@@ -28,8 +28,11 @@ export function Auth() {
           navigate("/");
         } else {
           if (isSignInWithEmailLink(auth, window.location.href)) {
-            console.log(getFromLocalStorage("userEmail"));
-            await signInWithEmailLink(auth, getFromLocalStorage("userEmail"), window.location.href);
+            await signInWithEmailLink(
+              auth,
+              localStorage.getItem("userEmail")!,
+              window.location.href
+            );
             localStorage.removeItem("userEmail");
           }
         }
