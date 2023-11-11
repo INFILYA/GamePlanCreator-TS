@@ -43,9 +43,8 @@ export type TPlayer = {
   boardPosition: number;
 };
 export type TMix = TPlayer | TTeam;
-export type TPlayerKeys = keyof TPlayer;
-export type TTeamKeys = keyof TTeam;
-export type TMixUnionKeys = TPlayerKeys | TTeamKeys;
+type TPlayerKeys = keyof TPlayer;
+type TTeamKeys = keyof TTeam;
 export type TMixInterSectionKeys = TPlayerKeys & TTeamKeys;
 
 export type TTeam = {

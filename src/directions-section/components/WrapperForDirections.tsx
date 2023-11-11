@@ -222,7 +222,7 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   };
   const saveTeam = async (team: TTeam) => {
     try {
-      const Team = doc(dataBase, "clubs", team.id);
+      const Team = doc(dataBase, "teams", team.id);
       await setDoc(Team, team);
       const teams = allTeams.map((squad) => (squad.id === team.id ? team : squad));
       dispatch(setAllTeams(teams));

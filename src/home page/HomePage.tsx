@@ -71,7 +71,7 @@ export function HomePage() {
     dispatch(setHomeTeam(name));
   }
   async function saveStartingSix() {
-    saveTeam({
+    await saveTeam({
       ...guestTeam[0],
       startingSquad: guestTeamOptions.map((player) => player.name),
     });
@@ -86,7 +86,7 @@ export function HomePage() {
   }
   const saveTeam = async (team: TTeam) => {
     try {
-      const docRef = doc(dataBase, "clubs", team.id);
+      const docRef = doc(dataBase, "teams", team.id);
       await setDoc(docRef, team);
     } catch (error) {
       console.error(error);
