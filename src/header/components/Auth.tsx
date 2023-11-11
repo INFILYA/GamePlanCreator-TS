@@ -7,13 +7,15 @@ import {
 } from "firebase/auth";
 import { FormEvent, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { getFromLocalStorage } from "../../utilities/functions";
 import SectionWrapper from "../../wrappers/SectionWrapper";
 import { RegularButton } from "../../css/Button.styled";
 
 export function Auth() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { search } = location;
   const [isRegistratedUser] = useAuthState(auth);
   const [email, setEmail] = useState<string>("");
   const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
@@ -26,6 +28,7 @@ export function Auth() {
           navigate("/");
         } else {
           if (isSignInWithEmailLink(auth, window.location.href)) {
+            console.log(getFromLocalStorage("userEmail"));
             await signInWithEmailLink(auth, getFromLocalStorage("userEmail"), window.location.href);
             localStorage.removeItem("userEmail");
           }
@@ -36,7 +39,7 @@ export function Auth() {
       }
     }
     signInWithEmail();
-  }, [isRegistratedUser, navigate]);
+  }, [isRegistratedUser, navigate, search]);
 
   async function handleLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
