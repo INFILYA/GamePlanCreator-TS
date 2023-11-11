@@ -43,7 +43,7 @@ export function Auth() {
     try {
       setIsLoginLoading(true);
       await sendSignInLinkToEmail(auth, email, {
-        url: "https://game-plan-creator.web.app/Auth",
+        url: "https://gameplancreator-ts.web.app/Auth",
         handleCodeInApp: true,
         dynamicLinkDomain: "gameplancreatorts.page.link",
       });
