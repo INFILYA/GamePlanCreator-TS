@@ -55,6 +55,7 @@ export function Auth() {
       setLoginError(err as string);
     } finally {
       setIsLoginLoading(false);
+      navigate("/");
     }
   }
   async function signInWithGoogle() {
