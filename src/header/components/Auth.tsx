@@ -8,7 +8,6 @@ import {
 import { FormEvent, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useLocation, useNavigate } from "react-router";
-import { getFromLocalStorage } from "../../utilities/functions";
 import SectionWrapper from "../../wrappers/SectionWrapper";
 import { RegularButton } from "../../css/Button.styled";
 
