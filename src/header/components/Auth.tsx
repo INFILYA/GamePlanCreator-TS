@@ -55,7 +55,6 @@ export function Auth() {
       setLoginError(err as string);
     } finally {
       setIsLoginLoading(false);
-      navigate("/");
     }
   }
   async function signInWithGoogle() {
@@ -88,7 +87,12 @@ export function Auth() {
               onChange={(e) => setEmail(e.target.value)}
               value={email}
             />
-            <RegularButton type="submit" $color="#ffd700" $background="#0057b8">
+            <RegularButton
+              type="submit"
+              $color="#ffd700"
+              $background="#0057b8"
+              disabled={isLoginLoading}
+            >
               {isLoginLoading ? "Logging you in" : "Log in"}
             </RegularButton>
             <div>{loginError}</div>
