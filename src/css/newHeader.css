@@ -1,0 +1,125 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100px;
+  padding: 2vmax;
+  box-sizing: border-box;
+}
+.header .block {
+  display: flex;
+  align-items: center;
+  width: 30%;
+}
+.header .home {
+  width: calc((var(--normal-text-size-value) - 1) * 1.2vw + 2.5rem);
+  border: transparent;
+  display: flex;
+  justify-content: center;
+  background-color: transparent;
+  cursor: pointer;
+}
+.header .home img {
+  border-radius: 0;
+}
+.header img {
+  width: calc((var(--normal-text-size-value) - 1) * 1.2vw + 2.5rem);
+  margin: 0px 10px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+}
+.header .matchup {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+.header .matchup img {
+  width: calc((var(--normal-text-size-value) - 0.75) * 5vw + 1rem);
+  border-radius: 0;
+}
+.header .logout {
+  background-color: indianred;
+  color: white;
+  font-weight: bold;
+  box-sizing: border-box;
+  border: 4px solid silver;
+  font-size: calc((var(--normal-text-size-value) - 0.9) * 2vw + 0.5rem);
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.header .login {
+  background-color: cornflowerblue;
+  font-weight: bold;
+  box-sizing: border-box;
+  border: 4px solid silver;
+  font-size: calc((var(--normal-text-size-value) - 0.9) * 2vw + 0.5rem);
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.emailPanel {
+  position: fixed;
+  background-color: darkgray;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 15px;
+  z-index: 25;
+  padding: 15px;
+  margin-top: 20px;
+}
+.emailPanel .google,
+.emailPanel .facebook {
+  width: 45px;
+  height: 45px;
+  border: none;
+  margin: 10px 10px;
+  border-radius: 50%;
+  background-color: transparent;
+}
+.emailPanel .google:hover,
+.emailPanel .facebook:hover {
+  transform: translateY(-10px);
+  transition: 0.7s;
+  background-color: transparent;
+}
+.emailPanel .google img,
+.emailPanel .facebook img {
+  width: 45px;
+  height: 45px;
+  border: none;
+  margin: 10px 10px;
+  border-radius: 50%;
+}
+.emailPanel .google img:hover,
+.emailPanel .facebook img:hover {
+  transform: translateY(-10px);
+  transition: 0.7s;
+  background-color: transparent;
+}
+.emailPanel .createAccount {
+  font-size: 15px;
+  width: 150px;
+  font-size: 100;
+  border: none;
+  background-color: transparent;
+}
+.emailPanel input,
+.emailPanel button,
+.emailPanel label {
+  margin: 10px auto;
+  font-size: 25px;
+  border-radius: 10px;
+  padding: 5px;
+  text-align: center;
+  display: flex;
+  width: 300px;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+.emailPanel label {
+  font-size: 30px;
+}
+
+/*# sourceMappingURL=newHeader.css.map */

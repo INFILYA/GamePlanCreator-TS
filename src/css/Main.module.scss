@@ -1,0 +1,522 @@
+$Grey-190: rgb(190, 190, 190);
+$Orange: #ff8001;
+$ButtonColor: rgb(255, 69, 0);
+$Black: rgb(0, 0, 0);
+$White: rgb(255, 255, 255);
+$ButtonBlue: rgb(100, 149, 237);
+
+@mixin linesForCort($Percent) {
+  position: relative;
+  top: 16.66 * $Percent;
+  height: 16.66%;
+  border-top: 4px solid $White;
+  background-color: $Grey-190;
+}
+@keyframes greyscale {
+  0% {
+    filter: contrast(50%) grayscale(100%);
+  }
+  25% {
+    filter: contrast(75%) grayscale(100%);
+  }
+  100% {
+    filter: contrast(100%) grayscale(0%);
+  }
+}
+@keyframes fillUp {
+  from {
+    height: -25vmax;
+  }
+  to {
+    height: 0;
+  }
+}
+
+body {
+  text-align: center;
+}
+:root {
+  --normal-text-size-value: 1.25;
+}
+h1 {
+  font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 1.5rem);
+  margin: 5px 0;
+}
+h2 {
+  font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 0.3rem);
+  margin: 5px 0;
+}
+p {
+  font-size: calc((var(--normal-text-size-value) - 1) * 1vw + 1rem);
+  padding: 10px 0;
+  margin: 0;
+}
+option {
+  font-size: calc((var(--normal-text-size-value) - 1) * 2vw + 0.5rem);
+}
+
+main {
+  padding: 0 2vw;
+  box-sizing: border-box;
+  button {
+    background-color: $ButtonBlue;
+  }
+  .loading-logo-wrapper {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    background-color: white;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .front-photo,
+    .back-photo {
+      position: relative;
+      margin-right: 3%;
+      position: absolute;
+      height: 25vmax;
+      z-index: 11;
+    }
+    .back-photo {
+      margin-right: 3.2%;
+      margin-bottom: 0.3%;
+      z-index: 9;
+    }
+    .backGround-plank {
+      height: 7vmax;
+      width: 100%;
+      background-color: white;
+      position: absolute;
+      z-index: 10;
+    }
+    .backGround-wrapper {
+      margin: 0 100vw 30vw 0;
+      .backGround {
+        position: absolute;
+        animation: fillUp 2.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        height: 25vmax;
+        width: 100%;
+        z-index: 10;
+        background-color: white;
+      }
+    }
+  }
+  .main-content-wrapper {
+    display: flex;
+    justify-content: center;
+    // Персональні стилі секцій
+    .attack-section {
+      align-self: center;
+      width: 70%;
+      position: relative;
+      z-index: 6;
+    }
+    .teamsquad-section {
+      width: 22.5%;
+      background-color: gainsboro;
+      text-align: center;
+      border-radius: calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem);
+      box-sizing: border-box;
+      padding: 1vw;
+      position: relative;
+      z-index: 5;
+    }
+    .ratings-section,
+    .playground-section {
+      align-self: center;
+      width: 55%;
+      position: relative;
+      z-index: 6;
+    }
+    .playground-section {
+      align-self: baseline;
+      .section-border {
+        .section-background {
+          display: flex;
+        }
+      }
+    }
+    .playArea-sections-wrapper {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      .playArea-section {
+        position: relative;
+        margin: 25px;
+        aspect-ratio: 1/2;
+        border: 10px solid #0272be;
+        min-width: 340px;
+        width: 100%;
+        max-width: 340px;
+      }
+    }
+    .distribution-section {
+      position: relative;
+      margin: 25px;
+      aspect-ratio: 1/1.2;
+      border: 10px solid #0272be;
+      min-width: 340px;
+      width: 100%;
+      max-width: 340px;
+    }
+    // Кінець
+    .section-border {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      overflow: hidden;
+      z-index: -1;
+      .section-background {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+        img {
+          width: 100%;
+        }
+        .playground-area-background {
+          width: 100%;
+          height: 100%;
+          border: 4px solid $White;
+          box-sizing: border-box;
+          background-color: darkgrey;
+          .threeMRivalCort {
+            @include linesForCort(2%);
+            display: flex;
+            div {
+              border: 2px solid white;
+              width: 33.3%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              font-size: 25px;
+              font-weight: 600;
+            }
+          }
+          .threeMMyCort {
+            @include linesForCort(2%);
+            border-bottom: 4px solid $White;
+          }
+        }
+      }
+    }
+    .section-content-wrapper {
+      .section-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        // Іконки гравців
+        .playerNumber-wrapper {
+          .playerNumber {
+            background-color: fuchsia;
+            border-radius: 0px 20px 20px 0px;
+          }
+          button {
+            position: relative;
+            color: $Black;
+            font-weight: bold;
+            background-color: $Orange;
+            text-align: center;
+            border-radius: 20px 0px 0px 20px;
+            border: 2px solid $Black;
+            height: 100%;
+            font-size: 1vw;
+          }
+        }
+        .player-surname-wrapper {
+          width: 100%;
+          button {
+            width: 100%;
+            height: 100%;
+            background-color: khaki;
+            border: 2px solid $Black;
+            border-radius: 0px 20px 20px 0px;
+            font-weight: 600;
+            font-size: 1vw;
+          }
+        }
+        // ПОЛЕ СКЛАДУ КОМАНД
+        .chooseHomeTeam {
+          padding: 10px;
+          appearance: auto;
+          width: 100%;
+          display: flex;
+          text-align: center;
+          background-color: transparent;
+          border: none;
+          font-weight: bold;
+          font-size: calc((var(--normal-text-size-value) - 0.9) * 5vw);
+        }
+        .team-title-wrapper {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .team-label-wrapper {
+            width: 70%;
+            .team-label {
+              font-size: calc((var(--normal-text-size-value) - 0.9) * 5vw);
+              background-color: transparent;
+              border: 1px solid transparent;
+              width: 100%;
+              text-align: center;
+              font-weight: bold;
+            }
+          }
+          .team-logo-wrapper {
+            width: 30%;
+            .team-logo {
+              width: 3vw;
+              aspect-ratio: 1/1;
+              animation: spin 5s linear 0s infinite;
+            }
+          }
+        }
+        .squad-wrapper {
+          width: 100%;
+          .player-field-wrapper {
+            display: flex;
+            margin: 3px 0;
+            width: 100%;
+            min-height: 2vw;
+            .player-surname {
+              background-color: darkgray;
+              border-radius: 20px 0px 0px 20px;
+            }
+            .moveToBoard-wrapper {
+              display: flex;
+              select {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                background-color: transparent;
+                border: none;
+                font-weight: bold;
+                font-size: calc((var(--normal-text-size-value) - 0.9) * 3vw);
+              }
+            }
+          }
+        }
+        // КНОПКИ ЗМІНИ РОЗТАШУВАННЯ
+        .plusMinus {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 5px 0;
+          height: 2vw;
+          button {
+            font-size: calc((var(--normal-text-size-value) - 1) * 4vw + 0.3rem);
+            border: none;
+            border-radius: 5px;
+            min-width: 2vmax;
+            font-weight: 600;
+            padding: 0;
+          }
+          span {
+            font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 0.8rem);
+            padding: 0px 15px;
+            font-weight: 600;
+          }
+        }
+        // КНОПКИ СБРОСУ КОМАНД
+        .reset-button-wrapper {
+          display: flex;
+          width: 100%;
+          margin: 1vw 0;
+          justify-content: center;
+        }
+        // ВІКНО ІНФОРМАЦІЇ ГРАВЦЯ
+        .hidden-player-information-wrapper {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          box-sizing: border-box;
+          .player-surname-wrapper {
+            border-radius: 2vw;
+            background-color: $ButtonColor;
+            color: $White;
+            cursor: pointer;
+            h2 {
+              font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.7rem);
+            }
+          }
+          .show-details {
+            border: none;
+            font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.4rem);
+            font-weight: 600;
+            border-top: 2px solid $Black;
+            border-bottom: 2px solid $Black;
+            &:hover {
+              filter: grayscale(50);
+            }
+          }
+          .player-full-info-wrapper {
+            display: flex;
+            justify-content: space-around;
+            .player-info-data-wrapper {
+              padding: 2vw 0;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              align-items: center;
+              box-sizing: border-box;
+              width: 40%;
+              .player-info-row-wrapper {
+                display: flex;
+                font-weight: bold;
+                padding: 0.3vw 0;
+                font-size: calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem);
+                div {
+                  white-space: nowrap;
+                  display: flex;
+                }
+              }
+              nav {
+                display: flex;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+              }
+            }
+            .photo-player-wrapper {
+              display: flex;
+              justify-content: center;
+              width: 40%;
+              aspect-ratio: 1/1;
+              img {
+                height: 100%;
+                overflow: hidden;
+              }
+            }
+            .player-diagramm-wrapper {
+              width: 40%;
+              padding: 2vw 0;
+              .row {
+                width: 100%;
+              }
+            }
+          }
+        }
+        // МЕНЮ ВИБОРУ КОМАНДИ СУПЕРНИКА
+        .opponentTeamList {
+          display: grid;
+          grid-template-columns: repeat(3, auto);
+          grid-row-gap: 1.5vw;
+          padding: 0;
+          width: 75%;
+          padding: 2vw;
+          .nav-image-wrapper {
+            img {
+              width: 8vw;
+              aspect-ratio: 1/1;
+              &:hover {
+                transform: translateY(-7px);
+                transition: 0.3s;
+              }
+            }
+          }
+        }
+        // ПЕРЕХІД НА ІНШІ СТОРІНКИ
+        .showRatings {
+          display: flex;
+          justify-content: center;
+          margin-top: 10px;
+        }
+        //ПОЛЕ РОТАЦІЇ КОМАНД
+        .rotation-field-wrapper {
+          width: 100%;
+          .reset-button-wrapper {
+            margin: -10px 0;
+            justify-content: space-between;
+            position: relative;
+            z-index: 11;
+          }
+          .button-save-wrapper {
+            margin: 5px;
+          }
+          .empty-home-row-zones-wrapper {
+            height: 2vmax;
+            .nameOfZone-field-wrapper {
+              height: 2vmax;
+              width: 33.33%;
+            }
+          }
+          .empty-guest-front-row-zones-wrapper,
+          .empty-guest-back-row-zones-wrapper,
+          .row-zones-wrapper,
+          .my-row-zones-wrapper {
+            height: 12vmax;
+            display: flex;
+            justify-content: space-around;
+            min-height: 18.5px;
+            align-items: center;
+            font-weight: 600;
+            width: 100%;
+            z-index: 9;
+            .player-field-wrapper {
+              height: 2vw;
+              width: 90%;
+              min-height: 18.5px;
+            }
+            .zone-names-wrapper {
+              height: 12vmax;
+              width: 33%;
+              font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
+              align-items: center;
+            }
+            .card-content {
+              width: 33%;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              min-height: 18.5px;
+            }
+            .player-field-wrapper,
+            .zone-names-wrapper {
+              font-weight: bold;
+              display: flex;
+              justify-content: center;
+            }
+            .player-image-wrapper {
+              height: 10vmax;
+              img {
+                border: none;
+                height: 100%;
+                min-height: 60px;
+                padding-top: 7px;
+              }
+            }
+          }
+          .empty-guest-front-row-zones-wrapper {
+            top: 0.5%;
+            position: absolute;
+            font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
+          }
+          .empty-guest-back-row-zones-wrapper {
+            top: 41%;
+            position: absolute;
+            font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
+          }
+          .my-row-zones-wrapper {
+            height: 2vmax;
+          }
+          .row-zones-wrapper,
+          .my-row-zones-wrapper {
+            display: flex;
+            min-height: 18.5px;
+            z-index: 10;
+            position: relative;
+            .nameOfZone-field-wrapper {
+              height: 2vmax;
+              width: 33.33%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
