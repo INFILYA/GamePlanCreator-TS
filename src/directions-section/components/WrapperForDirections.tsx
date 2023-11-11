@@ -111,7 +111,7 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
       [event.target.name]: +event.target.value.replace(/\D+/g, ""),
     } as TServiceDiagramm & TAttackDiagramm);
   };
-  const onHandleCountClick = (event: FormEvent<HTMLFormElement>) => {
+  const onHandleCountClick = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     while (actionType === "choose") {
       // якщо не вибарно тип атаки то return
@@ -148,8 +148,8 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
         (att, index) => att + (!actionHistory[index] ? 0 : actionHistory[index])
       ); // оновлюємо поля атаки у обраного гравця
       refreshVersionOFAdmin(1); //перезаписываю версию
-      savePlayer(playerInfo); //сохраняю одного игрока
-      saveTeam(newTeam as TTeam); // сохраняю команду
+      await savePlayer(playerInfo); //сохраняю одного игрока
+      await saveTeam(newTeam as TTeam); // сохраняю команду
       setIsSaveDataOfActions(!isSaveDataOfActions);
     }
     const totalAttacks = reduce(loadByZone, 0.0001);
@@ -158,10 +158,10 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
     setIsShowInputs(!isShowInputs);
     setIsDisableSwitch(!isDisableSwitch);
   };
-  const returnOldData = () => {
+  const returnOldData = async () => {
     refreshVersionOFAdmin(-1); //откатываю версию
-    savePlayer(previousPlayerData!); //откатываю данные одного игрока
-    saveTeam(previousTeamData!); // откатываю данные команды
+    await savePlayer(previousPlayerData!); //откатываю данные одного игрока
+    await saveTeam(previousTeamData!); // откатываю данные команды
     setIsConfirmReturn(!isConfirmReturn);
     alert("Last Data Returned");
   };
