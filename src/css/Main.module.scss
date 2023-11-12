@@ -91,7 +91,7 @@ main {
       z-index: 10;
     }
     .backGround-wrapper {
-      margin: 0 100vw 30vw 0;
+      margin: 0 100vw 30vmax 0;
       .backGround {
         position: absolute;
         animation: fillUp 2.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;

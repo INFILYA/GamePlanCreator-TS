@@ -80,13 +80,11 @@
     width: 90vw !important;
   }
 }
-@media screen and (max-width: 810px) {
-  .backGround-wrapper {
-    margin: 0 100vw 30vh 0 !important;
-  }
-}
 
 @media screen and (max-width: 620px) {
+  .moveToBoard-wrapper {
+    display: block !important;
+  }
   header {
     img {
       width: calc((var(--normal-text-size-value) - 1) * 1.2vw + 1.5rem) !important;
