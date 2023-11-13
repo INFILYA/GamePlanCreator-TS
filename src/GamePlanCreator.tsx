@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { getFromLocalStorage, later } from "./utilities/functions";
 import { Route, Routes } from "react-router-dom";
@@ -25,7 +25,7 @@ import MyLogo from "./myLogo/MyLogo";
 
 export default function GamePlanCreator() {
   const dispatch = useAppDispatch();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
   const changeLanguage = useSelector(selectChangeLanguage);
   const isShowedTutorial = useSelector(selectIsShowedTutorial);
   const userVersion: number = getFromLocalStorage("currentUserVersion") || 0;
@@ -33,7 +33,7 @@ export default function GamePlanCreator() {
   useEffect(() => {
     async function checkVersionOfData() {
       try {
-        setIsLoading(true);
+        // setIsLoading(true);
         await later(250000);
         const data = await getDocs(collection(dataBase, "dataVersion"));
         const adminVersion = data.docs[0].data().currentVersion;
@@ -56,7 +56,7 @@ export default function GamePlanCreator() {
       } catch (error) {
         console.error(error);
       } finally {
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     }
     async function getPlayers() {
@@ -85,7 +85,7 @@ export default function GamePlanCreator() {
     <>
       <Header />
       <main>
-        {isLoading ? (
+        {/* {isLoading ? ( */}
           <>
             <div className="loading-logo-wrapper">
               {/* <div className="backGround-wrapper">
@@ -97,7 +97,7 @@ export default function GamePlanCreator() {
               </div>
             </div>
           </>
-        ) : (
+        {/* ) : ( */}
           <>
             {!isShowedTutorial && (
               <div className="textForTutorial">
@@ -115,7 +115,7 @@ export default function GamePlanCreator() {
               <Route path="/SendStatistic" element={<SendStatistic />} />
             </Routes>
           </>
-        )}
+        {/* )} */}
       </main>
     </>
   );
