@@ -57,7 +57,7 @@ main .loading-logo-wrapper {
   top: 0;
   bottom: 0;
   background-color: white;
-  width: 100vw;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -66,12 +66,6 @@ main .loading-logo-wrapper .logo-wrapper {
   position: relative;
   width: 50vmin;
   display: flex;
-}
-main .loading-logo-wrapper .logo-wrapper .my-logo {
-  z-index: 13;
-}
-main .loading-logo-wrapper .logo-wrapper .my-logo .ball-shapes {
-  border: 2px solid black;
 }
 main .loading-logo-wrapper .logo-wrapper img {
   position: absolute;
