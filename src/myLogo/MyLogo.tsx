@@ -5,6 +5,7 @@ export default function MyLogo() {
       viewBox="0 0 585 527"
       preserveAspectRatio="xMidYMid meet"
       // className="my-logo"
+      type="image/svg+xml"
     >
       <g
         transform="translate(0.000000,527.000000) scale(0.100000,-0.100000)"

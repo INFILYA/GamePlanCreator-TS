@@ -53,7 +53,7 @@ main button {
   background-color: rgb(100, 149, 237);
 }
 main .loading-logo-wrapper {
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
   background-color: white;

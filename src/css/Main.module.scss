@@ -62,7 +62,7 @@ main {
     background-color: $ButtonBlue;
   }
   .loading-logo-wrapper {
-    position: absolute;
+    position: fixed;
     top: 0;
     bottom: 0;
     background-color: white;
@@ -75,17 +75,6 @@ main {
       width: 50vmin;
       display: flex;
       z-index: 13;
-      // height: 100%;
-      // display: flex;
-      // justify-content: center;
-      // min-height: 35vh;
-      // min-width: 50vmin;
-      // .my-logo {
-      //   z-index: 13;
-      //   .ball-shapes {
-      //     border: 2px solid black;
-      //   }
-      // }
       img {
         position: absolute;
         width: 49vmin;
