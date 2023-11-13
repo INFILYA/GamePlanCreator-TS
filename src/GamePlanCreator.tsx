@@ -34,7 +34,7 @@ export default function GamePlanCreator() {
     async function checkVersionOfData() {
       try {
         setIsLoading(true);
-        await later(2500);
+        await later(250000);
         const data = await getDocs(collection(dataBase, "dataVersion"));
         const adminVersion = data.docs[0].data().currentVersion;
         dispatch(setUserVersion(adminVersion));

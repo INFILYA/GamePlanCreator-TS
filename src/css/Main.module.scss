@@ -62,7 +62,7 @@ main {
     background-color: $ButtonBlue;
   }
   .loading-logo-wrapper {
-    position: fixed;
+    position: absolute;
     top: 0;
     bottom: 0;
     background-color: white;
@@ -71,7 +71,7 @@ main {
     justify-content: center;
     align-items: center;
     .logo-wrapper {
-      position: absolute;
+      position: relative;
       width: 50vmin;
       display: flex;
       .my-logo {
