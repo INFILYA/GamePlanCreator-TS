@@ -8,7 +8,6 @@ export default function MyLogo() {
     >
       <g
         transform="translate(0.000000,527.000000) scale(0.100000,-0.100000)"
-        // fill="#ffd700"
         fill="#0057b8"
         stroke="none"
       >
@@ -23,7 +22,6 @@ export default function MyLogo() {
       </g>
       <g
         transform="translate(0.000000,527.000000) scale(0.10000,-0.100000)"
-        // fill="#0057b8"
         fill="#ffd700"
         stroke="none"
       >
@@ -32,7 +30,6 @@ export default function MyLogo() {
       <g
         transform="translate(0.000000,527.000000) scale(0.100000,-0.100000)"
         fill="#ffd700"
-        // fill="#0057b8"
         stroke="none"
       >
         <path d="M3850 2645 l0 -525 85 0 85 0 0 525 0 525 -85 0 -85 0 0 -525z" />

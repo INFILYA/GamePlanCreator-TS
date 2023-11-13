@@ -34,7 +34,7 @@ export default function GamePlanCreator() {
     async function checkVersionOfData() {
       try {
         setIsLoading(true);
-        await later(2500);
+        await later(2500000);
         const data = await getDocs(collection(dataBase, "dataVersion"));
         const adminVersion = data.docs[0].data().currentVersion;
         dispatch(setUserVersion(adminVersion));
@@ -92,7 +92,7 @@ export default function GamePlanCreator() {
                 <div className="backGround"></div>
               </div>
               <div className="logo-wrapper">
-                <img src="/photos/ball.png" alt="" className="back-photo" />
+                {/* <img src="/photos/ball.png" alt="" className="back-photo" /> */}
                 <MyLogo />
               </div>
             </div>
