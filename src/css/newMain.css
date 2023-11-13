@@ -66,26 +66,22 @@ main .loading-logo-wrapper .logo-wrapper {
   position: absolute;
   width: 50vmin;
   display: flex;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 main .loading-logo-wrapper .logo-wrapper .my-logo {
   z-index: 13;
 }
-main .loading-logo-wrapper .logo-wrapper img {
+main .loading-logo-wrapper .logo-wrapper .back-photo {
   position: absolute;
   width: 49vmin;
   margin-left: -4%;
   margin-top: -4%;
   rotate: 328deg;
 }
-main .loading-logo-wrapper .backGround-wrapper {
-  width: 70vmin;
-  position: relative;
-  bottom: 0;
-  right: 0;
-  aspect-ratio: 1/1;
-}
-main .loading-logo-wrapper .backGround-wrapper .backGround {
-  position: relative;
+main .loading-logo-wrapper .logo-wrapper .backGround {
+  position: absolute;
   animation: fillUp 2.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
   z-index: 10;
   background-color: white;

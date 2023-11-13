@@ -74,26 +74,21 @@ main {
       position: absolute;
       width: 50vmin;
       display: flex;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       .my-logo {
         z-index: 13;
       }
-      img {
+      .back-photo {
         position: absolute;
         width: 49vmin;
         margin-left: -4%;
         margin-top: -4%;
         rotate: 328deg;
-        // z-index: 10;
       }
-    }
-    .backGround-wrapper {
-      width: 70vmin;
-      position: relative;
-      bottom: 0;
-      right: 0;
-      aspect-ratio: 1/1;
       .backGround {
-        position: relative;
+        position: absolute;
         animation: fillUp 2.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
         z-index: 10;
         background-color: white;
