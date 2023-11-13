@@ -25,7 +25,7 @@ $ButtonBlue: rgb(100, 149, 237);
 }
 @keyframes fillUp {
   from {
-    height: -25vmax;
+    height: -100vmin;
   }
   to {
     height: 0;
@@ -70,35 +70,37 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    .front-photo,
-    .back-photo {
-      position: relative;
-      margin-right: 3%;
+    .logo-wrapper {
       position: absolute;
-      height: 25vmax;
-      z-index: 11;
-    }
-    .back-photo {
-      margin-right: 3.2%;
-      margin-bottom: 0.3%;
-      z-index: 9;
-    }
-    .backGround-plank {
-      height: 7vmax;
-      width: 100%;
-      background-color: white;
-      position: absolute;
-      z-index: 10;
+      width: 50vmin;
+      display: flex;
+      .my-logo {
+        z-index: 13;
+        .ball-shapes {
+          border: 2px solid black;
+        }
+      }
+      img {
+        position: absolute;
+        width: 49vmin;
+        margin-left: -4%;
+        margin-top: -4%;
+        rotate: 328deg;
+      }
     }
     .backGround-wrapper {
-      margin: 0 100vw 30vmax 0;
+      width: 50vmin;
+      position: relative;
+      bottom: 0;
+      right: 0;
+      aspect-ratio: 1/1;
       .backGround {
-        position: absolute;
+        position: relative;
         animation: fillUp 2.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
-        height: 25vmax;
-        width: 100%;
         z-index: 10;
         background-color: white;
+        height: 100%;
+        width: 100%;
       }
     }
   }

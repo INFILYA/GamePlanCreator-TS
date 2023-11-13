@@ -6,7 +6,7 @@ type TButton = {
 };
 
 export const RegularButton = styled.button<TButton>`
-  font-size: calc((var(--normal-text-size-value) - 1) * 4vmax);
+  font-size: calc((var(--normal-text-size-value) - 1) * 4vmax + 0.1rem);
   margin: 0.5vmax;
   border: none;
   padding: 0.5vmax;

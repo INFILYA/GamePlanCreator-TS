@@ -60,6 +60,7 @@
         display: flex;
         justify-content: center;
         min-height: 35vh;
+        min-width: 50vmin;
         img {
           object-fit: contain;
           overflow: hidden;
@@ -119,17 +120,30 @@
 .textForTutorial div {
   font-size: calc((0.25) * 3vw + 0.7rem);
 }
-@media screen and (max-width: 820px) {
-  .my-logo {
-    width: 50%;
-  }
-}
 @media screen and (max-width: 600px) {
   .grab {
     .tutorial {
       .switch {
         justify-content: space-between !important;
       }
+    }
+  }
+}
+svg {
+  .group-1 {
+    .path-container-1 {
+      clip-path: path();
+    }
+    .path-container-2 {
+      clip-path: path();
+    }
+  }
+  .group-2 {
+    .path-container-3 {
+      clip-path: path();
+    }
+    .path-container-4 {
+      clip-path: path();
     }
   }
 }

@@ -1,3 +1,5 @@
+import MyLogo from "../myLogo/MyLogo";
+
 const enterWordEng = (
   <>
     <div className="inner-text-wrapper">
@@ -6,7 +8,7 @@ const enterWordEng = (
       database available. However, it will be populated starting from the 2023-2024 PVLU season.
     </div>
     <div className="inner-image-wrapper">
-      <img alt="" src="/photos/MyLogoFront.png" className="my-logo" />
+      <MyLogo />
     </div>
   </>
 );

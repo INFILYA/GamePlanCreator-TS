@@ -61,6 +61,7 @@
   display: flex;
   justify-content: center;
   min-height: 35vh;
+  min-width: 50vmin;
 }
 .grab .tutorial .text-wrapper .inner-image-wrapper img {
   object-fit: contain;
@@ -112,15 +113,22 @@
   font-size: calc(0.75vw + 0.7rem);
 }
 
-@media screen and (max-width: 820px) {
-  .my-logo {
-    width: 50%;
-  }
-}
 @media screen and (max-width: 600px) {
   .grab .tutorial .switch {
     justify-content: space-between !important;
   }
+}
+svg .group-1 .path-container-1 {
+  clip-path: path();
+}
+svg .group-1 .path-container-2 {
+  clip-path: path();
+}
+svg .group-2 .path-container-3 {
+  clip-path: path();
+}
+svg .group-2 .path-container-4 {
+  clip-path: path();
 }
 
 /*# sourceMappingURL=newTutorial.css.map */

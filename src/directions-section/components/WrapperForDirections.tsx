@@ -56,7 +56,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   const [previousPlayerData, setPreviousPlayerData] = useState<TPlayer | null>(null);
   const [previousTeamData, setPreviousTeamData] = useState<TTeam | null>(null);
   const [isShowInputs, setIsShowInputs] = useState<boolean>(false);
-  const [isShowBalls, setIsShowBalls] = useState<boolean>(false);
   const [isDisableSwitch, setIsDisableSwitch] = useState<boolean>(false);
   const [isConfirmReturn, setIsConfirmReturn] = useState<boolean>(false);
   const [actionType, setActionType] = useState<string>("choose");
@@ -155,7 +154,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
     const totalAttacks = reduce(loadByZone, 0.0001);
     const result = loadByZone.map((attacks) => Math.round((attacks / totalAttacks) * 100));
     setZoneValue(result);
-    setIsShowInputs(!isShowInputs);
     setIsDisableSwitch(!isDisableSwitch);
   };
   const returnOldData = async () => {
@@ -177,7 +175,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
     const totalAttacks = reduce(attHistory, 0.0001);
     const result = attHistory.map((attacks) => Math.round((attacks / totalAttacks) * 100));
     setZoneValue(result);
-    setIsShowInputs(!isShowInputs);
     setIsDisableSwitch(!isDisableSwitch);
     setIsShowDataOfActions(!isShowDataOfActions);
   };
@@ -248,6 +245,12 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   const zone5 = totalPercentOfzone(0, 1);
   const zone6 = totalPercentOfzone(2, 3);
   const zone1 = totalPercentOfzone(4, 5);
+
+  console.log(isShowDataOfActions, "showDataActions");
+  console.log(isSaveDataOfActions, "SaveDataActions");
+  console.log(isShowInputs, "showInputs");
+  console.log(isDisableSwitch, "switch");
+  console.log(isConfirmReturn, "confirmReturn");
   return (
     <SectionWrapper
       className="playArea-section"
@@ -315,12 +318,11 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                       <Balls
                         key={index}
                         value={ball.zone.replace(/[a-z]/g, "")}
-                        className={!isShowBalls ? ball.zone : "none"}
+                        className={!isShowInputs ? ball.zone : "none"}
                         index={index}
                         zonesStates={zonesStates}
                         setZonesStates={setZonesStates}
                         setIsShowInputs={setIsShowInputs}
-                        setIsShowBalls={setIsShowBalls}
                       />
                     ) : (
                       <Balls
@@ -331,7 +333,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                         zonesStates={zonesStates}
                         setZonesStates={setZonesStates}
                         setIsShowInputs={setIsShowInputs}
-                        setIsShowBalls={setIsShowBalls}
                       />
                     )
                   )
@@ -343,12 +344,11 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                         <Balls
                           key={index}
                           value={ball.zone.replace(/[a-z]/g, "")}
-                          className={!isShowBalls ? ball.zone : "none"}
+                          className={!isShowInputs ? ball.zone : "none"}
                           index={index}
                           zonesStates={zonesStates}
                           setZonesStates={setZonesStates}
                           setIsShowInputs={setIsShowInputs}
-                          setIsShowBalls={setIsShowBalls}
                         />
                       ) : (
                         <Balls
@@ -359,7 +359,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                           zonesStates={zonesStates}
                           setZonesStates={setZonesStates}
                           setIsShowInputs={setIsShowInputs}
-                          setIsShowBalls={setIsShowBalls}
                         />
                       )
                     )
@@ -371,12 +370,11 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                         <Balls
                           key={index + 1}
                           value={ball.zone.replace(/[a-z]/g, "")}
-                          className={!isShowBalls ? ball.zone : "none"}
+                          className={!isShowInputs ? ball.zone : "none"}
                           index={index + 1}
                           zonesStates={zonesStates}
                           setZonesStates={setZonesStates}
                           setIsShowInputs={setIsShowInputs}
-                          setIsShowBalls={setIsShowBalls}
                         />
                       ) : (
                         <Balls
@@ -387,7 +385,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                           zonesStates={zonesStates}
                           setZonesStates={setZonesStates}
                           setIsShowInputs={setIsShowInputs}
-                          setIsShowBalls={setIsShowBalls}
                         />
                       )
                     )
@@ -399,12 +396,11 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                         <Balls
                           key={index + 4}
                           value={ball.zone.replace(/[a-z]/g, "")}
-                          className={!isShowBalls ? ball.zone : "none"}
+                          className={!isShowInputs ? ball.zone : "none"}
                           index={index + 4}
                           zonesStates={zonesStates}
                           setZonesStates={setZonesStates}
                           setIsShowInputs={setIsShowInputs}
-                          setIsShowBalls={setIsShowBalls}
                         />
                       ) : (
                         <Balls
@@ -415,7 +411,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                           zonesStates={zonesStates}
                           setZonesStates={setZonesStates}
                           setIsShowInputs={setIsShowInputs}
-                          setIsShowBalls={setIsShowBalls}
                         />
                       )
                     )
@@ -429,7 +424,7 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
               ))}
             </div>
           )}
-          {isShowBalls && (
+          {isShowInputs && (
             <>
               {!isDisableSwitch && !isShowDataOfActions && (
                 <div className="cones-wrapper">

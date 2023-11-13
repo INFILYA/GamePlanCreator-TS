@@ -21,6 +21,7 @@ import { ENGTUTORIAL } from "./utilities/engTutorial";
 import Distribution from "./distribution/Distribution";
 import Directions from "./directions-section/Directions";
 import SendStatistic from "./loadStatistic/SendStatistic";
+import MyLogo from "./myLogo/MyLogo";
 
 export default function GamePlanCreator() {
   const dispatch = useAppDispatch();
@@ -85,13 +86,17 @@ export default function GamePlanCreator() {
       <Header />
       <main>
         {isLoading ? (
-          <div className="loading-logo-wrapper">
-            <div className="backGround-wrapper">
-              <div className="backGround"></div>
+          <>
+            <div className="loading-logo-wrapper">
+              <div className="backGround-wrapper">
+                <div className="backGround"></div>
+              </div>
+              <div className="logo-wrapper">
+                <img src="/photos/ball.png" alt="" className="back-photo" />
+                <MyLogo />
+              </div>
             </div>
-            <img src="/photos/MyLogoBack.png" alt="" className="back-photo" />
-            <img src="/photos/MyLogoFront.png" alt="" className="front-photo" />
-          </div>
+          </>
         ) : (
           <>
             {!isShowedTutorial && (

@@ -241,7 +241,6 @@ export function HomePage() {
                       </>
                     )}
                 </div>
-
                 {showGuestTeam && (
                   <div className="showRatings">
                     <NavLink to={"/Ratings"}>
@@ -256,7 +255,7 @@ export function HomePage() {
                     </NavLink>
                     <NavLink to={"/SendStatistic"}>
                       <RegularButton onClick={() => dispatch(setInfoOfPlayer(null))} type="button">
-                        Send Statistic
+                        Send Data
                       </RegularButton>
                     </NavLink>
                   </div>
