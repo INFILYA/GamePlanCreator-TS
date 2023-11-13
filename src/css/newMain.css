@@ -63,9 +63,11 @@ main .loading-logo-wrapper {
   align-items: center;
 }
 main .loading-logo-wrapper .logo-wrapper {
-  position: fixed;
+  position: absolute;
   width: 50vmin;
   display: flex;
+}
+main .loading-logo-wrapper .logo-wrapper .my-logo {
   z-index: 13;
 }
 main .loading-logo-wrapper .logo-wrapper img {
@@ -74,7 +76,6 @@ main .loading-logo-wrapper .logo-wrapper img {
   margin-left: -4%;
   margin-top: -4%;
   rotate: 328deg;
-  z-index: 8;
 }
 main .loading-logo-wrapper .backGround-wrapper {
   width: 70vmin;

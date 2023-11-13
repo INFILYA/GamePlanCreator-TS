@@ -71,17 +71,19 @@ main {
     justify-content: center;
     align-items: center;
     .logo-wrapper {
-      position: fixed;
+      position: absolute;
       width: 50vmin;
       display: flex;
-      z-index: 13;
+      .my-logo {
+        z-index: 13;
+      }
       img {
         position: absolute;
         width: 49vmin;
         margin-left: -4%;
         margin-top: -4%;
         rotate: 328deg;
-        z-index: 8;
+        // z-index: 10;
       }
     }
     .backGround-wrapper {

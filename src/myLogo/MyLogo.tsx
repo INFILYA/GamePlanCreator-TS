@@ -4,7 +4,7 @@ export default function MyLogo() {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 585 527"
       preserveAspectRatio="xMidYMid meet"
-      // className="my-logo"
+      className="my-logo"
       type="image/svg+xml"
     >
       <g
