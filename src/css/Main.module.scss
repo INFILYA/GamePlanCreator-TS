@@ -113,6 +113,9 @@ main {
       width: 70%;
       position: relative;
       z-index: 6;
+      @media screen and (max-width: 1200px) {
+        width: 90vw;
+      }
     }
     .teamsquad-section {
       width: 22.5%;
@@ -124,6 +127,7 @@ main {
       position: relative;
       z-index: 5;
     }
+
     .ratings-section,
     .playground-section {
       align-self: center;
@@ -161,6 +165,11 @@ main {
       min-width: 340px;
       width: 100%;
       max-width: 340px;
+    }
+    .ratings-section {
+      @media screen and (max-width: 1200px) {
+        width: 90vw;
+      }
     }
     // Кінець
     .section-border {
@@ -228,6 +237,9 @@ main {
             border: 2px solid $Black;
             height: 100%;
             font-size: 1vw;
+            @media screen and (max-width: 620px) {
+              font-size: 1.1vw;
+            }
           }
         }
         .player-surname-wrapper {
@@ -240,6 +252,9 @@ main {
             border-radius: 0px 20px 20px 0px;
             font-weight: 600;
             font-size: 1vw;
+            @media screen and (max-width: 620px) {
+              font-size: 1.1vw;
+            }
           }
         }
         // ПОЛЕ СКЛАДУ КОМАНД
@@ -260,6 +275,9 @@ main {
           align-items: center;
           .team-label-wrapper {
             width: 70%;
+            @media screen and (max-width: 620px) {
+              align-self: auto;
+            }
             .team-label {
               font-size: calc((var(--normal-text-size-value) - 0.9) * 5vw);
               background-color: transparent;
@@ -275,6 +293,9 @@ main {
               width: 3vw;
               aspect-ratio: 1/1;
               animation: spin 5s linear 0s infinite;
+              @media screen and (max-width: 620px) {
+                width: calc((var(--normal-text-size-value) - 1) * 1.2vw + 1rem);
+              }
             }
           }
         }
@@ -291,6 +312,9 @@ main {
             }
             .moveToBoard-wrapper {
               display: flex;
+              @media screen and (max-width: 620px) {
+                display: block;
+              }
               select {
                 -webkit-appearance: none;
                 -moz-appearance: none;
@@ -359,6 +383,10 @@ main {
           .player-full-info-wrapper {
             display: flex;
             justify-content: space-around;
+            @media screen and (max-width: 620px) {
+              flex-direction: column;
+              align-items: center;
+            }
             .player-info-data-wrapper {
               padding: 2vw 0;
               display: flex;
@@ -397,8 +425,16 @@ main {
             .player-diagramm-wrapper {
               width: 40%;
               padding: 2vw 0;
+
               .row {
                 width: 100%;
+              }
+            }
+            .player-info-data-wrapper,
+            .photo-player-wrapper,
+            .player-diagramm-wrapper {
+              @media screen and (max-width: 620px) {
+                width: 75%;
               }
             }
           }

@@ -6,7 +6,7 @@ type TButton = {
 };
 
 export const RegularButton = styled.button<TButton>`
-  font-size: calc((var(--normal-text-size-value) - 1) * 4vmax + 0.1rem);
+  font-size: calc((var(--normal-text-size-value) - 1) * 4vmax + 0.2rem);
   margin: 0.5vmax;
   border: none;
   padding: 0.5vmax;
@@ -17,6 +17,7 @@ export const RegularButton = styled.button<TButton>`
   min-width: 3vmax;
   background-color: ${(props) => props.$background};
   color: ${(props) => props.$color};
+  white-space: nowrap;
   &:hover {
     transition: 0.5s;
     opacity: 1;

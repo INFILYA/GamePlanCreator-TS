@@ -105,6 +105,11 @@ main .main-content-wrapper .attack-section {
   position: relative;
   z-index: 6;
 }
+@media screen and (max-width: 1200px) {
+  main .main-content-wrapper .attack-section {
+    width: 90vw;
+  }
+}
 main .main-content-wrapper .teamsquad-section {
   width: 22.5%;
   background-color: gainsboro;
@@ -150,6 +155,11 @@ main .main-content-wrapper .distribution-section {
   min-width: 340px;
   width: 100%;
   max-width: 340px;
+}
+@media screen and (max-width: 1200px) {
+  main .main-content-wrapper .ratings-section {
+    width: 90vw;
+  }
 }
 main .main-content-wrapper .section-border {
   position: absolute;
@@ -223,6 +233,11 @@ main .main-content-wrapper .section-content-wrapper .section-content .playerNumb
   height: 100%;
   font-size: 1vw;
 }
+@media screen and (max-width: 620px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button {
+    font-size: 1.1vw;
+  }
+}
 main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper {
   width: 100%;
 }
@@ -234,6 +249,11 @@ main .main-content-wrapper .section-content-wrapper .section-content .player-sur
   border-radius: 0px 20px 20px 0px;
   font-weight: 600;
   font-size: 1vw;
+}
+@media screen and (max-width: 620px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button {
+    font-size: 1.1vw;
+  }
 }
 main .main-content-wrapper .section-content-wrapper .section-content .chooseHomeTeam {
   padding: 10px;
@@ -254,6 +274,11 @@ main .main-content-wrapper .section-content-wrapper .section-content .team-title
 main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-label-wrapper {
   width: 70%;
 }
+@media screen and (max-width: 620px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-label-wrapper {
+    align-self: auto;
+  }
+}
 main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-label-wrapper .team-label {
   font-size: calc((var(--normal-text-size-value) - 0.9) * 5vw);
   background-color: transparent;
@@ -270,6 +295,11 @@ main .main-content-wrapper .section-content-wrapper .section-content .team-title
   aspect-ratio: 1/1;
   animation: spin 5s linear 0s infinite;
 }
+@media screen and (max-width: 620px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-logo-wrapper .team-logo {
+    width: calc((var(--normal-text-size-value) - 1) * 1.2vw + 1rem);
+  }
+}
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper {
   width: 100%;
 }
@@ -285,6 +315,11 @@ main .main-content-wrapper .section-content-wrapper .section-content .squad-wrap
 }
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper {
   display: flex;
+}
+@media screen and (max-width: 620px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper {
+    display: block;
+  }
 }
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select {
   -webkit-appearance: none;
@@ -350,6 +385,12 @@ main .main-content-wrapper .section-content-wrapper .section-content .hidden-pla
   display: flex;
   justify-content: space-around;
 }
+@media screen and (max-width: 620px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper .player-full-info-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+}
 main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper .player-full-info-wrapper .player-info-data-wrapper {
   padding: 2vw 0;
   display: flex;
@@ -391,6 +432,13 @@ main .main-content-wrapper .section-content-wrapper .section-content .hidden-pla
 }
 main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper .player-full-info-wrapper .player-diagramm-wrapper .row {
   width: 100%;
+}
+@media screen and (max-width: 620px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper .player-full-info-wrapper .player-info-data-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper .player-full-info-wrapper .photo-player-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper .player-full-info-wrapper .player-diagramm-wrapper {
+    width: 75%;
+  }
 }
 main .main-content-wrapper .section-content-wrapper .section-content .opponentTeamList {
   display: grid;

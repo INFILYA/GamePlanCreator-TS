@@ -1,3 +1,7 @@
+.textForTutorial div {
+  font-size: calc(0.75vw + 0.7rem);
+}
+
 .grab {
   position: fixed;
   border: 2px solid black;
@@ -94,6 +98,11 @@
 .grab .tutorial .switch {
   justify-content: end !important;
 }
+@media screen and (max-width: 600px) {
+  .grab .tutorial .switch {
+    justify-content: space-between !important;
+  }
+}
 .grab .tutorial .item-wrapper {
   display: flex;
   justify-content: center;
@@ -107,28 +116,6 @@
 .grab .tutorial .item-wrapper label {
   margin-right: 10px;
   font-size: calc(0.25vw + 0.5rem);
-}
-
-.textForTutorial div {
-  font-size: calc(0.75vw + 0.7rem);
-}
-
-@media screen and (max-width: 600px) {
-  .grab .tutorial .switch {
-    justify-content: space-between !important;
-  }
-}
-svg .group-1 .path-container-1 {
-  clip-path: path();
-}
-svg .group-1 .path-container-2 {
-  clip-path: path();
-}
-svg .group-2 .path-container-3 {
-  clip-path: path();
-}
-svg .group-2 .path-container-4 {
-  clip-path: path();
 }
 
 /*# sourceMappingURL=newTutorial.css.map */

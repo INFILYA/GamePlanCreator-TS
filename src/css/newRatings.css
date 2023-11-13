@@ -69,39 +69,4 @@
   padding: 0.5vw;
 }
 
-@media screen and (max-width: 1200px) {
-  .ratings-section,
-  .attack-section {
-    width: 90vw !important;
-  }
-}
-@media screen and (max-width: 620px) {
-  .moveToBoard-wrapper {
-    display: block !important;
-  }
-  header img {
-    width: calc((var(--normal-text-size-value) - 1) * 1.2vw + 1.5rem) !important;
-    margin: 0px 5px !important;
-  }
-  .team-label-wrapper {
-    align-self: auto;
-  }
-  .team-logo-wrapper img {
-    width: calc((var(--normal-text-size-value) - 1) * 1.2vw + 1rem) !important;
-  }
-  .player-surname-wrapper button,
-  .player-number-wrapper button {
-    font-size: 1.1vw !important;
-  }
-  .player-full-info-wrapper {
-    flex-direction: column !important;
-    align-items: center !important;
-  }
-  .player-full-info-wrapper .player-info-data-wrapper,
-  .player-full-info-wrapper .photo-player-wrapper,
-  .player-full-info-wrapper .player-diagramm-wrapper {
-    width: 75% !important;
-  }
-}
-
 /*# sourceMappingURL=newRatings.css.map */

@@ -1,3 +1,13 @@
+@mixin forText($link) {
+  width: 100%;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  background: url($link) no-repeat center center;
+  background-size: contain;
+}
+.textForTutorial div {
+  font-size: calc((0.25) * 3vw + 0.7rem);
+}
 .grab {
   position: fixed;
   border: 2px solid black;
@@ -93,6 +103,9 @@
     }
     .switch {
       justify-content: end !important;
+      @media screen and (max-width: 600px) {
+        justify-content: space-between !important;
+      }
     }
     .item-wrapper {
       display: flex;
@@ -107,43 +120,6 @@
         margin-right: 10px;
         font-size: calc((0.25) * 1vw + 0.5rem);
       }
-    }
-  }
-}
-@mixin forText($link) {
-  width: 100%;
-  border-radius: 2px;
-  border: 1px solid transparent;
-  background: url($link) no-repeat center center;
-  background-size: contain;
-}
-.textForTutorial div {
-  font-size: calc((0.25) * 3vw + 0.7rem);
-}
-@media screen and (max-width: 600px) {
-  .grab {
-    .tutorial {
-      .switch {
-        justify-content: space-between !important;
-      }
-    }
-  }
-}
-svg {
-  .group-1 {
-    .path-container-1 {
-      clip-path: path();
-    }
-    .path-container-2 {
-      clip-path: path();
-    }
-  }
-  .group-2 {
-    .path-container-3 {
-      clip-path: path();
-    }
-    .path-container-4 {
-      clip-path: path();
     }
   }
 }
