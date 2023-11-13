@@ -1,10 +1,9 @@
 export default function MyLogo() {
   return (
     <svg
-      version="1.0"
-      // xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 585.000000 527.000000"
-      // preserveAspectRatio="xMidYMid meet"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 585 527"
+      preserveAspectRatio="xMidYMid meet"
       className="my-logo"
     >
       <g
