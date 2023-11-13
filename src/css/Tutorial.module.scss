@@ -75,6 +75,12 @@
           object-fit: contain;
           overflow: hidden;
         }
+        .tutorial-logo-wrapper {
+          display: flex;
+          justify-content: center;
+          width: 50vmin;
+          padding: 5px 0;
+        }
       }
     }
     .hideBackground {

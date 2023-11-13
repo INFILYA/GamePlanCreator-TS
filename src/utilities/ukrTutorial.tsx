@@ -8,7 +8,9 @@ const enterWord = (
       статистичних даних відсутня, але буде заповнюватися з початком сезону 2023-2024 ПВЛУ.
     </div>
     <div className="inner-image-wrapper">
-      <MyLogo />
+      <div className="tutorial-logo-wrapper">
+        <MyLogo />
+      </div>
     </div>
   </>
 );

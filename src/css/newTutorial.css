@@ -71,6 +71,12 @@
   object-fit: contain;
   overflow: hidden;
 }
+.grab .tutorial .text-wrapper .inner-image-wrapper .tutorial-logo-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 50vmin;
+  padding: 5px 0;
+}
 .grab .tutorial .hideBackground {
   background-color: rgba(0, 0, 0, 0.8);
   position: absolute;

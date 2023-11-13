@@ -8,7 +8,9 @@ const enterWordEng = (
       database available. However, it will be populated starting from the 2023-2024 PVLU season.
     </div>
     <div className="inner-image-wrapper">
-      <MyLogo />
+      <div className="tutorial-logo-wrapper">
+        <MyLogo />
+      </div>
     </div>
   </>
 );
