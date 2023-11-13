@@ -3,9 +3,9 @@ export default function MyLogo() {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 585 527"
-      preserveAspectRatio="xMidYMid meet"
       className="my-logo"
-      type="image/svg+xml"
+      width="100%"
+      height="auto"
     >
       <g
         transform="translate(0.000000,527.000000) scale(0.100000,-0.100000)"
