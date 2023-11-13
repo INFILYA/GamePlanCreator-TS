@@ -71,9 +71,10 @@ main {
     justify-content: center;
     align-items: center;
     .logo-wrapper {
-      position: relative;
+      position: fixed;
       width: 50vmin;
       display: flex;
+      z-index: 13;
       // height: 100%;
       // display: flex;
       // justify-content: center;

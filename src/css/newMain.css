@@ -63,9 +63,10 @@ main .loading-logo-wrapper {
   align-items: center;
 }
 main .loading-logo-wrapper .logo-wrapper {
-  position: relative;
+  position: fixed;
   width: 50vmin;
   display: flex;
+  z-index: 13;
 }
 main .loading-logo-wrapper .logo-wrapper img {
   position: absolute;
