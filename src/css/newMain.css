@@ -11,7 +11,7 @@
 }
 @keyframes fillUp {
   from {
-    height: -100vmin;
+    height: -100%;
   }
   to {
     height: 0;
@@ -66,9 +66,6 @@ main .loading-logo-wrapper .logo-wrapper {
   position: absolute;
   width: 50vmin;
   display: flex;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 main .loading-logo-wrapper .logo-wrapper .my-logo {
   z-index: 13;
@@ -79,6 +76,7 @@ main .loading-logo-wrapper .logo-wrapper .back-photo {
   margin-left: -4%;
   margin-top: -4%;
   rotate: 328deg;
+  z-index: 11;
 }
 main .loading-logo-wrapper .logo-wrapper .backGround {
   position: absolute;
@@ -87,6 +85,7 @@ main .loading-logo-wrapper .logo-wrapper .backGround {
   background-color: white;
   height: 100%;
   width: 100%;
+  z-index: 12;
 }
 main .main-content-wrapper {
   display: flex;
