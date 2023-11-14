@@ -63,7 +63,8 @@
   cursor: pointer;
 }
 
-.emailPanel {
+.emailPanel,
+.sendStatisticPanel {
   position: fixed;
   background-color: darkgray;
   top: 50%;
@@ -75,7 +76,9 @@
   margin-top: 20px;
 }
 .emailPanel .google,
-.emailPanel .facebook {
+.emailPanel .facebook,
+.sendStatisticPanel .google,
+.sendStatisticPanel .facebook {
   width: 45px;
   height: 45px;
   border: none;
@@ -84,13 +87,17 @@
   background-color: transparent;
 }
 .emailPanel .google:hover,
-.emailPanel .facebook:hover {
+.emailPanel .facebook:hover,
+.sendStatisticPanel .google:hover,
+.sendStatisticPanel .facebook:hover {
   transform: translateY(-10px);
   transition: 0.7s;
   background-color: transparent;
 }
 .emailPanel .google img,
-.emailPanel .facebook img {
+.emailPanel .facebook img,
+.sendStatisticPanel .google img,
+.sendStatisticPanel .facebook img {
   width: 45px;
   height: 45px;
   border: none;
@@ -98,12 +105,15 @@
   border-radius: 50%;
 }
 .emailPanel .google img:hover,
-.emailPanel .facebook img:hover {
+.emailPanel .facebook img:hover,
+.sendStatisticPanel .google img:hover,
+.sendStatisticPanel .facebook img:hover {
   transform: translateY(-10px);
   transition: 0.7s;
   background-color: transparent;
 }
-.emailPanel .createAccount {
+.emailPanel .createAccount,
+.sendStatisticPanel .createAccount {
   font-size: 15px;
   width: 150px;
   font-size: 100;
@@ -112,9 +122,12 @@
 }
 .emailPanel input,
 .emailPanel button,
-.emailPanel label {
+.emailPanel label,
+.sendStatisticPanel input,
+.sendStatisticPanel button,
+.sendStatisticPanel label {
   margin: 10px auto;
-  font-size: 25px;
+  font-size: 20px;
   border-radius: 10px;
   padding: 5px;
   text-align: center;
@@ -124,7 +137,8 @@
   align-items: center;
   font-weight: bold;
 }
-.emailPanel label {
+.emailPanel label,
+.sendStatisticPanel label {
   font-size: 30px;
 }
 

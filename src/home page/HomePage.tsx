@@ -244,17 +244,32 @@ export function HomePage() {
                 {showGuestTeam && (
                   <div className="showRatings">
                     <NavLink to={"/Ratings"}>
-                      <RegularButton onClick={() => dispatch(setInfoOfPlayer(null))} type="button">
+                      <RegularButton
+                        onClick={() => dispatch(setInfoOfPlayer(null))}
+                        type="button"
+                        $color="#0057b8"
+                        $background="#ffd700"
+                      >
                         Ratings
                       </RegularButton>
                     </NavLink>
                     <NavLink to={"/Distribution"}>
-                      <RegularButton onClick={() => dispatch(setInfoOfPlayer(null))} type="button">
+                      <RegularButton
+                        onClick={() => dispatch(setInfoOfPlayer(null))}
+                        type="button"
+                        $color="#0057b8"
+                        $background="#ffd700"
+                      >
                         Distribution
                       </RegularButton>
                     </NavLink>
                     <NavLink to={"/SendStatistic"}>
-                      <RegularButton onClick={() => dispatch(setInfoOfPlayer(null))} type="button">
+                      <RegularButton
+                        onClick={() => dispatch(setInfoOfPlayer(null))}
+                        type="button"
+                        $color="#0057b8"
+                        $background="#ffd700"
+                      >
                         Send Data
                       </RegularButton>
                     </NavLink>

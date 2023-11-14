@@ -18,6 +18,7 @@ export const RegularButton = styled.button<TButton>`
   background-color: ${(props) => props.$background};
   color: ${(props) => props.$color};
   white-space: nowrap;
+  overflow: hidden;
   &:hover {
     transition: 0.5s;
     opacity: 1;

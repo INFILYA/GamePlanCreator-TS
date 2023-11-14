@@ -64,7 +64,7 @@ main .loading-logo-wrapper {
 }
 main .loading-logo-wrapper .logo-wrapper {
   position: absolute;
-  width: 75vmin;
+  width: 60vmin;
   display: flex;
 }
 main .loading-logo-wrapper .logo-wrapper .my-logo {
@@ -72,7 +72,7 @@ main .loading-logo-wrapper .logo-wrapper .my-logo {
 }
 main .loading-logo-wrapper .logo-wrapper .back-photo {
   position: absolute;
-  width: 73.5vmin;
+  width: 58.7vmin;
   margin-left: -4%;
   margin-top: -4%;
   rotate: 328deg;

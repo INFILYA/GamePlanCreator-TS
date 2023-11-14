@@ -12,7 +12,7 @@
 }
 @mixin emailPanel {
   margin: 10px auto;
-  font-size: 25px;
+  font-size: 20px;
   border-radius: 10px;
   padding: 5px;
   text-align: center;
@@ -84,7 +84,8 @@
   }
 }
 
-.emailPanel {
+.emailPanel,
+.sendStatisticPanel {
   position: fixed;
   background-color: darkgray;
   top: 50%;

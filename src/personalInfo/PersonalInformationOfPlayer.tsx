@@ -85,8 +85,8 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                     <NavLink to={`/Directions?${playerInfo.name}=Attack`}>
                       <RegularButton
                         type="button"
-                        $color={attack ? "orangered" : ""}
-                        $background={attack ? "black" : ""}
+                        $color={attack ? "orangered" : "#0057b8"}
+                        $background={attack ? "black" : "#ffd700"}
                       >
                         Attack
                       </RegularButton>
@@ -95,8 +95,8 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                   <NavLink to={`/Directions?${playerInfo.name}=Service`}>
                     <RegularButton
                       type="button"
-                      $color={service ? "orangered" : ""}
-                      $background={service ? "black" : ""}
+                      $color={service ? "orangered" : "#0057b8"}
+                      $background={service ? "black" : "#ffd700"}
                     >
                       Service
                     </RegularButton>

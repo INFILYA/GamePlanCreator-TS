@@ -1,6 +1,8 @@
 import { ref, uploadBytes } from "firebase/storage";
 import { useState } from "react";
 import { storage } from "../config/firebase";
+import { RegularButton } from "../css/Button.styled";
+import SectionWrapper from "../wrappers/SectionWrapper";
 
 export default function SendStatistic() {
   const [fileUpload, setFileUpload] = useState<File | null>(null);
@@ -15,14 +17,21 @@ export default function SendStatistic() {
     console.log("done");
   }
   return (
-    <div>
-      <input
-        type="file"
-        onChange={(e) => {
-          setFileUpload(e.target.files![0]);
-        }}
-      />
-      <button onClick={uploadFile}>Upload statistic</button>
-    </div>
+    <SectionWrapper
+      content={
+        <div className="sendStatisticPanel">
+          <input
+            className="choose-file"
+            type="file"
+            onChange={(e) => {
+              setFileUpload(e.target.files![0]);
+            }}
+          />
+          <RegularButton onClick={uploadFile} $color="black" $background="#ffd700" type="button">
+            Upload statistic
+          </RegularButton>
+        </div>
+      }
+    />
   );
 }
