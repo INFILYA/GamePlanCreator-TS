@@ -15,11 +15,13 @@ export function Ratings() {
   const listOfPlayers = useSelector(selectListOfPlayers);
   const listOfTeams = useSelector(selectListOfTeams);
   const [filteredPlayers, setFilteredPlayers] = useState<TMix[]>([]);
+  const [chosenPosition, setChosenPosition] = useState<string>("");
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [isChoosenFilter, setChoosenFilter] = useState<boolean>(false);
   const positions = ["Reciever", "Opposite", "MBlocker", "Setter", "Team"];
 
   function setPositionFilter(position: string) {
+    setChosenPosition(position);
     setFilteredPlayers([]);
     if (position === "Team") {
       setFilteredPlayers([...listOfTeams]);
@@ -54,8 +56,8 @@ export function Ratings() {
                         <RegularButton
                           onClick={() => setPositionFilter(position)}
                           type="button"
-                          $color="#0057b8"
-                          $background="#ffd700"
+                          $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
+                          $background={chosenPosition === position ? "#0057b8" : "#ffd700"}
                         >{`${position}s`}</RegularButton>
                       </div>
                     ))}
