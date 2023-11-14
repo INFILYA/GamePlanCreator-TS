@@ -1,7 +1,7 @@
 import { CSSProperties } from "react";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { useAppDispatch } from "../../states/store";
-import { TMix } from "../../types/types";
+import { TMix, TTeam } from "../../types/types";
 import { upgradeAge } from "../../utilities/functions";
 
 type TRows = {
@@ -31,6 +31,13 @@ export function Rows(props: TRows) {
     if (params === 0) return {};
     return { color: params >= 0 ? "green" : "red" };
   }
+
+  function getAveragePlusMinus(team: TMix[], key: keyof TTeam): number {
+    const teamPlusMinus: number = team
+      .map((player) => ("logo" in player ? +player[key] : 0))
+      .reduce((a, b) => a + b, 0);
+    return +(teamPlusMinus / team.length).toFixed(1);
+  }
   return (
     <>
       {filteredPlayers.map((player, index) => (
@@ -50,8 +57,16 @@ export function Rows(props: TRows) {
           <td>{player.height}</td>
           <td>{player.aces}</td>
           <td>{player.winPoints}</td>
-          <td style={setStyle(player.plusMinusOnService)}>{player.plusMinusOnService}</td>
-          <td style={setStyle(player.plusMinusOnAttack)}>{player.plusMinusOnAttack}</td>
+          <td style={setStyle(player.plusMinusOnService)}>
+            {"logo" in player
+              ? getAveragePlusMinus(filteredPlayers, "plusMinusOnService")
+              : player.plusMinusOnService}
+          </td>
+          <td style={setStyle(player.plusMinusOnAttack)}>
+            {"logo" in player
+              ? getAveragePlusMinus(filteredPlayers, "plusMinusOnAttack")
+              : player.plusMinusOnAttack}
+          </td>
           <td>{player.percentOfAttack} %</td>
         </tr>
       ))}
