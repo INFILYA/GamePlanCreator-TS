@@ -3,6 +3,8 @@ import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { useAppDispatch } from "../../states/store";
 import { TMix, TTeam } from "../../types/types";
 import { upgradeAge } from "../../utilities/functions";
+import { useSelector } from "react-redux";
+import { selectListOfPlayers } from "../../states/slices/listOfPlayersSlice";
 
 type TRows = {
   filteredPlayers: TMix[];
@@ -11,6 +13,7 @@ type TRows = {
 export function Rows(props: TRows) {
   const { filteredPlayers } = props;
   const dispatch = useAppDispatch();
+  const listOfPlayers = useSelector(selectListOfPlayers);
 
   function changeBgColors(index: number) {
     const backgrounds = [
@@ -32,12 +35,12 @@ export function Rows(props: TRows) {
     return { color: params >= 0 ? "green" : "red" };
   }
 
-  function getAveragePlusMinus(team: TMix[], key: keyof TTeam): number {
-    const teamPlusMinus: number = team
-      .map((player) => ("logo" in player ? +player[key] : 0))
-      .reduce((a, b) => a + b, 0);
-    return +(teamPlusMinus / team.length).toFixed(1);
+  function getAveragePlusMinus(team: TTeam, key: keyof TTeam): number {
+    const teamPlusMinus: number =
+      +team[key] / listOfPlayers.filter((player) => player.team === team.name).length;
+    return +teamPlusMinus.toFixed(1);
   }
+
   return (
     <>
       {filteredPlayers.map((player, index) => (
@@ -59,12 +62,12 @@ export function Rows(props: TRows) {
           <td>{player.winPoints}</td>
           <td style={setStyle(player.plusMinusOnService)}>
             {"logo" in player
-              ? getAveragePlusMinus(filteredPlayers, "plusMinusOnService")
+              ? getAveragePlusMinus(player, "plusMinusOnService")
               : player.plusMinusOnService}
           </td>
           <td style={setStyle(player.plusMinusOnAttack)}>
             {"logo" in player
-              ? getAveragePlusMinus(filteredPlayers, "plusMinusOnAttack")
+              ? getAveragePlusMinus(player, "plusMinusOnAttack")
               : player.plusMinusOnAttack}
           </td>
           <td>{player.percentOfAttack} %</td>
