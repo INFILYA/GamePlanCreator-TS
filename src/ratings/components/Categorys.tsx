@@ -21,7 +21,7 @@ export function Categorys(props: TCategorys) {
   ];
   const criterias = [
     "name",
-    "teamid",
+    "team",
     "age",
     "height",
     "aces",
