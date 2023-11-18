@@ -425,6 +425,12 @@ main .main-content-wrapper .section-content-wrapper .section-content .hidden-pla
 main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper .player-full-info-wrapper .player-diagramm-wrapper .row {
   width: 100%;
 }
+main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper .player-full-info-wrapper .player-diagramm-wrapper .efficency-wrapper {
+  font-size: calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem);
+  display: flex;
+  justify-content: center;
+  font-weight: 600;
+}
 @media screen and (max-width: 620px) {
   main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper .player-full-info-wrapper .player-info-data-wrapper,
   main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper .player-full-info-wrapper .photo-player-wrapper,

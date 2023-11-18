@@ -1,8 +1,13 @@
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { selectPlayerInfo } from "../../states/slices/playerInfoSlice";
 import WrapperForDirections from "./WrapperForDirections";
-import { TAttackDiagramm, TDiagramm, TPlayer, TTeam, TZoneStates } from "../../types/types";
+import { TAttackDiagramm, TPlayer, TTeam, TZoneStates } from "../../types/types";
+import {
+  gerPercentOfAttack,
+  getAttackEfficency,
+  getPlusMinusAttack,
+} from "../../utilities/functions";
 
 export function Attack() {
   const playerInfos = useSelector(selectPlayerInfo);
@@ -17,42 +22,31 @@ export function Attack() {
     { zone: "attackKC", active: false },
     { zone: "attackK7", active: false },
   ]);
-  const [diagrammValue, setDiagrammValue] = useState<TDiagramm>({
-    aces: 0,
-    servicePlus: 0,
-    serviceMinus: 0,
-    serviceFailed: 0,
-    plusMinusOnService: 0,
+  const [diagrammValue, setDiagrammValue] = useState<TAttackDiagramm>({
     winPoints: 0,
     leftInGame: 0,
     attacksInBlock: 0,
     loosePoints: 0,
-    plusMinusOnAttack: 0,
-    percentOfAttack: 0,
   });
+  const handleDiagrammValue = (event: ChangeEvent<HTMLInputElement>) => {
+    setDiagrammValue({
+      ...diagrammValue,
+      [event.target.name]: +event.target.value.replace(/\D+/g, ""),
+    });
+  };
   function calculateForData<T extends TTeam | TPlayer>(obj: T): T {
-    if (obj === playerInfo) {
-      diagrammValue.plusMinusOnAttack =
-        diagrammValue.winPoints - (diagrammValue.attacksInBlock + diagrammValue.loosePoints);
-    }
     for (const key in diagrammValue) {
-      if (key === "percentOfAttack") {
-        continue;
-      }
       (obj[key as keyof T] as number) += diagrammValue[key as keyof TAttackDiagramm];
     }
-    obj.percentOfAttack = +(
-      (obj.winPoints /
-        (obj.winPoints + obj.attacksInBlock + obj.loosePoints + obj.leftInGame + 0.0001)) *
-      100
-    ).toFixed(1);
+    obj.percentOfAttack = gerPercentOfAttack(obj); //встановлюємо процент зйому
+    obj.plusMinusOnAttack = getPlusMinusAttack(obj); //встановлюємо + - в атаці
+    obj.efficencyAttack = getAttackEfficency(obj); // встановлюємо ефективність подачі
     return obj;
   }
-
   return (
     <WrapperForDirections
       diagrammValue={diagrammValue}
-      setDiagrammValue={setDiagrammValue}
+      handleDiagrammValue={handleDiagrammValue}
       calculateForData={calculateForData}
       zonesStates={zonesStates}
       setZonesStates={setZonesStates}

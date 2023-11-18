@@ -1,8 +1,9 @@
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { selectPlayerInfo } from "../../states/slices/playerInfoSlice";
 import WrapperForDirections from "./WrapperForDirections";
-import { TDiagramm, TPlayer, TServiceDiagramm, TTeam, TZoneStates } from "../../types/types";
+import { TPlayer, TServiceDiagramm, TTeam, TZoneStates } from "../../types/types";
+import { getPlusMinusService, getServiceEfficency } from "../../utilities/functions";
 
 export function Service() {
   const playerInfos = useSelector(selectPlayerInfo);
@@ -13,38 +14,31 @@ export function Service() {
     { zone: "serviceZone5", active: false },
   ]);
 
-  const [diagrammValue, setDiagrammValue] = useState<TDiagramm>({
+  const handleDiagrammValue = (event: ChangeEvent<HTMLInputElement>) => {
+    setDiagrammValue({
+      ...diagrammValue,
+      [event.target.name]: +event.target.value.replace(/\D+/g, ""),
+    });
+  };
+  const [diagrammValue, setDiagrammValue] = useState<TServiceDiagramm>({
     aces: 0,
     servicePlus: 0,
     serviceMinus: 0,
     serviceFailed: 0,
-    plusMinusOnService: 0,
-    winPoints: 0,
-    leftInGame: 0,
-    attacksInBlock: 0,
-    loosePoints: 0,
-    plusMinusOnAttack: 0,
-    percentOfAttack: 0,
   });
 
   function calculateForData<T extends TTeam | TPlayer>(obj: T): T {
-    if (obj === playerInfo) {
-      diagrammValue.plusMinusOnService =
-        diagrammValue.aces * 2 +
-        diagrammValue.servicePlus * 0.5 -
-        diagrammValue.serviceFailed -
-        diagrammValue.serviceMinus * 0.5;
-    }
     for (const key in diagrammValue) {
       (obj[key as keyof T] as number) += diagrammValue[key as keyof TServiceDiagramm];
     }
+    obj.plusMinusOnService = getPlusMinusService(obj); //встановлюємо + - на подачі
+    obj.efficencyService = getServiceEfficency(obj); // встановлюємо ефективність подачі
     return obj;
   }
-
   return (
     <WrapperForDirections
+      handleDiagrammValue={handleDiagrammValue}
       diagrammValue={diagrammValue}
-      setDiagrammValue={setDiagrammValue}
       calculateForData={calculateForData}
       zonesStates={zonesStates}
       setZonesStates={setZonesStates}

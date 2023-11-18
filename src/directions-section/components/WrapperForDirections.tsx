@@ -15,19 +15,11 @@ import { reduce, upgradeAge } from "../../utilities/functions";
 import { Explain } from "./innerComponents/Explain";
 import { selectGuestPlayers, setGuestPlayers } from "../../states/slices/guestPlayersSlice";
 import { selectHomePlayers, setHomePlayers } from "../../states/slices/homePlayersSlice";
-import {
-  TAttackDiagramm,
-  TDiagramm,
-  TPlayer,
-  TServiceDiagramm,
-  TTeam,
-  TZoneStates,
-  TZoneValue,
-} from "../../types/types";
+import { TDiagramm, TPlayer, TTeam, TZoneStates, TZoneValue } from "../../types/types";
 
 type TWrapperForDirections = {
   diagrammValue: TDiagramm;
-  setDiagrammValue(value: TDiagramm): void;
+  handleDiagrammValue(event: ChangeEvent<HTMLInputElement>): void;
   calculateForData<T extends TTeam | TPlayer>(obj: T): T;
   zonesStates: TZoneStates[];
   setZonesStates(arg: TZoneStates[]): void;
@@ -38,7 +30,7 @@ type TWrapperForDirections = {
 export default function WrapperForDirections(props: TWrapperForDirections) {
   const {
     diagrammValue,
-    setDiagrammValue,
+    handleDiagrammValue,
     calculateForData,
     zonesStates,
     setZonesStates,
@@ -103,12 +95,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
 
   const chooseTypeOfAttack = (event: ChangeEvent<HTMLSelectElement>) => {
     setActionType(event.target.value);
-  };
-  const handleDiagrammValue = (event: ChangeEvent<HTMLInputElement>) => {
-    setDiagrammValue({
-      ...diagrammValue,
-      [event.target.name]: +event.target.value.replace(/\D+/g, ""),
-    } as TServiceDiagramm & TAttackDiagramm);
   };
   const onHandleCountClick = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -245,12 +231,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   const zone5 = totalPercentOfzone(0, 1);
   const zone6 = totalPercentOfzone(2, 3);
   const zone1 = totalPercentOfzone(4, 5);
-
-  console.log(isShowDataOfActions, "showDataActions");
-  console.log(isSaveDataOfActions, "SaveDataActions");
-  console.log(isShowInputs, "showInputs");
-  console.log(isDisableSwitch, "switch");
-  console.log(isConfirmReturn, "confirmReturn");
   return (
     <SectionWrapper
       className="playArea-section"

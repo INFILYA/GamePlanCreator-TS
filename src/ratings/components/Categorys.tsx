@@ -15,8 +15,8 @@ export function Categorys(props: TCategorys) {
     "Height",
     "Aces",
     "Win points",
-    "Service +/-",
-    "Attack +/-",
+    "Attack Efficency",
+    "Service Efficency",
     "Attack %",
   ];
   const criterias = [
@@ -26,8 +26,8 @@ export function Categorys(props: TCategorys) {
     "height",
     "aces",
     "winPoints",
-    "plusMinusOnService",
-    "plusMinusOnAttack",
+    "efficencyAttack",
+    "efficencyService",
     "percentOfAttack",
   ];
   return (

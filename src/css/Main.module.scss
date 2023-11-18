@@ -421,6 +421,12 @@ main {
               .row {
                 width: 100%;
               }
+              .efficency-wrapper {
+                font-size: calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem);
+                display: flex;
+                justify-content: center;
+                font-weight: 600  ;
+              }
             }
             .player-info-data-wrapper,
             .photo-player-wrapper,

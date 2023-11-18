@@ -1,3 +1,4 @@
+import { CSSProperties } from "react";
 import { TMix, TPlayer } from "../types/types";
 
 export const later = (ms: number): Promise<void> =>
@@ -87,3 +88,40 @@ export function correctPositions(number: number): number {
 export const emptyPlayers: TPlayer[] = Array(6)
   .fill(emptyPlayer)
   .map((user, index) => ({ ...user, boardPosition: correctPositions(index) }));
+
+export function setStyle(params: number): CSSProperties {
+  if (params === 0) return {};
+  return { color: params >= 0 ? "green" : "red" };
+}
+
+
+export function getAttackEfficency(obj:TMix) {
+  if (!("winPoints" in obj)) return 0;
+  const totalAtt = [obj.winPoints, obj.leftInGame, obj.attacksInBlock, obj.loosePoints];
+  const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);
+  if (sumOfTotalAtt === 0) return 0;
+  const efficencyAttack = +((getPlusMinusAttack(obj) / sumOfTotalAtt) * 100).toFixed(1);
+  return efficencyAttack;
+}
+export function getServiceEfficency(obj:TMix) {
+  const totalService = [obj.aces, obj.servicePlus, obj.serviceMinus, obj.serviceFailed];
+  const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
+  if (sumOfTotalService === 0) return 0;
+  const efficencyService = +((getPlusMinusService(obj) / sumOfTotalService) * 100).toFixed(1);
+  return efficencyService;
+}
+
+export function getPlusMinusService(obj:TMix) {
+  return obj.aces - obj.serviceFailed;
+}
+export function getPlusMinusAttack(obj:TMix) {
+  return obj.winPoints - (obj.attacksInBlock + obj.loosePoints);
+}
+export function gerPercentOfAttack(obj:TMix) {
+  if (!("winPoints" in obj)) return 0;
+  const totalAtt = [obj.winPoints, obj.leftInGame, obj.attacksInBlock, obj.loosePoints];
+  const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);
+  if (sumOfTotalAtt === 0) return 0;
+  const percents = +((obj.winPoints / sumOfTotalAtt) * 100).toFixed(1);
+  return percents;
+}

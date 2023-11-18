@@ -1,10 +1,13 @@
-import { CSSProperties } from "react";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { useAppDispatch } from "../../states/store";
-import { TMix, TTeam } from "../../types/types";
-import { upgradeAge } from "../../utilities/functions";
-import { useSelector } from "react-redux";
-import { selectListOfPlayers } from "../../states/slices/listOfPlayersSlice";
+import { TMix } from "../../types/types";
+import {
+  gerPercentOfAttack,
+  getAttackEfficency,
+  getServiceEfficency,
+  setStyle,
+  upgradeAge,
+} from "../../utilities/functions";
 
 type TRows = {
   filteredPlayers: TMix[];
@@ -13,7 +16,6 @@ type TRows = {
 export function Rows(props: TRows) {
   const { filteredPlayers } = props;
   const dispatch = useAppDispatch();
-  const listOfPlayers = useSelector(selectListOfPlayers);
 
   function changeBgColors(index: number) {
     const backgrounds = [
@@ -30,17 +32,6 @@ export function Rows(props: TRows) {
     if ("startingSquad" in pickedPlayer) return;
     dispatch(setInfoOfPlayer(pickedPlayer));
   }
-  function setStyle(params: number): CSSProperties {
-    if (params === 0) return {};
-    return { color: params >= 0 ? "green" : "red" };
-  }
-
-  function getAveragePlusMinus(team: TTeam, key: keyof TTeam): number {
-    const teamPlusMinus: number =
-      +team[key] / listOfPlayers.filter((player) => player.team === team.name).length;
-    return +teamPlusMinus.toFixed(1);
-  }
-
   return (
     <>
       {filteredPlayers.map((player, index) => (
@@ -60,17 +51,9 @@ export function Rows(props: TRows) {
           <td>{player.height}</td>
           <td>{player.aces}</td>
           <td>{player.winPoints}</td>
-          <td style={setStyle(player.plusMinusOnService)}>
-            {"logo" in player
-              ? getAveragePlusMinus(player, "plusMinusOnService")
-              : player.plusMinusOnService}
-          </td>
-          <td style={setStyle(player.plusMinusOnAttack)}>
-            {"logo" in player
-              ? getAveragePlusMinus(player, "plusMinusOnAttack")
-              : player.plusMinusOnAttack}
-          </td>
-          <td>{player.percentOfAttack} %</td>
+          <td style={setStyle(getAttackEfficency(player))}>{getAttackEfficency(player)} %</td>
+          <td style={setStyle(getServiceEfficency(player))}>{getServiceEfficency(player)} %</td>
+          <td>{gerPercentOfAttack(player)} %</td>
         </tr>
       ))}
     </>

@@ -6,7 +6,14 @@ import { auth } from "../config/firebase";
 import { selectPlayerInfo, setInfoOfPlayer } from "../states/slices/playerInfoSlice";
 import { useState } from "react";
 import { useAppDispatch } from "../states/store";
-import { upgradeAge } from "../utilities/functions";
+import {
+  getAttackEfficency,
+  getPlusMinusAttack,
+  getPlusMinusService,
+  getServiceEfficency,
+  setStyle,
+  upgradeAge,
+} from "../utilities/functions";
 import { RegularButton } from "../css/Button.styled";
 
 type TPersonalInfoProps = {
@@ -26,14 +33,8 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   const attack = link === "Attack";
   const libero = playerInfo.position === "Libero";
   const setter = playerInfo.position === "Setter";
-  const servicePM = playerInfo?.plusMinusOnService;
-  const attackPM = playerInfo?.plusMinusOnAttack;
-  const styleService = {
-    color: servicePM >= 0 ? "green" : "red",
-  };
-  const styleAttack = {
-    color: attackPM >= 0 ? "green" : "red",
-  };
+  const servicePM = getPlusMinusService(playerInfo);
+  const attackPM = getPlusMinusAttack(playerInfo);
   return (
     <div className="hidden-player-information-wrapper">
       <div className="player-surname-wrapper">
@@ -67,14 +68,14 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
             {service && (
               <div className="player-info-row-wrapper">
                 <div>
-                  Plus/Minus: <div style={styleService}>&nbsp;{servicePM}</div>
+                  Plus/Minus: <div style={setStyle(servicePM)}>&nbsp;{servicePM}</div>
                 </div>
               </div>
             )}
             {attack && (
               <div className="player-info-row-wrapper">
                 <div>
-                  Plus/Minus: <div style={styleAttack}>&nbsp;{attackPM}</div>
+                  Plus/Minus: <div style={setStyle(attackPM)}>&nbsp;{attackPM}</div>
                 </div>
               </div>
             )}
@@ -121,14 +122,30 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
           {!page1 && (
             <div className="player-diagramm-wrapper">
               {service && (
-                <div className="row">
-                  <Diagramm link="Service" />
-                </div>
+                <>
+                  <div className="row">
+                    <Diagramm link="Service" />
+                  </div>
+                  <div className="efficency-wrapper">
+                    Efficency :
+                    <div style={setStyle(getServiceEfficency(playerInfo))}>
+                      &nbsp;{getServiceEfficency(playerInfo)}%
+                    </div>
+                  </div>
+                </>
               )}
               {!setter && attack && (
-                <div className="row">
-                  <Diagramm link="Attack" />
-                </div>
+                <>
+                  <div className="row">
+                    <Diagramm link="Attack" />
+                  </div>
+                  <div className="efficency-wrapper">
+                    Efficency :
+                    <div style={setStyle(getAttackEfficency(playerInfo))}>
+                      &nbsp;{getAttackEfficency(playerInfo)}%
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           )}

@@ -34,7 +34,8 @@ export function Explain(props: TExplain) {
   } = props;
   const [isRegistratedUser] = useAuthState(auth);
   const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
-  const attack = type === "Attack";
+  const attack = type === "Attack" && "winPoints" in diagrammValue;
+  const service = type === "Service" && "aces" in diagrammValue;
   const bgOrangeRed = { backgroundColor: "orangered" };
   return (
     <>
@@ -87,28 +88,30 @@ export function Explain(props: TExplain) {
             style={{ backgroundColor: "lightgreen" }}
             name={attack ? "winPoints" : "aces"}
             onChange={handleDiagrammValue}
-            value={attack ? diagrammValue.winPoints : diagrammValue.aces}
+            value={attack ? diagrammValue.winPoints : service ? diagrammValue.aces : ""}
             required
           ></input>
           <input
             style={{ backgroundColor: "yellow" }}
             name={attack ? "leftInGame" : "servicePlus"}
             onChange={handleDiagrammValue}
-            value={attack ? diagrammValue.leftInGame : diagrammValue.servicePlus}
+            value={attack ? diagrammValue.leftInGame : service ? diagrammValue.servicePlus : ""}
             required
           ></input>
           <input
             style={{ backgroundColor: "orange" }}
             name={attack ? "attacksInBlock" : "serviceMinus"}
             onChange={handleDiagrammValue}
-            value={attack ? diagrammValue.attacksInBlock : diagrammValue.serviceMinus}
+            value={
+              attack ? diagrammValue.attacksInBlock : service ? diagrammValue.serviceMinus : ""
+            }
             required
           ></input>
           <input
             style={bgOrangeRed}
             name={attack ? "loosePoints" : "serviceFailed"}
             onChange={handleDiagrammValue}
-            value={attack ? diagrammValue.loosePoints : diagrammValue.serviceFailed}
+            value={attack ? diagrammValue.loosePoints : service ? diagrammValue.serviceFailed : ""}
             required
           ></input>
         </div>

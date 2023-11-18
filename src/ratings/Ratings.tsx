@@ -23,14 +23,13 @@ export function Ratings() {
   function setPositionFilter(position: string) {
     setChosenPosition(position);
     setFilteredPlayers([]);
+    setChoosenFilter(true);
     if (position === "Team") {
       setFilteredPlayers([...listOfTeams]);
-      setChoosenFilter(true);
       return;
     }
     const choosenAmplua = listOfPlayers.filter((player) => player.position === position);
     setFilteredPlayers(choosenAmplua);
-    setChoosenFilter(true);
   }
   function rankByValue<T extends TMix>(criteria: keyof T, arr: T[]) {
     !isBiggest

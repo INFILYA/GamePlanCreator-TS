@@ -41,6 +41,8 @@ export type TPlayer = {
   serviceFailed: number;
   plusMinusOnService: number;
   boardPosition: number;
+  efficencyAttack: number;
+  efficencyService: number;
 };
 export type TMix = TPlayer | TTeam;
 type TPlayerKeys = keyof TPlayer;
@@ -65,6 +67,8 @@ export type TTeam = {
   serviceFailed: number;
   winPoints: number;
   startingSquad: string[];
+  efficencyAttack: number;
+  efficencyService: number;
 };
 
 export type TSectionWrapper = {
@@ -86,18 +90,15 @@ export type TAttackDiagramm = {
   leftInGame: number;
   attacksInBlock: number;
   loosePoints: number;
-  plusMinusOnAttack: number;
-  percentOfAttack: number;
 };
 export type TServiceDiagramm = {
   aces: number;
   servicePlus: number;
   serviceMinus: number;
   serviceFailed: number;
-  plusMinusOnService: number;
 };
 
-export type TDiagramm = TAttackDiagramm & TServiceDiagramm;
+export type TDiagramm = TAttackDiagramm | TServiceDiagramm;
 
 export type TZoneStates = {
   zone: string;
