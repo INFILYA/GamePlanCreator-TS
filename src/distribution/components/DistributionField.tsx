@@ -43,7 +43,7 @@ export function DistributionField() {
   function onHandleCountClick(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const final = Object.values(zoneValue);
-    const total = reduce(final);
+    const total = reduce(final, 0.0001);
     const result = final.map((obj) => Math.round((obj / total) * 100));
     setZoneValue(result);
     setIsShowButtonCount(true);
