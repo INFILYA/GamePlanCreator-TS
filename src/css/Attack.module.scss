@@ -20,7 +20,9 @@
     scale: (1.15);
   }
 }
-
+.none {
+  display: none;
+}
 .explain {
   width: 100%;
   display: flex;
@@ -120,7 +122,14 @@
       }
     }
     .countButton[disabled] {
-      display: none;
+      background-color: transparent;
+      border: none;
+      font-size: calc(2vmax + 1rem);
+      color: #000;
+      &:hover {
+        cursor: not-allowed;
+        transition: none;
+      }
     }
   }
   .showTheBall {

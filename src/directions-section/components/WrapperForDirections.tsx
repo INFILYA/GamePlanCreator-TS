@@ -231,6 +231,8 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   const zone5 = totalPercentOfzone(0, 1);
   const zone6 = totalPercentOfzone(2, 3);
   const zone1 = totalPercentOfzone(4, 5);
+  const choiceIsDone = !isShowInputs || isDisableSwitch;
+  const choice = zonesStates.filter((zone) => zone.active);
   return (
     <SectionWrapper
       className="playArea-section"
@@ -273,7 +275,7 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
               <select
                 className="typeOfAction"
                 onChange={chooseTypeOfAttack}
-                disabled={!isShowInputs || isDisableSwitch}
+                disabled={choiceIsDone}
               >
                 <option value="choose">{!isShowInputs ? `Choose zone` : `Choose type`}</option>
                 <option value={choosenActionOne}>{choosenActionOne}</option>
@@ -283,12 +285,8 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
               </select>
             </div>
             <div className="count-button-wrapper">
-              <button
-                type="submit"
-                className="countButton"
-                disabled={!isShowInputs || isDisableSwitch}
-              >
-                Count
+              <button type="submit" className="countButton" disabled={choiceIsDone}>
+                {choiceIsDone ? choice[0]?.zone.replace(/[a-z]/g, "") : "Count"}
               </button>
             </div>
             <div className="zones-wrapper">
