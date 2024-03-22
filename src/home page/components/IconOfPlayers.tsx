@@ -34,7 +34,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
         <div className="card-content">
           {!my && (
             <div className="player-image-wrapper" onClick={() => dispatch(setInfoOfPlayer(player))}>
-              <img src={player?.photo} alt=""></img>
+              <img src={`/photos/${player?.photo}`} alt=""></img>
             </div>
           )}
           <div className="player-field-wrapper">
