@@ -13,7 +13,7 @@ export function upgradeAge<T extends TMix>(player: T): T {
   if (typeof player.age === "number") return player;
   const age1 = new Date().getTime();
   const age2 = Date.parse(player.age);
-  const newAge = Math.floor((age1 - age2) / (1000 * 60 * 60 * 24 * 30 * 12));
+  const newAge = Math.floor((age1 - age2) / (1000 * 60 * 60 * 24 * 365));
   const newPlayer = { ...player, age: newAge };
   return newPlayer;
 }
