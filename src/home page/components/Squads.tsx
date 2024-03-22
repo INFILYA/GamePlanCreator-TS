@@ -50,6 +50,7 @@ export function Squads(props: TSquadsProps) {
     isRegistratedUser &&
     guestPlayers.length > 1 &&
     playerInfo;
+    //???????????????????????
   function homeTeamActions(event: ChangeEvent<HTMLSelectElement>) {
     setPlayerToHomeTeamBoard(event);
   }
