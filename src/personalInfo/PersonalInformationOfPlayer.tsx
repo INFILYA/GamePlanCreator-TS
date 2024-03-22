@@ -117,7 +117,7 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
             </nav>
           </div>
           <div className="photo-player-wrapper">
-            <img src={playerInfo.photo} alt="" />
+            <img src={`/photos/${playerInfo.photo}`} alt="" />
           </div>
           {!page1 && (
             <div className="player-diagramm-wrapper">
