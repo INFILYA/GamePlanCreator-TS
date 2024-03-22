@@ -46,7 +46,8 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                   !my ? () => cancelGuestTeamChoice(player) : () => cancelHomeTeamChoice(player)
                 }
               >
-                {player.number > 9 ? player.number : `0${player.number}`}
+                {/* {player.number > 9 ? player.number : `0${player.number}`} */}
+                {player.number}
               </button>
             </div>
             <div className="player-surname-wrapper">
