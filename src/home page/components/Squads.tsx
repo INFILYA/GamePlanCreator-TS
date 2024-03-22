@@ -48,7 +48,8 @@ export function Squads(props: TSquadsProps) {
     !myTeam &&
     guestTeamOptions.every((zone) => typeof zone.boardPosition === "number") &&
     isRegistratedUser &&
-    guestPlayers.length > 1 && playerInfo;
+    guestPlayers.length > 1 &&
+    playerInfo;
   function homeTeamActions(event: ChangeEvent<HTMLSelectElement>) {
     setPlayerToHomeTeamBoard(event);
   }
@@ -74,6 +75,7 @@ export function Squads(props: TSquadsProps) {
     dispatch(showGuestTeamStartingSix({ guestPlayers, guestTeamStartingSix }));
     dispatch(setGuestBenchPlayers({ guestPlayers, guestTeamStartingSix }));
   }
+  console.log(guestPlayers);
   return (
     <SectionWrapper
       className="teamsquad-section"
@@ -98,7 +100,8 @@ export function Squads(props: TSquadsProps) {
                 >
                   <div className="playerNumber-wrapper">
                     <button type="button" disabled className={myTeam ? "playerNumber" : ""}>
-                      {player.number > 9 ? player.number : `0${player.number}`}
+                      {/* {player.number > 9 ? player.number : `0${player.number}`} */}
+                      {player.number}
                     </button>
                   </div>
                   <div className="player-surname-wrapper">
