@@ -75,7 +75,6 @@ export function Squads(props: TSquadsProps) {
     dispatch(showGuestTeamStartingSix({ guestPlayers, guestTeamStartingSix }));
     dispatch(setGuestBenchPlayers({ guestPlayers, guestTeamStartingSix }));
   }
-  console.log(guestPlayers);
   return (
     <SectionWrapper
       className="teamsquad-section"
