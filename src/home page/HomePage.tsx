@@ -76,7 +76,7 @@ export function HomePage() {
       startingSquad: guestTeamOptions.map((player) => player.name),
     });
     try {
-      const docVersionRef = doc(dataBase, "versionChecker", "currentVersion");
+      const docVersionRef = doc(dataBase, "dataVersion", "currentVersion");
       await setDoc(docVersionRef, { currentVersion: userVersion + 1 });
       const adminVersion = userVersion + 1;
       dispatch(setUserVersion(adminVersion));

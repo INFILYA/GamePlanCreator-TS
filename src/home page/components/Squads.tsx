@@ -20,7 +20,7 @@ import {
   setGuestTeamIndexOfZones,
   showGuestTeamStartingSix,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
-import { selectPlayerInfo, setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
+import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { RegularButton } from "../../css/Button.styled";
 import { compare } from "../../utilities/functions";
@@ -38,7 +38,7 @@ export function Squads(props: TSquadsProps) {
   const homePlayers = useSelector(selectHomePlayers);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
-  const playerInfo = useSelector(selectPlayerInfo);
+  // const playerInfo = useSelector(selectPlayerInfo);
   const [isRegistratedUser] = useAuthState(auth);
   const myTeam = team === "my";
   const club = myTeam ? homeTeam[0] : guestTeam[0];
@@ -48,9 +48,9 @@ export function Squads(props: TSquadsProps) {
     !myTeam &&
     guestTeamOptions.every((zone) => typeof zone.boardPosition === "number") &&
     isRegistratedUser &&
-    guestPlayers.length > 1 &&
-    playerInfo;
-    //???????????????????????
+    guestPlayers.length > 1;
+
+  //???????????????????????
   function homeTeamActions(event: ChangeEvent<HTMLSelectElement>) {
     setPlayerToHomeTeamBoard(event);
   }
