@@ -103,7 +103,7 @@ main .main-content-wrapper .attack-section {
   }
 }
 main .main-content-wrapper .teamsquad-section {
-  width: 22.5%;
+  width: 20%;
   background-color: gainsboro;
   text-align: center;
   border-radius: calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem);
@@ -115,7 +115,7 @@ main .main-content-wrapper .teamsquad-section {
 main .main-content-wrapper .ratings-section,
 main .main-content-wrapper .playground-section {
   align-self: center;
-  width: 55%;
+  width: 60%;
   position: relative;
   z-index: 6;
 }
@@ -232,6 +232,8 @@ main .main-content-wrapper .section-content-wrapper .section-content .playerNumb
 }
 main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper {
   width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button {
   width: 100%;
@@ -241,6 +243,9 @@ main .main-content-wrapper .section-content-wrapper .section-content .player-sur
   border-radius: 0px 20px 20px 0px;
   font-weight: 600;
   font-size: 1vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 @media screen and (max-width: 620px) {
   main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button {
@@ -482,7 +487,6 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper {
-  height: 12vmax;
   display: flex;
   justify-content: space-around;
   min-height: 18.5px;
@@ -529,6 +533,44 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
   font-weight: bold;
   display: flex;
   justify-content: center;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper {
+  border: 1px solid black;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table {
+  background-color: white;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr {
+  border: 1px solid black;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr td,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr td,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr td,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr td {
+  border: 1px solid black;
+  height: 1vw;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr th {
+  background-color: gainsboro;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .player-image-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .player-image-wrapper,

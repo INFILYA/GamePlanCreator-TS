@@ -61,6 +61,34 @@ export function IconOfPlayer(props: TIconOfPlayer) {
               </button>
             </div>
           </div>
+          {!my && (
+            <div className="errors-field-wrapper">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>Score</th>
+                    <th>Type</th>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
     </>

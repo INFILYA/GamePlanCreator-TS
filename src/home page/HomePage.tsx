@@ -45,8 +45,9 @@ export function HomePage() {
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
   const showGuestTeam = guestTeam.length !== 0;
   const showHomeTeam = homeTeam.length !== 0;
-  const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
-
+  // прибрати після / !!!!!
+  const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2/2";
+  // прибрати після / !!!!!
   function checkNumbers(element: number): boolean {
     return typeof element !== "number";
   }
@@ -215,32 +216,30 @@ export function HomePage() {
                       </RegularButton>
                     )}
                 </div>
-                <div className="plusMinus">
-                  {homeTeamOptions.every((option) => checkNumbers(option.boardPosition)) &&
-                    isRegistratedUser && (
-                      <>
-                        <RegularButton
-                          onClick={() => dispatch(rotateForwardHomeTeam())}
-                          $color="black"
-                          $background="#ffd700"
-                        >
-                          -
-                        </RegularButton>
-                        {homeTeamOptions.map((player, index) =>
-                          typeof player !== "number" && player && player.position === "Setter" ? (
-                            <span key={player.name}>P{correctPositions(index) + 1}</span>
-                          ) : null
-                        )}
-                        <RegularButton
-                          onClick={() => dispatch(rotateBackHomeTeam())}
-                          $color="black"
-                          $background="#ffd700"
-                        >
-                          +
-                        </RegularButton>
-                      </>
-                    )}
-                </div>
+                {homeTeamOptions.every((option) => checkNumbers(option.boardPosition)) &&
+                  isRegistratedUser && (
+                    <div className="plusMinus">
+                      <RegularButton
+                        onClick={() => dispatch(rotateForwardHomeTeam())}
+                        $color="black"
+                        $background="#ffd700"
+                      >
+                        -
+                      </RegularButton>
+                      {homeTeamOptions.map((player, index) =>
+                        typeof player !== "number" && player && player.position === "Setter" ? (
+                          <span key={player.name}>P{correctPositions(index) + 1}</span>
+                        ) : null
+                      )}
+                      <RegularButton
+                        onClick={() => dispatch(rotateBackHomeTeam())}
+                        $color="black"
+                        $background="#ffd700"
+                      >
+                        +
+                      </RegularButton>
+                    </div>
+                  )}
                 {showGuestTeam && (
                   <div className="showRatings">
                     <NavLink to={"/Ratings"}>
