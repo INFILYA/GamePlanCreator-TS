@@ -86,6 +86,28 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                     <td></td>
                   </tr>
                 </tbody>
+                {/* <tbody>
+                  <tr>
+                    <th>Type</th>
+                    <th>Amount</th>
+                  </tr>
+                  <tr>
+                    <td style={{ backgroundColor: "lightgreen" }}>Win</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td style={{ backgroundColor: "yellow" }}>In game</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td style={{ backgroundColor: "orange" }}>Block</td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td style={{ backgroundColor: "orangered" }}>Error</td>
+                    <td></td>
+                  </tr>
+                </tbody> */}
               </table>
             </div>
           )}
