@@ -33,7 +33,7 @@ export function compare<T>(a: T, b: T): number {
 
 export const zones = [3, 2, 1, 4, 5, 0];
 
-const emptyPlayer = {
+export const emptyPlayer = {
   age: 0,
   hand: "",
   height: 0,

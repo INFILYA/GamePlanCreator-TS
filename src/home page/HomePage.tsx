@@ -7,9 +7,15 @@ import { NavLink } from "react-router-dom";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import { useAppDispatch } from "../states/store";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
-import { correctPositions, emptyPlayers } from "../utilities/functions";
-import { TTeam } from "../types/types";
-import { ChangeEvent } from "react";
+import {
+  correctPositions,
+  emptyPlayers,
+  gerPercentOfAttack,
+  getAttackEfficency,
+  getPlusMinusAttack,
+} from "../utilities/functions";
+import { TPlayer, TTeam } from "../types/types";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { selectHomeTeam, setHomeTeam } from "../states/slices/homeTeamSlice";
 import { setHomePlayers } from "../states/slices/homePlayersSlice";
 import { selectGuestTeam, setGuestTeam } from "../states/slices/guestTeamSlice";
@@ -43,6 +49,8 @@ export function HomePage() {
   const playerInfo = useSelector(selectPlayerInfo);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
+  const [showSquads, setShowSquads] = useState(true);
+
   const showGuestTeam = guestTeam.length !== 0;
   const showHomeTeam = homeTeam.length !== 0;
   // прибрати після / !!!!!
@@ -71,11 +79,8 @@ export function HomePage() {
     dispatch(setHomePlayers(homeTeamPlayers));
     dispatch(setHomeTeam(name));
   }
-  async function saveStartingSix() {
-    await saveTeam({
-      ...guestTeam[0],
-      startingSquad: guestTeamOptions.map((player) => player.name),
-    });
+
+  async function updateVersion() {
     try {
       const docVersionRef = doc(dataBase, "dataVersion", "currentVersion");
       await setDoc(docVersionRef, { currentVersion: userVersion + 1 });
@@ -85,6 +90,50 @@ export function HomePage() {
       console.error(error);
     }
   }
+
+  function calculateForData<T extends TTeam | TPlayer>(obj: T) {
+    const team = { ...guestTeam[0] };
+    for (const key in team) {
+      if (key === "id" || key === "startingSquad" || key === "name" || key === "logo") {
+        continue;
+      }
+      (team[key as keyof TTeam] as number) += obj[key as keyof T] as number;
+    }
+    team.percentOfAttack = gerPercentOfAttack(team); //встановлюємо процент зйому
+    team.plusMinusOnAttack = getPlusMinusAttack(team); //встановлюємо + - в атаці
+    team.efficencyAttack = getAttackEfficency(team); // встановлюємо ефективність подачі
+    guestTeam[0] = team;
+  }
+
+  async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const names = guestTeam[0].startingSquad;
+    const updatedStartingSix = listOfPlayers.filter(
+      (player) => player.name === names[names.indexOf(player.name)]
+    );
+    listOfPlayers.forEach((player) => {
+      if (player === updatedStartingSix[updatedStartingSix.indexOf(player)]) {
+        setDoc(doc(dataBase, "players", player.name), player);
+      }
+    });
+    updatedStartingSix.forEach((player) => {
+      calculateForData(player);
+    });
+    const Team = doc(dataBase, "teams", guestTeam[0].id);
+    await setDoc(Team, guestTeam[0]);
+    await updateVersion();
+    resetTheBoardForGuestTeam();
+    setShowSquads(true);
+    dispatch(setInfoOfPlayer(null));
+  }
+
+  async function saveStartingSix() {
+    await saveTeam({
+      ...guestTeam[0],
+      startingSquad: guestTeamOptions.map((player) => player.name),
+    });
+    updateVersion();
+  }
   const saveTeam = async (team: TTeam) => {
     try {
       const docRef = doc(dataBase, "teams", team.id);
@@ -93,28 +142,46 @@ export function HomePage() {
       console.error(error);
     }
   };
+
+  const hideSquads = () => {
+    setShowSquads(!showSquads);
+    if (playerInfo !== null) {
+      dispatch(setInfoOfPlayer(null));
+    }
+  };
+  const playerInfoWindow = playerInfo && showSquads;
   return (
     <article className="main-content-wrapper">
-      {showGuestTeam && <Squads team="rival" />}
+      {showGuestTeam && showSquads && <Squads team="rival" />}
       <SectionWrapper
         className="playground-section"
-        backGround={!playerInfo && <img src="/photos/playarea.jpg" alt="" />}
+        backGround={!playerInfoWindow && <img src="/photos/playarea.jpg" alt="" />}
         content={
           <>
             {!showGuestTeam && <ChooseGuestTeam />}
-            {playerInfo && <PersonalInformationOfPlayer link="page1" />}
-            {!playerInfo && showGuestTeam && (
-              <div className="rotation-field-wrapper">
+            {playerInfoWindow && <PersonalInformationOfPlayer link="page1" />}
+            {!playerInfoWindow && showGuestTeam && (
+              <form className="rotation-field-wrapper" onSubmit={saveSpikeData}>
                 <div className="reset-button-wrapper">
                   {showGuestTeam ? (
-                    <RegularButton
-                      onClick={resetTheBoardForGuestTeam}
-                      type="button"
-                      $color="orangered"
-                      $background="white"
-                    >
-                      Reset
-                    </RegularButton>
+                    <>
+                      <RegularButton
+                        onClick={resetTheBoardForGuestTeam}
+                        type="button"
+                        $color="orangered"
+                        $background="white"
+                      >
+                        Reset
+                      </RegularButton>
+                      <RegularButton
+                        onClick={hideSquads}
+                        type="button"
+                        $color="orangered"
+                        $background="white"
+                      >
+                        Hide Squads
+                      </RegularButton>
+                    </>
                   ) : (
                     <div></div>
                   )}
@@ -135,6 +202,7 @@ export function HomePage() {
                     .map((option, index) =>
                       checkNumbers(option.boardPosition) ? (
                         <IconOfPlayer
+                          showSquads={showSquads}
                           player={option}
                           startingSix={guestTeamOptions}
                           type="rival"
@@ -156,6 +224,7 @@ export function HomePage() {
                     .map((option, index) =>
                       checkNumbers(option.boardPosition) ? (
                         <IconOfPlayer
+                          showSquads={showSquads}
                           player={option}
                           startingSix={homeTeamOptions}
                           type="my"
@@ -172,6 +241,7 @@ export function HomePage() {
                     .map((option, index) =>
                       checkNumbers(option.boardPosition) ? (
                         <IconOfPlayer
+                          showSquads={showSquads}
                           player={option}
                           startingSix={guestTeamOptions}
                           type="rival"
@@ -193,6 +263,7 @@ export function HomePage() {
                     .map((option, index) =>
                       checkNumbers(option.boardPosition) ? (
                         <IconOfPlayer
+                          showSquads={showSquads}
                           player={option}
                           startingSix={homeTeamOptions}
                           type="my"
@@ -204,17 +275,25 @@ export function HomePage() {
                     )}
                 </div>
                 <div className="button-save-wrapper">
-                  {guestTeamOptions.every((option) => checkNumbers(option.boardPosition)) &&
-                    admin && (
-                      <RegularButton
-                        onClick={saveStartingSix}
-                        type="button"
-                        $color="black"
-                        $background="#ffd700"
-                      >
-                        Save starting six
-                      </RegularButton>
-                    )}
+                  {guestTeamOptions.every((option) => checkNumbers(option.boardPosition)) && (
+                    <>
+                      {!showSquads && (
+                        <RegularButton type="submit" $color="black" $background="#ffd700">
+                          Save Data
+                        </RegularButton>
+                      )}
+                      {admin && (
+                        <RegularButton
+                          onClick={saveStartingSix}
+                          type="button"
+                          $color="black"
+                          $background="#ffd700"
+                        >
+                          Save starting six
+                        </RegularButton>
+                      )}
+                    </>
+                  )}
                 </div>
                 {homeTeamOptions.every((option) => checkNumbers(option.boardPosition)) &&
                   isRegistratedUser && (
@@ -240,7 +319,7 @@ export function HomePage() {
                       </RegularButton>
                     </div>
                   )}
-                {showGuestTeam && (
+                {showGuestTeam && showSquads && (
                   <div className="showRatings">
                     <NavLink to={"/Ratings"}>
                       <RegularButton
@@ -274,12 +353,13 @@ export function HomePage() {
                     </NavLink>
                   </div>
                 )}
-              </div>
+              </form>
             )}
           </>
         }
       />
       {showGuestTeam &&
+        showSquads &&
         (showHomeTeam ? (
           <Squads team="my" />
         ) : (

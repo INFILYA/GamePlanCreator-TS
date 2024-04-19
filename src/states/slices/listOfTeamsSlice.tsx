@@ -15,8 +15,11 @@ export const listOfTeamsSlice = createSlice({
       state.listOfTeams = action.payload;
       localStorage.setItem("teams", JSON.stringify(action.payload));
     },
+    setUpdatedTeams: (state, action: PayloadAction<TTeam[]>) => {
+      state.listOfTeams = action.payload;
+    },
   },
 });
-export const { setAllTeams } = listOfTeamsSlice.actions;
+export const { setAllTeams, setUpdatedTeams } = listOfTeamsSlice.actions;
 export default listOfTeamsSlice.reducer;
 export const selectListOfTeams = (state: RootState) => state.listOfTeams.listOfTeams;

@@ -32,6 +32,11 @@ export const indexOfGuestTeamZonesSlice = createSlice({
     setBackGuestTeamSelects: (state, action: PayloadAction<TPlayer[]>) => {
       state.indexOfGuestTeamZones = action.payload;
     },
+    updateInfoOfStartingSix: (state, action: PayloadAction<TPlayer>) => {
+      state.indexOfGuestTeamZones = state.indexOfGuestTeamZones.map((player) =>
+        player.name === action.payload.name ? action.payload : player
+      );
+    },
     showGuestTeamStartingSix: (
       state,
       action: PayloadAction<{ guestPlayers: TPlayer[]; guestTeamStartingSix: string[] }>
@@ -55,6 +60,7 @@ export const {
   resetGuestTeamIndexOfZones,
   setBackGuestTeamSelects,
   showGuestTeamStartingSix,
+  updateInfoOfStartingSix,
 } = indexOfGuestTeamZonesSlice.actions;
 export default indexOfGuestTeamZonesSlice.reducer;
 export const selectIndexOfGuestTeamZones = (state: RootState) =>

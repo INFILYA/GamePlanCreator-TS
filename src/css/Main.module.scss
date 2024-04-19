@@ -537,6 +537,15 @@ main {
                     td {
                       border: 1px solid black;
                       height: 1vw;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      input {
+                        width: 100%;
+                        box-sizing: border-box;
+                        overflow: hidden;
+                        text-align: center;
+                        font-weight: 600;
+                      }
                     }
                     th {
                       background-color: gainsboro;
