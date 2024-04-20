@@ -4,9 +4,8 @@ import { TMix } from "../../types/types";
 import {
   gerPercentOfAttack,
   getAttackEfficency,
-  getServiceEfficency,
+  getPlusMinusAttack,
   setStyle,
-  upgradeAge,
 } from "../../utilities/functions";
 
 type TRows = {
@@ -47,12 +46,12 @@ export function Rows(props: TRows) {
           <td style={{ display: "flex", justifyContent: "center" }}>
             <img src={`/photos/${"team" in player ? player.team : player.name}.jpg`} alt="" />
           </td>
-          <td>{upgradeAge(player).age}</td>
-          <td>{player.height}</td>
-          <td>{player.aces}</td>
+          <td>{player.leftInGame}</td>
+          <td>{player.attacksInBlock}</td>
+          <td>{player.loosePoints}</td>
           <td>{player.winPoints}</td>
           <td style={setStyle(getAttackEfficency(player))}>{getAttackEfficency(player)} %</td>
-          <td style={setStyle(getServiceEfficency(player))}>{getServiceEfficency(player)} %</td>
+          <td style={setStyle(getPlusMinusAttack(player))}>{getPlusMinusAttack(player)}</td>
           <td>{gerPercentOfAttack(player)} %</td>
         </tr>
       ))}

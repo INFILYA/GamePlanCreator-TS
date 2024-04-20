@@ -11,23 +11,23 @@ export function Categorys(props: TCategorys) {
   const categorys = [
     "Name",
     "Club",
-    "Age",
-    "Height",
-    "Aces",
+    "Left in Game",
+    "Attacks in Block",
+    "Loose Points",
     "Win points",
     "Attack Efficency",
-    "Service Efficency",
+    "+  - on Attack",
     "Attack %",
   ];
   const criterias = [
     "name",
     "team",
-    "age",
-    "height",
-    "aces",
+    "leftInGame",
+    "attacksInBlock",
+    "loosePoints",
     "winPoints",
     "efficencyAttack",
-    "efficencyService",
+    "plusMinusOnAttack",
     "percentOfAttack",
   ];
   return (

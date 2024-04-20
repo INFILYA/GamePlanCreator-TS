@@ -37,6 +37,9 @@ import {
 } from "../states/slices/indexOfGuestTeamZonesSlice";
 import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
+import { selectSoloGameStats } from "../states/slices/soloGameStatsSlice";
+import { currentDate } from "../utilities/currentDate";
+import { setAddSoloGameStat } from "../states/slices/gamesStatsSlice";
 
 export function HomePage() {
   const dispatch = useAppDispatch();
@@ -49,7 +52,10 @@ export function HomePage() {
   const playerInfo = useSelector(selectPlayerInfo);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
+  const soloGameStats = useSelector(selectSoloGameStats);
+
   const [showSquads, setShowSquads] = useState(true);
+  const [opponentTeamName, setOpponentTeamName] = useState("");
 
   const showGuestTeam = guestTeam.length !== 0;
   const showHomeTeam = homeTeam.length !== 0;
@@ -91,7 +97,7 @@ export function HomePage() {
     }
   }
 
-  function calculateForData<T extends TTeam | TPlayer>(obj: T) {
+  function calculateForTeamData<T extends TTeam | TPlayer>(obj: T) {
     const team = { ...guestTeam[0] };
     for (const key in team) {
       if (key === "id" || key === "startingSquad" || key === "name" || key === "logo") {
@@ -117,9 +123,16 @@ export function HomePage() {
       }
     });
     updatedStartingSix.forEach((player) => {
-      calculateForData(player);
+      calculateForTeamData(player);
     });
     const Team = doc(dataBase, "teams", guestTeam[0].id);
+    const gameStats = doc(
+      dataBase,
+      "gameStats",
+      `${guestTeam[0].id} - ${opponentTeamName} - ${currentDate()}`
+    );
+    await setDoc(gameStats, { ...soloGameStats });
+    dispatch(setAddSoloGameStat(soloGameStats));
     await setDoc(Team, guestTeam[0]);
     await updateVersion();
     resetTheBoardForGuestTeam();
@@ -181,6 +194,10 @@ export function HomePage() {
                       >
                         Hide Squads
                       </RegularButton>
+                      <input
+                        onChange={(e) => setOpponentTeamName(e.target.value)}
+                        value={opponentTeamName}
+                      />
                     </>
                   ) : (
                     <div></div>
@@ -351,6 +368,16 @@ export function HomePage() {
                         Send Data
                       </RegularButton>
                     </NavLink>
+                    {/* <NavLink to={"/GamesStatistic"}>
+                      <RegularButton
+                        onClick={() => dispatch(setInfoOfPlayer(null))}
+                        type="button"
+                        $color="#0057b8"
+                        $background="#ffd700"
+                      >
+                        Games Statistic
+                      </RegularButton>
+                    </NavLink> */}
                   </div>
                 )}
               </form>

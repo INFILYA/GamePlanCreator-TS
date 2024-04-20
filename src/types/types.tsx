@@ -6,7 +6,7 @@ export type TPlayer = {
   name: string;
   number: number;
   photo: string;
-  position: "Setter" | "Reciever" | "MBlocker" | "Opposite" | "Libero";
+  position: "Setter" | "Reciever" | "MBlocker" | "Opposite" | "Libero" | "none";
   reach: number;
   team: string;
   attackPipeFastBall: number[];

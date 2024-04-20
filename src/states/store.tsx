@@ -12,6 +12,9 @@ import userVersionReducer from "./slices/userVersionSlice";
 import playerInfoReducer from "./slices/playerInfoSlice";
 import indexOfHomeTeamZonesReducer from "./slices/indexOfHomeTeamZonesSlice";
 import indexOfGuestTeamZonesReducer from "./slices/indexOfGuestTeamZonesSlice";
+import soloGameStatsReducer from "./slices/soloGameStatsSlice";
+import gamesStatsReducer from "./slices/gamesStatsSlice";
+
 
 export const store = configureStore({
   reducer: {
@@ -27,6 +30,8 @@ export const store = configureStore({
     changeLanguage: changeLanguageReducer, //+
     isShowedTutorial: isShowedTutorialReducer, //+
     userVersion: userVersionReducer, //+
+    soloGameStats: soloGameStatsReducer,
+    gamesStats: gamesStatsReducer,
   },
 });
 

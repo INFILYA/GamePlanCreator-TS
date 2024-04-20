@@ -530,9 +530,11 @@ main {
               flex-direction: column;
               table {
                 background-color: white;
+                table-layout: fixed;
+                width: 100%;
                 tbody {
                   tr {
-                    border: 1px solid black;
+                    border: 2px solid black;
                     th,
                     td {
                       border: 1px solid black;

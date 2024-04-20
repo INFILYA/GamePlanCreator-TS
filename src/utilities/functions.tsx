@@ -33,18 +33,17 @@ export function compare<T>(a: T, b: T): number {
 
 export const zones = [3, 2, 1, 4, 5, 0];
 
-export const emptyPlayer = {
+export const emptyPlayer: TPlayer = {
   age: 0,
   hand: "",
   height: 0,
   id: "",
-  firstName: "",
   name: "",
   number: 0,
   photo: "",
-  position: "Setter",
+  position: "none",
   reach: 0,
-  teamid: "",
+  team: "",
   attackPipeFastBall: [],
   attackPipeHighBall: [],
   attackZone2FastBall: [],
@@ -76,7 +75,9 @@ export const emptyPlayer = {
   serviceMinus: 0,
   serviceFailed: 0,
   plusMinusOnService: 0,
-  boardPosition: 3,
+  boardPosition: 0,
+  efficencyAttack: 0,
+  efficencyService: 0,
 };
 
 export const backGroundYellow = { backgroundColor: "#FFD700", color: "#0057B8" };
@@ -94,8 +95,7 @@ export function setStyle(params: number): CSSProperties {
   return { color: params >= 0 ? "green" : "red" };
 }
 
-
-export function getAttackEfficency(obj:TMix) {
+export function getAttackEfficency(obj: TMix) {
   if (!("winPoints" in obj)) return 0;
   const totalAtt = [obj.winPoints, obj.leftInGame, obj.attacksInBlock, obj.loosePoints];
   const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);
@@ -103,7 +103,7 @@ export function getAttackEfficency(obj:TMix) {
   const efficencyAttack = +((getPlusMinusAttack(obj) / sumOfTotalAtt) * 100).toFixed(1);
   return efficencyAttack;
 }
-export function getServiceEfficency(obj:TMix) {
+export function getServiceEfficency(obj: TMix) {
   const totalService = [obj.aces, obj.servicePlus, obj.serviceMinus, obj.serviceFailed];
   const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
   if (sumOfTotalService === 0) return 0;
@@ -111,13 +111,13 @@ export function getServiceEfficency(obj:TMix) {
   return efficencyService;
 }
 
-export function getPlusMinusService(obj:TMix) {
+export function getPlusMinusService(obj: TMix) {
   return obj.aces - obj.serviceFailed;
 }
-export function getPlusMinusAttack(obj:TMix) {
+export function getPlusMinusAttack(obj: TMix) {
   return obj.winPoints - (obj.attacksInBlock + obj.loosePoints);
 }
-export function gerPercentOfAttack(obj:TMix) {
+export function gerPercentOfAttack(obj: TMix) {
   if (!("winPoints" in obj)) return 0;
   const totalAtt = [obj.winPoints, obj.leftInGame, obj.attacksInBlock, obj.loosePoints];
   const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);

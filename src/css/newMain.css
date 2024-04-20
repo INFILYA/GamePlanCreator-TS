@@ -548,12 +548,14 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table {
   background-color: white;
+  table-layout: fixed;
+  width: 100%;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr {
-  border: 1px solid black;
+  border: 2px solid black;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr td,

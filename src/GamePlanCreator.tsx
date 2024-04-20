@@ -22,6 +22,8 @@ import Distribution from "./distribution/Distribution";
 import Directions from "./directions-section/Directions";
 import SendStatistic from "./loadStatistic/SendStatistic";
 import MyLogo from "./myLogo/MyLogo";
+import { setAllGameStats } from "./states/slices/gamesStatsSlice";
+import GamesStatistic from "./loadStatistic/GamesStatistic";
 
 export default function GamePlanCreator() {
   const dispatch = useAppDispatch();
@@ -41,6 +43,7 @@ export default function GamePlanCreator() {
         if (adminVersion === userVersion) {
           dispatch(setAllPlayers(getFromLocalStorage("players")));
           dispatch(setAllTeams(getFromLocalStorage("teams")));
+          dispatch(setAllGameStats(getFromLocalStorage("gamesStats")));
           console.log(`Versions of DATA are equal ${userVersion} = ${adminVersion}`);
           return;
         }
@@ -50,6 +53,7 @@ export default function GamePlanCreator() {
           localStorage.setItem("currentUserVersion", JSON.stringify(adminVersion));
           getTeams();
           getPlayers();
+          getGameStats();
           console.log(`Versions of DATA are not equal ${userVersion} != ${adminVersion}`);
           return;
         }
@@ -73,6 +77,17 @@ export default function GamePlanCreator() {
         const data = await getDocs(collection(dataBase, "teams"));
         const teams = data.docs.map((doc) => ({ ...doc.data() })) as unknown as TTeam[];
         dispatch(setAllTeams(teams));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    async function getGameStats() {
+      try {
+        const data = await getDocs(collection(dataBase, "gameStats"));
+        const dataOfGameStata = data.docs.map((doc) => ({
+          ...doc.data(),
+        })) as unknown as TPlayer[][];
+        dispatch(setAllGameStats(dataOfGameStata));
       } catch (error) {
         console.error(error);
       }
@@ -111,6 +126,7 @@ export default function GamePlanCreator() {
               <Route path="/Distribution" element={<Distribution />} />
               <Route path="/Directions" element={<Directions />} />
               <Route path="/SendStatistic" element={<SendStatistic />} />
+              <Route path="/GamesStatistic" element={<GamesStatistic />} />
             </Routes>
           </>
         )}

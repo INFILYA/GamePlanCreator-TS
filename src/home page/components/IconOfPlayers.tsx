@@ -12,6 +12,7 @@ import {
   getAttackEfficency,
   getPlusMinusAttack,
 } from "../../utilities/functions";
+import { setSoloGameStats } from "../../states/slices/soloGameStatsSlice";
 
 type TIconOfPlayer = {
   type: string;
@@ -38,20 +39,40 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       ...diagrammValue,
       [event.target.name]: +event.target.value.replace(/\D+/g, ""),
     });
-    const updatedPlayer = calculateForData(
+    const updatedPlayer = calculateForPlayerData(
       { ...player },
       {
         ...diagrammValue,
         [event.target.name]: +event.target.value.replace(/\D+/g, ""),
       }
     );
+    const soloGameUpdatedPlayer = calculateForPlayerData(
+      { ...player },
+      {
+        ...diagrammValue,
+        [event.target.name]: +event.target.value.replace(/\D+/g, ""),
+      },
+      true
+    );
+    console.log(soloGameUpdatedPlayer);
+    dispatch(setSoloGameStats(soloGameUpdatedPlayer));
+    console.log(updatedPlayer);
     dispatch(setUpdatedPlayers(updatedPlayer));
     dispatch(setInfoOfPlayer(updatedPlayer));
   };
 
-  function calculateForData<T extends TTeam | TPlayer>(obj: T, diagram: TAttackDiagramm): T {
+  function calculateForPlayerData<T extends TTeam | TPlayer>(
+    obj: T,
+    diagram: TAttackDiagramm,
+    soloGame?: boolean
+  ): T {
     for (const key in diagram) {
-      (obj[key as keyof T] as number) += diagram[key as keyof TAttackDiagramm];
+      if (!soloGame) {
+        (obj[key as keyof T] as number) += diagram[key as keyof TAttackDiagramm];
+      }
+      if (soloGame) {
+        (obj[key as keyof T] as number) = diagram[key as keyof TAttackDiagramm];
+      }
     }
     obj.percentOfAttack = gerPercentOfAttack(obj); //встановлюємо процент зйому
     obj.plusMinusOnAttack = getPlusMinusAttack(obj); //встановлюємо + - в атаці
@@ -73,6 +94,32 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       dispatch(setInfoOfPlayer(player));
     }
   }
+
+  function addAmount(type: string) {
+    setDiagrammValue({
+      ...diagrammValue,
+      [type]: +diagrammValue[type as keyof TAttackDiagramm] + 1,
+    });
+    const updatedPlayer = calculateForPlayerData(
+      { ...player },
+      {
+        ...diagrammValue,
+        [type]: +diagrammValue[type as keyof TAttackDiagramm] + 1,
+      }
+    );
+    const soloGameUpdatedPlayer = calculateForPlayerData(
+      { ...player },
+      {
+        ...diagrammValue,
+        [type]: +diagrammValue[type as keyof TAttackDiagramm] + 1,
+      },
+      true
+    );
+    dispatch(setSoloGameStats(soloGameUpdatedPlayer));
+    dispatch(setUpdatedPlayers(updatedPlayer));
+    dispatch(setInfoOfPlayer(updatedPlayer));
+  }
+
   if (typeof player === "number" || player === null) return;
   const condition = player.number !== 0;
 
@@ -141,7 +188,12 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                     <th>Amount</th>
                   </tr>
                   <tr>
-                    <td style={{ backgroundColor: "lightgreen" }}>Win</td>
+                    <td
+                      style={{ backgroundColor: "lightgreen" }}
+                      onClick={() => addAmount("winPoints")}
+                    >
+                      Win
+                    </td>
                     <td>
                       <input
                         type="number"
@@ -153,7 +205,12 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                     </td>
                   </tr>
                   <tr>
-                    <td style={{ backgroundColor: "yellow" }}>Game</td>
+                    <td
+                      style={{ backgroundColor: "yellow" }}
+                      onClick={() => addAmount("leftInGame")}
+                    >
+                      Game
+                    </td>
                     <td>
                       <input
                         type="number"
@@ -165,7 +222,12 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                     </td>
                   </tr>
                   <tr>
-                    <td style={{ backgroundColor: "orange" }}>Block</td>
+                    <td
+                      style={{ backgroundColor: "orange" }}
+                      onClick={() => addAmount("attacksInBlock")}
+                    >
+                      Block
+                    </td>
                     <td>
                       <input
                         type="number"
@@ -177,7 +239,12 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                     </td>
                   </tr>
                   <tr>
-                    <td style={{ backgroundColor: "orangered" }}>Error</td>
+                    <td
+                      style={{ backgroundColor: "orangered" }}
+                      onClick={() => addAmount("loosePoints")}
+                    >
+                      Error
+                    </td>
                     <td>
                       <input
                         type="number"

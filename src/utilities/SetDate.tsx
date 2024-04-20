@@ -1,4 +1,4 @@
-type TOptions = {
+export type TOptions = {
   day: "numeric" | "2-digit" | undefined;
   month: "numeric" | "2-digit" | "short" | "long" | "narrow" | undefined;
   year: "numeric" | "2-digit" | undefined;
@@ -18,3 +18,5 @@ export function SetDate() {
     </div>
   );
 }
+
+
