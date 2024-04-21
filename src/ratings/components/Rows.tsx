@@ -36,7 +36,7 @@ export function Rows(props: TRows) {
       {filteredPlayers.map((player, index) => (
         <tr
           onClick={() => showInfoOfPlayer(player.name)}
-          key={player.name}
+          key={index}
           className="rating-row"
           style={changeBgColors(index)}
         >
@@ -44,7 +44,7 @@ export function Rows(props: TRows) {
             {index + 1}. {player.name}
           </td>
           <td style={{ display: "flex", justifyContent: "center" }}>
-            <img src={`/photos/${"team" in player ? player.team : player.name}.jpg`} alt="" />
+            <img src={`/photos/${"team" in player ? player.team : player.name}.png`} alt="" />
           </td>
           <td>{player.leftInGame}</td>
           <td>{player.attacksInBlock}</td>

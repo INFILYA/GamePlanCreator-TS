@@ -50,8 +50,8 @@ export function Ratings() {
               <table>
                 <caption className="showRatings-wrapper">
                   <nav>
-                    {positions.map((position) => (
-                      <div key={position}>
+                    {positions.map((position, index) => (
+                      <div key={index}>
                         <RegularButton
                           onClick={() => setPositionFilter(position)}
                           type="button"

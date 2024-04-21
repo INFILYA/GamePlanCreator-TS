@@ -113,7 +113,7 @@ export function HomePage() {
 
   async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const names = guestTeam[0].startingSquad;
+    const names = guestTeamOptions.map((player) => player.name);
     const updatedStartingSix = listOfPlayers.filter(
       (player) => player.name === names[names.indexOf(player.name)]
     );
