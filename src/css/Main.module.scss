@@ -358,19 +358,15 @@ main {
             align-items: center;
             justify-content: center;
             height: 40px;
-            overflow: hidden;
           }
           .match-number-wrapper {
-            width: 100%;
-            input,
             select {
+              width: 10vw;
               border: 2px solid black;
               text-align: center;
               font-weight: 600;
-              height: 80%;
-            }
-            select {
-              height: 95%;
+              height: 100%;
+              font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem);
             }
           }
         }

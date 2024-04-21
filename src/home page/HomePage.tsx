@@ -56,7 +56,7 @@ export function HomePage() {
 
   const [showSquads, setShowSquads] = useState(true);
   const [opponentTeamName, setOpponentTeamName] = useState("");
-  const [setNumber, setSetNumber] = useState("Set 1");
+  const [set, setSet] = useState("");
 
   const showGuestTeam = guestTeam.length !== 0;
   const showHomeTeam = homeTeam.length !== 0;
@@ -130,7 +130,7 @@ export function HomePage() {
     const gameStats = doc(
       dataBase,
       "gameStats",
-      `${guestTeam[0].id} - ${opponentTeamName} - ${setNumber} - ${currentDate()}`
+      `${guestTeam[0].id} - ${opponentTeamName} - ${set} - ${currentDate()}`
     );
     await setDoc(gameStats, { ...soloGameStats });
     dispatch(setAddSoloGameStat(soloGameStats));
@@ -164,7 +164,7 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
-  console.log(`${opponentTeamName} - ${setNumber}`);
+  console.log(`${opponentTeamName} - ${set}`);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -192,11 +192,14 @@ export function HomePage() {
                       </div>
                       {!showSquads && (
                         <div className="match-number-wrapper">
-                          <input
-                            onChange={(e) => setOpponentTeamName(e.target.value)}
-                            value={opponentTeamName}
-                          />
-                          <select onChange={(e) => setSetNumber(e.target.value)}>
+                          <select onChange={(e) => setOpponentTeamName(e.target.value)}>
+                            <option value={opponentTeamName}>Choose opponent</option>
+                            <option value={"Mac"}>Mac</option>
+                            <option value={"Reach"}>Reach</option>
+                            <option value={"Kingston"}>Kingston</option>
+                          </select>
+                          <select onChange={(e) => setSet(e.target.value)}>
+                            <option value={set}>Choose set</option>
                             <option value={"Set 1"}>Set 1</option>
                             <option value={"Set 2"}>Set 2</option>
                             <option value={"Set 3"}>Set 3</option>

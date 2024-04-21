@@ -359,20 +359,14 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   align-items: center;
   justify-content: center;
   height: 40px;
-  overflow: hidden;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
-  width: 100%;
-}
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input,
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select {
+  width: 10vw;
   border: 2px solid black;
   text-align: center;
   font-weight: 600;
-  height: 80%;
-}
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select {
-  height: 95%;
+  height: 100%;
+  font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper {
   display: flex;
