@@ -178,26 +178,34 @@ export function HomePage() {
                 <div className="reset-button-wrapper">
                   {showGuestTeam ? (
                     <>
-                      <RegularButton
-                        onClick={resetTheBoardForGuestTeam}
-                        type="button"
-                        $color="orangered"
-                        $background="white"
-                      >
-                        Reset
-                      </RegularButton>
-                      <RegularButton
-                        onClick={hideSquads}
-                        type="button"
-                        $color="orangered"
-                        $background="white"
-                      >
-                        Hide Squads
-                      </RegularButton>
-                      <input
-                        onChange={(e) => setOpponentTeamName(e.target.value)}
-                        value={opponentTeamName}
-                      />
+                      <div>
+                        <RegularButton
+                          onClick={resetTheBoardForGuestTeam}
+                          type="button"
+                          $color="orangered"
+                          $background="white"
+                        >
+                          Reset
+                        </RegularButton>
+                      </div>
+                      {!showSquads && (
+                        <div>
+                          <input
+                            onChange={(e) => setOpponentTeamName(e.target.value)}
+                            value={opponentTeamName}
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <RegularButton
+                          onClick={hideSquads}
+                          type="button"
+                          $color="orangered"
+                          $background="white"
+                        >
+                          Statistic mode
+                        </RegularButton>
+                      </div>
                     </>
                   ) : (
                     <div></div>
