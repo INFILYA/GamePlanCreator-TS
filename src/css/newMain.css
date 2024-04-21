@@ -358,11 +358,21 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 40px;
+  overflow: hidden;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper input {
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
+  width: 100%;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input,
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select {
   border: 2px solid black;
   text-align: center;
   font-weight: 600;
+  height: 80%;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select {
+  height: 95%;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper {
   display: flex;

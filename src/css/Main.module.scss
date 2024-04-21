@@ -357,11 +357,21 @@ main {
             display: flex;
             align-items: center;
             justify-content: center;
+            height: 40px;
+            overflow: hidden;
           }
-          input {
-            border: 2px solid black;
-            text-align: center;
-            font-weight: 600;
+          .match-number-wrapper {
+            width: 100%;
+            input,
+            select {
+              border: 2px solid black;
+              text-align: center;
+              font-weight: 600;
+              height: 80%;
+            }
+            select {
+              height: 95%;
+            }
           }
         }
         // ВІКНО ІНФОРМАЦІЇ ГРАВЦЯ

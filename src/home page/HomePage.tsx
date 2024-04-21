@@ -56,6 +56,7 @@ export function HomePage() {
 
   const [showSquads, setShowSquads] = useState(true);
   const [opponentTeamName, setOpponentTeamName] = useState("");
+  const [setNumber, setSetNumber] = useState("Set 1");
 
   const showGuestTeam = guestTeam.length !== 0;
   const showHomeTeam = homeTeam.length !== 0;
@@ -129,7 +130,7 @@ export function HomePage() {
     const gameStats = doc(
       dataBase,
       "gameStats",
-      `${guestTeam[0].id} - ${opponentTeamName} - ${currentDate()}`
+      `${guestTeam[0].id} - ${opponentTeamName} - ${setNumber} - ${currentDate()}`
     );
     await setDoc(gameStats, { ...soloGameStats });
     dispatch(setAddSoloGameStat(soloGameStats));
@@ -163,6 +164,7 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
+  console.log(`${opponentTeamName} - ${setNumber}`);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -189,11 +191,16 @@ export function HomePage() {
                         </RegularButton>
                       </div>
                       {!showSquads && (
-                        <div>
+                        <div className="match-number-wrapper">
                           <input
                             onChange={(e) => setOpponentTeamName(e.target.value)}
                             value={opponentTeamName}
                           />
+                          <select onChange={(e) => setSetNumber(e.target.value)}>
+                            <option value={"Set 1"}>Set 1</option>
+                            <option value={"Set 2"}>Set 2</option>
+                            <option value={"Set 3"}>Set 3</option>
+                          </select>
                         </div>
                       )}
                       <div>
