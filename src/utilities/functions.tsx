@@ -33,6 +33,13 @@ export function compare<T>(a: T, b: T): number {
 
 export const zones = [3, 2, 1, 4, 5, 0];
 
+export const emtyTeam = {
+  winPoints: 0,
+  loosePoints: 0,
+  leftInGame: 0,
+  attacksInBlock: 0,
+};
+
 export const emptyPlayer: TPlayer = {
   age: 0,
   hand: "",

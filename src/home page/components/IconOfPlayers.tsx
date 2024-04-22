@@ -4,7 +4,9 @@ import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { pushFromHomeTeamBoard } from "../../states/slices/homePlayersSlice";
 import { pushFromGuestTeamBoard } from "../../states/slices/guestPlayersSlice";
 import { resetHomeTeamIndexOfZones } from "../../states/slices/indexOfHomeTeamZonesSlice";
-import { resetGuestTeamIndexOfZones } from "../../states/slices/indexOfGuestTeamZonesSlice";
+import {
+  resetGuestTeamIndexOfZones,
+} from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { ChangeEvent, useState } from "react";
 import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
 import {
@@ -54,9 +56,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       },
       true
     );
-    console.log(soloGameUpdatedPlayer);
     dispatch(setSoloGameStats(soloGameUpdatedPlayer));
-    console.log(updatedPlayer);
     dispatch(setUpdatedPlayers(updatedPlayer));
     dispatch(setInfoOfPlayer(updatedPlayer));
   };

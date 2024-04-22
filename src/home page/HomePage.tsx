@@ -6,7 +6,7 @@ import { selectUserVersion, setUserVersion } from "../states/slices/userVersionS
 import { NavLink } from "react-router-dom";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import { useAppDispatch } from "../states/store";
-import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
+import { selectListOfTeams, setAllTeams } from "../states/slices/listOfTeamsSlice";
 import {
   correctPositions,
   emptyPlayers,
@@ -114,19 +114,15 @@ export function HomePage() {
 
   async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    // Refresh players
     const names = guestTeamOptions.map((player) => player.name);
     const updatedStartingSix = listOfPlayers.filter(
       (player) => player.name === names[names.indexOf(player.name)]
     );
-    listOfPlayers.forEach((player) => {
-      if (player === updatedStartingSix[updatedStartingSix.indexOf(player)]) {
-        setDoc(doc(dataBase, "players", player.name), player);
-      }
-    });
     updatedStartingSix.forEach((player) => {
-      calculateForTeamData(player);
+      setDoc(doc(dataBase, "players", player.name), player);
     });
-    const Team = doc(dataBase, "teams", guestTeam[0].id);
+    // download solo game statisic
     const gameStats = doc(
       dataBase,
       "gameStats",
@@ -134,6 +130,24 @@ export function HomePage() {
     );
     await setDoc(gameStats, { ...soloGameStats });
     dispatch(setAddSoloGameStat(soloGameStats));
+    //add solo game stats
+    const loosePoints = soloGameStats.reduce((acc, val) => (acc += val.loosePoints), 0);
+    const winPoints = soloGameStats.reduce((acc, val) => (acc += val.winPoints), 0);
+    const leftInTheGame = soloGameStats.reduce((acc, val) => (acc += val.leftInGame), 0);
+    const attacksInBlock = soloGameStats.reduce((acc, val) => (acc += val.attacksInBlock), 0);
+    const sumOfAllPlayersSoloGamesStats = {
+      loosePoints: loosePoints,
+      winPoints: winPoints,
+      leftInGame: leftInTheGame,
+      attacksInBlock: attacksInBlock,
+    };
+    calculateForTeamData(sumOfAllPlayersSoloGamesStats as TPlayer);
+    const updatedListOfTeams = listOfTeams.map((team) =>
+      team.id === guestTeam[0].id ? guestTeam[0] : team
+    );
+    dispatch(setAllTeams(updatedListOfTeams));
+    // download team data
+    const Team = doc(dataBase, "teams", guestTeam[0].id);
     await setDoc(Team, guestTeam[0]);
     await updateVersion();
     resetTheBoardForGuestTeam();
@@ -164,7 +178,7 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
-  console.log(`${opponentTeamName} - ${set}`);
+
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}

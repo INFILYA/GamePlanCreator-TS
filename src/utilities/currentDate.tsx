@@ -6,6 +6,8 @@ export function currentDate() {
     day: "numeric",
     month: "short",
     year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
   };
   const currentDate = date.toLocaleDateString("en-US", options);
   return currentDate;
