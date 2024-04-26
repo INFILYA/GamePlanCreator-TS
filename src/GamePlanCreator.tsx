@@ -87,6 +87,7 @@ export default function GamePlanCreator() {
         const dataOfGameStata = data.docs.map((doc) => ({
           ...doc.data(),
         })) as unknown as TPlayer[][];
+        console.log(dataOfGameStata);
         dispatch(setAllGameStats(dataOfGameStata));
       } catch (error) {
         console.error(error);

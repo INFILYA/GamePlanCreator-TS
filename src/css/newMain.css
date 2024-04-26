@@ -354,19 +354,25 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   justify-content: center;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper div {
-  width: 33%;
+  width: 25%;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 40px;
 }
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
+  width: 50%;
+}
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select {
-  width: 10vw;
+  width: 12vw;
   border: 2px solid black;
   text-align: center;
   font-weight: 600;
   height: 100%;
   font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper .score-wrapper {
+  width: 5vmax;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper {
   display: flex;

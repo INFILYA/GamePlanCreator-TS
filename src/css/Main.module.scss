@@ -353,20 +353,24 @@ main {
           margin: 1vw 0;
           justify-content: center;
           div {
-            width: 33%;
+            width: 25%;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 40px;
           }
           .match-number-wrapper {
+            width: 50%;
             select {
-              width: 10vw;
+              width: 12vw;
               border: 2px solid black;
               text-align: center;
               font-weight: 600;
               height: 100%;
               font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem);
+            }
+            .score-wrapper {
+              width: 5vmax;
             }
           }
         }

@@ -57,11 +57,44 @@ export function HomePage() {
   const [showSquads, setShowSquads] = useState(true);
   const [opponentTeamName, setOpponentTeamName] = useState("");
   const [set, setSet] = useState("");
-
+  const [ourScore, setOurScore] = useState(0);
+  const [opponentScore, setOpponentScore] = useState(0);
+  const listOfOpponents = [
+    "Maverick Longhorns",
+    "Pakmen Gold Jessy",
+    "Pakmen Gold Omar",
+    "Durham Attack Power",
+    "Maverick Rangers",
+    "Toronto Thunderbolts Smash",
+    "FCVC Hyperion",
+    "KW Preds Invictus",
+    "MAC Iron",
+    "Kingston Rock Black",
+    "Niagara Rapids Alliance",
+    "Titans Black",
+    "Storm Voltage",
+    "Phoenix Skybirds",
+    "Scorpions Menace",
+    "Unity Valour",
+    "Pakmen Black Lam",
+    "Leaside Lobsters",
+    "Reach Rampage",
+    "Barie Elites Phoenix",
+    "Ottawa fusion Purple",
+    "Durham Attack Blast",
+    "KW Preds Wolwerines",
+    "41SIX Bounce",
+    "Ancaster Lions Fury",
+    "Halton Hurricanes Category 8BB",
+    "Niagara Rapids Crush",
+    "FCVC Baobab",
+    "REACH Nitro",
+    "MAC Titanium",
+  ];
   const showGuestTeam = guestTeam.length !== 0;
   const showHomeTeam = homeTeam.length !== 0;
   // прибрати після / !!!!!
-  const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2/2";
+  const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
   // прибрати після / !!!!!
   function checkNumbers(element: number): boolean {
     return typeof element !== "number";
@@ -123,11 +156,11 @@ export function HomePage() {
       setDoc(doc(dataBase, "players", player.name), player);
     });
     // download solo game statisic
-    const gameStats = doc(
-      dataBase,
-      "gameStats",
-      `${guestTeam[0].id} - ${opponentTeamName} - ${set} - ${currentDate()}`
-    );
+    const matchInfo = `${
+      guestTeam[0].id
+    } - ${opponentTeamName}; ${ourScore} - ${opponentScore}; ${set} - ${currentDate()}`;
+    const gameStats = doc(dataBase, "gameStats", matchInfo);
+    console.log({ ...soloGameStats });
     await setDoc(gameStats, { ...soloGameStats });
     dispatch(setAddSoloGameStat(soloGameStats));
     //add solo game stats
@@ -178,6 +211,7 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
+  const numbersForScore = Array(36).fill(0);
 
   return (
     <article className="main-content-wrapper">
@@ -207,16 +241,41 @@ export function HomePage() {
                       {!showSquads && (
                         <div className="match-number-wrapper">
                           <select onChange={(e) => setOpponentTeamName(e.target.value)}>
-                            <option value={opponentTeamName}>Choose opponent</option>
-                            <option value={"Mac"}>Mac</option>
-                            <option value={"Reach"}>Reach</option>
-                            <option value={"Kingston"}>Kingston</option>
+                            <option value={opponentTeamName}>Opponent</option>
+                            {listOfOpponents.map((team) => (
+                              <option key={team} value={team}>
+                                {team}
+                              </option>
+                            ))}
                           </select>
-                          <select onChange={(e) => setSet(e.target.value)}>
-                            <option value={set}>Choose set</option>
+                          <select
+                            onChange={(e) => setSet(e.target.value)}
+                            className="score-wrapper"
+                          >
+                            <option value={set}>Set</option>
                             <option value={"Set 1"}>Set 1</option>
                             <option value={"Set 2"}>Set 2</option>
                             <option value={"Set 3"}>Set 3</option>
+                          </select>
+                          <select
+                            onChange={(e) => setOurScore(+e.target.value)}
+                            className="score-wrapper"
+                          >
+                            {numbersForScore.map((number, index) => (
+                              <option key={number + index} value={+index}>
+                                {+index}
+                              </option>
+                            ))}
+                          </select>
+                          <select
+                            onChange={(e) => setOpponentScore(+e.target.value)}
+                            className="score-wrapper"
+                          >
+                            {numbersForScore.map((number, index) => (
+                              <option key={number + index} value={+index}>
+                                {+index}
+                              </option>
+                            ))}
                           </select>
                         </div>
                       )}
@@ -235,14 +294,16 @@ export function HomePage() {
                     <div></div>
                   )}
                   {showHomeTeam && (
-                    <RegularButton
-                      onClick={resetTheBoardForHomeTeam}
-                      type="button"
-                      $color="orangered"
-                      $background="white"
-                    >
-                      Reset
-                    </RegularButton>
+                    <div>
+                      <RegularButton
+                        onClick={resetTheBoardForHomeTeam}
+                        type="button"
+                        $color="orangered"
+                        $background="white"
+                      >
+                        Reset
+                      </RegularButton>
+                    </div>
                   )}
                 </div>
                 <div className="row-zones-wrapper">
@@ -390,7 +451,7 @@ export function HomePage() {
                         Distribution
                       </RegularButton>
                     </NavLink>
-                    <NavLink to={"/SendStatistic"}>
+                    {/* <NavLink to={"/SendStatistic"}>
                       <RegularButton
                         onClick={() => dispatch(setInfoOfPlayer(null))}
                         type="button"
@@ -399,8 +460,8 @@ export function HomePage() {
                       >
                         Send Data
                       </RegularButton>
-                    </NavLink>
-                    {/* <NavLink to={"/GamesStatistic"}>
+                    </NavLink> */}
+                    <NavLink to={"/GamesStatistic"}>
                       <RegularButton
                         onClick={() => dispatch(setInfoOfPlayer(null))}
                         type="button"
@@ -409,7 +470,7 @@ export function HomePage() {
                       >
                         Games Statistic
                       </RegularButton>
-                    </NavLink> */}
+                    </NavLink>
                   </div>
                 )}
               </form>

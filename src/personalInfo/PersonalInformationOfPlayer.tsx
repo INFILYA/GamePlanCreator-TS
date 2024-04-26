@@ -32,7 +32,7 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   const service = link === "Service";
   const attack = link === "Attack";
   const libero = playerInfo.position === "Libero";
-  const setter = playerInfo.position === "Setter";
+  // const setter = playerInfo.position === "Setter";
   const servicePM = getPlusMinusService(playerInfo);
   const attackPM = getPlusMinusAttack(playerInfo);
   return (
@@ -82,17 +82,16 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
             <nav>
               {!libero && isRegistratedUser && (
                 <>
-                  {!setter && (
-                    <NavLink to={`/Directions?${playerInfo.name}=Attack`}>
-                      <RegularButton
-                        type="button"
-                        $color={attack ? "orangered" : "#0057b8"}
-                        $background={attack ? "black" : "#ffd700"}
-                      >
-                        Attack
-                      </RegularButton>
-                    </NavLink>
-                  )}
+                  <NavLink to={`/Directions?${playerInfo.name}=Attack`}>
+                    <RegularButton
+                      type="button"
+                      $color={attack ? "orangered" : "#0057b8"}
+                      $background={attack ? "black" : "#ffd700"}
+                    >
+                      Attack
+                    </RegularButton>
+                  </NavLink>
+
                   <NavLink to={`/Directions?${playerInfo.name}=Service`}>
                     <RegularButton
                       type="button"
@@ -134,7 +133,7 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                   </div>
                 </>
               )}
-              {!setter && attack && (
+              {attack && (
                 <>
                   <div className="row">
                     <Diagramm link="Attack" />
