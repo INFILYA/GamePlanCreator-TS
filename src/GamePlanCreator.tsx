@@ -11,7 +11,7 @@ import { Auth } from "./header/components/Auth";
 import { collection, getDocs } from "firebase/firestore";
 import { dataBase } from "./config/firebase";
 import { setUserVersion } from "./states/slices/userVersionSlice";
-import { TPlayer, TTeam } from "./types/types";
+import { TGameStats, TPlayer, TTeam } from "./types/types";
 import { setAllPlayers } from "./states/slices/listOfPlayersSlice";
 import { setAllTeams } from "./states/slices/listOfTeamsSlice";
 import { HomePage } from "./home page/HomePage";
@@ -86,7 +86,7 @@ export default function GamePlanCreator() {
         const data = await getDocs(collection(dataBase, "gameStats"));
         const dataOfGameStata = data.docs.map((doc) => ({
           ...doc.data(),
-        })) as unknown as TPlayer[][];
+        })) as unknown as TGameStats[];
         console.log(dataOfGameStata);
         dispatch(setAllGameStats(dataOfGameStata));
       } catch (error) {

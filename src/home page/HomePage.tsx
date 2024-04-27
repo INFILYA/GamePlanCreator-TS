@@ -165,8 +165,8 @@ export function HomePage() {
     // download solo game statisic
     const matchInfo = `${guestTeam[0].id} - ${opponentTeamName}; ${currentDate()}`;
     const gameStats = doc(dataBase, "gameStats", matchInfo);
-    await setDoc(gameStats, { ...soloGameStats });
-    dispatch(setAddSoloGameStat(soloGameStats));
+    await setDoc(gameStats, { [matchInfo]: [...soloGameStats] });
+    dispatch(setAddSoloGameStat({ [matchInfo]: [...soloGameStats] }));
     //add solo game stats
     const loosePoints = soloGameStats.reduce((acc, val) => (acc += val.loosePoints), 0);
     const winPoints = soloGameStats.reduce((acc, val) => (acc += val.winPoints), 0);
@@ -215,7 +215,6 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
-  console.log(opponentTeamName);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}

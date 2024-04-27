@@ -1,9 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { TPlayer } from "../../types/types";
+import { TGameStats } from "../../types/types";
 import { RootState } from "../store";
 
 type TListOfTeams = {
-  gamesStats: TPlayer[][];
+  gamesStats: TGameStats[];
 };
 const initialState: TListOfTeams = { gamesStats: [] };
 
@@ -11,11 +11,11 @@ export const gamesStatsSlice = createSlice({
   name: "gamesStats",
   initialState,
   reducers: {
-    setAllGameStats: (state, action: PayloadAction<TPlayer[][]>) => {
+    setAllGameStats: (state, action: PayloadAction<TGameStats[]>) => {
       state.gamesStats = action.payload;
       localStorage.setItem("gamesStats", JSON.stringify(action.payload));
     },
-    setAddSoloGameStat: (state, action: PayloadAction<TPlayer[]>) => {
+    setAddSoloGameStat: (state, action: PayloadAction<TGameStats>) => {
       state.gamesStats = [...state.gamesStats, action.payload];
     },
   },

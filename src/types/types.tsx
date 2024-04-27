@@ -108,3 +108,7 @@ export type TZoneStates = {
 export type TZoneValue = {
   [key: string]: number;
 };
+
+export type TGameStats = {
+  [key: string]: TPlayer[];
+};
