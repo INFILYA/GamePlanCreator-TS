@@ -361,6 +361,13 @@ main {
           }
           .match-number-wrapper {
             width: 50%;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            div {
+              height: 50%;
+              width: 50%;
+            }
             select {
               width: 12vw;
               border: 2px solid black;
@@ -598,7 +605,7 @@ main {
             font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
           }
           .my-row-zones-wrapper {
-            height: 2vmax;
+            height: 100%;
           }
           .row-zones-wrapper,
           .my-row-zones-wrapper {

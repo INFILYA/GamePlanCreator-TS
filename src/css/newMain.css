@@ -362,6 +362,13 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
   width: 50%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper div {
+  height: 50%;
+  width: 50%;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select {
   width: 12vw;
@@ -637,7 +644,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
   font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper {
-  height: 2vmax;
+  height: 100%;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper {

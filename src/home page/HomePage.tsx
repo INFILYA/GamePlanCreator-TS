@@ -37,7 +37,7 @@ import {
 } from "../states/slices/indexOfGuestTeamZonesSlice";
 import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
-import { selectSoloGameStats } from "../states/slices/soloGameStatsSlice";
+import { resetGameStats, selectSoloGameStats } from "../states/slices/soloGameStatsSlice";
 import { currentDate } from "../utilities/currentDate";
 import { setAddSoloGameStat } from "../states/slices/gamesStatsSlice";
 
@@ -53,13 +53,10 @@ export function HomePage() {
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
   const soloGameStats = useSelector(selectSoloGameStats);
-
   const [showSquads, setShowSquads] = useState(true);
   const [opponentTeamName, setOpponentTeamName] = useState("");
-  const [set, setSet] = useState("");
-  const [ourScore, setOurScore] = useState(0);
-  const [opponentScore, setOpponentScore] = useState(0);
   const listOfOpponents = [
+    "Choose Opponent",
     "Maverick Longhorns",
     "Pakmen Gold Jessy",
     "Pakmen Gold Omar",
@@ -104,6 +101,8 @@ export function HomePage() {
     dispatch(setGuestTeam(""));
     dispatch(setBackGuestTeamSelects(emptyPlayers));
     dispatch(setInfoOfPlayer(null));
+    dispatch(resetGameStats());
+    setOpponentTeamName("");
     resetTheBoardForHomeTeam();
   }
   function resetTheBoardForHomeTeam() {
@@ -147,7 +146,7 @@ export function HomePage() {
 
   async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // Refresh players
+    // Refresh StartingSix players
     const names = guestTeamOptions.map((player) => player.name);
     const updatedStartingSix = listOfPlayers.filter(
       (player) => player.name === names[names.indexOf(player.name)]
@@ -155,12 +154,17 @@ export function HomePage() {
     updatedStartingSix.forEach((player) => {
       setDoc(doc(dataBase, "players", player.name), player);
     });
+    // Refresh SubstitutionPlayers players
+    const benchNames = homeTeamOptions.map((player) => player.name);
+    const updatedSubstitutionPlayers = listOfPlayers.filter(
+      (player) => player.name === benchNames[benchNames.indexOf(player.name)]
+    );
+    updatedSubstitutionPlayers.forEach((player) => {
+      setDoc(doc(dataBase, "players", player.name), player);
+    });
     // download solo game statisic
-    const matchInfo = `${
-      guestTeam[0].id
-    } - ${opponentTeamName}; ${ourScore} - ${opponentScore}; ${set} - ${currentDate()}`;
+    const matchInfo = `${guestTeam[0].id} - ${opponentTeamName}; ${currentDate()}`;
     const gameStats = doc(dataBase, "gameStats", matchInfo);
-    console.log({ ...soloGameStats });
     await setDoc(gameStats, { ...soloGameStats });
     dispatch(setAddSoloGameStat(soloGameStats));
     //add solo game stats
@@ -211,11 +215,11 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
-  const numbersForScore = Array(36).fill(0);
-
+  console.log(opponentTeamName);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
+      {!showSquads && <div>xxx</div>}
       <SectionWrapper
         className="playground-section"
         backGround={!playerInfoWindow && <img src="/photos/playarea.jpg" alt="" />}
@@ -238,56 +242,29 @@ export function HomePage() {
                           Reset
                         </RegularButton>
                       </div>
-                      {!showSquads && (
-                        <div className="match-number-wrapper">
-                          <select onChange={(e) => setOpponentTeamName(e.target.value)}>
-                            <option value={opponentTeamName}>Opponent</option>
+                      <div className="match-number-wrapper">
+                        <div>
+                          <RegularButton
+                            onClick={hideSquads}
+                            type="button"
+                            $color="orangered"
+                            $background="white"
+                          >
+                            Statistic mode
+                          </RegularButton>
+                        </div>
+                        {!showSquads && (
+                          <select
+                            onChange={(e) => setOpponentTeamName(e.target.value)}
+                            value={opponentTeamName}
+                          >
                             {listOfOpponents.map((team) => (
                               <option key={team} value={team}>
                                 {team}
                               </option>
                             ))}
                           </select>
-                          <select
-                            onChange={(e) => setSet(e.target.value)}
-                            className="score-wrapper"
-                          >
-                            <option value={set}>Set</option>
-                            <option value={"Set 1"}>Set 1</option>
-                            <option value={"Set 2"}>Set 2</option>
-                            <option value={"Set 3"}>Set 3</option>
-                          </select>
-                          <select
-                            onChange={(e) => setOurScore(+e.target.value)}
-                            className="score-wrapper"
-                          >
-                            {numbersForScore.map((number, index) => (
-                              <option key={number + index} value={+index}>
-                                {+index}
-                              </option>
-                            ))}
-                          </select>
-                          <select
-                            onChange={(e) => setOpponentScore(+e.target.value)}
-                            className="score-wrapper"
-                          >
-                            {numbersForScore.map((number, index) => (
-                              <option key={number + index} value={+index}>
-                                {+index}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
-                      <div>
-                        <RegularButton
-                          onClick={hideSquads}
-                          type="button"
-                          $color="orangered"
-                          $background="white"
-                        >
-                          Statistic mode
-                        </RegularButton>
+                        )}
                       </div>
                     </>
                   ) : (
@@ -499,6 +476,7 @@ export function HomePage() {
             }
           />
         ))}
+      {!showSquads && <div>xxx</div>}
     </article>
   );
 }

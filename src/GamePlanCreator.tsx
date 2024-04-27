@@ -105,7 +105,7 @@ export default function GamePlanCreator() {
           <>
             <div className="loading-logo-wrapper">
               <div className="logo-wrapper">
-                <img src="/photos/ball.png" alt="" className="back-photo" />
+                <img src="/photos/gameball.png" alt="" className="back-photo" />
                 <MyLogo />
                 <div className="backGround"></div>
               </div>

@@ -4,9 +4,7 @@ import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { pushFromHomeTeamBoard } from "../../states/slices/homePlayersSlice";
 import { pushFromGuestTeamBoard } from "../../states/slices/guestPlayersSlice";
 import { resetHomeTeamIndexOfZones } from "../../states/slices/indexOfHomeTeamZonesSlice";
-import {
-  resetGuestTeamIndexOfZones,
-} from "../../states/slices/indexOfGuestTeamZonesSlice";
+import { resetGuestTeamIndexOfZones } from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { ChangeEvent, useState } from "react";
 import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
 import {
@@ -156,32 +154,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
               </button>
             </div>
           </div>
-          {!my && !showSquads && (
+          {!showSquads && (
             <div className="errors-field-wrapper">
               <table>
-                {/* <tbody>
-                  <tr>
-                    <th>Score</th>
-                    <th>Type</th>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </tbody> */}
-
                 <tbody>
                   <tr>
                     <th>Type</th>

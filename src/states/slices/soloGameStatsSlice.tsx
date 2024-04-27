@@ -18,8 +18,11 @@ export const soloGameStatsSlice = createSlice({
         );
       } else state.soloGameStats = [...state.soloGameStats, action.payload];
     },
+    resetGameStats: (state) => {
+      state.soloGameStats = [];
+    },
   },
 });
-export const { setSoloGameStats } = soloGameStatsSlice.actions;
+export const { setSoloGameStats, resetGameStats } = soloGameStatsSlice.actions;
 export default soloGameStatsSlice.reducer;
 export const selectSoloGameStats = (state: RootState) => state.soloGameStats.soloGameStats;
