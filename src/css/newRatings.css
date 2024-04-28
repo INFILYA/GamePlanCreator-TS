@@ -15,6 +15,7 @@
   font-size: 1.5vw;
   background-color: darkorange;
   border-radius: 5px;
+  text-align: center;
 }
 .main-content-wrapper .ratings-section tbody .showInfo-wrapper {
   top: 50%;

@@ -30,7 +30,6 @@ export function Categorys(props: TCategorys) {
     "plusMinusOnAttack",
     "percentOfAttack",
   ];
-  console.log(filteredPlayers);
   return (
     <>
       <tr>

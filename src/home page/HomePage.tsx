@@ -55,6 +55,7 @@ export function HomePage() {
   const soloGameStats = useSelector(selectSoloGameStats);
   const [showSquads, setShowSquads] = useState(true);
   const [opponentTeamName, setOpponentTeamName] = useState("");
+  const [set, setSet] = useState("");
   const listOfOpponents = [
     "Choose Opponent",
     "Maverick Longhorns",
@@ -103,6 +104,7 @@ export function HomePage() {
     dispatch(setInfoOfPlayer(null));
     dispatch(resetGameStats());
     setOpponentTeamName("");
+    setSet("");
     resetTheBoardForHomeTeam();
   }
   function resetTheBoardForHomeTeam() {
@@ -163,7 +165,7 @@ export function HomePage() {
       setDoc(doc(dataBase, "players", player.name), player);
     });
     // download solo game statisic
-    const matchInfo = `${guestTeam[0].id} - ${opponentTeamName}; ${currentDate()}`;
+    const matchInfo = `${guestTeam[0].id} - ${opponentTeamName}; ${set}; ${currentDate()}`;
     const gameStats = doc(dataBase, "gameStats", matchInfo);
     await setDoc(gameStats, { [matchInfo]: [...soloGameStats] });
     dispatch(setAddSoloGameStat({ [matchInfo]: [...soloGameStats] }));
@@ -215,6 +217,7 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
+  console.log(set);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -253,16 +256,24 @@ export function HomePage() {
                           </RegularButton>
                         </div>
                         {!showSquads && (
-                          <select
-                            onChange={(e) => setOpponentTeamName(e.target.value)}
-                            value={opponentTeamName}
-                          >
-                            {listOfOpponents.map((team) => (
-                              <option key={team} value={team}>
-                                {team}
-                              </option>
-                            ))}
-                          </select>
+                          <>
+                            <select
+                              onChange={(e) => setOpponentTeamName(e.target.value)}
+                              value={opponentTeamName}
+                            >
+                              {listOfOpponents.map((team) => (
+                                <option key={team} value={team}>
+                                  {team}
+                                </option>
+                              ))}
+                            </select>
+                            <select onChange={(e) => setSet(e.target.value)} value={set}>
+                              <option value="">Choose set</option>
+                              <option value="Set 1">Set 1</option>
+                              <option value="Set 2">Set 2</option>
+                              <option value="Set 3">Set 3</option>
+                            </select>
+                          </>
                         )}
                       </div>
                     </>
