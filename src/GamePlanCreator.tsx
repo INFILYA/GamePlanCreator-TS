@@ -11,7 +11,7 @@ import { Auth } from "./header/components/Auth";
 import { collection, getDocs } from "firebase/firestore";
 import { dataBase } from "./config/firebase";
 import { setUserVersion } from "./states/slices/userVersionSlice";
-import { TGameStats, TPlayer, TTeam } from "./types/types";
+import { TPlayer, TTeam } from "./types/types";
 import { setAllPlayers } from "./states/slices/listOfPlayersSlice";
 import { setAllTeams } from "./states/slices/listOfTeamsSlice";
 import { HomePage } from "./home page/HomePage";
@@ -22,7 +22,6 @@ import Distribution from "./distribution/Distribution";
 import Directions from "./directions-section/Directions";
 import SendStatistic from "./loadStatistic/SendStatistic";
 import MyLogo from "./myLogo/MyLogo";
-import { setAllGameStats } from "./states/slices/gamesStatsSlice";
 import GamesStatistic from "./loadStatistic/GamesStatistic";
 
 export default function GamePlanCreator() {
@@ -43,7 +42,6 @@ export default function GamePlanCreator() {
         if (adminVersion === userVersion) {
           dispatch(setAllPlayers(getFromLocalStorage("players")));
           dispatch(setAllTeams(getFromLocalStorage("teams")));
-          dispatch(setAllGameStats(getFromLocalStorage("gamesStats")));
           console.log(`Versions of DATA are equal ${userVersion} = ${adminVersion}`);
           return;
         }
@@ -53,7 +51,6 @@ export default function GamePlanCreator() {
           localStorage.setItem("currentUserVersion", JSON.stringify(adminVersion));
           getTeams();
           getPlayers();
-          getGameStats();
           console.log(`Versions of DATA are not equal ${userVersion} != ${adminVersion}`);
           return;
         }
@@ -81,18 +78,18 @@ export default function GamePlanCreator() {
         console.error(error);
       }
     }
-    async function getGameStats() {
-      try {
-        const data = await getDocs(collection(dataBase, "gameStats"));
-        const dataOfGameStata = data.docs.map((doc) => ({
-          ...doc.data(),
-        })) as unknown as TGameStats[];
-        console.log(dataOfGameStata);
-        dispatch(setAllGameStats(dataOfGameStata));
-      } catch (error) {
-        console.error(error);
-      }
-    }
+    // async function getGameStats() {
+    //   try {
+    //     const data = await getDocs(collection(dataBase, "gameStats"));
+    //     const dataOfGameStata = data.docs.map((doc) => ({
+    //       ...doc.data(),
+    //     })) as unknown as TGameStats[];
+    //     console.log(dataOfGameStata);
+    //     dispatch(setAllGameStats(dataOfGameStata));
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // }
     checkVersionOfData();
   }, [dispatch, userVersion]);
 

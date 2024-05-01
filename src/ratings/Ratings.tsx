@@ -50,16 +50,18 @@ export function Ratings() {
               <table>
                 <caption className="showRatings-wrapper">
                   <nav>
-                    {positions.map((position, index) => (
-                      <div key={index}>
-                        <RegularButton
-                          onClick={() => setPositionFilter(position)}
-                          type="button"
-                          $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
-                          $background={chosenPosition === position ? "#0057b8" : "#ffd700"}
-                        >{`${position}s`}</RegularButton>
-                      </div>
-                    ))}
+                    <div className="team-filter-wrapper">
+                      {positions.map((position, index) => (
+                        <div key={index}>
+                          <RegularButton
+                            onClick={() => setPositionFilter(position)}
+                            type="button"
+                            $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
+                            $background={chosenPosition === position ? "#0057b8" : "#ffd700"}
+                          >{`${position}s`}</RegularButton>
+                        </div>
+                      ))}
+                    </div>
                   </nav>
                 </caption>
                 {isChoosenFilter && (

@@ -9,8 +9,14 @@
   margin: 1vw 0;
   display: flex;
   justify-content: center;
+  flex-direction: column;
 }
-.main-content-wrapper .ratings-section caption nav select {
+.main-content-wrapper .ratings-section caption nav .team-filter-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 1vw 0 1vw 0;
+}
+.main-content-wrapper .ratings-section caption nav .choosen-game-filter-wrapper select {
   border: 2px solid black;
   font-size: 1.5vw;
   background-color: darkorange;

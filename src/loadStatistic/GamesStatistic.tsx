@@ -1,6 +1,13 @@
 import { useSelector } from "react-redux";
-import { selectGamesStats } from "../states/slices/gamesStatsSlice";
-import { ChangeEvent, useState } from "react";
+import {
+  fetchGamesStats,
+  selectFilteredGameStats,
+  selectGamesStats,
+  selectorFilter,
+  setgameFilterByDate,
+  setgameFilterByTeam,
+} from "../states/slices/gamesStatsSlice";
+import { ChangeEvent, useEffect, useState } from "react";
 import { TMix } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import {
@@ -14,15 +21,32 @@ import { Rows } from "../ratings/components/Rows";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import { selectPlayerInfo } from "../states/slices/playerInfoSlice";
 import { PersonalInformationOfPlayer } from "../personalInfo/PersonalInformationOfPlayer";
+import { useAppDispatch } from "../states/store";
+import { RegularButton } from "../css/Button.styled";
 
 export default function GamesStatistic() {
+  const dispatch = useAppDispatch();
   const gamesStats = useSelector(selectGamesStats);
   const listOfTeams = useSelector(selectListOfTeams);
   const playerInfo = useSelector(selectPlayerInfo);
-
+  const filteredGamesStats = useSelector(selectFilteredGameStats);
+  const teamFilter = useSelector(selectorFilter);
+  const [dateFilter, setDateFilter] = useState("");
   const [filter, setFilter] = useState("");
   const [filteredGames, setFilteredGames] = useState<TMix[]>([]);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
+
+  useEffect(() => {
+    async function loadGames() {
+      try {
+        dispatch(fetchGamesStats());
+      } catch (e) {
+        console.error(e);
+        alert("something go wrong");
+      }
+    }
+    loadGames();
+  }, [dispatch]);
 
   function calculateForTeamData<T extends TMix>(obj: T): TMix {
     if (filter.length === 0) return obj;
@@ -67,10 +91,23 @@ export default function GamesStatistic() {
     const choosenGame = gamesStats.find((game) => Object.keys(game).find((name) => name === value));
     if (!choosenGame) return;
     setFilteredGames([...Object.values(choosenGame)[0]]);
-    console.log(filter);
   }
+  function setGameFilterByTeam(name: string) {
+    dispatch(setgameFilterByTeam(name));
+    setFilteredGames([]);
+    setFilter("");
+    setDateFilter("");
+  }
+
+  function setGameFilterByDate(e: ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setDateFilter(value);
+    dispatch(setgameFilterByDate(value));
+  }
+
   const fullGameStats = calculateForTeamData(sumOfAllPlayersSoloGamesStats as TMix);
-  const sortedGameStats = [...gamesStats].sort((a, b) => compare(b, a));
+  const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
+  const namesOfTeams = listOfTeams.map((team) => team.name);
   return (
     <article className="main-content-wrapper">
       <SectionWrapper
@@ -83,14 +120,33 @@ export default function GamesStatistic() {
               <table>
                 <caption className="showRatings-wrapper">
                   <nav>
-                    <select onChange={setGameFilter}>
-                      <option value="">Choose Game</option>
-                      {sortedGameStats.map((game, index) => (
-                        <option value={Object.keys(game)} key={index}>
-                          {Object.keys(game)}
-                        </option>
+                    <div className="team-filter-wrapper">
+                      {namesOfTeams.map((name) => (
+                        <div key={name}>
+                          <RegularButton
+                            onClick={() => setGameFilterByTeam(name)}
+                            type="button"
+                            $color={teamFilter.team === name ? "#ffd700" : "#0057b8"}
+                            $background={teamFilter.team === name ? "#0057b8" : "#ffd700"}
+                          >
+                            {name}
+                          </RegularButton>
+                        </div>
                       ))}
-                    </select>
+                    </div>
+                    <div className="choosen-game-filter-wrapper">
+                      <input type="date" onChange={setGameFilterByDate} value={dateFilter} />
+                    </div>
+                    <div className="choosen-game-filter-wrapper">
+                      <select onChange={setGameFilter} value={filter}>
+                        <option value="">Choose Game ({sortedGameStats.length})</option>
+                        {sortedGameStats.map((game, index) => (
+                          <option value={Object.keys(game)} key={index}>
+                            {Object.keys(game)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </nav>
                 </caption>
                 <tbody className="rating-table-wrapper">
