@@ -97,10 +97,11 @@ export default function GamesStatistic() {
     setFilteredGames([]);
     setFilter("");
     setDateFilter("");
+    dispatch(setgameFilterByDate(""));
   }
 
   function setGameFilterByDate(e: ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value;
+    const value = e.target.value.toUpperCase();
     setDateFilter(value);
     dispatch(setgameFilterByDate(value));
   }
@@ -135,7 +136,8 @@ export default function GamesStatistic() {
                       ))}
                     </div>
                     <div className="choosen-game-filter-wrapper">
-                      <input type="date" onChange={setGameFilterByDate} value={dateFilter} />
+                      <div>Add filter</div>
+                      <input type="text" onChange={setGameFilterByDate} value={dateFilter} />
                     </div>
                     <div className="choosen-game-filter-wrapper">
                       <select onChange={setGameFilter} value={filter}>
@@ -151,7 +153,7 @@ export default function GamesStatistic() {
                 </caption>
                 <tbody className="rating-table-wrapper">
                   <Categorys filteredPlayers={filteredGames} rankByValue={rankByValue} />
-                  {filter && <Rows filteredPlayers={[fullGameStats]} />}
+                  {filter && <Rows filteredPlayers={[fullGameStats]} lastRow={true} />}
                 </tbody>
               </table>
             )}

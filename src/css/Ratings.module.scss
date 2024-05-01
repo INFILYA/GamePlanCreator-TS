@@ -1,89 +1,108 @@
 .main-content-wrapper {
   .ratings-section {
     width: 100%;
-    caption {
-      min-width: 340px;
-      nav {
-        width: 100%;
-        margin: 1vw 0;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        .team-filter-wrapper {
+    table {
+      width: clamp(325px, 100%, 1300px);
+      table-layout: fixed;
+
+      caption {
+        min-width: 340px;
+        nav {
+          width: 100%;
+          margin: 1vw 0;
           display: flex;
           justify-content: center;
-          margin: 1vw 0 1vw 0;
-        }
-        .choosen-game-filter-wrapper {
-          select {
-            border: 2px solid black;
-            font-size: 1.5vw;
-            background-color: darkorange;
-            border-radius: 5px;
-            text-align: center;
+          flex-direction: column;
+          .team-filter-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 1vw;
           }
-        }
-      }
-    }
-    tbody {
-      .showInfo-wrapper {
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        position: fixed;
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        height: 100%;
-        align-items: center;
-        background-color: rgba(0, 0, 0, 0.5);
-        .hidden-player-information-wrapper {
-          width: 55vw;
-        }
-      }
-      tr {
-        .rating-player-name {
-          white-space: nowrap;
-          padding: 0 0.5vw;
-          text-align: start;
-        }
-        th {
-          background-color: rgb(100, 149, 237);
-          border: 2px solid black;
-          button {
-            color: black;
-          }
-          &:hover {
-            background-color: orangered;
-            transform: translateY(-1vw);
-            transition: 0.7s;
-            button {
-              color: white;
+          .choosen-game-filter-wrapper {
+            margin: 1vw 0 1vw 0;
+            div {
+              font-size: 1.25vmax;
+              margin: 0.1vmax 0 0.1vmax 0;
+            }
+            select,
+            input {
+              border: 2px solid black;
+              font-size: 1.25vmax;
+              background-color: darkorange;
+              border-radius: 5px;
+              text-align: center;
+            }
+            input {
+              background-color: transparent;
             }
           }
-          button {
-            width: 100%;
-            background-color: transparent;
-            border: none;
-            font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.5rem);
-            font-weight: 600;
-            padding: 1vw 0.5vw;
-          }
         }
-        td {
-          font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.5rem);
-          box-sizing: border-box;
-          border: 1px solid black;
-          font-weight: 600;
-          img {
-            width: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
-          }
-        }
-        .name-wrapper {
+      }
+      tbody {
+        .showInfo-wrapper {
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          position: fixed;
           display: flex;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
           align-items: center;
-          justify-content: space-between;
-          padding: 0.5vw;
+          background-color: rgba(0, 0, 0, 0.5);
+          .hidden-player-information-wrapper {
+            width: 55vw;
+          }
+        }
+        tr {
+          .rating-player-name {
+            padding: 0 0.5vw;
+            text-align: start;
+          }
+          th {
+            background-color: rgb(100, 149, 237);
+            border: 2px solid black;
+            white-space: nowrap;
+            overflow: hidden;
+
+            button {
+              color: black;
+            }
+            &:hover {
+              background-color: orangered;
+              transform: translateY(-1vw);
+              transition: 0.7s;
+              button {
+                color: white;
+              }
+            }
+            button {
+              width: 100%;
+              background-color: transparent;
+              border: none;
+              font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.5rem);
+              font-weight: 600;
+              padding: 1vw 0.5vw;
+            }
+          }
+          td {
+            font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.5rem);
+            box-sizing: border-box;
+            border: 1px solid black;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+
+            img {
+              width: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
+            }
+          }
+          // .name-wrapper {
+          //   display: flex;
+          //   align-items: center;
+          //   justify-content: space-between;
+          //   padding: 0.5vw;
+          // }
         }
       }
     }

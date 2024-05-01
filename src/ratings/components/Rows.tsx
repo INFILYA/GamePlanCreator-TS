@@ -4,26 +4,18 @@ import { TMix } from "../../types/types";
 import {
   gerPercentOfAttack,
   getAttackEfficency,
-  getPlusMinusAttack,
-  setStyle,
+  setStyleForEfficency,
+  setStyleForPercent,
 } from "../../utilities/functions";
 
 type TRows = {
   filteredPlayers: TMix[];
+  lastRow?: boolean;
 };
 
 export function Rows(props: TRows) {
-  const { filteredPlayers } = props;
+  const { filteredPlayers, lastRow } = props;
   const dispatch = useAppDispatch();
-
-  function changeBgColors(index: number) {
-    const backgrounds = [
-      { backgroundColor: "gold" },
-      { backgroundColor: "silver" },
-      { backgroundColor: "burlywood" },
-    ];
-    return backgrounds[index];
-  }
 
   function showInfoOfPlayer(name: string) {
     const pickedPlayer = filteredPlayers.find((player) => player.name === name);
@@ -38,21 +30,24 @@ export function Rows(props: TRows) {
           onClick={() => showInfoOfPlayer(player.name)}
           key={index}
           className="rating-row"
-          style={changeBgColors(index)}
+          style={lastRow ? { backgroundColor: "gainsboro" } : {}}
         >
-          <td className="rating-player-name">
-            {index + 1}. {player.name}
+          <td className="rating-player-name" style={lastRow ? { textAlign: "center" } : {}}>
+            {!lastRow && `${index + 1}.`} {player.name}
           </td>
-          <td style={{ display: "flex", justifyContent: "center" }}>
+          <td>
             <img src={`/photos/${"team" in player ? player.team : player.name}.png`} alt="" />
           </td>
-          <td>{player.leftInGame}</td>
-          <td>{player.attacksInBlock}</td>
-          <td>{player.loosePoints}</td>
-          <td>{player.winPoints}</td>
-          <td style={setStyle(getAttackEfficency(player))}>{getAttackEfficency(player)} %</td>
-          <td style={setStyle(getPlusMinusAttack(player))}>{getPlusMinusAttack(player)}</td>
-          <td>{gerPercentOfAttack(player)} %</td>
+          <td style={lastRow ? { backgroundColor: "yellow" } : {}}>{player.leftInGame}</td>
+          <td style={lastRow ? { backgroundColor: "orange" } : {}}>{player.attacksInBlock}</td>
+          <td style={lastRow ? { backgroundColor: "orangered" } : {}}>{player.loosePoints}</td>
+          <td style={lastRow ? { backgroundColor: "lightgreen" } : {}}>{player.winPoints}</td>
+          <td style={setStyleForEfficency(getAttackEfficency(player))}>
+            {getAttackEfficency(player)} %
+          </td>
+          <td style={setStyleForPercent(gerPercentOfAttack(player))}>
+            {gerPercentOfAttack(player)} %
+          </td>
         </tr>
       ))}
     </>

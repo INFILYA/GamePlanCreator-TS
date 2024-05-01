@@ -13,6 +13,7 @@ import {
   gerPercentOfAttack,
   getAttackEfficency,
   getPlusMinusAttack,
+  listOfOpponents,
 } from "../utilities/functions";
 import { TPlayer, TTeam } from "../types/types";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -56,39 +57,7 @@ export function HomePage() {
   const [showSquads, setShowSquads] = useState(true);
   const [opponentTeamName, setOpponentTeamName] = useState("");
   const [set, setSet] = useState("");
-  const listOfOpponents = [
-    "Choose Opponent",
-    "Maverick Longhorns",
-    "Pakmen Gold Jessy",
-    "Pakmen Gold Omar",
-    "Durham Attack Power",
-    "Maverick Rangers",
-    "Toronto Thunderbolts Smash",
-    "FCVC Hyperion",
-    "KW Preds Invictus",
-    "MAC Iron",
-    "Kingston Rock Black",
-    "Niagara Rapids Alliance",
-    "Titans Black",
-    "Storm Voltage",
-    "Phoenix Skybirds",
-    "Scorpions Menace",
-    "Unity Valour",
-    "Pakmen Black Lam",
-    "Leaside Lobsters",
-    "Reach Rampage",
-    "Barie Elites Phoenix",
-    "Ottawa fusion Purple",
-    "Durham Attack Blast",
-    "KW Preds Wolwerines",
-    "41SIX Bounce",
-    "Ancaster Lions Fury",
-    "Halton Hurricanes Category 8BB",
-    "Niagara Rapids Crush",
-    "FCVC Baobab",
-    "REACH Nitro",
-    "MAC Titanium",
-  ];
+
   const showGuestTeam = guestTeam.length !== 0;
   const showHomeTeam = homeTeam.length !== 0;
   // прибрати після / !!!!!

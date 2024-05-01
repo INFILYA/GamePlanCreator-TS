@@ -81,5 +81,5 @@ export const selectFilteredGameStats = createSelector(
   (games, filters) =>
     games
       .filter((game) => (!filters.team ? game : Object.keys(game)[0].includes(filters.team)))
-      .filter((game) => (!filters.date ? game : Object.keys(game)[0].includes(filters.date)))
+      .filter((game) => (!filters.date ? game : Object.keys(game)[0].toUpperCase().includes(filters.date)))
 );

@@ -97,9 +97,17 @@ export const emptyPlayers: TPlayer[] = Array(6)
   .fill(emptyPlayer)
   .map((user, index) => ({ ...user, boardPosition: correctPositions(index) }));
 
+export function setStyleForEfficency(params: number): CSSProperties {
+  return { color: params >= 30 ? "green" : params <= 30 && params >= 25 ? "black" : "red" };
+}
+
+export function setStyleForPercent(params: number): CSSProperties {
+  return { color: params >= 50 ? "green" : params <= 50 && params >= 45 ? "black" : "red" };
+}
+
 export function setStyle(params: number): CSSProperties {
   if (params === 0) return {};
-  return { color: params >= 0 ? "green" : "red" };
+  return { color: params >= 0 ? "orangered" : "green" };
 }
 
 export function getAttackEfficency(obj: TMix) {
@@ -132,3 +140,37 @@ export function gerPercentOfAttack(obj: TMix) {
   const percents = +((obj.winPoints / sumOfTotalAtt) * 100).toFixed(1);
   return percents;
 }
+
+export const listOfOpponents = [
+  "Choose Opponent",
+  "Maverick Longhorns",
+  "Pakmen Gold Jessy",
+  "Pakmen Gold Omar",
+  "Durham Attack Power",
+  "Maverick Rangers",
+  "Toronto Thunderbolts Smash",
+  "FCVC Hyperion",
+  "KW Preds Invictus",
+  "MAC Iron",
+  "Kingston Rock Black",
+  "Niagara Rapids Alliance",
+  "Titans Black",
+  "Storm Voltage",
+  "Phoenix Skybirds",
+  "Scorpions Menace",
+  "Unity Valour",
+  "Pakmen Black Lam",
+  "Leaside Lobsters",
+  "Reach Rampage",
+  "Barie Elites Phoenix",
+  "Ottawa fusion Purple",
+  "Durham Attack Blast",
+  "KW Preds Wolwerines",
+  "41SIX Bounce",
+  "Ancaster Lions Fury",
+  "Halton Hurricanes Category 8BB",
+  "Niagara Rapids Crush",
+  "FCVC Baobab",
+  "REACH Nitro",
+  "MAC Titanium",
+];
