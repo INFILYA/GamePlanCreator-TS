@@ -107,7 +107,7 @@ export function setStyleForPercent(params: number): CSSProperties {
 
 export function setStyle(params: number): CSSProperties {
   if (params === 0) return {};
-  return { color: params >= 0 ? "orangered" : "green" };
+  return { color: params >= 0 ? "green" : "orangered" };
 }
 
 export function getAttackEfficency(obj: TMix) {
@@ -139,6 +139,20 @@ export function gerPercentOfAttack(obj: TMix) {
   if (sumOfTotalAtt === 0) return 0;
   const percents = +((obj.winPoints / sumOfTotalAtt) * 100).toFixed(1);
   return percents;
+}
+
+export function calculateTotalofActions(obj: TMix[]) {
+  const loosePoints = obj.reduce((acc, val) => (acc += val.loosePoints), 0);
+  const winPoints = obj.reduce((acc, val) => (acc += val.winPoints), 0);
+  const leftInTheGame = obj.reduce((acc, val) => (acc += val.leftInGame), 0);
+  const attacksInBlock = obj.reduce((acc, val) => (acc += val.attacksInBlock), 0);
+  const sumOfAllPlayersSoloGamesStats = {
+    loosePoints: loosePoints,
+    winPoints: winPoints,
+    leftInGame: leftInTheGame,
+    attacksInBlock: attacksInBlock,
+  };
+  return sumOfAllPlayersSoloGamesStats;
 }
 
 export const listOfOpponents = [

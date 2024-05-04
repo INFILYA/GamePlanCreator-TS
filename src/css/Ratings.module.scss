@@ -1,8 +1,17 @@
 .main-content-wrapper {
   .ratings-section {
     width: 100%;
+    .diagram-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 2vw;
+      .diagram-content {
+        width: 40%;
+      }
+    }
     table {
-      width: clamp(325px, 100%, 1300px);
+      // width: clamp(325px, 100%, 1300px);
       table-layout: fixed;
 
       caption {
@@ -34,6 +43,11 @@
             }
             input {
               background-color: transparent;
+            }
+          }
+          .set-selection-wrapper {
+            input {
+              margin: 0 2vw;
             }
           }
         }

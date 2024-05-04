@@ -2,14 +2,17 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { useSelector } from "react-redux";
 import { selectPlayerInfo } from "../../states/slices/playerInfoSlice";
+import { TMix } from "../../types/types";
 
 type TDiagrammProps = {
   link: string;
+  data?: TMix;
 };
 
 export default function Diagramm(props: TDiagrammProps) {
-  const { link } = props;
-  const playerInfo = useSelector(selectPlayerInfo);
+  const { link, data } = props;
+  const playerInformation = useSelector(selectPlayerInfo);
+  const playerInfo = data || playerInformation;
   const colors = ["lightgreen", "yellow", "orange", "orangered"];
   const options = {
     chart: {
@@ -59,7 +62,7 @@ export default function Diagramm(props: TDiagrammProps) {
         data: [
           [link === "Attack" ? "Win" : "Ace", rightPercentageForDiagramm(0), true],
           [
-            link === "Attack" ? "Stay in Game" : "Reception on (- , / , !)",
+            link === "Attack" ? "Game" : "Reception on (- , / , !)",
             rightPercentageForDiagramm(1),
             false,
           ],

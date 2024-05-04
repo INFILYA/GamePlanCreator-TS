@@ -8,9 +8,10 @@ import {
   setgameFilterByTeam,
 } from "../states/slices/gamesStatsSlice";
 import { ChangeEvent, useEffect, useState } from "react";
-import { TMix } from "../types/types";
+import { TMix, TObjectStats, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import {
+  calculateTotalofActions,
   compare,
   gerPercentOfAttack,
   getAttackEfficency,
@@ -23,6 +24,7 @@ import { selectPlayerInfo } from "../states/slices/playerInfoSlice";
 import { PersonalInformationOfPlayer } from "../personalInfo/PersonalInformationOfPlayer";
 import { useAppDispatch } from "../states/store";
 import { RegularButton } from "../css/Button.styled";
+import Diagramm from "../personalInfo/components/Diagramm";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
@@ -33,7 +35,9 @@ export default function GamesStatistic() {
   const teamFilter = useSelector(selectorFilter);
   const [dateFilter, setDateFilter] = useState("");
   const [filter, setFilter] = useState("");
-  const [filteredGames, setFilteredGames] = useState<TMix[]>([]);
+  const [filteredGames, setFilteredGames] = useState<TObjectStats[]>([]);
+  const [choosenGameStats, setChoosenGameStats] = useState<TMix[]>([]);
+  const [saveFullGameStats, setSaveFullGameStats] = useState<TMix[]>([]);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
 
   useEffect(() => {
@@ -73,42 +77,88 @@ export default function GamesStatistic() {
     setIsBiggest(!isBiggest);
   }
 
-  const loosePoints = filteredGames.reduce((acc, val) => (acc += val.loosePoints), 0);
-  const winPoints = filteredGames.reduce((acc, val) => (acc += val.winPoints), 0);
-  const leftInTheGame = filteredGames.reduce((acc, val) => (acc += val.leftInGame), 0);
-  const attacksInBlock = filteredGames.reduce((acc, val) => (acc += val.attacksInBlock), 0);
-  const sumOfAllPlayersSoloGamesStats = {
-    loosePoints: loosePoints,
-    winPoints: winPoints,
-    leftInGame: leftInTheGame,
-    attacksInBlock: attacksInBlock,
-  };
-
-  function setGameFilter(e: ChangeEvent<HTMLSelectElement>) {
+  function handleGameFilter(e: ChangeEvent<HTMLSelectElement>) {
     const value = e.target.value;
     setFilter(value);
     setFilteredGames([]);
+    setChoosenGameStats([]);
     const choosenGame = gamesStats.find((game) => Object.keys(game).find((name) => name === value));
     if (!choosenGame) return;
-    setFilteredGames([...Object.values(choosenGame)[0]]);
+    const game = Object.values(choosenGame)[0];
+    setFilteredGames([...game]);
+    const fullSizeGameStat: TPlayer[] = [];
+    game.forEach((sets) =>
+      Object.values(sets).forEach((set) => set.forEach((player) => fullSizeGameStat.push(player)))
+    );
+    let properGameStat: TPlayer[] = [];
+    for (let i = 0; i < fullSizeGameStat.length; i++) {
+      const player = fullSizeGameStat[i];
+      if (properGameStat.some((athlete) => athlete.name === player.name)) {
+        const properPlayer = properGameStat.find((athlete) => athlete.name === player.name);
+        if (!properPlayer) return;
+        const updatedPlayer = calculateForUnion(player, properPlayer);
+        properGameStat = properGameStat.map((athlete) =>
+          athlete.name === updatedPlayer.name ? updatedPlayer : athlete
+        );
+      } else properGameStat = [...properGameStat, player];
+    }
+    setChoosenGameStats(properGameStat);
+    setSaveFullGameStats(properGameStat);
   }
+  // Обраховуємо повторних гравців
+  function calculateForUnion<T extends TMix>(obj: T, fullObj: T) {
+    const newObj = { ...obj };
+    const newFullObj = { ...fullObj };
+    for (const key in newFullObj) {
+      if (
+        key === "attacksInBlock" ||
+        key === "loosePoints" ||
+        key === "winPoints" ||
+        key === "leftInGame"
+      ) {
+        (newFullObj[key as keyof TMix] as number) += newObj[key as keyof T] as number;
+      } else continue;
+    }
+    newFullObj.percentOfAttack = gerPercentOfAttack(newFullObj); //встановлюємо процент зйому
+    newFullObj.plusMinusOnAttack = getPlusMinusAttack(newFullObj); //встановлюємо + - в атаці
+    newFullObj.efficencyAttack = getAttackEfficency(newFullObj); // встановлюємо ефективність подачі
+    return newFullObj;
+  }
+
+  //Обираємо потрібний сет
+  function handleChoosenSet(e: ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    if (value === "full") {
+      setChoosenGameStats(saveFullGameStats);
+      return;
+    }
+    const isFullGame = filteredGames.map((game) => Object.keys(game)[0]);
+    const index = isFullGame.indexOf(value);
+    setChoosenGameStats(filteredGames[index][value as keyof TObjectStats]);
+  }
+
   function setGameFilterByTeam(name: string) {
     dispatch(setgameFilterByTeam(name));
     setFilteredGames([]);
+    setChoosenGameStats([]);
     setFilter("");
     setDateFilter("");
     dispatch(setgameFilterByDate(""));
   }
 
-  function setGameFilterByDate(e: ChangeEvent<HTMLInputElement>) {
+  function handleGameFilterByDate(e: ChangeEvent<HTMLInputElement>) {
     const value = e.target.value.toUpperCase();
     setDateFilter(value);
     dispatch(setgameFilterByDate(value));
   }
 
-  const fullGameStats = calculateForTeamData(sumOfAllPlayersSoloGamesStats as TMix);
+  const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats) as TMix);
   const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
   const namesOfTeams = listOfTeams.map((team) => team.name);
+
+  console.log(choosenGameStats);
+  console.log(saveFullGameStats);
+
   return (
     <article className="main-content-wrapper">
       <SectionWrapper
@@ -118,44 +168,75 @@ export default function GamesStatistic() {
             {playerInfo ? (
               <PersonalInformationOfPlayer link="page1" />
             ) : (
-              <table>
-                <caption className="showRatings-wrapper">
-                  <nav>
-                    <div className="team-filter-wrapper">
-                      {namesOfTeams.map((name) => (
-                        <div key={name}>
-                          <RegularButton
-                            onClick={() => setGameFilterByTeam(name)}
-                            type="button"
-                            $color={teamFilter.team === name ? "#ffd700" : "#0057b8"}
-                            $background={teamFilter.team === name ? "#0057b8" : "#ffd700"}
-                          >
-                            {name}
-                          </RegularButton>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="choosen-game-filter-wrapper">
-                      <div>Add filter</div>
-                      <input type="text" onChange={setGameFilterByDate} value={dateFilter} />
-                    </div>
-                    <div className="choosen-game-filter-wrapper">
-                      <select onChange={setGameFilter} value={filter}>
-                        <option value="">Choose Game ({sortedGameStats.length})</option>
-                        {sortedGameStats.map((game, index) => (
-                          <option value={Object.keys(game)} key={index}>
-                            {Object.keys(game)}
-                          </option>
+              <>
+                <table>
+                  <caption className="showRatings-wrapper">
+                    <nav>
+                      <div className="team-filter-wrapper">
+                        {namesOfTeams.map((name) => (
+                          <div key={name}>
+                            <RegularButton
+                              onClick={() => setGameFilterByTeam(name)}
+                              type="button"
+                              $color={teamFilter.team === name ? "#ffd700" : "#0057b8"}
+                              $background={teamFilter.team === name ? "#0057b8" : "#ffd700"}
+                            >
+                              {name}
+                            </RegularButton>
+                          </div>
                         ))}
-                      </select>
+                      </div>
+                      <div className="choosen-game-filter-wrapper">
+                        <div>Add filter</div>
+                        <input type="text" onChange={handleGameFilterByDate} value={dateFilter} />
+                      </div>
+                      <div className="choosen-game-filter-wrapper">
+                        <select onChange={handleGameFilter} value={filter}>
+                          <option value="">Choose Game ({sortedGameStats.length})</option>
+                          {sortedGameStats.map((game, index) => (
+                            <option value={Object.keys(game)} key={index}>
+                              {Object.keys(game)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {filteredGames.length !== 0 && (
+                        <div className="set-selection-wrapper">
+                          {filteredGames.map((set) => (
+                            <>
+                              <div>{Object.keys(set)}</div>
+                              <input
+                                type="checkbox"
+                                value={Object.keys(set)}
+                                onChange={handleChoosenSet}
+                                checked={Object.values(set)[0] === choosenGameStats}
+                              />
+                            </>
+                          ))}
+                          <div>Full game</div>
+                          <input
+                            type="checkbox"
+                            value="full"
+                            onChange={handleChoosenSet}
+                            checked={saveFullGameStats === choosenGameStats}
+                          />
+                        </div>
+                      )}
+                    </nav>
+                  </caption>
+                  <tbody className="rating-table-wrapper">
+                    <Categorys filteredPlayers={choosenGameStats} rankByValue={rankByValue} />
+                    {filter && <Rows filteredPlayers={[fullGameStats]} lastRow={true} />}
+                  </tbody>
+                </table>
+                {filter && (
+                  <div className="diagram-wrapper">
+                    <div className="diagram-content">
+                      <Diagramm link="Attack" data={fullGameStats} />
                     </div>
-                  </nav>
-                </caption>
-                <tbody className="rating-table-wrapper">
-                  <Categorys filteredPlayers={filteredGames} rankByValue={rankByValue} />
-                  {filter && <Rows filteredPlayers={[fullGameStats]} lastRow={true} />}
-                </tbody>
-              </table>
+                  </div>
+                )}
+              </>
             )}
           </>
         }

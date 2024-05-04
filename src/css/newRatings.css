@@ -1,8 +1,16 @@
 .main-content-wrapper .ratings-section {
   width: 100%;
 }
+.main-content-wrapper .ratings-section .diagram-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 2vw;
+}
+.main-content-wrapper .ratings-section .diagram-wrapper .diagram-content {
+  width: 40%;
+}
 .main-content-wrapper .ratings-section table {
-  width: clamp(325px, 100%, 1300px);
   table-layout: fixed;
 }
 .main-content-wrapper .ratings-section table caption {
@@ -37,6 +45,9 @@
 }
 .main-content-wrapper .ratings-section table caption nav .choosen-game-filter-wrapper input {
   background-color: transparent;
+}
+.main-content-wrapper .ratings-section table caption nav .set-selection-wrapper input {
+  margin: 0 2vw;
 }
 .main-content-wrapper .ratings-section table tbody .showInfo-wrapper {
   top: 50%;
