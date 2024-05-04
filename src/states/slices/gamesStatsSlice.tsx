@@ -21,13 +21,13 @@ export const fetchGamesStats = createAsyncThunk("", async () => {
 
 type TListOfTeams = {
   gamesStats: TGameStats[];
-  gameFilters: { team: string; date: string };
+  gameFilters: { team: string };
   loading: boolean;
   failed: boolean;
 };
 const initialState: TListOfTeams = {
   gamesStats: [],
-  gameFilters: { team: "", date: "" },
+  gameFilters: { team: "" },
   loading: true,
   failed: false,
 };
@@ -45,9 +45,6 @@ export const gamesStatsSlice = createSlice({
     },
     setgameFilterByTeam: (state, action: PayloadAction<string>) => {
       state.gameFilters.team = action.payload;
-    },
-    setgameFilterByDate: (state, action: PayloadAction<string>) => {
-      state.gameFilters.date = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -69,8 +66,7 @@ export const gamesStatsSlice = createSlice({
       });
   },
 });
-export const { setAllGameStats, setAddSoloGameStat, setgameFilterByTeam, setgameFilterByDate } =
-  gamesStatsSlice.actions;
+export const { setAllGameStats, setAddSoloGameStat, setgameFilterByTeam } = gamesStatsSlice.actions;
 export default gamesStatsSlice.reducer;
 export const selectGamesStats = (state: RootState) => state.gamesStats.gamesStats;
 export const selectorFilter = (state: RootState) => state.gamesStats.gameFilters;
@@ -79,7 +75,5 @@ export const selectFilteredGameStats = createSelector(
   selectGamesStats,
   selectorFilter,
   (games, filters) =>
-    games
-      .filter((game) => (!filters.team ? game : Object.keys(game)[0].includes(filters.team)))
-      .filter((game) => (!filters.date ? game : Object.keys(game)[0].toUpperCase().includes(filters.date)))
+    games.filter((game) => (!filters.team ? game : Object.keys(game)[0].includes(filters.team)))
 );

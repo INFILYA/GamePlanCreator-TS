@@ -1,4 +1,4 @@
-import { TMix, TMixInterSectionKeys } from "../../types/types";
+import { TMix } from "../../types/types";
 import { Rows } from "./Rows";
 
 type TCategorys = {
@@ -25,7 +25,7 @@ export function Categorys(props: TCategorys) {
         {categorys.map((category, index) => (
           <th key={index}>
             <button
-              onClick={() => rankByValue(criterias[index] as TMixInterSectionKeys, filteredPlayers)}
+              onClick={() => rankByValue(criterias[index] as keyof TMix, filteredPlayers)}
               title={`Click to sort by ${category}`}
             >
               {category}

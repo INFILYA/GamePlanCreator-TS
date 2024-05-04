@@ -4,7 +4,6 @@ import {
   selectFilteredGameStats,
   selectGamesStats,
   selectorFilter,
-  setgameFilterByDate,
   setgameFilterByTeam,
 } from "../states/slices/gamesStatsSlice";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -25,15 +24,16 @@ import { PersonalInformationOfPlayer } from "../personalInfo/PersonalInformation
 import { useAppDispatch } from "../states/store";
 import { RegularButton } from "../css/Button.styled";
 import Diagramm from "../personalInfo/components/Diagramm";
+import { useSetWidth } from "../utilities/useSetWidth";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
+  const isBurger = useSetWidth() > 568;
   const gamesStats = useSelector(selectGamesStats);
   const listOfTeams = useSelector(selectListOfTeams);
   const playerInfo = useSelector(selectPlayerInfo);
   const filteredGamesStats = useSelector(selectFilteredGameStats);
   const teamFilter = useSelector(selectorFilter);
-  const [dateFilter, setDateFilter] = useState("");
   const [filter, setFilter] = useState("");
   const [filteredGames, setFilteredGames] = useState<TObjectStats[]>([]);
   const [choosenGameStats, setChoosenGameStats] = useState<TMix[]>([]);
@@ -142,22 +142,11 @@ export default function GamesStatistic() {
     setFilteredGames([]);
     setChoosenGameStats([]);
     setFilter("");
-    setDateFilter("");
-    dispatch(setgameFilterByDate(""));
-  }
-
-  function handleGameFilterByDate(e: ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value.toUpperCase();
-    setDateFilter(value);
-    dispatch(setgameFilterByDate(value));
   }
 
   const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats) as TMix);
   const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
   const namesOfTeams = listOfTeams.map((team) => team.name);
-
-  console.log(choosenGameStats);
-  console.log(saveFullGameStats);
 
   return (
     <article className="main-content-wrapper">
@@ -187,10 +176,6 @@ export default function GamesStatistic() {
                         ))}
                       </div>
                       <div className="choosen-game-filter-wrapper">
-                        <div>Add filter</div>
-                        <input type="text" onChange={handleGameFilterByDate} value={dateFilter} />
-                      </div>
-                      <div className="choosen-game-filter-wrapper">
                         <select onChange={handleGameFilter} value={filter}>
                           <option value="">Choose Game ({sortedGameStats.length})</option>
                           {sortedGameStats.map((game, index) => (
@@ -203,7 +188,7 @@ export default function GamesStatistic() {
                       {filteredGames.length !== 0 && (
                         <div className="set-selection-wrapper">
                           {filteredGames.map((set) => (
-                            <>
+                            <div key={Object.keys(set)[0]}>
                               <div>{Object.keys(set)}</div>
                               <input
                                 type="checkbox"
@@ -211,15 +196,17 @@ export default function GamesStatistic() {
                                 onChange={handleChoosenSet}
                                 checked={Object.values(set)[0] === choosenGameStats}
                               />
-                            </>
+                            </div>
                           ))}
-                          <div>Full game</div>
-                          <input
-                            type="checkbox"
-                            value="full"
-                            onChange={handleChoosenSet}
-                            checked={saveFullGameStats === choosenGameStats}
-                          />
+                          <div>
+                            <div>Full game</div>
+                            <input
+                              type="checkbox"
+                              value="full"
+                              onChange={handleChoosenSet}
+                              checked={saveFullGameStats === choosenGameStats}
+                            />
+                          </div>
                         </div>
                       )}
                     </nav>
@@ -231,7 +218,7 @@ export default function GamesStatistic() {
                 </table>
                 {filter && (
                   <div className="diagram-wrapper">
-                    <div className="diagram-content">
+                    <div className="diagram-content" style={!isBurger ? { width: "80%" } : {}}>
                       <Diagramm link="Attack" data={fullGameStats} />
                     </div>
                   </div>

@@ -13,7 +13,7 @@
     table {
       // width: clamp(325px, 100%, 1300px);
       table-layout: fixed;
-
+      width: 100%;
       caption {
         min-width: 340px;
         nav {
@@ -46,8 +46,16 @@
             }
           }
           .set-selection-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            div {
+              font-size: 1.25vmax;
+              font-weight: bold;
+            }
             input {
-              margin: 0 2vw;
+              font-size: 1.25vmax;
+              margin: 1vw 2vw 0 2vw;
             }
           }
         }
@@ -69,10 +77,6 @@
           }
         }
         tr {
-          .rating-player-name {
-            padding: 0 0.5vw;
-            text-align: start;
-          }
           th {
             background-color: rgb(100, 149, 237);
             border: 2px solid black;
@@ -110,6 +114,11 @@
             img {
               width: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
             }
+          }
+          .rating-player-name {
+            padding: 0 0.5vw;
+            text-align: center;
+            white-space: inherit;
           }
           // .name-wrapper {
           //   display: flex;

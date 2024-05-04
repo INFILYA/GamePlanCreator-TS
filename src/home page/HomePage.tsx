@@ -186,7 +186,6 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
-  console.log(set);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}

@@ -32,9 +32,7 @@ export function Rows(props: TRows) {
           className="rating-row"
           style={lastRow ? { backgroundColor: "gainsboro" } : {}}
         >
-          <td className="rating-player-name" style={lastRow ? { textAlign: "center" } : {}}>
-            {player.name}
-          </td>
+          <td className="rating-player-name">{player.name}</td>
           <td>
             <img src={`/photos/${"team" in player ? player.team : player.name}.png`} alt="" />
           </td>
