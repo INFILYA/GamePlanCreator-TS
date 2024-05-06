@@ -1,12 +1,11 @@
 import { useSelector } from "react-redux";
 import {
-  fetchGamesStats,
   selectFilteredGameStats,
   selectGamesStats,
   selectorFilter,
   setgameFilterByTeam,
 } from "../states/slices/gamesStatsSlice";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { TMix, TObjectStats, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import {
@@ -40,17 +39,17 @@ export default function GamesStatistic() {
   const [saveFullGameStats, setSaveFullGameStats] = useState<TMix[]>([]);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
 
-  useEffect(() => {
-    async function loadGames() {
-      try {
-        dispatch(fetchGamesStats());
-      } catch (e) {
-        console.error(e);
-        alert("something go wrong");
-      }
-    }
-    loadGames();
-  }, [dispatch]);
+  // useEffect(() => {
+  //   async function loadGames() {
+  //     try {
+  //       dispatch(fetchGamesStats());
+  //     } catch (e) {
+  //       console.error(e);
+  //       alert("something go wrong");
+  //     }
+  //   }
+  //   loadGames();
+  // }, [dispatch]);
 
   function calculateForTeamData<T extends TMix>(obj: T): TMix {
     if (filter.length === 0) return obj;
@@ -104,6 +103,7 @@ export default function GamesStatistic() {
     }
     setChoosenGameStats(properGameStat);
     setSaveFullGameStats(properGameStat);
+    console.log(game);
   }
   // Обраховуємо повторних гравців
   function calculateForUnion<T extends TMix>(obj: T, fullObj: T) {
@@ -147,7 +147,6 @@ export default function GamesStatistic() {
   const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats) as TMix);
   const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
   const namesOfTeams = listOfTeams.map((team) => team.name);
-
   return (
     <article className="main-content-wrapper">
       <SectionWrapper

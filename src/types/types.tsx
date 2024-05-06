@@ -113,8 +113,6 @@ export type TGameStats = {
   [key: string]: TObjectStats[];
 };
 
-const sets = "Set 1" || "Set 2" || "Set 3";
-
 export type TObjectStats = {
-  [sets]: TPlayer[];
+  [key: string]: TPlayer[];
 };

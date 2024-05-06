@@ -13,10 +13,11 @@ export const fetchGamesStats = createAsyncThunk("", async () => {
     return getFromLocalStorage("gamesStats");
   }
   const data = await getDocs(collection(dataBase, "gameStats"));
-  const dataOfGameStata = data.docs.map((doc) => ({
+  const dataOfGameStats = data.docs.map((doc) => ({
     ...doc.data(),
   }));
-  return dataOfGameStata;
+  localStorage.setItem("gamesStats", JSON.stringify(dataOfGameStats));
+  return dataOfGameStats;
 });
 
 type TListOfTeams = {
@@ -42,6 +43,7 @@ export const gamesStatsSlice = createSlice({
     },
     setAddSoloGameStat: (state, action: PayloadAction<TGameStats>) => {
       state.gamesStats = [...state.gamesStats, action.payload];
+      localStorage.setItem("gamesStats", JSON.stringify([...state.gamesStats, action.payload]));
     },
     setgameFilterByTeam: (state, action: PayloadAction<string>) => {
       state.gameFilters.team = action.payload;
@@ -53,7 +55,6 @@ export const gamesStatsSlice = createSlice({
         state.gamesStats = action.payload;
         state.loading = false;
         state.failed = false;
-        localStorage.setItem("gamesStats", JSON.stringify(action.payload));
       })
       .addCase(fetchGamesStats.pending, (state) => {
         state.loading = true;

@@ -23,6 +23,7 @@ import Directions from "./directions-section/Directions";
 import SendStatistic from "./loadStatistic/SendStatistic";
 import MyLogo from "./myLogo/MyLogo";
 import GamesStatistic from "./loadStatistic/GamesStatistic";
+import { fetchGamesStats } from "./states/slices/gamesStatsSlice";
 
 export default function GamePlanCreator() {
   const dispatch = useAppDispatch();
@@ -78,18 +79,15 @@ export default function GamePlanCreator() {
         console.error(error);
       }
     }
-    // async function getGameStats() {
-    //   try {
-    //     const data = await getDocs(collection(dataBase, "gameStats"));
-    //     const dataOfGameStata = data.docs.map((doc) => ({
-    //       ...doc.data(),
-    //     })) as unknown as TGameStats[];
-    //     console.log(dataOfGameStata);
-    //     dispatch(setAllGameStats(dataOfGameStata));
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // }
+    async function loadGames() {
+      try {
+        dispatch(fetchGamesStats());
+      } catch (e) {
+        console.error(e);
+        alert("something go wrong");
+      }
+    }
+    loadGames();
     checkVersionOfData();
   }, [dispatch, userVersion]);
 

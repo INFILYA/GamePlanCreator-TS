@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, dataBase } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { selectUserVersion, setUserVersion } from "../states/slices/userVersionSlice";
@@ -12,10 +12,11 @@ import {
   emptyPlayers,
   gerPercentOfAttack,
   getAttackEfficency,
+  getFromLocalStorage,
   getPlusMinusAttack,
   listOfOpponents,
 } from "../utilities/functions";
-import { TPlayer, TTeam } from "../types/types";
+import { TGameStats, TPlayer, TTeam } from "../types/types";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { selectHomeTeam, setHomeTeam } from "../states/slices/homeTeamSlice";
 import { setHomePlayers } from "../states/slices/homePlayersSlice";
@@ -40,7 +41,11 @@ import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
 import { resetGameStats, selectSoloGameStats } from "../states/slices/soloGameStatsSlice";
 import { currentDate } from "../utilities/currentDate";
-import { setAddSoloGameStat } from "../states/slices/gamesStatsSlice";
+import {
+  selectFilteredGameStats,
+  setAddSoloGameStat,
+  setAllGameStats,
+} from "../states/slices/gamesStatsSlice";
 
 export function HomePage() {
   const dispatch = useAppDispatch();
@@ -57,6 +62,7 @@ export function HomePage() {
   const [showSquads, setShowSquads] = useState(true);
   const [opponentTeamName, setOpponentTeamName] = useState("");
   const [set, setSet] = useState("");
+  const filteredGamesStats = useSelector(selectFilteredGameStats);
 
   const showGuestTeam = guestTeam.length !== 0;
   const showHomeTeam = homeTeam.length !== 0;
@@ -117,50 +123,79 @@ export function HomePage() {
 
   async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // Refresh StartingSix players
-    const names = guestTeamOptions.map((player) => player.name);
-    const updatedStartingSix = listOfPlayers.filter(
-      (player) => player.name === names[names.indexOf(player.name)]
-    );
-    updatedStartingSix.forEach((player) => {
-      setDoc(doc(dataBase, "players", player.name), player);
-    });
-    // Refresh SubstitutionPlayers players
-    const benchNames = homeTeamOptions.map((player) => player.name);
-    const updatedSubstitutionPlayers = listOfPlayers.filter(
-      (player) => player.name === benchNames[benchNames.indexOf(player.name)]
-    );
-    updatedSubstitutionPlayers.forEach((player) => {
-      setDoc(doc(dataBase, "players", player.name), player);
-    });
+
     // download solo game statisic
-    const matchInfo = `${guestTeam[0].id} - ${opponentTeamName}; ${set}; ${currentDate()}`;
+    const matchInfo = `${guestTeam[0].id} - ${opponentTeamName}; ${currentDate()}`;
     const gameStats = doc(dataBase, "gameStats", matchInfo);
-    await setDoc(gameStats, { [matchInfo]: [...soloGameStats] });
-    dispatch(setAddSoloGameStat({ [matchInfo]: [...soloGameStats] }));
+    const setStat = { [set]: soloGameStats };
+    const dataOfGameStats: TGameStats[] = getFromLocalStorage("gamesStats");
+    const choosenGame = dataOfGameStats.find((game) => game[matchInfo]);
+    if (!choosenGame) {
+      await setDoc(gameStats, { [matchInfo]: [setStat] });
+      dispatch(setAddSoloGameStat({ [matchInfo]: [setStat] }));
+    } else {
+      const isSetExist = choosenGame[matchInfo].some((sets) => Object.keys(sets)[0] === set);
+      if (isSetExist) {
+        alert("set already exist");
+        return;
+      } else {
+        await updateDoc(gameStats, {
+          [matchInfo]: [...choosenGame[matchInfo], setStat],
+        });
+
+        // ТУТ ПРОБЛЕМА !!!!!
+        // const updatedDataOfGameStats = dataOfGameStats.map((game) =>
+        //   Object.keys(game)[0] === matchInfo
+        //     ? {
+        //         [matchInfo]: [...choosenGame[matchInfo], setStat],
+        //       }
+        //     : game
+        // );
+        // console.log(updatedDataOfGameStats);
+
+        // dispatch(setAllGameStats(updatedDataOfGameStats));
+      }
+    }
+    console.log("done");
+    // Refresh StartingSix players
+    // const names = guestTeamOptions.map((player) => player.name);
+    // const updatedStartingSix = listOfPlayers.filter(
+    //   (player) => player.name === names[names.indexOf(player.name)]
+    // );
+    // updatedStartingSix.forEach((player) => {
+    //   setDoc(doc(dataBase, "players", player.name), player);
+    // });
+    // // Refresh SubstitutionPlayers players
+    // const benchNames = homeTeamOptions.map((player) => player.name);
+    // const updatedSubstitutionPlayers = listOfPlayers.filter(
+    //   (player) => player.name === benchNames[benchNames.indexOf(player.name)]
+    // );
+    // updatedSubstitutionPlayers.forEach((player) => {
+    //   setDoc(doc(dataBase, "players", player.name), player);
+    // });
     //add solo game stats
-    const loosePoints = soloGameStats.reduce((acc, val) => (acc += val.loosePoints), 0);
-    const winPoints = soloGameStats.reduce((acc, val) => (acc += val.winPoints), 0);
-    const leftInTheGame = soloGameStats.reduce((acc, val) => (acc += val.leftInGame), 0);
-    const attacksInBlock = soloGameStats.reduce((acc, val) => (acc += val.attacksInBlock), 0);
-    const sumOfAllPlayersSoloGamesStats = {
-      loosePoints: loosePoints,
-      winPoints: winPoints,
-      leftInGame: leftInTheGame,
-      attacksInBlock: attacksInBlock,
-    };
-    calculateForTeamData(sumOfAllPlayersSoloGamesStats as TPlayer);
-    const updatedListOfTeams = listOfTeams.map((team) =>
-      team.id === guestTeam[0].id ? guestTeam[0] : team
-    );
-    dispatch(setAllTeams(updatedListOfTeams));
-    // download team data
-    const Team = doc(dataBase, "teams", guestTeam[0].id);
-    await setDoc(Team, guestTeam[0]);
+    // const loosePoints = soloGameStats.reduce((acc, val) => (acc += val.loosePoints), 0);
+    // const winPoints = soloGameStats.reduce((acc, val) => (acc += val.winPoints), 0);
+    // const leftInTheGame = soloGameStats.reduce((acc, val) => (acc += val.leftInGame), 0);
+    // const attacksInBlock = soloGameStats.reduce((acc, val) => (acc += val.attacksInBlock), 0);
+    // const sumOfAllPlayersSoloGamesStats = {
+    //   loosePoints: loosePoints,
+    //   winPoints: winPoints,
+    //   leftInGame: leftInTheGame,
+    //   attacksInBlock: attacksInBlock,
+    // };
+    // calculateForTeamData(sumOfAllPlayersSoloGamesStats as TPlayer);
+    // const updatedListOfTeams = listOfTeams.map((team) =>
+    //   team.id === guestTeam[0].id ? guestTeam[0] : team
+    // );
+    // dispatch(setAllTeams(updatedListOfTeams));
+    // // download team data
+    // const Team = doc(dataBase, "teams", guestTeam[0].id);
+    // await setDoc(Team, guestTeam[0]);
     await updateVersion();
-    resetTheBoardForGuestTeam();
-    setShowSquads(true);
-    dispatch(setInfoOfPlayer(null));
+    // resetTheBoardForGuestTeam();
+    // setShowSquads(true);
+    // dispatch(setInfoOfPlayer(null));
   }
 
   async function saveStartingSix() {
@@ -186,6 +221,7 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
+  // console.log(filteredGamesStats);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -342,7 +378,7 @@ export function HomePage() {
                 <div className="button-save-wrapper">
                   {guestTeamOptions.every((option) => checkNumbers(option.boardPosition)) && (
                     <>
-                      {!showSquads && (
+                      {!showSquads && set && opponentTeamName && (
                         <RegularButton type="submit" $color="black" $background="#ffd700">
                           Save Data
                         </RegularButton>
