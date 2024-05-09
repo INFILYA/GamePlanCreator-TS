@@ -2,7 +2,6 @@ import { useSelector } from "react-redux";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { auth, dataBase } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { selectUserVersion, setUserVersion } from "../states/slices/userVersionSlice";
 import { NavLink } from "react-router-dom";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import { useAppDispatch } from "../states/store";
@@ -51,7 +50,6 @@ export function HomePage() {
   const [isRegistratedUser] = useAuthState(auth);
   const listOfTeams = useSelector(selectListOfTeams);
   const listOfPlayers = useSelector(selectListOfPlayers);
-  const userVersion = useSelector(selectUserVersion);
   const homeTeam = useSelector(selectHomeTeam);
   const guestTeam = useSelector(selectGuestTeam);
   const playerInfo = useSelector(selectPlayerInfo);
@@ -95,16 +93,7 @@ export function HomePage() {
     dispatch(setHomeTeam(name));
   }
 
-  async function updateVersion() {
-    try {
-      const docVersionRef = doc(dataBase, "dataVersion", "currentVersion");
-      await setDoc(docVersionRef, { currentVersion: userVersion + 1 });
-      const adminVersion = userVersion + 1;
-      dispatch(setUserVersion(adminVersion));
-    } catch (error) {
-      console.error(error);
-    }
-  }
+
 
   function calculateForTeamData<T extends TTeam | TPlayer>(obj: T) {
     const team = { ...guestTeam[0] };
@@ -184,7 +173,6 @@ export function HomePage() {
     // // download team data
     const Team = doc(dataBase, "teams", guestTeam[0].id);
     await setDoc(Team, guestTeam[0]);
-    await updateVersion();
     resetTheBoardForGuestTeam();
     setShowSquads(true);
     dispatch(setInfoOfPlayer(null));
@@ -195,7 +183,6 @@ export function HomePage() {
       ...guestTeam[0],
       startingSquad: guestTeamOptions.map((player) => player.name),
     });
-    updateVersion();
   }
   const saveTeam = async (team: TTeam) => {
     try {

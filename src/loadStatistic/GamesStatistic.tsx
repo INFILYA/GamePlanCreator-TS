@@ -24,6 +24,8 @@ import { useAppDispatch } from "../states/store";
 import { RegularButton } from "../css/Button.styled";
 import Diagramm from "../personalInfo/components/Diagramm";
 import { useSetWidth } from "../utilities/useSetWidth";
+import { set } from "firebase/database";
+import { gamesRef } from "../config/firebase";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
@@ -144,9 +146,16 @@ export default function GamesStatistic() {
     setFilter("");
   }
 
+  async function saveGame() {
+    const choosen = gamesStats.find((game) => Object.keys(game).find((name) => name === filter));
+    if (!choosen) return;
+    await set(gamesRef(filter), choosen);
+  }
+
   const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats) as TMix);
   const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
   const namesOfTeams = listOfTeams.map((team) => team.name);
+
   return (
     <article className="main-content-wrapper">
       <SectionWrapper
@@ -222,6 +231,9 @@ export default function GamesStatistic() {
                     </div>
                   </div>
                 )}
+                <RegularButton onClick={() => saveGame()} type="button">
+                  save game
+                </RegularButton>
               </>
             )}
           </>

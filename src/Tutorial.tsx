@@ -5,7 +5,6 @@ import { Switch } from "antd";
 import { setisShowedTutorial } from "./states/slices/isShowedTutorialSlice";
 import { useAppDispatch } from "./states/store";
 import { backGroundBlue, backGroundYellow, getFromLocalStorage } from "./utilities/functions";
-import { selectUserVersion } from "./states/slices/userVersionSlice";
 import { RegularButton } from "./css/Button.styled";
 
 type TTutorial = { text: React.ReactNode; key: number };
@@ -14,7 +13,6 @@ export function Tutorial(props: TTutorial) {
   const { text } = props;
   const dispatch = useAppDispatch();
   const changeLanguage = useSelector(selectChangeLanguage);
-  const userVersion = useSelector(selectUserVersion);
   const [showTutorial, setShowTutorial] = useState<boolean>(true);
   const [confirmRepeat, setConfirmReapeat] = useState<boolean>(false);
 
@@ -29,7 +27,6 @@ export function Tutorial(props: TTutorial) {
         <div className="grab">
           <div className="tutorial">
             <div className="version-language-wrapper">
-              <div className="userVersion">data version: {userVersion}</div>
               <div className="changeLanguage">
                 <RegularButton
                   onClick={() => dispatch(setChangeLanguage(true))}

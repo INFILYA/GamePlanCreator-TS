@@ -2,7 +2,6 @@ import { useState, ChangeEvent, FormEvent, CSSProperties } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { doc, setDoc } from "firebase/firestore";
 import { dataBase } from "../../config/firebase";
-import { selectUserVersion, setUserVersion } from "../../states/slices/userVersionSlice";
 import { selectListOfPlayers, setAllPlayers } from "../../states/slices/listOfPlayersSlice";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { selectListOfTeams, setAllTeams } from "../../states/slices/listOfTeamsSlice";
@@ -40,7 +39,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   const dispatch = useDispatch();
   const allTeams = useSelector(selectListOfTeams);
   const allPlayers = useSelector(selectListOfPlayers);
-  const userVersion = useSelector(selectUserVersion);
   const guestPlayers = useSelector(selectGuestPlayers);
   const homePlayers = useSelector(selectHomePlayers);
   const [isShowDataOfActions, setIsShowDataOfActions] = useState<boolean>(false);
@@ -132,7 +130,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
       (playerInfo[nameOfZone as keyof TPlayer] as number[]) = loadByZone.map(
         (att, index) => att + (!actionHistory[index] ? 0 : actionHistory[index])
       ); // оновлюємо поля атаки у обраного гравця
-      refreshVersionOFAdmin(1); //перезаписываю версию
       await savePlayer(playerInfo); //сохраняю одного игрока
       await saveTeam(newTeam as TTeam); // сохраняю команду
       setIsSaveDataOfActions(!isSaveDataOfActions);
@@ -143,7 +140,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
     setIsDisableSwitch(!isDisableSwitch);
   };
   const returnOldData = async () => {
-    refreshVersionOFAdmin(-1); //откатываю версию
     await savePlayer(previousPlayerData!); //откатываю данные одного игрока
     await saveTeam(previousTeamData!); // откатываю данные команды
     setIsConfirmReturn(!isConfirmReturn);
@@ -163,17 +159,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
     setZoneValue(result);
     setIsDisableSwitch(!isDisableSwitch);
     setIsShowDataOfActions(!isShowDataOfActions);
-  };
-
-  const refreshVersionOFAdmin = async (count: number) => {
-    try {
-      const version = doc(dataBase, "dataVersion", "currentVersion");
-      const adminVersion = userVersion + count;
-      await setDoc(version, { currentVersion: adminVersion });
-      dispatch(setUserVersion(adminVersion));
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const savePlayer = async (player: TPlayer) => {

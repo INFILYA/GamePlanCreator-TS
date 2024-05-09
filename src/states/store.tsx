@@ -8,7 +8,6 @@ import guestTeamReducer from "./slices/guestTeamSlice";
 import guestPlayersReducer from "./slices/guestPlayersSlice";
 import homePlayersReducer from "./slices/homePlayersSlice";
 import isShowedTutorialReducer from "./slices/isShowedTutorialSlice";
-import userVersionReducer from "./slices/userVersionSlice";
 import playerInfoReducer from "./slices/playerInfoSlice";
 import indexOfHomeTeamZonesReducer from "./slices/indexOfHomeTeamZonesSlice";
 import indexOfGuestTeamZonesReducer from "./slices/indexOfGuestTeamZonesSlice";
@@ -29,7 +28,6 @@ export const store = configureStore({
     playerInfo: playerInfoReducer, //+
     changeLanguage: changeLanguageReducer, //+
     isShowedTutorial: isShowedTutorialReducer, //+
-    userVersion: userVersionReducer, //+
     soloGameStats: soloGameStatsReducer,
     gamesStats: gamesStatsReducer,
   },
