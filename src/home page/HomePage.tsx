@@ -187,6 +187,9 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
+  const isBoardFull = (arr: TPlayer[]) => {
+    return arr.every((option) => checkNumbers(option.boardPosition));
+  };
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -213,41 +216,43 @@ export function HomePage() {
                           Reset
                         </RegularButton>
                       </div>
-                      <div className="match-number-wrapper">
-                        <div>
-                          <RegularButton
-                            onClick={hideSquads}
-                            type="button"
-                            $color="orangered"
-                            $background="white"
-                          >
-                            Statistic mode
-                          </RegularButton>
+                      {isBoardFull(guestTeamOptions) && showHomeTeam && (
+                        <div className="match-number-wrapper">
+                          <div>
+                            <RegularButton
+                              onClick={hideSquads}
+                              type="button"
+                              $color="orangered"
+                              $background="white"
+                            >
+                              Statistic mode
+                            </RegularButton>
+                          </div>
+                          {!showSquads && (
+                            <>
+                              <select
+                                onChange={(e) => setOpponentTeamName(e.target.value)}
+                                value={opponentTeamName}
+                              >
+                                {listOfOpponents.map((team) => (
+                                  <option key={team} value={team}>
+                                    {team}
+                                  </option>
+                                ))}
+                              </select>
+                              <select
+                                onChange={(e) => setSetNumber(e.target.value)}
+                                value={setNumber}
+                              >
+                                <option value="">Choose set</option>
+                                <option value="Set 1">Set 1</option>
+                                <option value="Set 2">Set 2</option>
+                                <option value="Set 3">Set 3</option>
+                              </select>
+                            </>
+                          )}
                         </div>
-                        {!showSquads && (
-                          <>
-                            <select
-                              onChange={(e) => setOpponentTeamName(e.target.value)}
-                              value={opponentTeamName}
-                            >
-                              {listOfOpponents.map((team) => (
-                                <option key={team} value={team}>
-                                  {team}
-                                </option>
-                              ))}
-                            </select>
-                            <select
-                              onChange={(e) => setSetNumber(e.target.value)}
-                              value={setNumber}
-                            >
-                              <option value="">Choose set</option>
-                              <option value="Set 1">Set 1</option>
-                              <option value="Set 2">Set 2</option>
-                              <option value="Set 3">Set 3</option>
-                            </select>
-                          </>
-                        )}
-                      </div>
+                      )}
                     </>
                   ) : (
                     <div></div>
@@ -271,6 +276,7 @@ export function HomePage() {
                     .map((option, index) =>
                       checkNumbers(option.boardPosition) ? (
                         <IconOfPlayer
+                          setShowSquads={setShowSquads}
                           showSquads={showSquads}
                           player={option}
                           startingSix={guestTeamOptions}
@@ -298,6 +304,7 @@ export function HomePage() {
                           startingSix={homeTeamOptions}
                           type="my"
                           key={index}
+                          setShowSquads={setShowSquads}
                         />
                       ) : (
                         <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
@@ -310,6 +317,7 @@ export function HomePage() {
                     .map((option, index) =>
                       checkNumbers(option.boardPosition) ? (
                         <IconOfPlayer
+                          setShowSquads={setShowSquads}
                           showSquads={showSquads}
                           player={option}
                           startingSix={guestTeamOptions}
@@ -337,6 +345,7 @@ export function HomePage() {
                           startingSix={homeTeamOptions}
                           type="my"
                           key={index}
+                          setShowSquads={setShowSquads}
                         />
                       ) : (
                         <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
@@ -344,50 +353,49 @@ export function HomePage() {
                     )}
                 </div>
                 <div className="button-save-wrapper">
-                  {/* {guestTeamOptions.every((option) => checkNumbers(option.boardPosition)) && ( */}
-                  <>
-                    {!showSquads && setNumber && opponentTeamName && (
-                      <RegularButton type="submit" $color="black" $background="#ffd700">
-                        Save Data
-                      </RegularButton>
-                    )}
-                    {admin && (
-                      <RegularButton
-                        onClick={saveStartingSix}
-                        type="button"
-                        $color="black"
-                        $background="#ffd700"
-                      >
-                        Save starting six
-                      </RegularButton>
-                    )}
-                  </>
-                  {/* )} */}
-                </div>
-                {homeTeamOptions.every((option) => checkNumbers(option.boardPosition)) &&
-                  isRegistratedUser && (
-                    <div className="plusMinus">
-                      <RegularButton
-                        onClick={() => dispatch(rotateForwardHomeTeam())}
-                        $color="black"
-                        $background="#ffd700"
-                      >
-                        -
-                      </RegularButton>
-                      {homeTeamOptions.map((player, index) =>
-                        typeof player !== "number" && player && player.position === "Setter" ? (
-                          <span key={player.name}>P{correctPositions(index) + 1}</span>
-                        ) : null
+                  {isBoardFull(guestTeamOptions) && (
+                    <>
+                      {!showSquads && setNumber && opponentTeamName && (
+                        <RegularButton type="submit" $color="black" $background="#ffd700">
+                          Save Data
+                        </RegularButton>
                       )}
-                      <RegularButton
-                        onClick={() => dispatch(rotateBackHomeTeam())}
-                        $color="black"
-                        $background="#ffd700"
-                      >
-                        +
-                      </RegularButton>
-                    </div>
+                      {admin && (
+                        <RegularButton
+                          onClick={saveStartingSix}
+                          type="button"
+                          $color="black"
+                          $background="#ffd700"
+                        >
+                          Save starting six
+                        </RegularButton>
+                      )}
+                    </>
                   )}
+                </div>
+                {isBoardFull(homeTeamOptions) && isRegistratedUser && (
+                  <div className="plusMinus">
+                    <RegularButton
+                      onClick={() => dispatch(rotateForwardHomeTeam())}
+                      $color="black"
+                      $background="#ffd700"
+                    >
+                      -
+                    </RegularButton>
+                    {homeTeamOptions.map((player, index) =>
+                      typeof player !== "number" && player && player.position === "Setter" ? (
+                        <span key={player.name}>P{correctPositions(index) + 1}</span>
+                      ) : null
+                    )}
+                    <RegularButton
+                      onClick={() => dispatch(rotateBackHomeTeam())}
+                      $color="black"
+                      $background="#ffd700"
+                    >
+                      +
+                    </RegularButton>
+                  </div>
+                )}
                 {showGuestTeam && showSquads && (
                   <div className="showRatings">
                     <NavLink to={"/Ratings"}>

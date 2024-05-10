@@ -4,7 +4,10 @@ import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { pushFromHomeTeamBoard } from "../../states/slices/homePlayersSlice";
 import { pushFromGuestTeamBoard } from "../../states/slices/guestPlayersSlice";
 import { resetHomeTeamIndexOfZones } from "../../states/slices/indexOfHomeTeamZonesSlice";
-import { resetGuestTeamIndexOfZones } from "../../states/slices/indexOfGuestTeamZonesSlice";
+import {
+  resetGuestTeamIndexOfZones,
+  selectIndexOfGuestTeamZones,
+} from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { ChangeEvent, useState } from "react";
 import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
 import {
@@ -13,6 +16,7 @@ import {
   getPlusMinusAttack,
 } from "../../utilities/functions";
 import { setSoloGameStats } from "../../states/slices/soloGameStatsSlice";
+import { useSelector } from "react-redux";
 
 type TIconOfPlayer = {
   type: string;
@@ -20,11 +24,13 @@ type TIconOfPlayer = {
   startingSix: TPlayer[];
   player: TPlayer;
   showSquads: boolean;
+  setShowSquads(arg: boolean): void;
 };
 
 export function IconOfPlayer(props: TIconOfPlayer) {
-  const { player, startingSix, type, showSquads } = props;
+  const { player, startingSix, type, showSquads, setShowSquads } = props;
   const dispatch = useAppDispatch();
+  const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
 
   const [diagrammValue, setDiagrammValue] = useState<TAttackDiagramm>({
     winPoints: 0,
@@ -33,6 +39,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     loosePoints: 0,
   });
   const my = type === "my";
+
+  function checkNumbers(element: number): boolean {
+    return typeof element !== "number";
+  }
+
+  const isBoardFull = (arr: TPlayer[]) => {
+    return arr.every((option) => checkNumbers(option.boardPosition));
+  };
 
   const handleDiagrammValue = (event: ChangeEvent<HTMLInputElement>) => {
     setDiagrammValue({
@@ -79,6 +93,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   }
 
   function cancelGuestTeamChoice(player: TPlayer) {
+    if (isBoardFull(guestTeamOptions)) {
+      setShowSquads(true);
+    }
     dispatch(pushFromGuestTeamBoard(player));
     dispatch(resetGuestTeamIndexOfZones({ startingSix, player }));
   }

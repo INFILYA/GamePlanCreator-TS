@@ -24,6 +24,7 @@ import GamesStatistic from "./loadStatistic/GamesStatistic";
 import { setAllGameStats } from "./states/slices/gamesStatsSlice";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { onValue } from "firebase/database";
+import { later } from "./utilities/functions";
 
 export default function GamePlanCreator() {
   const dispatch = useAppDispatch();
@@ -33,6 +34,20 @@ export default function GamePlanCreator() {
   const isShowedTutorial = useSelector(selectIsShowedTutorial);
 
   useEffect(() => {
+    async function appIsReady() {
+      try {
+        setIsLoading(true);
+        getTeams();
+        getPlayers();
+        getGames();
+        await later(2500);
+        console.log("huy");
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
     async function getTeams() {
       try {
         if (isRegistratedUser) {
@@ -73,13 +88,9 @@ export default function GamePlanCreator() {
         }
       } catch (error) {
         console.error(error);
-      } finally {
-        setIsLoading(!isLoading);
       }
     }
-    getTeams();
-    getPlayers();
-    getGames();
+    appIsReady();
     // async function checkVersionOfData() {
     //   try {
     //     setIsLoading(true);
@@ -136,7 +147,7 @@ export default function GamePlanCreator() {
     // }
     // loadGames();
     // checkVersionOfData();
-  }, [dispatch, isRegistratedUser, isLoading]);
+  }, [dispatch, isRegistratedUser]);
 
   const TUTORIAL = !changeLanguage ? UKRTUTORIAL : ENGTUTORIAL;
   return (
