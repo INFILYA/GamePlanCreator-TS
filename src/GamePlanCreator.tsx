@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getFromLocalStorage, later } from "./utilities/functions";
 import { Route, Routes } from "react-router-dom";
 import { selectChangeLanguage } from "./states/slices/changeLanguageSlice";
 import { useAppDispatch } from "./states/store";
-import { selectIsShowedTutorial, setisShowedTutorial } from "./states/slices/isShowedTutorialSlice";
+import { selectIsShowedTutorial } from "./states/slices/isShowedTutorialSlice";
 import { Header } from "./header/Header";
 import { Tutorial } from "./Tutorial";
 import { Auth } from "./header/components/Auth";
-import { collection, getDocs } from "firebase/firestore";
-import { auth, dataBase, gamesRef, playersRef, teamsRef } from "./config/firebase";
+// import { collection, getDocs } from "firebase/firestore";
+import { auth, gamesRef, playersRef, teamsRef } from "./config/firebase";
 import { TGameStats, TPlayer, TTeam } from "./types/types";
 import { setAllPlayers } from "./states/slices/listOfPlayersSlice";
 import { setAllTeams } from "./states/slices/listOfTeamsSlice";
@@ -41,6 +40,7 @@ export default function GamePlanCreator() {
             const data = snapshot.val();
             const teams = Object.values(data) as TTeam[];
             dispatch(setAllTeams(teams));
+            console.log("teams");
           });
         }
       } catch (error) {
@@ -54,6 +54,7 @@ export default function GamePlanCreator() {
             const data = snapshot.val();
             const players = Object.values(data) as TPlayer[];
             dispatch(setAllPlayers(players));
+            console.log("players");
           });
         }
       } catch (error) {
@@ -67,10 +68,13 @@ export default function GamePlanCreator() {
             const data = snapshot.val();
             const games = Object.values(data) as TGameStats[];
             dispatch(setAllGameStats(games));
+            console.log("games");
           });
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(!isLoading);
       }
     }
     getTeams();
@@ -132,7 +136,7 @@ export default function GamePlanCreator() {
     // }
     // loadGames();
     // checkVersionOfData();
-  }, [dispatch, isRegistratedUser]);
+  }, [dispatch, isRegistratedUser, isLoading]);
 
   const TUTORIAL = !changeLanguage ? UKRTUTORIAL : ENGTUTORIAL;
   return (

@@ -1,11 +1,10 @@
 import { useSelector } from "react-redux";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { auth, dataBase } from "../config/firebase";
+import { auth, gamesRef, playersRef, teamsRef } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { NavLink } from "react-router-dom";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import { useAppDispatch } from "../states/store";
-import { selectListOfTeams, setAllTeams } from "../states/slices/listOfTeamsSlice";
+import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import {
   correctPositions,
   emptyPlayers,
@@ -39,11 +38,8 @@ import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
 import { resetGameStats, selectSoloGameStats } from "../states/slices/soloGameStatsSlice";
 import { currentDate } from "../utilities/currentDate";
-import {
-  selectGamesStats,
-  setAddSoloGameStat,
-  setAllGameStats,
-} from "../states/slices/gamesStatsSlice";
+import { selectGamesStats } from "../states/slices/gamesStatsSlice";
+import { set, update } from "firebase/database";
 
 export function HomePage() {
   const dispatch = useAppDispatch();
@@ -58,7 +54,7 @@ export function HomePage() {
   const soloGameStats = useSelector(selectSoloGameStats);
   const [showSquads, setShowSquads] = useState(true);
   const [opponentTeamName, setOpponentTeamName] = useState("");
-  const [set, setSet] = useState("");
+  const [setNumber, setSetNumber] = useState("");
   const gamesStats = useSelector(selectGamesStats);
 
   const showGuestTeam = guestTeam.length !== 0;
@@ -76,7 +72,7 @@ export function HomePage() {
     dispatch(setInfoOfPlayer(null));
     dispatch(resetGameStats());
     setOpponentTeamName("");
-    setSet("");
+    setSetNumber("");
     resetTheBoardForHomeTeam();
   }
   function resetTheBoardForHomeTeam() {
@@ -93,12 +89,17 @@ export function HomePage() {
     dispatch(setHomeTeam(name));
   }
 
-
-
   function calculateForTeamData<T extends TTeam | TPlayer>(obj: T) {
     const team = { ...guestTeam[0] };
     for (const key in team) {
-      if (key === "id" || key === "startingSquad" || key === "name" || key === "logo") {
+      if (
+        key === "id" ||
+        key === "startingSquad" ||
+        key === "name" ||
+        key === "logo" ||
+        key === "age" ||
+        key === "height"
+      ) {
         continue;
       }
       (team[key as keyof TTeam] as number) += obj[key as keyof T] as number;
@@ -113,38 +114,31 @@ export function HomePage() {
     event.preventDefault();
     // download solo game statisic
     const matchInfo = `${guestTeam[0].id} - ${opponentTeamName}; ${currentDate()}`;
-    const gameStats = doc(dataBase, "gameStats", matchInfo);
-    const setStat = { [set]: soloGameStats };
+    const setStat = { [setNumber]: soloGameStats };
     const choosenGame = gamesStats.find((game) => game[matchInfo]);
     if (!choosenGame) {
-      await setDoc(gameStats, { [matchInfo]: [setStat] });
-      dispatch(setAddSoloGameStat({ [matchInfo]: [setStat] }));
+      await set(gamesRef(matchInfo), { [matchInfo]: [setStat] });
     } else {
-      const isSetExist = choosenGame[matchInfo].some((sets) => Object.keys(sets)[0] === set);
+      const isSetExist = choosenGame[matchInfo].some((sets) => Object.keys(sets)[0] === setNumber);
       if (isSetExist) {
-        alert("set already exist");
+        alert("Set already exist");
         return;
       } else {
-        await updateDoc(gameStats, {
+        await update(gamesRef(matchInfo), {
           [matchInfo]: [...choosenGame[matchInfo], setStat],
         });
-        const updatedDataOfGameStats = gamesStats.map((game) =>
-          Object.keys(game)[0] === matchInfo
-            ? {
-                [matchInfo]: [...choosenGame[matchInfo], setStat],
-              }
-            : game
-        );
-        dispatch(setAllGameStats(updatedDataOfGameStats));
       }
     }
     // Refresh StartingSix players
+    async function setPlayersToData(player: TPlayer) {
+      await set(playersRef(player.name), player);
+    }
     const names = guestTeamOptions.map((player) => player.name);
     const updatedStartingSix = listOfPlayers.filter(
       (player) => player.name === names[names.indexOf(player.name)]
     );
     updatedStartingSix.forEach((player) => {
-      setDoc(doc(dataBase, "players", player.name), player);
+      setPlayersToData(player);
     });
     // // Refresh SubstitutionPlayers players
     const benchNames = homeTeamOptions.map((player) => player.name);
@@ -152,7 +146,7 @@ export function HomePage() {
       (player) => player.name === benchNames[benchNames.indexOf(player.name)]
     );
     updatedSubstitutionPlayers.forEach((player) => {
-      setDoc(doc(dataBase, "players", player.name), player);
+      setPlayersToData(player);
     });
     //add solo game stats
     const loosePoints = soloGameStats.reduce((acc, val) => (acc += val.loosePoints), 0);
@@ -166,18 +160,12 @@ export function HomePage() {
       attacksInBlock: attacksInBlock,
     };
     calculateForTeamData(sumOfAllPlayersSoloGamesStats as TPlayer);
-    const updatedListOfTeams = listOfTeams.map((team) =>
-      team.id === guestTeam[0].id ? guestTeam[0] : team
-    );
-    dispatch(setAllTeams(updatedListOfTeams));
-    // // download team data
-    const Team = doc(dataBase, "teams", guestTeam[0].id);
-    await setDoc(Team, guestTeam[0]);
+    await set(teamsRef(guestTeam[0].name), guestTeam[0]);
     resetTheBoardForGuestTeam();
     setShowSquads(true);
     dispatch(setInfoOfPlayer(null));
   }
-
+  // Save starting six of the rival team
   async function saveStartingSix() {
     await saveTeam({
       ...guestTeam[0],
@@ -186,8 +174,7 @@ export function HomePage() {
   }
   const saveTeam = async (team: TTeam) => {
     try {
-      const docRef = doc(dataBase, "teams", team.id);
-      await setDoc(docRef, team);
+      await set(teamsRef(team.id), team);
     } catch (error) {
       console.error(error);
     }
@@ -200,7 +187,6 @@ export function HomePage() {
     }
   };
   const playerInfoWindow = playerInfo && showSquads;
-  // console.log(filteredGamesStats);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -250,7 +236,10 @@ export function HomePage() {
                                 </option>
                               ))}
                             </select>
-                            <select onChange={(e) => setSet(e.target.value)} value={set}>
+                            <select
+                              onChange={(e) => setSetNumber(e.target.value)}
+                              value={setNumber}
+                            >
                               <option value="">Choose set</option>
                               <option value="Set 1">Set 1</option>
                               <option value="Set 2">Set 2</option>
@@ -355,25 +344,25 @@ export function HomePage() {
                     )}
                 </div>
                 <div className="button-save-wrapper">
-                  {guestTeamOptions.every((option) => checkNumbers(option.boardPosition)) && (
-                    <>
-                      {!showSquads && set && opponentTeamName && (
-                        <RegularButton type="submit" $color="black" $background="#ffd700">
-                          Save Data
-                        </RegularButton>
-                      )}
-                      {admin && (
-                        <RegularButton
-                          onClick={saveStartingSix}
-                          type="button"
-                          $color="black"
-                          $background="#ffd700"
-                        >
-                          Save starting six
-                        </RegularButton>
-                      )}
-                    </>
-                  )}
+                  {/* {guestTeamOptions.every((option) => checkNumbers(option.boardPosition)) && ( */}
+                  <>
+                    {!showSquads && setNumber && opponentTeamName && (
+                      <RegularButton type="submit" $color="black" $background="#ffd700">
+                        Save Data
+                      </RegularButton>
+                    )}
+                    {admin && (
+                      <RegularButton
+                        onClick={saveStartingSix}
+                        type="button"
+                        $color="black"
+                        $background="#ffd700"
+                      >
+                        Save starting six
+                      </RegularButton>
+                    )}
+                  </>
+                  {/* )} */}
                 </div>
                 {homeTeamOptions.every((option) => checkNumbers(option.boardPosition)) &&
                   isRegistratedUser && (
@@ -421,16 +410,6 @@ export function HomePage() {
                         Distribution
                       </RegularButton>
                     </NavLink>
-                    {/* <NavLink to={"/SendStatistic"}>
-                      <RegularButton
-                        onClick={() => dispatch(setInfoOfPlayer(null))}
-                        type="button"
-                        $color="#0057b8"
-                        $background="#ffd700"
-                      >
-                        Send Data
-                      </RegularButton>
-                    </NavLink> */}
                     <NavLink to={"/GamesStatistic"}>
                       <RegularButton
                         onClick={() => dispatch(setInfoOfPlayer(null))}

@@ -31,7 +31,7 @@
 .grab .tutorial .version-language-wrapper {
   display: flex;
   width: 100%;
-  justify-content: space-between;
+  justify-content: end;
   align-items: center;
   height: 5%;
 }

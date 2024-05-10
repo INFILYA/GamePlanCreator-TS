@@ -1,10 +1,9 @@
 import { useState, ChangeEvent, FormEvent, CSSProperties } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { doc, setDoc } from "firebase/firestore";
-import { dataBase } from "../../config/firebase";
-import { selectListOfPlayers, setAllPlayers } from "../../states/slices/listOfPlayersSlice";
+import { playersRef, teamsRef } from "../../config/firebase";
+import { selectListOfPlayers } from "../../states/slices/listOfPlayersSlice";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
-import { selectListOfTeams, setAllTeams } from "../../states/slices/listOfTeamsSlice";
+import { selectListOfTeams } from "../../states/slices/listOfTeamsSlice";
 import { Balls } from "./innerComponents/Balls";
 import { CheckEquality } from "./innerComponents/CheckEquality";
 import { Reaction } from "./innerComponents/Reaction";
@@ -15,6 +14,15 @@ import { Explain } from "./innerComponents/Explain";
 import { selectGuestPlayers, setGuestPlayers } from "../../states/slices/guestPlayersSlice";
 import { selectHomePlayers, setHomePlayers } from "../../states/slices/homePlayersSlice";
 import { TDiagramm, TPlayer, TTeam, TZoneStates, TZoneValue } from "../../types/types";
+import { set } from "firebase/database";
+import {
+  selectIndexOfGuestTeamZones,
+  setBackGuestTeamSelects,
+} from "../../states/slices/indexOfGuestTeamZonesSlice";
+import {
+  selectIndexOfHomeTeamZones,
+  setBackHomeTeamSelects,
+} from "../../states/slices/indexOfHomeTeamZonesSlice";
 
 type TWrapperForDirections = {
   diagrammValue: TDiagramm;
@@ -41,6 +49,9 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   const allPlayers = useSelector(selectListOfPlayers);
   const guestPlayers = useSelector(selectGuestPlayers);
   const homePlayers = useSelector(selectHomePlayers);
+  const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
+  const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
+
   const [isShowDataOfActions, setIsShowDataOfActions] = useState<boolean>(false);
   const [isSaveDataOfActions, setIsSaveDataOfActions] = useState<boolean>(false);
   const [previousPlayerData, setPreviousPlayerData] = useState<TPlayer | null>(null);
@@ -114,12 +125,11 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
       });
       calculateForData(playerInfo); // додаємо полі діаграмм до значень обраного гравця
       const zoneOfAction = zonesStates.find((ball) => ball.active); // визначаємо з якої зона атака
-      const actionHistory = playerInfo[
-        (zoneOfAction!.zone + actionType) as keyof TPlayer
-      ] as number[]; // дістаємо данні гравця з конкретної зони
-      const nameOfZone = zoneOfAction!.zone + actionType; // назва зони атаки
+      const nameOfZone = (zoneOfAction!.zone + actionType) as keyof TPlayer; // назва зони атаки
+      const actionHistory = playerInfo[nameOfZone] as number[]; // дістаємо данні гравця з конкретної зони
       const players = allPlayers.filter((player) => player.team === playerInfo.team); // знаходимо одноклубників обраного гравця
       const team = allTeams.find((team) => team.name === playerInfo.team); // знаходимо команду обраного гравця
+      if (!team) return;
       const upgradedPlayers = players.map((player) => upgradeAge(player)); // оновлюємо точний вік гравців команди обраного гравця
       const teamAge = upgradedPlayers.reduce((a, b) => a + +b.age, 0) / players.length; // середній вік гравців обраної команди
       const teamHeight = upgradedPlayers.reduce((a, b) => a + b.height, 0) / players.length; // середній зріст гравців обраної команди
@@ -127,7 +137,7 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
       calculateForData(newTeam as TTeam); // додаємо полі діаграмм до значень команди обраного гравця
       newTeam.age = +teamAge.toFixed(1); // встановлюємо правильний вік
       newTeam.height = +teamHeight.toFixed(1); // встановлюємо правильний зріст
-      (playerInfo[nameOfZone as keyof TPlayer] as number[]) = loadByZone.map(
+      (playerInfo[nameOfZone] as number[]) = loadByZone.map(
         (att, index) => att + (!actionHistory[index] ? 0 : actionHistory[index])
       ); // оновлюємо поля атаки у обраного гравця
       await savePlayer(playerInfo); //сохраняю одного игрока
@@ -163,24 +173,39 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
 
   const savePlayer = async (player: TPlayer) => {
     try {
-      const Player = doc(dataBase, "players", player.name);
-      await setDoc(Player, player);
-      const players = allPlayers.map((athlete) =>
-        athlete.name === player.name ? player : athlete
-      );
-      dispatch(setAllPlayers(players));
+      await set(playersRef(player.name), player);
       dispatch(setInfoOfPlayer(player));
-      if (guestPlayers.length !== 0 && guestPlayers?.[0].team === player.team) {
+      if (
+        guestPlayers.find((athlete) => athlete.name === player.name) &&
+        guestPlayers?.[0].team === player.team
+      ) {
         dispatch(
           setGuestPlayers(
             guestPlayers.map((athlete) => (athlete.name === player.name ? player : athlete))
           )
         );
       }
-      if (homePlayers.length !== 0 && homePlayers?.[0].team === player.team) {
+      if (guestTeamOptions.find((athlete) => athlete.name === player.name)) {
+        dispatch(
+          setBackGuestTeamSelects(
+            guestTeamOptions.map((athlete) => (athlete.name === player.name ? player : athlete))
+          )
+        );
+      }
+      if (
+        homePlayers.find((athlete) => athlete.name === player.name) &&
+        homePlayers?.[0].team === player.team
+      ) {
         dispatch(
           setHomePlayers(
             homePlayers.map((athlete) => (athlete.name === player.name ? player : athlete))
+          )
+        );
+      }
+      if (homeTeamOptions.find((athlete) => athlete.name === player.name)) {
+        dispatch(
+          setBackHomeTeamSelects(
+            homeTeamOptions.map((athlete) => (athlete.name === player.name ? player : athlete))
           )
         );
       }
@@ -188,16 +213,15 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
       console.error(error);
     }
   };
+
   const saveTeam = async (team: TTeam) => {
     try {
-      const Team = doc(dataBase, "teams", team.id);
-      await setDoc(Team, team);
-      const teams = allTeams.map((squad) => (squad.id === team.id ? team : squad));
-      dispatch(setAllTeams(teams));
+      await set(teamsRef(team.id), team);
     } catch (error) {
       console.error(error);
     }
   };
+
   const choosenActionOne = type === "Attack" ? "FastBall" : "Jump";
   const choosenActionTwo = type === "Attack" ? "HighBall" : "Float";
   function totalPercentOfzone(number1: number, number2: number): number | null {
@@ -218,6 +242,8 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   const zone1 = totalPercentOfzone(4, 5);
   const choiceIsDone = !isShowInputs || isDisableSwitch;
   const choice = zonesStates.filter((zone) => zone.active);
+
+  console.log(guestPlayers);
   return (
     <SectionWrapper
       className="playArea-section"
