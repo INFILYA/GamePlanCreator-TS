@@ -25,10 +25,12 @@ import { RegularButton } from "../css/Button.styled";
 import Diagramm from "../personalInfo/components/Diagramm";
 import { useSetWidth } from "../utilities/useSetWidth";
 import { set } from "firebase/database";
-import { gamesRef } from "../config/firebase";
+import { auth, gamesRef } from "../config/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
+  const [isRegistratedUser] = useAuthState(auth);
   const isBurger = useSetWidth() > 568;
   const gamesStats = useSelector(selectGamesStats);
   const listOfTeams = useSelector(selectListOfTeams);
@@ -40,6 +42,7 @@ export default function GamesStatistic() {
   const [choosenGameStats, setChoosenGameStats] = useState<TMix[]>([]);
   const [saveFullGameStats, setSaveFullGameStats] = useState<TMix[]>([]);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
+  const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
 
   // useEffect(() => {
   //   async function loadGames() {
@@ -231,9 +234,11 @@ export default function GamesStatistic() {
                     </div>
                   </div>
                 )}
-                <RegularButton onClick={() => saveGame()} type="button">
-                  save game
-                </RegularButton>
+                {admin && (
+                  <RegularButton onClick={() => saveGame()} type="button">
+                    save game
+                  </RegularButton>
+                )}
               </>
             )}
           </>

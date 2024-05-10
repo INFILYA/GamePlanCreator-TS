@@ -73,6 +73,7 @@ export function HomePage() {
     dispatch(resetGameStats());
     setOpponentTeamName("");
     setSetNumber("");
+    setShowSquads(true);
     resetTheBoardForHomeTeam();
   }
   function resetTheBoardForHomeTeam() {
@@ -216,7 +217,7 @@ export function HomePage() {
                           Reset
                         </RegularButton>
                       </div>
-                      {isBoardFull(guestTeamOptions) && showHomeTeam && (
+                      {isBoardFull(guestTeamOptions) && (
                         <div className="match-number-wrapper">
                           <div>
                             <RegularButton
