@@ -361,7 +361,7 @@ export function HomePage() {
                           Save Data
                         </RegularButton>
                       )}
-                      {admin && (
+                      {admin && showSquads &&(
                         <RegularButton
                           onClick={saveStartingSix}
                           type="button"

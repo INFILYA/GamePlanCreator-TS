@@ -233,6 +233,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .playerNumb
 main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper {
   width: 100%;
   z-index: 4;
+  overflow: hidden;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button {
   width: 100%;
