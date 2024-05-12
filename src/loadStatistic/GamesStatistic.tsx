@@ -24,13 +24,13 @@ import { useAppDispatch } from "../states/store";
 import { RegularButton } from "../css/Button.styled";
 import Diagramm from "../personalInfo/components/Diagramm";
 import { useSetWidth } from "../utilities/useSetWidth";
-import { set } from "firebase/database";
-import { auth, gamesRef } from "../config/firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
+// import { set } from "firebase/database";
+// import { auth } from "../config/firebase";
+// import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
-  const [isRegistratedUser] = useAuthState(auth);
+  // const [isRegistratedUser] = useAuthState(auth);
   const isBurger = useSetWidth() > 568;
   const gamesStats = useSelector(selectGamesStats);
   const listOfTeams = useSelector(selectListOfTeams);
@@ -42,7 +42,7 @@ export default function GamesStatistic() {
   const [choosenGameStats, setChoosenGameStats] = useState<TMix[]>([]);
   const [saveFullGameStats, setSaveFullGameStats] = useState<TMix[]>([]);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
-  const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
+  // const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
 
   // useEffect(() => {
   //   async function loadGames() {
@@ -149,11 +149,11 @@ export default function GamesStatistic() {
     setFilter("");
   }
 
-  async function saveGame() {
-    const choosen = gamesStats.find((game) => Object.keys(game).find((name) => name === filter));
-    if (!choosen) return;
-    await set(gamesRef(filter), choosen);
-  }
+  // async function saveGame() {
+  //   const choosen = gamesStats.find((game) => Object.keys(game).find((name) => name === filter));
+  //   if (!choosen) return;
+  //   await set(gamesRef(filter), choosen);
+  // }
 
   const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats) as TMix);
   const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
@@ -234,11 +234,11 @@ export default function GamesStatistic() {
                     </div>
                   </div>
                 )}
-                {admin && (
+                {/* {admin && (
                   <RegularButton onClick={() => saveGame()} type="button">
                     save game
                   </RegularButton>
-                )}
+                )} */}
               </>
             )}
           </>
