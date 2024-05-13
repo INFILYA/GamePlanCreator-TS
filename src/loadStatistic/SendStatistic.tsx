@@ -17,21 +17,19 @@ export default function SendStatistic() {
     console.log("done");
   }
   return (
-    <SectionWrapper
-      content={
-        <div className="sendStatisticPanel">
-          <input
-            className="choose-file"
-            type="file"
-            onChange={(e) => {
-              setFileUpload(e.target.files![0]);
-            }}
-          />
-          <RegularButton onClick={uploadFile} $color="black" $background="#ffd700" type="button">
-            Upload statistic
-          </RegularButton>
-        </div>
-      }
-    />
+    <SectionWrapper>
+      <div className="sendStatisticPanel">
+        <input
+          className="choose-file"
+          type="file"
+          onChange={(e) => {
+            setFileUpload(e.target.files![0]);
+          }}
+        />
+        <RegularButton onClick={uploadFile} $color="black" $background="#ffd700" type="button">
+          Upload statistic
+        </RegularButton>
+      </div>
+    </SectionWrapper>
   );
 }

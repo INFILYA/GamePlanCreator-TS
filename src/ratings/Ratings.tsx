@@ -39,41 +39,36 @@ export function Ratings() {
   }
   return (
     <article className="main-content-wrapper">
-      <SectionWrapper
-        className="ratings-section"
-        content={
-          <>
-            <h1>Ratings</h1>
-            {playerInfo ? (
-              <PersonalInformationOfPlayer link="page1" />
-            ) : (
-              <table>
-                <caption className="showRatings-wrapper">
-                  <nav>
-                    <div className="team-filter-wrapper">
-                      {positions.map((position, index) => (
-                        <div key={index}>
-                          <RegularButton
-                            onClick={() => setPositionFilter(position)}
-                            type="button"
-                            $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
-                            $background={chosenPosition === position ? "#0057b8" : "#ffd700"}
-                          >{`${position}s`}</RegularButton>
-                        </div>
-                      ))}
+      <SectionWrapper className="ratings-section">
+        <h1>Ratings</h1>
+        {playerInfo ? (
+          <PersonalInformationOfPlayer link="page1" />
+        ) : (
+          <table>
+            <caption className="showRatings-wrapper">
+              <nav>
+                <div className="team-filter-wrapper">
+                  {positions.map((position, index) => (
+                    <div key={index}>
+                      <RegularButton
+                        onClick={() => setPositionFilter(position)}
+                        type="button"
+                        $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
+                        $background={chosenPosition === position ? "#0057b8" : "#ffd700"}
+                      >{`${position}s`}</RegularButton>
                     </div>
-                  </nav>
-                </caption>
-                {isChoosenFilter && (
-                  <tbody className="rating-table-wrapper">
-                    <Categorys filteredPlayers={filteredPlayers} rankByValue={rankByValue} />
-                  </tbody>
-                )}
-              </table>
+                  ))}
+                </div>
+              </nav>
+            </caption>
+            {isChoosenFilter && (
+              <tbody className="rating-table-wrapper">
+                <Categorys filteredPlayers={filteredPlayers} rankByValue={rankByValue} />
+              </tbody>
             )}
-          </>
-        }
-      />
+          </table>
+        )}
+      </SectionWrapper>
     </article>
   );
 }

@@ -77,84 +77,77 @@ export function Squads(props: TSquadsProps) {
     dispatch(setGuestBenchPlayers({ guestPlayers, guestTeamStartingSix }));
   }
   return (
-    <SectionWrapper
-      className="teamsquad-section"
-      content={
-        <>
-          <div className="team-title-wrapper" style={myTeam ? { direction: "rtl" } : {}}>
-            <div className="team-label-wrapper">
-              <input className="team-label" readOnly value={club.name} />
-            </div>
-            <div className="team-logo-wrapper">
-              <img className="team-logo" src={club.logo} alt="" />
-            </div>
-          </div>
-          <div className="squad-wrapper">
-            {players
-              .sort((a, b) => compare(a.number, b.number))
-              .map((player) => (
-                <div
-                  key={player.name}
-                  className="player-field-wrapper"
-                  style={myTeam ? { direction: "rtl" } : {}}
+    <SectionWrapper className="teamsquad-section">
+      <div className="team-title-wrapper" style={myTeam ? { direction: "rtl" } : {}}>
+        <div className="team-label-wrapper">
+          <input className="team-label" readOnly value={club.name} />
+        </div>
+        <div className="team-logo-wrapper">
+          <img className="team-logo" src={club.logo} alt="" />
+        </div>
+      </div>
+      <div className="squad-wrapper">
+        {players
+          .sort((a, b) => compare(a.number, b.number))
+          .map((player) => (
+            <div
+              key={player.name}
+              className="player-field-wrapper"
+              style={myTeam ? { direction: "rtl" } : {}}
+            >
+              <div className="playerNumber-wrapper">
+                <button type="button" disabled className={myTeam ? "playerNumber" : ""}>
+                  {/* {player.number > 9 ? player.number : `0${player.number}`} */}
+                  {player.number}
+                </button>
+              </div>
+              <div className="player-surname-wrapper">
+                <button
+                  type="button"
+                  className={myTeam ? "player-surname" : ""}
+                  onClick={() => dispatch(setInfoOfPlayer(player))}
                 >
-                  <div className="playerNumber-wrapper">
-                    <button type="button" disabled className={myTeam ? "playerNumber" : ""}>
-                      {/* {player.number > 9 ? player.number : `0${player.number}`} */}
-                      {player.number}
-                    </button>
-                  </div>
-                  <div className="player-surname-wrapper">
-                    <button
-                      type="button"
-                      className={myTeam ? "player-surname" : ""}
-                      onClick={() => dispatch(setInfoOfPlayer(player))}
-                    >
-                      {player.name}
-                    </button>
-                  </div>
-                  <div className="moveToBoard-wrapper">
-                    {teamOptions && (
-                      <select
-                        className="moveToBoard"
-                        onChange={myTeam ? homeTeamActions : guestTeamActions}
-                      >
-                        {myTeam ? (
-                          <option defaultValue="◀">◀</option>
-                        ) : (
-                          <option defaultValue="▶">▶</option>
-                        )}
-                        {teamOptions
-                          .filter((option) => typeof option.boardPosition === "number")
-                          .sort((a, b) =>
-                            compare(a.boardPosition as number, b.boardPosition as number)
-                          )
-                          .map((option, index) => (
-                            <option
-                              key={index}
-                              value={[player.name, JSON.stringify(option.boardPosition)]}
-                            >
-                              P{(option.boardPosition as number) + 1}
-                            </option>
-                          ))}
-                      </select>
+                  {player.name}
+                </button>
+              </div>
+              <div className="moveToBoard-wrapper">
+                {teamOptions && (
+                  <select
+                    className="moveToBoard"
+                    onChange={myTeam ? homeTeamActions : guestTeamActions}
+                  >
+                    {myTeam ? (
+                      <option defaultValue="◀">◀</option>
+                    ) : (
+                      <option defaultValue="▶">▶</option>
                     )}
-                  </div>
-                </div>
-              ))}
-            {showButtonStartingSix && (
-              <RegularButton
-                onClick={showStartingSix}
-                type="button"
-                $color="black"
-                $background="#ffd700"
-              >
-                Starting six
-              </RegularButton>
-            )}
-          </div>
-        </>
-      }
-    />
+                    {teamOptions
+                      .filter((option) => typeof option.boardPosition === "number")
+                      .sort((a, b) => compare(a.boardPosition as number, b.boardPosition as number))
+                      .map((option, index) => (
+                        <option
+                          key={index}
+                          value={[player.name, JSON.stringify(option.boardPosition)]}
+                        >
+                          P{(option.boardPosition as number) + 1}
+                        </option>
+                      ))}
+                  </select>
+                )}
+              </div>
+            </div>
+          ))}
+        {showButtonStartingSix && (
+          <RegularButton
+            onClick={showStartingSix}
+            type="button"
+            $color="black"
+            $background="#ffd700"
+          >
+            Starting six
+          </RegularButton>
+        )}
+      </div>
+    </SectionWrapper>
   );
 }

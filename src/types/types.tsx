@@ -74,7 +74,7 @@ export type TTeam = {
 export type TSectionWrapper = {
   className?: string;
   backGround?: React.ReactNode;
-  content: React.ReactNode;
+  children: React.ReactNode;
 };
 
 export type TDistributionZones = {

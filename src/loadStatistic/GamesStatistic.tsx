@@ -161,89 +161,84 @@ export default function GamesStatistic() {
 
   return (
     <article className="main-content-wrapper">
-      <SectionWrapper
-        className="ratings-section"
-        content={
+      <SectionWrapper className="ratings-section">
+        {playerInfo ? (
+          <PersonalInformationOfPlayer link="page1" />
+        ) : (
           <>
-            {playerInfo ? (
-              <PersonalInformationOfPlayer link="page1" />
-            ) : (
-              <>
-                <table>
-                  <caption className="showRatings-wrapper">
-                    <nav>
-                      <div className="team-filter-wrapper">
-                        {namesOfTeams.map((name) => (
-                          <div key={name}>
-                            <RegularButton
-                              onClick={() => setGameFilterByTeam(name)}
-                              type="button"
-                              $color={teamFilter.team === name ? "#ffd700" : "#0057b8"}
-                              $background={teamFilter.team === name ? "#0057b8" : "#ffd700"}
-                            >
-                              {name}
-                            </RegularButton>
-                          </div>
-                        ))}
+            <table>
+              <caption className="showRatings-wrapper">
+                <nav>
+                  <div className="team-filter-wrapper">
+                    {namesOfTeams.map((name) => (
+                      <div key={name}>
+                        <RegularButton
+                          onClick={() => setGameFilterByTeam(name)}
+                          type="button"
+                          $color={teamFilter.team === name ? "#ffd700" : "#0057b8"}
+                          $background={teamFilter.team === name ? "#0057b8" : "#ffd700"}
+                        >
+                          {name}
+                        </RegularButton>
                       </div>
-                      <div className="choosen-game-filter-wrapper">
-                        <select onChange={handleGameFilter} value={filter}>
-                          <option value="">Choose Game ({sortedGameStats.length})</option>
-                          {sortedGameStats.map((game, index) => (
-                            <option value={Object.keys(game)} key={index}>
-                              {Object.keys(game)}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {filteredGames.length !== 0 && (
-                        <div className="set-selection-wrapper">
-                          {filteredGames.map((set) => (
-                            <div key={Object.keys(set)[0]}>
-                              <div>{Object.keys(set)}</div>
-                              <input
-                                type="checkbox"
-                                value={Object.keys(set)}
-                                onChange={handleChoosenSet}
-                                checked={Object.values(set)[0] === choosenGameStats}
-                              />
-                            </div>
-                          ))}
-                          <div>
-                            <div>Full game</div>
-                            <input
-                              type="checkbox"
-                              value="full"
-                              onChange={handleChoosenSet}
-                              checked={saveFullGameStats === choosenGameStats}
-                            />
-                          </div>
-                        </div>
-                      )}
-                    </nav>
-                  </caption>
-                  <tbody className="rating-table-wrapper">
-                    <Categorys filteredPlayers={choosenGameStats} rankByValue={rankByValue} />
-                    {filter && <Rows filteredPlayers={[fullGameStats]} lastRow={true} />}
-                  </tbody>
-                </table>
-                {filter && (
-                  <div className="diagram-wrapper">
-                    <div className="diagram-content" style={!isBurger ? { width: "80%" } : {}}>
-                      <Diagramm link="Attack" data={fullGameStats} />
-                    </div>
+                    ))}
                   </div>
-                )}
-                {/* {admin && (
+                  <div className="choosen-game-filter-wrapper">
+                    <select onChange={handleGameFilter} value={filter}>
+                      <option value="">Choose Game ({sortedGameStats.length})</option>
+                      {sortedGameStats.map((game, index) => (
+                        <option value={Object.keys(game)} key={index}>
+                          {Object.keys(game)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {filteredGames.length !== 0 && (
+                    <div className="set-selection-wrapper">
+                      {filteredGames.map((set) => (
+                        <div key={Object.keys(set)[0]}>
+                          <div>{Object.keys(set)}</div>
+                          <input
+                            type="checkbox"
+                            value={Object.keys(set)}
+                            onChange={handleChoosenSet}
+                            checked={Object.values(set)[0] === choosenGameStats}
+                          />
+                        </div>
+                      ))}
+                      <div>
+                        <div>Full game</div>
+                        <input
+                          type="checkbox"
+                          value="full"
+                          onChange={handleChoosenSet}
+                          checked={saveFullGameStats === choosenGameStats}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </nav>
+              </caption>
+              <tbody className="rating-table-wrapper">
+                <Categorys filteredPlayers={choosenGameStats} rankByValue={rankByValue} />
+                {filter && <Rows filteredPlayers={[fullGameStats]} lastRow={true} />}
+              </tbody>
+            </table>
+            {filter && (
+              <div className="diagram-wrapper">
+                <div className="diagram-content" style={!isBurger ? { width: "80%" } : {}}>
+                  <Diagramm link="Attack" data={fullGameStats} />
+                </div>
+              </div>
+            )}
+            {/* {admin && (
                   <RegularButton onClick={() => saveGame()} type="button">
                     save game
                   </RegularButton>
                 )} */}
-              </>
-            )}
           </>
-        }
-      />
+        )}
+      </SectionWrapper>
     </article>
   );
 }

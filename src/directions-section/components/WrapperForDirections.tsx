@@ -261,184 +261,174 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
           <div className="threeMMyCort"></div>
         </div>
       }
-      content={
-        <>
-          <form
-            className="playArea"
-            onSubmit={!isShowDataOfActions ? onHandleCountClick : showData}
-          >
-            <div className="explain">
-              <Explain
-                isConfirmReturn={isConfirmReturn}
-                setIsConfirmReturn={setIsConfirmReturn}
-                isDisableSwitch={isDisableSwitch}
-                isSaveDataOfActions={isSaveDataOfActions}
-                setIsSaveDataOfActions={setIsSaveDataOfActions}
-                diagrammValue={diagrammValue}
-                handleDiagrammValue={handleDiagrammValue}
-                returnOldData={returnOldData}
-                isShowDataOfActions={isShowDataOfActions}
-                setIsShowDataOfActions={setIsShowDataOfActions}
-                type={type}
-              />
-            </div>
-            <div className="select-wrapper">
-              <select
-                className="typeOfAction"
-                onChange={chooseTypeOfAttack}
-                disabled={choiceIsDone}
-              >
-                <option value="choose">{!isShowInputs ? `Choose zone` : `Choose type`}</option>
-                <option value={choosenActionOne}>{choosenActionOne}</option>
-                {(type === "Service" || playerInfo.position !== "MBlocker") && (
-                  <option value={choosenActionTwo}>{choosenActionTwo}</option>
-                )}
-              </select>
-            </div>
-            <div className="count-button-wrapper">
-              <button type="submit" className="countButton" disabled={choiceIsDone}>
-                {choiceIsDone ? choice[0]?.zone.replace(/[a-z]/g, "") : "Count"}
-              </button>
-            </div>
-            <div className="zones-wrapper">
-              {type === "Service"
-                ? zonesStates.map((ball, index) =>
-                    !ball.active ? (
-                      <Balls
-                        key={index}
-                        value={ball.zone.replace(/[a-z]/g, "")}
-                        className={!isShowInputs ? ball.zone : "none"}
-                        index={index}
-                        zonesStates={zonesStates}
-                        setZonesStates={setZonesStates}
-                        setIsShowInputs={setIsShowInputs}
-                      />
-                    ) : (
-                      <Balls
-                        key={index}
-                        value="🏐"
-                        className={ball.zone + " showTheBall"}
-                        index={index}
-                        zonesStates={zonesStates}
-                        setZonesStates={setZonesStates}
-                        setIsShowInputs={setIsShowInputs}
-                      />
-                    )
+    >
+      <form className="playArea" onSubmit={!isShowDataOfActions ? onHandleCountClick : showData}>
+        <div className="explain">
+          <Explain
+            isConfirmReturn={isConfirmReturn}
+            setIsConfirmReturn={setIsConfirmReturn}
+            isDisableSwitch={isDisableSwitch}
+            isSaveDataOfActions={isSaveDataOfActions}
+            setIsSaveDataOfActions={setIsSaveDataOfActions}
+            diagrammValue={diagrammValue}
+            handleDiagrammValue={handleDiagrammValue}
+            returnOldData={returnOldData}
+            isShowDataOfActions={isShowDataOfActions}
+            setIsShowDataOfActions={setIsShowDataOfActions}
+            type={type}
+          />
+        </div>
+        <div className="select-wrapper">
+          <select className="typeOfAction" onChange={chooseTypeOfAttack} disabled={choiceIsDone}>
+            <option value="choose">{!isShowInputs ? `Choose zone` : `Choose type`}</option>
+            <option value={choosenActionOne}>{choosenActionOne}</option>
+            {(type === "Service" || playerInfo.position !== "MBlocker") && (
+              <option value={choosenActionTwo}>{choosenActionTwo}</option>
+            )}
+          </select>
+        </div>
+        <div className="count-button-wrapper">
+          <button type="submit" className="countButton" disabled={choiceIsDone}>
+            {choiceIsDone ? choice[0]?.zone.replace(/[a-z]/g, "") : "Count"}
+          </button>
+        </div>
+        <div className="zones-wrapper">
+          {type === "Service"
+            ? zonesStates.map((ball, index) =>
+                !ball.active ? (
+                  <Balls
+                    key={index}
+                    value={ball.zone.replace(/[a-z]/g, "")}
+                    className={!isShowInputs ? ball.zone : "none"}
+                    index={index}
+                    zonesStates={zonesStates}
+                    setZonesStates={setZonesStates}
+                    setIsShowInputs={setIsShowInputs}
+                  />
+                ) : (
+                  <Balls
+                    key={index}
+                    value="🏐"
+                    className={ball.zone + " showTheBall"}
+                    index={index}
+                    zonesStates={zonesStates}
+                    setZonesStates={setZonesStates}
+                    setIsShowInputs={setIsShowInputs}
+                  />
+                )
+              )
+            : playerInfo.position === "Opposite"
+            ? zonesStates
+                .slice(0, 3)
+                .map((ball, index) =>
+                  ball.active === false ? (
+                    <Balls
+                      key={index}
+                      value={ball.zone.replace(/[a-z]/g, "")}
+                      className={!isShowInputs ? ball.zone : "none"}
+                      index={index}
+                      zonesStates={zonesStates}
+                      setZonesStates={setZonesStates}
+                      setIsShowInputs={setIsShowInputs}
+                    />
+                  ) : (
+                    <Balls
+                      key={index}
+                      value="🏐"
+                      className={ball.zone + " showTheBall"}
+                      index={index}
+                      zonesStates={zonesStates}
+                      setZonesStates={setZonesStates}
+                      setIsShowInputs={setIsShowInputs}
+                    />
                   )
-                : playerInfo.position === "Opposite"
-                ? zonesStates
-                    .slice(0, 3)
-                    .map((ball, index) =>
-                      ball.active === false ? (
-                        <Balls
-                          key={index}
-                          value={ball.zone.replace(/[a-z]/g, "")}
-                          className={!isShowInputs ? ball.zone : "none"}
-                          index={index}
-                          zonesStates={zonesStates}
-                          setZonesStates={setZonesStates}
-                          setIsShowInputs={setIsShowInputs}
-                        />
-                      ) : (
-                        <Balls
-                          key={index}
-                          value="🏐"
-                          className={ball.zone + " showTheBall"}
-                          index={index}
-                          zonesStates={zonesStates}
-                          setZonesStates={setZonesStates}
-                          setIsShowInputs={setIsShowInputs}
-                        />
-                      )
-                    )
-                : playerInfo.position === "Reciever"
-                ? zonesStates
-                    .slice(1, 4)
-                    .map((ball, index) =>
-                      ball.active === false ? (
-                        <Balls
-                          key={index + 1}
-                          value={ball.zone.replace(/[a-z]/g, "")}
-                          className={!isShowInputs ? ball.zone : "none"}
-                          index={index + 1}
-                          zonesStates={zonesStates}
-                          setZonesStates={setZonesStates}
-                          setIsShowInputs={setIsShowInputs}
-                        />
-                      ) : (
-                        <Balls
-                          key={index + 1}
-                          value="🏐"
-                          className={ball.zone + " showTheBall"}
-                          index={index + 1}
-                          zonesStates={zonesStates}
-                          setZonesStates={setZonesStates}
-                          setIsShowInputs={setIsShowInputs}
-                        />
-                      )
-                    )
-                : playerInfo.position === "MBlocker"
-                ? zonesStates
-                    .slice(4, 7)
-                    .map((ball, index) =>
-                      ball.active === false ? (
-                        <Balls
-                          key={index + 4}
-                          value={ball.zone.replace(/[a-z]/g, "")}
-                          className={!isShowInputs ? ball.zone : "none"}
-                          index={index + 4}
-                          zonesStates={zonesStates}
-                          setZonesStates={setZonesStates}
-                          setIsShowInputs={setIsShowInputs}
-                        />
-                      ) : (
-                        <Balls
-                          key={index + 4}
-                          value="🏐"
-                          className={ball.zone + " showTheBall"}
-                          index={index + 4}
-                          zonesStates={zonesStates}
-                          setZonesStates={setZonesStates}
-                          setIsShowInputs={setIsShowInputs}
-                        />
-                      )
-                    )
-                : null}
-            </div>
-          </form>
-          {isDisableSwitch && !isShowDataOfActions && (
+                )
+            : playerInfo.position === "Reciever"
+            ? zonesStates
+                .slice(1, 4)
+                .map((ball, index) =>
+                  ball.active === false ? (
+                    <Balls
+                      key={index + 1}
+                      value={ball.zone.replace(/[a-z]/g, "")}
+                      className={!isShowInputs ? ball.zone : "none"}
+                      index={index + 1}
+                      zonesStates={zonesStates}
+                      setZonesStates={setZonesStates}
+                      setIsShowInputs={setIsShowInputs}
+                    />
+                  ) : (
+                    <Balls
+                      key={index + 1}
+                      value="🏐"
+                      className={ball.zone + " showTheBall"}
+                      index={index + 1}
+                      zonesStates={zonesStates}
+                      setZonesStates={setZonesStates}
+                      setIsShowInputs={setIsShowInputs}
+                    />
+                  )
+                )
+            : playerInfo.position === "MBlocker"
+            ? zonesStates
+                .slice(4, 7)
+                .map((ball, index) =>
+                  ball.active === false ? (
+                    <Balls
+                      key={index + 4}
+                      value={ball.zone.replace(/[a-z]/g, "")}
+                      className={!isShowInputs ? ball.zone : "none"}
+                      index={index + 4}
+                      zonesStates={zonesStates}
+                      setZonesStates={setZonesStates}
+                      setIsShowInputs={setIsShowInputs}
+                    />
+                  ) : (
+                    <Balls
+                      key={index + 4}
+                      value="🏐"
+                      className={ball.zone + " showTheBall"}
+                      index={index + 4}
+                      zonesStates={zonesStates}
+                      setZonesStates={setZonesStates}
+                      setIsShowInputs={setIsShowInputs}
+                    />
+                  )
+                )
+            : null}
+        </div>
+      </form>
+      {isDisableSwitch && !isShowDataOfActions && (
+        <div className="cones-wrapper">
+          {Object.values(zoneValue).map((value, index) => (
+            <Reaction key={index} value={value} />
+          ))}
+        </div>
+      )}
+      {isShowInputs && (
+        <>
+          {!isDisableSwitch && !isShowDataOfActions && (
             <div className="cones-wrapper">
-              {Object.values(zoneValue).map((value, index) => (
-                <Reaction key={index} value={value} />
+              {Object.entries(zoneValue).map(([key, value]) => (
+                <InputForCount
+                  key={key}
+                  name={key}
+                  setZoneValue={setZoneValue}
+                  zoneValue={zoneValue}
+                  value={value}
+                />
               ))}
             </div>
           )}
-          {isShowInputs && (
-            <>
-              {!isDisableSwitch && !isShowDataOfActions && (
-                <div className="cones-wrapper">
-                  {Object.entries(zoneValue).map(([key, value]) => (
-                    <InputForCount
-                      key={key}
-                      name={key}
-                      setZoneValue={setZoneValue}
-                      zoneValue={zoneValue}
-                      value={value}
-                    />
-                  ))}
-                </div>
-              )}
-              {isSaveDataOfActions && (
-                <CheckEquality
-                  zoneValue={zoneValue}
-                  diagrammValue={diagrammValue}
-                  checkEquality={checkEquality}
-                />
-              )}
-            </>
+          {isSaveDataOfActions && (
+            <CheckEquality
+              zoneValue={zoneValue}
+              diagrammValue={diagrammValue}
+              checkEquality={checkEquality}
+            />
           )}
         </>
-      }
-    />
+      )}
+    </SectionWrapper>
   );
 }

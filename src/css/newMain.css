@@ -102,7 +102,8 @@ main .main-content-wrapper .attack-section {
     width: 90vw;
   }
 }
-main .main-content-wrapper .teamsquad-section {
+main .main-content-wrapper .teamsquad-section,
+main .main-content-wrapper .rotation-panel-wrapper {
   width: 20%;
   background-color: gainsboro;
   text-align: center;
@@ -111,6 +112,11 @@ main .main-content-wrapper .teamsquad-section {
   padding: 1vw;
   position: relative;
   z-index: 5;
+}
+main .main-content-wrapper .rotation-panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 main .main-content-wrapper .ratings-section,
 main .main-content-wrapper .playground-section {
@@ -209,6 +215,36 @@ main .main-content-wrapper .section-content-wrapper .section-content {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .team-name-wrapper {
+  width: 15vw;
+  display: flex;
+  justify-content: center;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .team-name-wrapper .team-name {
+  font-size: 2vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-column-gap: 2vw;
+  grid-row-gap: 2vw;
+  padding: 2vw;
+  box-sizing: border-box;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content button {
+  width: 4vw;
+  aspect-ratio: 1/1;
+  font-size: 2vw;
+  font-weight: bold;
+  border: 2px solid black;
+  background-color: transparent;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content button:hover {
+  background-color: #0272be;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper .playerNumber {
   background-color: fuchsia;
@@ -370,7 +406,8 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   height: 50%;
   width: 50%;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select {
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select,
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input {
   width: 12vw;
   border: 2px solid black;
   text-align: center;
@@ -536,7 +573,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .zone-names-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .zone-names-wrapper {
   height: 12vmax;
-  width: 33%;
+  width: 100%;
   font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
   align-items: center;
 }
@@ -544,7 +581,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .card-content,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .card-content,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .card-content {
-  width: 33%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -648,7 +685,8 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   min-height: 18.5px;
   z-index: 10;
   position: relative;

@@ -80,38 +80,36 @@ export function Auth() {
     }
   }
   return (
-    <SectionWrapper
-      content={
-        <form className="emailPanel" onSubmit={handleLogin}>
-          <div>
-            <label>Email:</label>
-            <input
-              type="text"
-              placeholder="Email..."
-              required
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-            />
-            <RegularButton
-              type="submit"
-              $color="#ffd700"
-              $background="#0057b8"
-              disabled={isLoginLoading}
-            >
-              {isLoginLoading ? "Logging you in" : "Log in"}
-            </RegularButton>
-            <div>{loginError}</div>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <button type="button" className="google" onClick={signInWithGoogle}>
-                <img src="/photos/google.jpg" alt="" />
-              </button>
-              <button type="button" className="facebook" onClick={signInWithFaceBook}>
-                <img src="/photos/facebook.jpg" alt="" />
-              </button>
-            </div>
+    <SectionWrapper>
+      <form className="emailPanel" onSubmit={handleLogin}>
+        <div>
+          <label>Email:</label>
+          <input
+            type="text"
+            placeholder="Email..."
+            required
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+          />
+          <RegularButton
+            type="submit"
+            $color="#ffd700"
+            $background="#0057b8"
+            disabled={isLoginLoading}
+          >
+            {isLoginLoading ? "Logging you in" : "Log in"}
+          </RegularButton>
+          <div>{loginError}</div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <button type="button" className="google" onClick={signInWithGoogle}>
+              <img src="/photos/google.jpg" alt="" />
+            </button>
+            <button type="button" className="facebook" onClick={signInWithFaceBook}>
+              <img src="/photos/facebook.jpg" alt="" />
+            </button>
           </div>
-        </form>
-      }
-    />
+        </div>
+      </form>
+    </SectionWrapper>
   );
 }

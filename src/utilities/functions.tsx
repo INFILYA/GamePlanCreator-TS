@@ -21,6 +21,14 @@ export function reduce(arr: number[], sum = 0): number {
   const result = arr.reduce((a, b) => a + b, sum);
   return result;
 }
+
+export function firstLetterCapital(string: string): string {
+  if (string.length === 0) return string;
+  const firstLetter = string.charAt(0);
+  const wordWithoutFirstLetter = string.slice(1);
+  const newWord = firstLetter.toUpperCase() + wordWithoutFirstLetter;
+  return newWord;
+}
 export function compare<T>(a: T, b: T): number {
   if (a < b) {
     return -1;
@@ -31,7 +39,8 @@ export function compare<T>(a: T, b: T): number {
   return 0;
 }
 
-export const zones = [3, 2, 1, 4, 5, 0];
+export const positions = [3, 2, 1, 4, 5, 0];
+export const zones = [4, 3, 2, 5, 6, 1];
 
 export const emtyTeam = {
   winPoints: 0,
@@ -91,8 +100,12 @@ export const backGroundYellow = { backgroundColor: "#FFD700", color: "#0057B8" }
 export const backGroundBlue = { backgroundColor: "#0057B8", color: "#FFD700" };
 
 export function correctPositions(number: number): number {
+  return positions[number];
+}
+export function correctZones(number: number): number {
   return zones[number];
 }
+
 export const emptyPlayers: TPlayer[] = Array(6)
   .fill(emptyPlayer)
   .map((user, index) => ({ ...user, boardPosition: correctPositions(index) }));

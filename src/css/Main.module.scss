@@ -109,7 +109,8 @@ main {
         width: 90vw;
       }
     }
-    .teamsquad-section {
+    .teamsquad-section,
+    .rotation-panel-wrapper {
       width: 20%;
       background-color: gainsboro;
       text-align: center;
@@ -119,7 +120,11 @@ main {
       position: relative;
       z-index: 5;
     }
-
+    .rotation-panel-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
     .ratings-section,
     .playground-section {
       align-self: center;
@@ -213,6 +218,37 @@ main {
         display: flex;
         flex-direction: column;
         align-items: center;
+        // Rotation panel
+        .team-name-wrapper {
+          width: 15vw;
+          display: flex;
+          justify-content: center;
+          .team-name {
+            font-size: 2vw;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+        .rotation-panel-content {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-column-gap: 2vw;
+          grid-row-gap: 2vw;
+          padding: 2vw;
+          box-sizing: border-box;
+          button {
+            width: 4vw;
+            aspect-ratio: 1/1;
+            font-size: 2vw;
+            font-weight: bold;
+            border: 2px solid black;
+            background-color: transparent;
+            &:hover {
+              background-color: #0272be;
+            }
+          }
+        }
         // Іконки гравців
         .playerNumber-wrapper {
           .playerNumber {
@@ -367,7 +403,8 @@ main {
               height: 50%;
               width: 50%;
             }
-            select {
+            select,
+            input {
               width: 12vw;
               border: 2px solid black;
               text-align: center;
@@ -533,12 +570,12 @@ main {
             }
             .zone-names-wrapper {
               height: 12vmax;
-              width: 33%;
+              width: 100%;
               font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
               align-items: center;
             }
             .card-content {
-              width: 33%;
+              width: 100%;
               display: flex;
               flex-direction: column;
               align-items: center;
@@ -608,7 +645,8 @@ main {
           }
           .row-zones-wrapper,
           .my-row-zones-wrapper {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             min-height: 18.5px;
             z-index: 10;
             position: relative;
