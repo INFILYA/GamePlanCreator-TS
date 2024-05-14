@@ -6,6 +6,7 @@ import SectionWrapper from "../wrappers/SectionWrapper";
 import { useAppDispatch } from "../states/store";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import {
+  checkNumbers,
   correctPositions,
   correctZones,
   emptyPlayers,
@@ -13,6 +14,7 @@ import {
   gerPercentOfAttack,
   getAttackEfficency,
   getPlusMinusAttack,
+  isBoardFull,
 } from "../utilities/functions";
 import { TPlayer, TTeam } from "../types/types";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -56,17 +58,14 @@ export function HomePage() {
   const soloGameStats = useSelector(selectSoloGameStats);
   const [showSquads, setShowSquads] = useState(true);
   const [opponentTeamName, setOpponentTeamName] = useState("");
-  const [setNumber, setSetNumber] = useState("");
+  const [setNumber, setSetNumber] = useState("Choose set");
   const gamesStats = useSelector(selectGamesStats);
 
   const showGuestTeam = guestTeam.length !== 0;
   const showHomeTeam = homeTeam.length !== 0;
   // прибрати після / !!!!!
-  const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
   // прибрати після / !!!!!
-  function checkNumbers(element: number): boolean {
-    return typeof element !== "number";
-  }
+
   function resetTheBoardForGuestTeam() {
     dispatch(setGuestPlayers([]));
     dispatch(setGuestTeam(""));
@@ -168,20 +167,6 @@ export function HomePage() {
     setShowSquads(true);
     dispatch(setInfoOfPlayer(null));
   }
-  // Save starting six of the rival team
-  async function saveStartingSix() {
-    await saveTeam({
-      ...guestTeam[0],
-      startingSquad: guestTeamOptions.map((player) => player.name),
-    });
-  }
-  const saveTeam = async (team: TTeam) => {
-    try {
-      await set(teamsRef(team.id), team);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const hideSquads = () => {
     setShowSquads(!showSquads);
@@ -189,14 +174,13 @@ export function HomePage() {
       dispatch(setInfoOfPlayer(null));
     }
   };
+
   const playerInfoWindow = playerInfo && showSquads;
-  const isBoardFull = (arr: TPlayer[]) => {
-    return arr.every((option) => checkNumbers(option.boardPosition));
-  };
+  const saveDataIcon = !opponentTeamName || setNumber === "Choose set";
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
-      {!showSquads && <RotationPanel />}
+      {!showSquads && <RotationPanel team={false} />}
       <SectionWrapper
         className="playground-section"
         backGround={!playerInfoWindow && <img src="/photos/playarea.jpg" alt="" />}
@@ -239,7 +223,7 @@ export function HomePage() {
                             value={opponentTeamName}
                           />
                           <select onChange={(e) => setSetNumber(e.target.value)} value={setNumber}>
-                            <option value="">Choose set</option>
+                            <option value="Choose set">Choose set</option>
                             <option value="Set 1">Set 1</option>
                             <option value="Set 2">Set 2</option>
                             <option value="Set 3">Set 3</option>
@@ -336,19 +320,9 @@ export function HomePage() {
             <div className="button-save-wrapper">
               {isBoardFull(guestTeamOptions) && (
                 <>
-                  {!showSquads && setNumber && opponentTeamName && (
+                  {!showSquads && !saveDataIcon && (
                     <RegularButton type="submit" $color="black" $background="#ffd700">
                       Save Data
-                    </RegularButton>
-                  )}
-                  {admin && showSquads && (
-                    <RegularButton
-                      onClick={saveStartingSix}
-                      type="button"
-                      $color="black"
-                      $background="#ffd700"
-                    >
-                      Save starting six
                     </RegularButton>
                   )}
                 </>
@@ -432,7 +406,7 @@ export function HomePage() {
             )}
           </SectionWrapper>
         ))}
-      {!showSquads && <RotationPanel opponentTeamName={opponentTeamName} />}
+      {!showSquads && <RotationPanel opponentTeamName={opponentTeamName} team={true} />}
     </article>
   );
 }

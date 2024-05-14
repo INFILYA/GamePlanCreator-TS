@@ -10,7 +10,7 @@ import {
 } from "../../states/slices/guestPlayersSlice";
 import { filterHomePlayers, selectHomePlayers } from "../../states/slices/homePlayersSlice";
 import { ChangeEvent } from "react";
-import { auth } from "../../config/firebase";
+import { auth, teamsRef } from "../../config/firebase";
 import {
   selectIndexOfHomeTeamZones,
   setHomeTeamIndexOfZones,
@@ -23,7 +23,9 @@ import {
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { RegularButton } from "../../css/Button.styled";
-import { compare } from "../../utilities/functions";
+import { compare, isBoardFull } from "../../utilities/functions";
+import { set } from "firebase/database";
+import { TTeam } from "../../types/types";
 
 type TSquadsProps = {
   team: string;
@@ -40,6 +42,7 @@ export function Squads(props: TSquadsProps) {
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
   // const playerInfo = useSelector(selectPlayerInfo);
   const [isRegistratedUser] = useAuthState(auth);
+  const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
   const myTeam = team === "my";
   const club = myTeam ? homeTeam[0] : guestTeam[0];
   const players = myTeam ? [...homePlayers] : [...guestPlayers];
@@ -76,6 +79,22 @@ export function Squads(props: TSquadsProps) {
     dispatch(showGuestTeamStartingSix({ guestPlayers, guestTeamStartingSix }));
     dispatch(setGuestBenchPlayers({ guestPlayers, guestTeamStartingSix }));
   }
+
+  async function saveStartingSix() {
+    await saveTeam({
+      ...guestTeam[0],
+      startingSquad: guestTeamOptions.map((player) => player.name),
+    });
+  }
+
+  const saveTeam = async (team: TTeam) => {
+    try {
+      await set(teamsRef(team.id), team);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <SectionWrapper className="teamsquad-section">
       <div className="team-title-wrapper" style={myTeam ? { direction: "rtl" } : {}}>
@@ -145,6 +164,16 @@ export function Squads(props: TSquadsProps) {
             $background="#ffd700"
           >
             Starting six
+          </RegularButton>
+        )}
+        {admin && isBoardFull(guestTeamOptions) && !myTeam &&(
+          <RegularButton
+            onClick={saveStartingSix}
+            type="button"
+            $color="black"
+            $background="#ffd700"
+          >
+            Save starting six
           </RegularButton>
         )}
       </div>

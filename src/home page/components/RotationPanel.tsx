@@ -4,16 +4,17 @@ import { selectGuestTeam } from "../../states/slices/guestTeamSlice";
 import { useState } from "react";
 
 type TRotationPanel = {
+  team: boolean;
   opponentTeamName?: string;
 };
 
 export default function RotationPanel(arg: TRotationPanel) {
-  const { opponentTeamName } = arg;
+  const { opponentTeamName, team } = arg;
   const guestTeam = useSelector(selectGuestTeam);
   const [number, setNumber] = useState(1);
 
   const zones = [4, 3, 2, 5, 6, 1];
-  const nameOfTheTeam = opponentTeamName || guestTeam[0].name;
+  const nameOfTheTeam = team ? opponentTeamName : guestTeam[0]?.name;
   return (
     <SectionWrapper className="rotation-panel-wrapper">
       <div className="team-name-wrapper">

@@ -232,7 +232,6 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-p
   grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-column-gap: 2vw;
   grid-row-gap: 2vw;
-  padding: 2vw;
   box-sizing: border-box;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content button {

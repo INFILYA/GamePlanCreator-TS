@@ -29,6 +29,15 @@ export function firstLetterCapital(string: string): string {
   const newWord = firstLetter.toUpperCase() + wordWithoutFirstLetter;
   return newWord;
 }
+
+export const isBoardFull = (arr: TPlayer[]) => {
+  return arr.every((option) => checkNumbers(option.boardPosition));
+};
+
+export function checkNumbers(element: number): boolean {
+  return typeof element !== "number";
+}
+
 export function compare<T>(a: T, b: T): number {
   if (a < b) {
     return -1;

@@ -41,7 +41,6 @@ export default function GamePlanCreator() {
         getPlayers();
         getGames();
         await later(2500);
-        console.log("huy");
       } catch (error) {
         console.error(error);
       } finally {
