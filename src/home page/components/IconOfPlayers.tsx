@@ -7,10 +7,12 @@ import { resetHomeTeamIndexOfZones } from "../../states/slices/indexOfHomeTeamZo
 import {
   resetGuestTeamIndexOfZones,
   selectIndexOfGuestTeamZones,
+  updateInfoOfStartingSix,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
-import { ChangeEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
 import {
+  emptyPlayer,
   gerPercentOfAttack,
   getAttackEfficency,
   getPlusMinusAttack,
@@ -23,21 +25,21 @@ type TIconOfPlayer = {
   key: number;
   startingSix: TPlayer[];
   player: TPlayer;
+  soloGameStats: TPlayer[];
   showSquads: boolean;
   setShowSquads(arg: boolean): void;
 };
 
 export function IconOfPlayer(props: TIconOfPlayer) {
-  const { player, startingSix, type, showSquads, setShowSquads } = props;
+  const { player, soloGameStats, startingSix, type, showSquads, setShowSquads } = props;
   const dispatch = useAppDispatch();
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
+  const [diagrammValue, setDiagrammValue] = useState<TPlayer>(emptyPlayer);
 
-  const [diagrammValue, setDiagrammValue] = useState<TAttackDiagramm>({
-    winPoints: 0,
-    leftInGame: 0,
-    attacksInBlock: 0,
-    loosePoints: 0,
-  });
+  useEffect(() => {
+    const choosenPlayer = soloGameStats.filter((athlete) => athlete.name === player.name);
+    setDiagrammValue(choosenPlayer[0]);
+  }, [player, soloGameStats]);
   const my = type === "my";
 
   function checkNumbers(element: number): boolean {
@@ -48,31 +50,6 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     return arr.every((option) => checkNumbers(option.boardPosition));
   };
 
-  const handleDiagrammValue = (event: ChangeEvent<HTMLInputElement>) => {
-    setDiagrammValue({
-      ...diagrammValue,
-      [event.target.name]: +event.target.value.replace(/\D+/g, ""),
-    });
-    const updatedPlayer = calculateForPlayerData(
-      { ...player },
-      {
-        ...diagrammValue,
-        [event.target.name]: +event.target.value.replace(/\D+/g, ""),
-      }
-    );
-    const soloGameUpdatedPlayer = calculateForPlayerData(
-      { ...player },
-      {
-        ...diagrammValue,
-        [event.target.name]: +event.target.value.replace(/\D+/g, ""),
-      },
-      true
-    );
-    dispatch(setSoloGameStats(soloGameUpdatedPlayer));
-    dispatch(setUpdatedPlayers(updatedPlayer));
-    dispatch(setInfoOfPlayer(updatedPlayer));
-  };
-
   function calculateForPlayerData<T extends TTeam | TPlayer>(
     obj: T,
     diagram: TAttackDiagramm,
@@ -80,7 +57,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   ): T {
     for (const key in diagram) {
       if (!soloGame) {
-        (obj[key as keyof T] as number) += diagram[key as keyof TAttackDiagramm];
+        if (
+          key === "attacksInBlock" ||
+          key === "loosePoints" ||
+          key === "winPoints" ||
+          key === "leftInGame"
+        ) {
+          (obj[key as keyof T] as number) += diagram[key as keyof TAttackDiagramm];
+        } else continue;
       }
       if (soloGame) {
         (obj[key as keyof T] as number) = diagram[key as keyof TAttackDiagramm];
@@ -110,33 +94,36 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     }
   }
 
-  function addAmount(type: string) {
+  function addAmount(type: keyof TPlayer, number: number) {
+    if (diagrammValue[type] === 0 && number === -1) return;
     setDiagrammValue({
       ...diagrammValue,
-      [type]: +diagrammValue[type as keyof TAttackDiagramm] + 1,
+      [type]: +diagrammValue[type] + number,
     });
-    const updatedPlayer = calculateForPlayerData(
-      { ...player },
-      {
-        ...diagrammValue,
-        [type]: +diagrammValue[type as keyof TAttackDiagramm] + 1,
-      }
-    );
+    const obj = { [type]: number } as TAttackDiagramm;
+    const updatedPlayer = calculateForPlayerData({ ...player }, obj);
     const soloGameUpdatedPlayer = calculateForPlayerData(
       { ...player },
       {
         ...diagrammValue,
-        [type]: +diagrammValue[type as keyof TAttackDiagramm] + 1,
+        [type]: diagrammValue[type as keyof TAttackDiagramm] + number,
       },
       true
     );
     dispatch(setSoloGameStats(soloGameUpdatedPlayer));
     dispatch(setUpdatedPlayers(updatedPlayer));
     dispatch(setInfoOfPlayer(updatedPlayer));
+    dispatch(updateInfoOfStartingSix(updatedPlayer));
   }
 
   if (typeof player === "number" || player === null) return;
   const condition = player.number !== 0;
+  const gradations = [
+    ["winPoints", "lightgreen", "Win"],
+    ["leftInGame", "yellow", "Game"],
+    ["attacksInBlock", "orange", "Block"],
+    ["loosePoints", "orangered", "Error"],
+  ];
 
   return (
     <>
@@ -156,7 +143,6 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                   !my ? () => cancelGuestTeamChoice(player) : () => cancelHomeTeamChoice(player)
                 }
               >
-                {/* {player.number > 9 ? player.number : `0${player.number}`} */}
                 {player.number}
               </button>
             </div>
@@ -176,77 +162,35 @@ export function IconOfPlayer(props: TIconOfPlayer) {
               <table>
                 <tbody>
                   <tr>
-                    <th>Type</th>
+                    <th>+</th>
                     <th>Amount</th>
+                    <th>-</th>
                   </tr>
-                  <tr>
-                    <td
-                      style={{ backgroundColor: "lightgreen" }}
-                      onClick={() => addAmount("winPoints")}
-                    >
-                      Win
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        min={0}
-                        value={diagrammValue.winPoints}
-                        onChange={handleDiagrammValue}
-                        name="winPoints"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={{ backgroundColor: "yellow" }}
-                      onClick={() => addAmount("leftInGame")}
-                    >
-                      Game
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        min={0}
-                        value={diagrammValue.leftInGame}
-                        onChange={handleDiagrammValue}
-                        name="leftInGame"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={{ backgroundColor: "orange" }}
-                      onClick={() => addAmount("attacksInBlock")}
-                    >
-                      Block
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        min={0}
-                        value={diagrammValue.attacksInBlock}
-                        onChange={handleDiagrammValue}
-                        name="attacksInBlock"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td
-                      style={{ backgroundColor: "orangered" }}
-                      onClick={() => addAmount("loosePoints")}
-                    >
-                      Error
-                    </td>
-                    <td>
-                      <input
-                        type="number"
-                        min={0}
-                        value={diagrammValue.loosePoints}
-                        onChange={handleDiagrammValue}
-                        name="loosePoints"
-                      />
-                    </td>
-                  </tr>
+                  {gradations.map((grade) => (
+                    <tr key={grade[0]}>
+                      <td
+                        style={{ backgroundColor: grade[1] }}
+                        onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
+                      >
+                        {grade[2]}
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          min={0}
+                          value={diagrammValue[grade[0] as keyof TAttackDiagramm]}
+                          name={grade[0]}
+                          readOnly
+                        />
+                      </td>
+                      <td
+                        style={{ backgroundColor: grade[1] }}
+                        onClick={() => addAmount(grade[0] as keyof TPlayer, -1)}
+                      >
+                        -
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>

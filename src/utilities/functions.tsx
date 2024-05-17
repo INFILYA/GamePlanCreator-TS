@@ -210,3 +210,28 @@ export const listOfOpponents = [
   "REACH Nitro",
   "MAC Titanium",
 ];
+
+export const soloGameStatOfPlayer = {
+  age: 0,
+  birthday: "",
+  hand: "",
+  height: 0,
+  id: "",
+  name: "",
+  number: 0,
+  photo: "",
+  position: "none",
+  reach: 0,
+  team: "",
+  winPoints: 0,
+  loosePoints: 0,
+  leftInGame: 0,
+  attacksInBlock: 0,
+  plusMinusOnAttack: 0,
+  percentOfAttack: 0,
+  boardPosition: 0,
+};
+
+export const soloGameStatOfPlayers: TPlayer[] = Array(6)
+  .fill(soloGameStatOfPlayer)
+  .map((user, index) => ({ ...user, boardPosition: correctPositions(index) }));

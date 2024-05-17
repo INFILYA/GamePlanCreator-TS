@@ -58,7 +58,7 @@ export function HomePage() {
   const soloGameStats = useSelector(selectSoloGameStats);
   const [showSquads, setShowSquads] = useState(true);
   const [opponentTeamName, setOpponentTeamName] = useState("");
-  const [setNumber, setSetNumber] = useState("Choose set");
+  const [setNumber, setSetNumber] = useState("");
   const gamesStats = useSelector(selectGamesStats);
 
   const showGuestTeam = guestTeam.length !== 0;
@@ -119,6 +119,7 @@ export function HomePage() {
     const setStat = { [setNumber]: soloGameStats };
     const choosenGame = gamesStats.find((game) => game[matchInfo]);
     if (!choosenGame) {
+      // console.log({ [matchInfo]: [setStat] });
       await set(gamesRef(matchInfo), { [matchInfo]: [setStat] });
     } else {
       const isSetExist = choosenGame[matchInfo].some((sets) => Object.keys(sets)[0] === setNumber);
@@ -133,6 +134,7 @@ export function HomePage() {
     }
     // Refresh StartingSix players
     async function setPlayersToData(player: TPlayer) {
+      // console.log(player);
       await set(playersRef(player.name), player);
     }
     const names = guestTeamOptions.map((player) => player.name);
@@ -162,6 +164,7 @@ export function HomePage() {
       attacksInBlock: attacksInBlock,
     };
     calculateForTeamData(sumOfAllPlayersSoloGamesStats as TPlayer);
+    // console.log(guestTeam[0]);
     await set(teamsRef(guestTeam[0].name), guestTeam[0]);
     resetTheBoardForGuestTeam();
     setShowSquads(true);
@@ -176,7 +179,7 @@ export function HomePage() {
   };
 
   const playerInfoWindow = playerInfo && showSquads;
-  const saveDataIcon = !opponentTeamName || setNumber === "Choose set";
+  const saveDataIcon = !opponentTeamName || !setNumber;
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -221,9 +224,10 @@ export function HomePage() {
                               setOpponentTeamName(firstLetterCapital(e.target.value))
                             }
                             value={opponentTeamName}
+                            placeholder="Choose team name"
                           />
                           <select onChange={(e) => setSetNumber(e.target.value)} value={setNumber}>
-                            <option value="Choose set">Choose set</option>
+                            <option value="">Choose set</option>
                             <option value="Set 1">Set 1</option>
                             <option value="Set 2">Set 2</option>
                             <option value="Set 3">Set 3</option>
@@ -258,6 +262,7 @@ export function HomePage() {
                     setShowSquads={setShowSquads}
                     showSquads={showSquads}
                     player={option}
+                    soloGameStats={soloGameStats}
                     startingSix={guestTeamOptions}
                     type="rival"
                     key={index}
@@ -275,6 +280,7 @@ export function HomePage() {
                     <IconOfPlayer
                       showSquads={showSquads}
                       player={option}
+                      soloGameStats={soloGameStats}
                       startingSix={homeTeamOptions}
                       type="my"
                       key={index}
@@ -290,6 +296,7 @@ export function HomePage() {
                     setShowSquads={setShowSquads}
                     showSquads={showSquads}
                     player={option}
+                    soloGameStats={soloGameStats}
                     startingSix={guestTeamOptions}
                     type="rival"
                     key={index}
@@ -307,6 +314,7 @@ export function HomePage() {
                     <IconOfPlayer
                       showSquads={showSquads}
                       player={option}
+                      soloGameStats={soloGameStats}
                       startingSix={homeTeamOptions}
                       type="my"
                       key={index}

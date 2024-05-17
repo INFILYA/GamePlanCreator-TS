@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { TPlayer } from "../../types/types";
 import { RootState } from "../store";
-import { emptyPlayers, zones } from "../../utilities/functions";
+import { emptyPlayers, positions } from "../../utilities/functions";
 
 type TIndexOfHomeTeamZones = {
   indexOfHomeTeamZones: TPlayer[];
@@ -25,7 +25,7 @@ export const indexOfHomeTeamZonesSlice = createSlice({
     ) => {
       state.indexOfHomeTeamZones = state.indexOfHomeTeamZones.map((player, index) =>
         index === action.payload.startingSix.indexOf(action.payload.player)
-          ? { ...emptyPlayers[0], boardPosition: zones[index] }
+          ? { ...emptyPlayers[0], boardPosition: positions[index] }
           : player
       );
     },

@@ -26,6 +26,7 @@ import { RegularButton } from "../../css/Button.styled";
 import { compare, isBoardFull } from "../../utilities/functions";
 import { set } from "firebase/database";
 import { TTeam } from "../../types/types";
+import { setSoloGameStartingSix, setSoloGameStats, setSoloGameSubPlaeyrsStats } from "../../states/slices/soloGameStatsSlice";
 
 type TSquadsProps = {
   team: string;
@@ -63,6 +64,15 @@ export function Squads(props: TSquadsProps) {
     dispatch(filterHomePlayers(event.target.value.split(",")[0]));
     const zone = +event.target.value.split(",")[1];
     dispatch(setHomeTeamIndexOfZones({ player, zone }));
+    const soloGamePlayer = { ...player };
+    soloGamePlayer.winPoints = 0;
+    soloGamePlayer.loosePoints = 0;
+    soloGamePlayer.leftInGame = 0;
+    soloGamePlayer.attacksInBlock = 0;
+    soloGamePlayer.efficencyAttack = 0;
+    soloGamePlayer.plusMinusOnAttack = 0;
+    soloGamePlayer.percentOfAttack = 0;
+    dispatch(setSoloGameSubPlaeyrsStats(soloGamePlayer));
   }
   function guestTeamActions(event: ChangeEvent<HTMLSelectElement>) {
     setPlayerToGuestTeamBoard(event);
@@ -73,11 +83,21 @@ export function Squads(props: TSquadsProps) {
     dispatch(filterGuestPlayers(event.target.value.split(",")[0]));
     const zone = +event.target.value.split(",")[1];
     dispatch(setGuestTeamIndexOfZones({ player, zone }));
+    const soloGamePlayer = { ...player };
+    soloGamePlayer.winPoints = 0;
+    soloGamePlayer.loosePoints = 0;
+    soloGamePlayer.leftInGame = 0;
+    soloGamePlayer.attacksInBlock = 0;
+    soloGamePlayer.efficencyAttack = 0;
+    soloGamePlayer.plusMinusOnAttack = 0;
+    soloGamePlayer.percentOfAttack = 0;
+    dispatch(setSoloGameStats(soloGamePlayer));
   }
   function showStartingSix() {
     const guestTeamStartingSix = guestTeam[0].startingSquad;
     dispatch(showGuestTeamStartingSix({ guestPlayers, guestTeamStartingSix }));
     dispatch(setGuestBenchPlayers({ guestPlayers, guestTeamStartingSix }));
+    dispatch(setSoloGameStartingSix({ guestPlayers, guestTeamStartingSix }));
   }
 
   async function saveStartingSix() {
@@ -166,7 +186,7 @@ export function Squads(props: TSquadsProps) {
             Starting six
           </RegularButton>
         )}
-        {admin && isBoardFull(guestTeamOptions) && !myTeam &&(
+        {admin && isBoardFull(guestTeamOptions) && !myTeam && (
           <RegularButton
             onClick={saveStartingSix}
             type="button"
