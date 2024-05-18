@@ -53,6 +53,16 @@ export const indexOfGuestTeamZonesSlice = createSlice({
       }
       state.indexOfGuestTeamZones = correctStartingSix;
     },
+    rotateForwardGuestTeam: (state) => {
+      const Zone = [...state.indexOfGuestTeamZones];
+      const newRot = [Zone[3], Zone[0], Zone[1], Zone[4], Zone[5], Zone[2]];
+      state.indexOfGuestTeamZones = newRot;
+    },
+    rotateBackGuestTeam: (state) => {
+      const zone = [...state.indexOfGuestTeamZones];
+      const newRot2 = [zone[1], zone[2], zone[5], zone[0], zone[3], zone[4]];
+      state.indexOfGuestTeamZones = newRot2;
+    },
   },
 });
 export const {
@@ -61,6 +71,8 @@ export const {
   setBackGuestTeamSelects,
   showGuestTeamStartingSix,
   updateInfoOfStartingSix,
+  rotateForwardGuestTeam,
+  rotateBackGuestTeam,
 } = indexOfGuestTeamZonesSlice.actions;
 export default indexOfGuestTeamZonesSlice.reducer;
 export const selectIndexOfGuestTeamZones = (state: RootState) =>

@@ -258,72 +258,72 @@ export function HomePage() {
             <div className="row-zones-wrapper">
               {guestTeamOptions.slice(0, 3).map((option, index) =>
                 checkNumbers(option.boardPosition) ? (
-                  <IconOfPlayer
-                    setShowSquads={setShowSquads}
-                    showSquads={showSquads}
-                    player={option}
-                    soloGameStats={soloGameStats}
-                    startingSix={guestTeamOptions}
-                    type="rival"
-                    key={index}
-                  />
+                  <div key={index}>
+                    <IconOfPlayer
+                      setShowSquads={setShowSquads}
+                      showSquads={showSquads}
+                      player={option}
+                      soloGameStats={soloGameStats}
+                      startingSix={guestTeamOptions}
+                      type="rival"
+                    />
+                  </div>
                 ) : (
                   <div className="zone-names-wrapper" key={"_" + index}>
                     P{correctZones(index)}
                   </div>
                 )
               )}
-              {homeTeamOptions
-                .slice(0, 3)
-                .map((option, index) =>
-                  checkNumbers(option.boardPosition) ? (
+              {homeTeamOptions.slice(0, 3).map((option, index) =>
+                checkNumbers(option.boardPosition) ? (
+                  <div key={index}>
                     <IconOfPlayer
                       showSquads={showSquads}
                       player={option}
                       soloGameStats={soloGameStats}
                       startingSix={homeTeamOptions}
                       type="my"
-                      key={index}
                       setShowSquads={setShowSquads}
                     />
-                  ) : (
-                    <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
-                  )
-                )}
+                  </div>
+                ) : (
+                  <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
+                )
+              )}
               {guestTeamOptions.slice(3, 6).map((option, index) =>
                 checkNumbers(option.boardPosition) ? (
-                  <IconOfPlayer
-                    setShowSquads={setShowSquads}
-                    showSquads={showSquads}
-                    player={option}
-                    soloGameStats={soloGameStats}
-                    startingSix={guestTeamOptions}
-                    type="rival"
-                    key={index}
-                  />
+                  <div key={index}>
+                    <IconOfPlayer
+                      setShowSquads={setShowSquads}
+                      showSquads={showSquads}
+                      player={option}
+                      soloGameStats={soloGameStats}
+                      startingSix={guestTeamOptions}
+                      type="rival"
+                    />
+                  </div>
                 ) : (
                   <div className="zone-names-wrapper" key={"_" + index}>
                     P{correctZones(index + 3)}
                   </div>
                 )
               )}
-              {homeTeamOptions
-                .slice(3, 6)
-                .map((option, index) =>
-                  checkNumbers(option.boardPosition) ? (
+              {homeTeamOptions.slice(3, 6).map((option, index) =>
+                checkNumbers(option.boardPosition) ? (
+                  <div key={index}>
                     <IconOfPlayer
                       showSquads={showSquads}
                       player={option}
                       soloGameStats={soloGameStats}
                       startingSix={homeTeamOptions}
                       type="my"
-                      key={index}
                       setShowSquads={setShowSquads}
                     />
-                  ) : (
-                    <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
-                  )
-                )}
+                  </div>
+                ) : (
+                  <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
+                )
+              )}
             </div>
             <div className="button-save-wrapper">
               {isBoardFull(guestTeamOptions) && (

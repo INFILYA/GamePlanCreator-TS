@@ -3,12 +3,16 @@ import SectionWrapper from "../../wrappers/SectionWrapper";
 import { selectGuestTeam } from "../../states/slices/guestTeamSlice";
 import { useEffect, useState } from "react";
 import {
+  rotateBackGuestTeam,
+  rotateForwardGuestTeam,
   selectIndexOfGuestTeamZones,
-  setBackGuestTeamSelects,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { correctZones } from "../../utilities/functions";
 import { useAppDispatch } from "../../states/store";
-import { rotateBackPositions, rotateForwardPositions, selectSoloGameStats } from "../../states/slices/soloGameStatsSlice";
+import {
+  rotateBackPositions,
+  rotateForwardPositions,
+} from "../../states/slices/soloGameStatsSlice";
 
 type TRotationPanel = {
   team: boolean;
@@ -20,33 +24,14 @@ export default function RotationPanel(arg: TRotationPanel) {
   const dispatch = useAppDispatch();
   const guestTeam = useSelector(selectGuestTeam);
   const [number, setNumber] = useState(1);
-  const soloGame = useSelector(selectSoloGameStats);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   function rotateFront() {
-    const newOptions = [
-      guestTeamOptions[3],
-      guestTeamOptions[0],
-      guestTeamOptions[1],
-      guestTeamOptions[4],
-      guestTeamOptions[5],
-      guestTeamOptions[2],
-    ];
-    dispatch(setBackGuestTeamSelects(newOptions));
-    dispatch(rotateForwardPositions())
-    // guestTeamOptions[number];
+    dispatch(rotateForwardGuestTeam());
+    dispatch(rotateForwardPositions());
   }
   function rotateBack() {
-    const newOptions = [
-      guestTeamOptions[1],
-      guestTeamOptions[2],
-      guestTeamOptions[5],
-      guestTeamOptions[0],
-      guestTeamOptions[3],
-      guestTeamOptions[4],
-    ];
-    dispatch(setBackGuestTeamSelects(newOptions));
-    dispatch(rotateBackPositions())
-    // guestTeamOptions[number];
+    dispatch(rotateBackGuestTeam());
+    dispatch(rotateBackPositions());
   }
 
   useEffect(() => {
@@ -57,15 +42,13 @@ export default function RotationPanel(arg: TRotationPanel) {
       setNumber(correctZones(indexOfSetter));
       return;
     }
-    rigthRotation();
+    if (!team) {
+      rigthRotation();
+    }
   });
-
-  // setBackGuestTeamSelects
   const zones = [4, 3, 2, 5, 6, 1];
   const nameOfTheTeam = team ? opponentTeamName : guestTeam[0]?.name;
 
-  console.log(soloGame);
-  // console.log(emptyPlayers);
   return (
     <SectionWrapper className="rotation-panel-wrapper">
       <div className="team-name-wrapper">
@@ -83,8 +66,16 @@ export default function RotationPanel(arg: TRotationPanel) {
           </button>
         ))}
       </div>
-      <button onClick={() => rotateFront()}>+</button>
-      <button onClick={() => rotateBack()}>-</button>
+      {!team ? (
+        <div className="rotation-buttons-wrapper">
+          <button onClick={() => rotateFront()}>+</button>
+          <button onClick={() => rotateBack()} style={{ borderRadius: "0px 20px 20px 0px" }}>
+            -
+          </button>
+        </div>
+      ) : (
+        <div className="rotation-buttons-wrapper"></div>
+      )}
     </SectionWrapper>
   );
 }

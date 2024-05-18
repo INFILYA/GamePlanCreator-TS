@@ -22,7 +22,6 @@ import { useSelector } from "react-redux";
 
 type TIconOfPlayer = {
   type: string;
-  key: number;
   startingSix: TPlayer[];
   player: TPlayer;
   soloGameStats: TPlayer[];

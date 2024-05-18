@@ -245,6 +245,20 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-p
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content button:hover {
   background-color: #0272be;
 }
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper {
+  width: 100%;
+  margin: 2vw;
+  height: 3vw;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper button {
+  width: 3vw;
+  aspect-ratio: 1/1;
+  margin: 1vw;
+  border: 2px solid black;
+  border-radius: 20px 0px 0px 20px;
+  font-size: 1.5vw;
+  font-weight: bold;
+}
 main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper .playerNumber {
   background-color: fuchsia;
   border-radius: 0px 20px 20px 0px;
