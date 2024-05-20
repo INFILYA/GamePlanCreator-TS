@@ -94,7 +94,7 @@ export default function Diagramm(props: TDiagrammProps) {
       return percentOfActions[index];
     } else if (link === "Service") {
       const totalService = [
-        playerInfo.aces,
+        playerInfo.ace,
         playerInfo.servicePlus,
         playerInfo.serviceMinus,
         playerInfo.serviceFailed,

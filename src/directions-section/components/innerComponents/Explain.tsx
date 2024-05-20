@@ -35,7 +35,7 @@ export function Explain(props: TExplain) {
   const [isRegistratedUser] = useAuthState(auth);
   const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
   const attack = type === "Attack" && "winPoints" in diagrammValue;
-  const service = type === "Service" && "aces" in diagrammValue;
+  const service = type === "Service" && "ace" in diagrammValue;
   const bgOrangeRed = { backgroundColor: "orangered" };
   return (
     <>
@@ -86,9 +86,9 @@ export function Explain(props: TExplain) {
         <div className="input-wrapper">
           <input
             style={{ backgroundColor: "lightgreen" }}
-            name={attack ? "winPoints" : "aces"}
+            name={attack ? "winPoints" : "ace"}
             onChange={handleDiagrammValue}
-            value={attack ? diagrammValue.winPoints : service ? diagrammValue.aces : ""}
+            value={attack ? diagrammValue.winPoints : service ? diagrammValue.ace : ""}
             required
           ></input>
           <input

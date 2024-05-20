@@ -92,7 +92,7 @@ export type TAttackDiagramm = {
   loosePoints: number;
 };
 export type TServiceDiagramm = {
-  aces: number;
+  ace: number;
   servicePlus: number;
   serviceMinus: number;
   serviceFailed: number;

@@ -21,7 +21,7 @@ export function Service() {
     });
   };
   const [diagrammValue, setDiagrammValue] = useState<TServiceDiagramm>({
-    aces: 0,
+    ace: 0,
     servicePlus: 0,
     serviceMinus: 0,
     serviceFailed: 0,
