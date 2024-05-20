@@ -168,7 +168,6 @@ export function HomePage() {
 
   const playerInfoWindow = playerInfo && showSquads;
   const saveDataIcon = !opponentTeamName || !setNumber;
-  console.log(playerInfo);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}

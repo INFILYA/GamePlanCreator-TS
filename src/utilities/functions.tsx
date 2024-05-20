@@ -185,6 +185,22 @@ export function calculateTotalofActions(obj: TMix[]) {
   return sumOfAllPlayersSoloGamesStats;
 }
 
+export function preparePlayerToSoloGame(obj: TPlayer) {
+  const soloGamePlayerStats = { ...obj };
+  soloGamePlayerStats.winPoints = 0;
+  soloGamePlayerStats.loosePoints = 0;
+  soloGamePlayerStats.leftInGame = 0;
+  soloGamePlayerStats.attacksInBlock = 0;
+  soloGamePlayerStats.efficencyAttack = 0;
+  soloGamePlayerStats.plusMinusOnAttack = 0;
+  soloGamePlayerStats.percentOfAttack = 0;
+  soloGamePlayerStats.ace = 0;
+  soloGamePlayerStats.serviceFailed = 0;
+  soloGamePlayerStats.serviceMinus = 0;
+  soloGamePlayerStats.servicePlus = 0;
+  return soloGamePlayerStats;
+}
+
 export const listOfOpponents = [
   "Choose Opponent",
   "Maverick Longhorns",

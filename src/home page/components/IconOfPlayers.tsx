@@ -3,7 +3,10 @@ import { useAppDispatch } from "../../states/store";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { pushFromHomeTeamBoard } from "../../states/slices/homePlayersSlice";
 import { pushFromGuestTeamBoard } from "../../states/slices/guestPlayersSlice";
-import { resetHomeTeamIndexOfZones } from "../../states/slices/indexOfHomeTeamZonesSlice";
+import {
+  resetHomeTeamIndexOfZones,
+  updateInfoOfSubPlayers,
+} from "../../states/slices/indexOfHomeTeamZonesSlice";
 import {
   resetGuestTeamIndexOfZones,
   selectIndexOfGuestTeamZones,
@@ -118,6 +121,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     dispatch(setUpdatedPlayers(updatedPlayer));
     dispatch(setInfoOfPlayer(updatedPlayer));
     dispatch(updateInfoOfStartingSix(updatedPlayer));
+    dispatch(updateInfoOfSubPlayers(updatedPlayer));
   }
 
   const handleGradationSet = (e: ChangeEvent<HTMLSelectElement>) => {

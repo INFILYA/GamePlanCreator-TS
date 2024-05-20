@@ -29,6 +29,11 @@ export const indexOfHomeTeamZonesSlice = createSlice({
           : player
       );
     },
+    updateInfoOfSubPlayers: (state, action: PayloadAction<TPlayer>) => {
+      state.indexOfHomeTeamZones = state.indexOfHomeTeamZones.map((player) =>
+        player.name === action.payload.name ? action.payload : player
+      );
+    },
     setBackHomeTeamSelects: (state, action: PayloadAction<TPlayer[]>) => {
       state.indexOfHomeTeamZones = action.payload;
     },
@@ -47,6 +52,7 @@ export const indexOfHomeTeamZonesSlice = createSlice({
 export const {
   setHomeTeamIndexOfZones,
   resetHomeTeamIndexOfZones,
+  updateInfoOfSubPlayers,
   setBackHomeTeamSelects,
   rotateForwardHomeTeam,
   rotateBackHomeTeam,
