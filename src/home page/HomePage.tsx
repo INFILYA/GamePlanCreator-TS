@@ -6,6 +6,7 @@ import SectionWrapper from "../wrappers/SectionWrapper";
 import { useAppDispatch } from "../states/store";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import {
+  calculateTotalofActions,
   checkNumbers,
   correctPositions,
   correctZones,
@@ -119,7 +120,6 @@ export function HomePage() {
     const setStat = { [setNumber]: soloGameStats };
     const choosenGame = gamesStats.find((game) => game[matchInfo]);
     if (!choosenGame) {
-      // console.log({ [matchInfo]: [setStat] });
       await set(gamesRef(matchInfo), { [matchInfo]: [setStat] });
     } else {
       const isSetExist = choosenGame[matchInfo].some((sets) => Object.keys(sets)[0] === setNumber);
@@ -134,7 +134,6 @@ export function HomePage() {
     }
     // Refresh StartingSix players
     async function setPlayersToData(player: TPlayer) {
-      // console.log(player);
       await set(playersRef(player.name), player);
     }
     const names = guestTeamOptions.map((player) => player.name);
@@ -153,18 +152,7 @@ export function HomePage() {
       setPlayersToData(player);
     });
     //add solo game stats
-    const loosePoints = soloGameStats.reduce((acc, val) => (acc += val.loosePoints), 0);
-    const winPoints = soloGameStats.reduce((acc, val) => (acc += val.winPoints), 0);
-    const leftInTheGame = soloGameStats.reduce((acc, val) => (acc += val.leftInGame), 0);
-    const attacksInBlock = soloGameStats.reduce((acc, val) => (acc += val.attacksInBlock), 0);
-    const sumOfAllPlayersSoloGamesStats = {
-      loosePoints: loosePoints,
-      winPoints: winPoints,
-      leftInGame: leftInTheGame,
-      attacksInBlock: attacksInBlock,
-    };
-    calculateForTeamData(sumOfAllPlayersSoloGamesStats as TPlayer);
-    // console.log(guestTeam[0]);
+    calculateForTeamData(calculateTotalofActions(soloGameStats) as TPlayer);
     await set(teamsRef(guestTeam[0].name), guestTeam[0]);
     resetTheBoardForGuestTeam();
     setShowSquads(true);
@@ -180,6 +168,7 @@ export function HomePage() {
 
   const playerInfoWindow = playerInfo && showSquads;
   const saveDataIcon = !opponentTeamName || !setNumber;
+  console.log(playerInfo);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}

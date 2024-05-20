@@ -108,7 +108,6 @@ export default function GamesStatistic() {
     }
     setChoosenGameStats(properGameStat);
     setSaveFullGameStats(properGameStat);
-    console.log(game);
   }
   // Обраховуємо повторних гравців
   function calculateForUnion<T extends TMix>(obj: T, fullObj: T) {
@@ -119,7 +118,11 @@ export default function GamesStatistic() {
         key === "attacksInBlock" ||
         key === "loosePoints" ||
         key === "winPoints" ||
-        key === "leftInGame"
+        key === "leftInGame" ||
+        key === "ace" ||
+        key === "serviceFailed" ||
+        key === "servicePlus" ||
+        key === "serviceMinus"
       ) {
         (newFullObj[key as keyof TMix] as number) += newObj[key as keyof T] as number;
       } else continue;

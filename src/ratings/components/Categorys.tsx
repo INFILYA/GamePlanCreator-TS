@@ -8,7 +8,20 @@ type TCategorys = {
 
 export function Categorys(props: TCategorys) {
   const { filteredPlayers, rankByValue } = props;
-  const categorys = ["Name", "Club", "Game", "Block", "Errors", "Win", "Efficency", "Percentage"];
+  const categorys = [
+    "Name",
+    "Club",
+    "Game",
+    "Block",
+    "Errors",
+    "Win",
+    "S (=)",
+    "S (# +)",
+    "S (! - /)",
+    "Ace",
+    "Efficency",
+    "Percentage",
+  ];
   const criterias = [
     "name",
     "team",
@@ -16,6 +29,10 @@ export function Categorys(props: TCategorys) {
     "attacksInBlock",
     "loosePoints",
     "winPoints",
+    "serviceFailed",
+    "serviceMinus",
+    "servicePlus",
+    "ace",
     "efficencyAttack",
     "percentOfAttack",
   ];

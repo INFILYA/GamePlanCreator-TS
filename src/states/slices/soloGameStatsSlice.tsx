@@ -43,6 +43,10 @@ export const soloGameStatsSlice = createSlice({
             soloGamePlayer.efficencyAttack = 0;
             soloGamePlayer.plusMinusOnAttack = 0;
             soloGamePlayer.percentOfAttack = 0;
+            soloGamePlayer.ace = 0;
+            soloGamePlayer.serviceFailed = 0;
+            soloGamePlayer.serviceMinus = 0;
+            soloGamePlayer.servicePlus = 0;
             correctStartingSix.push(soloGamePlayer);
           }
         }

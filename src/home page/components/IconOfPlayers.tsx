@@ -9,7 +9,7 @@ import {
   selectIndexOfGuestTeamZones,
   updateInfoOfStartingSix,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
 import {
   emptyPlayer,
@@ -33,6 +33,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   const { player, soloGameStats, startingSix, type, showSquads, setShowSquads } = props;
   const dispatch = useAppDispatch();
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
+  const [gradations, setGradations] = useState<string[][]>([]);
   const [diagrammValue, setDiagrammValue] = useState<TPlayer>(emptyPlayer);
 
   useEffect(() => {
@@ -60,7 +61,11 @@ export function IconOfPlayer(props: TIconOfPlayer) {
           key === "attacksInBlock" ||
           key === "loosePoints" ||
           key === "winPoints" ||
-          key === "leftInGame"
+          key === "leftInGame" ||
+          key === "ace" ||
+          key === "serviceFailed" ||
+          key === "servicePlus" ||
+          key === "serviceMinus"
         ) {
           (obj[key as keyof T] as number) += diagram[key as keyof TAttackDiagramm];
         } else continue;
@@ -115,15 +120,28 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     dispatch(updateInfoOfStartingSix(updatedPlayer));
   }
 
+  const handleGradationSet = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    if (value === "attack") {
+      setGradations(attackGradations);
+    } else setGradations(serviceGradations);
+  };
+
   if (typeof player === "number" || player === null) return;
   const condition = player.number !== 0;
-  const gradations = [
+  const attackGradations = [
     ["winPoints", "lightgreen", "Win"],
     ["leftInGame", "yellow", "Game"],
     ["attacksInBlock", "orange", "Block"],
     ["loosePoints", "orangered", "Error"],
   ];
-
+  const serviceGradations = [
+    ["ace", "lightgreen", "Ace"],
+    ["servicePlus", "yellow", "(! - /)"],
+    ["serviceMinus", "orange", "(# +)"],
+    ["serviceFailed", "orangered", "Error"],
+  ];
+  const choosenGradations = gradations.length ? gradations : attackGradations;
   return (
     <>
       {condition && (
@@ -158,6 +176,13 @@ export function IconOfPlayer(props: TIconOfPlayer) {
           </div>
           {!showSquads && (
             <div className="errors-field-wrapper">
+              <select
+                onChange={handleGradationSet}
+                style={{ textAlign: "center", fontWeight: "bold" }}
+              >
+                <option value="attack">Attack</option>
+                <option value="service">Service</option>
+              </select>
               <table>
                 <tbody>
                   <tr>
@@ -165,7 +190,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                     <th>Amount</th>
                     <th>-</th>
                   </tr>
-                  {gradations.map((grade) => (
+                  {choosenGradations.map((grade) => (
                     <tr key={grade[0]}>
                       <td
                         style={{ backgroundColor: grade[1] }}

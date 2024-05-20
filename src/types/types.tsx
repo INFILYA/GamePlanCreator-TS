@@ -35,7 +35,7 @@ export type TPlayer = {
   serviceZone5Jump: number[];
   serviceZone6Float: number[];
   serviceZone6Jump: number[];
-  aces: number;
+  ace: number;
   servicePlus: number;
   serviceMinus: number;
   serviceFailed: number;
@@ -51,7 +51,7 @@ export type TMixInterSectionKeys = TPlayerKeys & TTeamKeys;
 
 export type TTeam = {
   age: number;
-  aces: number;
+  ace: number;
   attacksInBlock: number;
   height: number;
   id: string;

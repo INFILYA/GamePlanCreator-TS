@@ -40,6 +40,10 @@ export function Rows(props: TRows) {
           <td style={lastRow ? { backgroundColor: "orange" } : {}}>{player.attacksInBlock}</td>
           <td style={lastRow ? { backgroundColor: "orangered" } : {}}>{player.loosePoints}</td>
           <td style={lastRow ? { backgroundColor: "lightgreen" } : {}}>{player.winPoints}</td>
+          <td style={lastRow ? { backgroundColor: "orangered" } : {}}>{player.serviceFailed}</td>
+          <td style={lastRow ? { backgroundColor: "orange" } : {}}>{player.serviceMinus}</td>
+          <td style={lastRow ? { backgroundColor: "yellow" } : {}}>{player.servicePlus}</td>
+          <td style={lastRow ? { backgroundColor: "lightgreen" } : {}}>{player.ace}</td>
           <td style={setStyleForEfficency(getAttackEfficency(player))}>
             {getAttackEfficency(player)} %
           </td>

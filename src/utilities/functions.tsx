@@ -95,7 +95,7 @@ export const emptyPlayer: TPlayer = {
   serviceZone5Jump: [],
   serviceZone6Float: [],
   serviceZone6Jump: [],
-  aces: 0,
+  ace: 0,
   servicePlus: 0,
   serviceMinus: 0,
   serviceFailed: 0,
@@ -141,7 +141,7 @@ export function getAttackEfficency(obj: TMix) {
   return efficencyAttack;
 }
 export function getServiceEfficency(obj: TMix) {
-  const totalService = [obj.aces, obj.servicePlus, obj.serviceMinus, obj.serviceFailed];
+  const totalService = [obj.ace, obj.servicePlus, obj.serviceMinus, obj.serviceFailed];
   const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
   if (sumOfTotalService === 0) return 0;
   const efficencyService = +((getPlusMinusService(obj) / sumOfTotalService) * 100).toFixed(1);
@@ -149,7 +149,7 @@ export function getServiceEfficency(obj: TMix) {
 }
 
 export function getPlusMinusService(obj: TMix) {
-  return obj.aces - obj.serviceFailed;
+  return obj.ace - obj.serviceFailed;
 }
 export function getPlusMinusAttack(obj: TMix) {
   return obj.winPoints - (obj.attacksInBlock + obj.loosePoints);
@@ -168,11 +168,19 @@ export function calculateTotalofActions(obj: TMix[]) {
   const winPoints = obj.reduce((acc, val) => (acc += val.winPoints), 0);
   const leftInTheGame = obj.reduce((acc, val) => (acc += val.leftInGame), 0);
   const attacksInBlock = obj.reduce((acc, val) => (acc += val.attacksInBlock), 0);
+  const ace = obj.reduce((acc, val) => (acc += val.ace), 0);
+  const serviceFailed = obj.reduce((acc, val) => (acc += val.serviceFailed), 0);
+  const servicePlus = obj.reduce((acc, val) => (acc += val.servicePlus), 0);
+  const serviceMinus = obj.reduce((acc, val) => (acc += val.serviceMinus), 0);
   const sumOfAllPlayersSoloGamesStats = {
     loosePoints: loosePoints,
     winPoints: winPoints,
     leftInGame: leftInTheGame,
     attacksInBlock: attacksInBlock,
+    ace: ace,
+    serviceFailed: serviceFailed,
+    servicePlus: servicePlus,
+    serviceMinus: serviceMinus,
   };
   return sumOfAllPlayersSoloGamesStats;
 }
