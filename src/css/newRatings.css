@@ -6,9 +6,7 @@
   display: flex;
   justify-content: center;
   margin-top: 2vw;
-}
-.main-content-wrapper .ratings-section .diagram-wrapper .diagram-content {
-  width: 40%;
+  align-items: center;
 }
 .main-content-wrapper .ratings-section table {
   table-layout: fixed;

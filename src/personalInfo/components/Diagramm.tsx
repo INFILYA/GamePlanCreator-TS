@@ -106,5 +106,15 @@ export default function Diagramm(props: TDiagrammProps) {
       return percentOfActions[index];
     }
   }
-  return <HighchartsReact highcharts={Highcharts} options={options} />;
+  return (
+    <div className="diagram-content">
+      <HighchartsReact highcharts={Highcharts} options={options} />{" "}
+      <div className="split-arrow-wrapper">
+        <div className="arrow-content">
+          <img src="/photos/arrow.png" />
+        </div>
+        <div className="percentage-content">50%</div>
+      </div>
+    </div>
+  );
 }

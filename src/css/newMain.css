@@ -91,6 +91,22 @@ main .main-content-wrapper {
   display: flex;
   justify-content: center;
 }
+main .main-content-wrapper section .diagram-content {
+  width: 100%;
+}
+main .main-content-wrapper section .diagram-content .split-arrow-wrapper .arrow-content {
+  margin-top: -40px;
+  position: relative;
+  z-index: 1000;
+}
+main .main-content-wrapper section .diagram-content .split-arrow-wrapper .arrow-content img {
+  width: 2.5vmax;
+}
+main .main-content-wrapper section .diagram-content .split-arrow-wrapper .percentage-content {
+  font-weight: 600;
+  font-size: 1vmax;
+  margin-top: -0.5vw;
+}
 main .main-content-wrapper .attack-section {
   align-self: center;
   width: 70%;

@@ -24,14 +24,10 @@ import { useAppDispatch } from "../states/store";
 import { RegularButton } from "../css/Button.styled";
 import Diagramm from "../personalInfo/components/Diagramm";
 import { useSetWidth } from "../utilities/useSetWidth";
-// import { set } from "firebase/database";
-// import { auth } from "../config/firebase";
-// import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
-  // const [isRegistratedUser] = useAuthState(auth);
-  const isBurger = useSetWidth() > 568;
+  const isBurger = useSetWidth() > 767;
   const gamesStats = useSelector(selectGamesStats);
   const listOfTeams = useSelector(selectListOfTeams);
   const playerInfo = useSelector(selectPlayerInfo);
@@ -42,19 +38,6 @@ export default function GamesStatistic() {
   const [choosenGameStats, setChoosenGameStats] = useState<TMix[]>([]);
   const [saveFullGameStats, setSaveFullGameStats] = useState<TMix[]>([]);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
-  // const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
-
-  // useEffect(() => {
-  //   async function loadGames() {
-  //     try {
-  //       dispatch(fetchGamesStats());
-  //     } catch (e) {
-  //       console.error(e);
-  //       alert("something go wrong");
-  //     }
-  //   }
-  //   loadGames();
-  // }, [dispatch]);
 
   function calculateForTeamData<T extends TMix>(obj: T): TMix {
     if (filter.length === 0) return obj;
@@ -152,11 +135,6 @@ export default function GamesStatistic() {
     setFilter("");
   }
 
-  // async function saveGame() {
-  //   const choosen = gamesStats.find((game) => Object.keys(game).find((name) => name === filter));
-  //   if (!choosen) return;
-  //   await set(gamesRef(filter), choosen);
-  // }
 
   const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats) as TMix);
   const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
@@ -228,17 +206,15 @@ export default function GamesStatistic() {
               </tbody>
             </table>
             {filter && (
-              <div className="diagram-wrapper">
-                <div className="diagram-content" style={!isBurger ? { width: "80%" } : {}}>
+              <div className="diagram-wrapper" style={!isBurger ? { flexDirection: "column" } : {}}>
+                <div style={{ width: "80%" }}>
                   <Diagramm link="Attack" data={fullGameStats} />
+                </div>
+                <div style={{ width: "80%" }}>
+                  <Diagramm link="Service" data={fullGameStats} />
                 </div>
               </div>
             )}
-            {/* {admin && (
-                  <RegularButton onClick={() => saveGame()} type="button">
-                    save game
-                  </RegularButton>
-                )} */}
           </>
         )}
       </SectionWrapper>

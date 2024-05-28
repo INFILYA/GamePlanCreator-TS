@@ -6,9 +6,7 @@
       display: flex;
       justify-content: center;
       margin-top: 2vw;
-      .diagram-content {
-        width: 40%;
-      }
+      align-items: center;
     }
     table {
       // width: clamp(325px, 100%, 1300px);
