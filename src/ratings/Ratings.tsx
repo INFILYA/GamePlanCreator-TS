@@ -44,29 +44,37 @@ export function Ratings() {
         {playerInfo ? (
           <PersonalInformationOfPlayer link="page1" />
         ) : (
-          <table>
-            <caption className="showRatings-wrapper">
-              <nav>
-                <div className="team-filter-wrapper">
-                  {positions.map((position, index) => (
-                    <div key={index}>
-                      <RegularButton
-                        onClick={() => setPositionFilter(position)}
-                        type="button"
-                        $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
-                        $background={chosenPosition === position ? "#0057b8" : "#ffd700"}
-                      >{`${position}s`}</RegularButton>
-                    </div>
-                  ))}
-                </div>
-              </nav>
-            </caption>
+          <>
+            <table>
+              <caption className="showRatings-wrapper">
+                <nav>
+                  <div className="team-filter-wrapper">
+                    {positions.map((position, index) => (
+                      <div key={index}>
+                        <RegularButton
+                          onClick={() => setPositionFilter(position)}
+                          type="button"
+                          $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
+                          $background={chosenPosition === position ? "#0057b8" : "#ffd700"}
+                        >{`${position}s`}</RegularButton>
+                      </div>
+                    ))}
+                  </div>
+                </nav>
+              </caption>
+              {isChoosenFilter && (
+                <tbody className="rating-table-wrapper">
+                  <Categorys filteredPlayers={filteredPlayers} rankByValue={rankByValue} />
+                </tbody>
+              )}
+            </table>
             {isChoosenFilter && (
-              <tbody className="rating-table-wrapper">
-                <Categorys filteredPlayers={filteredPlayers} rankByValue={rankByValue} />
-              </tbody>
+              <div className="type-of-actions-wrapper">
+                <div className="service-content">Service</div>
+                <div className="attack-content">Attack</div>
+              </div>
             )}
-          </table>
+          </>
         )}
       </SectionWrapper>
     </article>

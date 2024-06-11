@@ -120,10 +120,16 @@ export const emptyPlayers: TPlayer[] = Array(6)
   .map((user, index) => ({ ...user, boardPosition: correctPositions(index) }));
 
 export function setStyleForEfficency(params: number): CSSProperties {
+  if (params === 0) {
+    return { color: "black" };
+  }
   return { color: params >= 30 ? "green" : params <= 30 && params >= 25 ? "black" : "red" };
 }
 
 export function setStyleForPercent(params: number): CSSProperties {
+  if (params === 0) {
+    return { color: "black" };
+  }
   return { color: params >= 50 ? "green" : params <= 50 && params >= 45 ? "black" : "red" };
 }
 

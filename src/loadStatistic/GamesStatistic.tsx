@@ -135,7 +135,6 @@ export default function GamesStatistic() {
     setFilter("");
   }
 
-
   const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats) as TMix);
   const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
   const namesOfTeams = listOfTeams.map((team) => team.name);
@@ -206,14 +205,23 @@ export default function GamesStatistic() {
               </tbody>
             </table>
             {filter && (
-              <div className="diagram-wrapper" style={!isBurger ? { flexDirection: "column" } : {}}>
-                <div style={{ width: "80%" }}>
-                  <Diagramm link="Attack" data={fullGameStats} />
+              <>
+                <div className="type-of-actions-wrapper">
+                  <div className="service-content">Service</div>
+                  <div className="attack-content">Attack</div>
                 </div>
-                <div style={{ width: "80%" }}>
-                  <Diagramm link="Service" data={fullGameStats} />
+                <div
+                  className="diagram-wrapper"
+                  style={!isBurger ? { flexDirection: "column" } : {}}
+                >
+                  <div style={{ width: "80%" }}>
+                    <Diagramm link="Service" data={fullGameStats} />
+                  </div>
+                  <div style={{ width: "80%" }}>
+                    <Diagramm link="Attack" data={fullGameStats} />
+                  </div>
                 </div>
-              </div>
+              </>
             )}
           </>
         )}
