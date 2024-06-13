@@ -21,16 +21,24 @@ export function ChooseGuestTeam() {
   }
   return (
     <nav className="opponentTeamList">
-      {listOfTeams.map((team) => (
-        <div className="nav-image-wrapper" key={team.id}>
-          <img
-            alt=""
-            onClick={() => handleSetOpponentTeam(team)}
-            className="Logo"
-            src={team.logo}
-          ></img>
-        </div>
-      ))}
+      {listOfTeams.length === 0 ? (
+        <>
+          <div>Sign up </div>
+          <div>to get acces </div>
+          <div>to Data </div>
+        </>
+      ) : (
+        listOfTeams.map((team) => (
+          <div className="nav-image-wrapper" key={team.id}>
+            <img
+              alt=""
+              onClick={() => handleSetOpponentTeam(team)}
+              className="Logo"
+              src={team.logo}
+            ></img>
+          </div>
+        ))
+      )}
     </nav>
   );
 }

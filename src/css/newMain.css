@@ -575,6 +575,10 @@ main .main-content-wrapper .section-content-wrapper .section-content .opponentTe
   transform: translateY(-7px);
   transition: 0.3s;
 }
+main .main-content-wrapper .section-content-wrapper .section-content .opponentTeamList div {
+  font-weight: 600;
+  font-size: 2vw;
+}
 main .main-content-wrapper .section-content-wrapper .section-content .showRatings {
   display: flex;
   justify-content: center;
