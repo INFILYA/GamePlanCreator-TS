@@ -109,9 +109,8 @@ main .main-content-wrapper section .diagram-content .split-arrow-wrapper .percen
 }
 main .main-content-wrapper section .type-of-actions-wrapper {
   display: flex;
-  width: 66%;
+  width: 66.6%;
   justify-content: center;
-  border: 1px solid black;
 }
 main .main-content-wrapper section .type-of-actions-wrapper .service-content,
 main .main-content-wrapper section .type-of-actions-wrapper .attack-content {
@@ -121,12 +120,10 @@ main .main-content-wrapper section .type-of-actions-wrapper .attack-content {
 }
 main .main-content-wrapper section .type-of-actions-wrapper .service-content {
   background-color: khaki;
-  border-right: 1px solid black;
   margin-right: 1px;
 }
 main .main-content-wrapper section .type-of-actions-wrapper .attack-content {
   background-color: gainsboro;
-  border-left: 1px solid black;
   margin-left: 1px;
 }
 main .main-content-wrapper .attack-section {

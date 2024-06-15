@@ -121,9 +121,8 @@ main {
       }
       .type-of-actions-wrapper {
         display: flex;
-        width: 66%;
+        width: 66.6%;
         justify-content: center;
-        border: 1px solid black;
         .service-content,
         .attack-content {
           width: 100%;
@@ -132,12 +131,10 @@ main {
         }
         .service-content {
           background-color: khaki;
-          border-right: 1px solid black;
           margin-right: 1px;
         }
         .attack-content {
           background-color: gainsboro;
-          border-left: 1px solid black;
           margin-left: 1px;
         }
       }

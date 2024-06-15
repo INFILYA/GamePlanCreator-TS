@@ -77,34 +77,31 @@
         tr {
           th {
             background-color: rgb(100, 149, 237);
-            border: 2px solid black;
             white-space: nowrap;
             overflow: hidden;
-
-            button {
-              color: black;
-            }
             &:hover {
               background-color: orangered;
-              transform: translateY(-1vw);
               transition: 0.7s;
               button {
                 color: white;
               }
             }
             button {
+              height: 10vmin;
               width: 100%;
               background-color: transparent;
               border: none;
-              font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.5rem);
+              font-size: calc((var(--normal-text-size-value) - 1) * 4.5vmin + 0.5rem);
               font-weight: 600;
-              padding: 1vw 0.5vw;
+              transform: rotate(90deg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
             }
           }
           td {
-            font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.5rem);
+            font-size: calc((var(--normal-text-size-value) - 1) * 4vmin + 0.5rem);
             box-sizing: border-box;
-            border: 1px solid black;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
@@ -117,6 +114,7 @@
             padding: 0 0.5vw;
             text-align: center;
             white-space: inherit;
+            width: 10vw;
           }
           // .name-wrapper {
           //   display: flex;

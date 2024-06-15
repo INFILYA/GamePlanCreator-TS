@@ -40,13 +40,12 @@ export function Categorys(props: TCategorys) {
     <>
       <tr>
         {categorys.map((category, index) => (
-          <th key={index}>
-            <button
-              onClick={() => rankByValue(criterias[index] as keyof TMix, filteredPlayers)}
-              title={`Click to sort by ${category}`}
-            >
-              {category}
-            </button>
+          <th
+            key={index}
+            onClick={() => rankByValue(criterias[index] as keyof TMix, filteredPlayers)}
+            title={`Click to sort by ${category}`}
+          >
+            <button>{category}</button>
           </th>
         ))}
       </tr>
