@@ -199,10 +199,12 @@ export default function GamesStatistic() {
                   )}
                 </nav>
               </caption>
-              <tbody className="rating-table-wrapper">
-                <Categorys filteredPlayers={choosenGameStats} rankByValue={rankByValue} />
-                {filter && <Rows filteredPlayers={[fullGameStats]} lastRow={true} />}
-              </tbody>
+              {filter && (
+                <tbody className="rating-table-wrapper">
+                  <Categorys filteredPlayers={choosenGameStats} rankByValue={rankByValue} />
+                  <Rows filteredPlayers={[fullGameStats]} lastRow={true} />
+                </tbody>
+              )}
             </table>
             {filter && (
               <>
