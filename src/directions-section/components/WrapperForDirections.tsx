@@ -242,8 +242,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   const zone1 = totalPercentOfzone(4, 5);
   const choiceIsDone = !isShowInputs || isDisableSwitch;
   const choice = zonesStates.filter((zone) => zone.active);
-
-  console.log(guestPlayers);
   return (
     <SectionWrapper
       className="playArea-section"
