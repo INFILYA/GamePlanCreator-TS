@@ -138,20 +138,28 @@ export function setStyle(params: number): CSSProperties {
   return { color: params >= 0 ? "green" : "orangered" };
 }
 
-export function getAttackEfficency(obj: TMix) {
-  if (!("winPoints" in obj)) return 0;
+function getSumofAttacks(obj: TMix) {
   const totalAtt = [obj.winPoints, obj.leftInGame, obj.attacksInBlock, obj.loosePoints];
   const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);
-  if (sumOfTotalAtt === 0) return 0;
-  const efficencyAttack = +((getPlusMinusAttack(obj) / sumOfTotalAtt) * 100).toFixed(1);
-  return efficencyAttack;
+  return +sumOfTotalAtt;
 }
+
+export function gerPercentOfAttack(obj: TMix) {
+  const percents = +((obj.winPoints / getSumofAttacks(obj)) * 100);
+  return Math.round(percents);
+}
+
+export function getAttackEfficency(obj: TMix) {
+  const efficencyAttack = +((getPlusMinusAttack(obj) / getSumofAttacks(obj)) * 100);
+  return Math.round(efficencyAttack);
+}
+
 export function getServiceEfficency(obj: TMix) {
   const totalService = [obj.ace, obj.servicePlus, obj.serviceMinus, obj.serviceFailed];
   const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
   if (sumOfTotalService === 0) return 0;
-  const efficencyService = +((getPlusMinusService(obj) / sumOfTotalService) * 100).toFixed(1);
-  return efficencyService;
+  const efficencyService = +((getPlusMinusService(obj) / sumOfTotalService) * 100);
+  return Math.round(efficencyService);
 }
 
 export function getPlusMinusService(obj: TMix) {
@@ -159,14 +167,6 @@ export function getPlusMinusService(obj: TMix) {
 }
 export function getPlusMinusAttack(obj: TMix) {
   return obj.winPoints - (obj.attacksInBlock + obj.loosePoints);
-}
-export function gerPercentOfAttack(obj: TMix) {
-  if (!("winPoints" in obj)) return 0;
-  const totalAtt = [obj.winPoints, obj.leftInGame, obj.attacksInBlock, obj.loosePoints];
-  const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);
-  if (sumOfTotalAtt === 0) return 0;
-  const percents = +((obj.winPoints / sumOfTotalAtt) * 100).toFixed(1);
-  return percents;
 }
 
 export function calculateTotalofActions(obj: TMix[]) {

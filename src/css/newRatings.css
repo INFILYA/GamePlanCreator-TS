@@ -96,6 +96,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #000;
 }
 .main-content-wrapper .ratings-section table tbody tr td {
   font-size: calc((var(--normal-text-size-value) - 1) * 4vmin + 0.5rem);
