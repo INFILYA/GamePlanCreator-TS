@@ -1,4 +1,5 @@
 import { TMix } from "../../types/types";
+import { useSetWidth } from "../../utilities/useSetWidth";
 import { Rows } from "./Rows";
 
 type TCategorys = {
@@ -8,6 +9,7 @@ type TCategorys = {
 
 export function Categorys(props: TCategorys) {
   const { filteredPlayers, rankByValue } = props;
+  const properWidth = useSetWidth() > 767;
   const categorys = [
     "Name",
     "Club",
@@ -45,7 +47,9 @@ export function Categorys(props: TCategorys) {
             onClick={() => rankByValue(criterias[index] as keyof TMix, filteredPlayers)}
             title={`Click to sort by ${category}`}
           >
-            <button>{category}</button>
+            <button style={{ transform: properWidth ? "rotate(0deg)" : "rotate(90deg)" }}>
+              {category}
+            </button>
           </th>
         ))}
       </tr>

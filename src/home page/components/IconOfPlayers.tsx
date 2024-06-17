@@ -1,4 +1,4 @@
-import { TAttackDiagramm, TPlayer, TTeam } from "../../types/types";
+import { TAttackDiagramm, TMix, TPlayer } from "../../types/types";
 import { useAppDispatch } from "../../states/store";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { pushFromHomeTeamBoard } from "../../states/slices/homePlayersSlice";
@@ -53,7 +53,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     return arr.every((option) => checkNumbers(option.boardPosition));
   };
 
-  function calculateForPlayerData<T extends TTeam | TPlayer>(
+  function calculateForPlayerData<T extends TMix>(
     obj: T,
     diagram: TAttackDiagramm,
     soloGame?: boolean
