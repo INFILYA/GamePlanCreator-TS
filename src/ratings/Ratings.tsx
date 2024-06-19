@@ -18,13 +18,13 @@ export function Ratings() {
   const [chosenPosition, setChosenPosition] = useState<string>("");
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [isChoosenFilter, setChoosenFilter] = useState<boolean>(false);
-  const positions = ["OutsideHitter", "OPPosite", "MBlocker", "SETter", "Team"];
+  const positions = ["OHitter", "OPPosite", "MBlocker", "SETter", "Team"];
 
   function setPositionFilter(position: string) {
     setChosenPosition(position);
     setFilteredPlayers([]);
     setChoosenFilter(true);
-    if (position === "Team") {
+    if (position === "T") {
       setFilteredPlayers([...listOfTeams]);
       return;
     }
@@ -37,6 +37,7 @@ export function Ratings() {
       : arr.sort((a, b) => compare(a[criteria], b[criteria]));
     setIsBiggest(!isBiggest);
   }
+  console.log(filteredPlayers);
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">
