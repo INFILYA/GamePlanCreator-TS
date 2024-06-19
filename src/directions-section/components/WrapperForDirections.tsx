@@ -1,7 +1,6 @@
 import { useState, ChangeEvent, FormEvent, CSSProperties } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { playersRef, teamsRef } from "../../config/firebase";
-import { selectListOfPlayers } from "../../states/slices/listOfPlayersSlice";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { selectListOfTeams } from "../../states/slices/listOfTeamsSlice";
 import { Balls } from "./innerComponents/Balls";
@@ -9,7 +8,7 @@ import { CheckEquality } from "./innerComponents/CheckEquality";
 import { Reaction } from "./innerComponents/Reaction";
 import { InputForCount } from "./innerComponents/inputForCount";
 import SectionWrapper from "../../wrappers/SectionWrapper";
-import { reduce, upgradeAge } from "../../utilities/functions";
+import { reduce } from "../../utilities/functions";
 import { Explain } from "./innerComponents/Explain";
 import { selectGuestPlayers, setGuestPlayers } from "../../states/slices/guestPlayersSlice";
 import { selectHomePlayers, setHomePlayers } from "../../states/slices/homePlayersSlice";
@@ -46,7 +45,6 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   } = props;
   const dispatch = useDispatch();
   const allTeams = useSelector(selectListOfTeams);
-  const allPlayers = useSelector(selectListOfPlayers);
   const guestPlayers = useSelector(selectGuestPlayers);
   const homePlayers = useSelector(selectHomePlayers);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
@@ -127,16 +125,10 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
       const zoneOfAction = zonesStates.find((ball) => ball.active); // визначаємо з якої зона атака
       const nameOfZone = (zoneOfAction!.zone + actionType) as keyof TPlayer; // назва зони атаки
       const actionHistory = playerInfo[nameOfZone] as number[]; // дістаємо данні гравця з конкретної зони
-      const players = allPlayers.filter((player) => player.team === playerInfo.team); // знаходимо одноклубників обраного гравця
       const team = allTeams.find((team) => team.name === playerInfo.team); // знаходимо команду обраного гравця
       if (!team) return;
-      const upgradedPlayers = players.map((player) => upgradeAge(player)); // оновлюємо точний вік гравців команди обраного гравця
-      const teamAge = upgradedPlayers.reduce((a, b) => a + +b.age, 0) / players.length; // середній вік гравців обраної команди
-      const teamHeight = upgradedPlayers.reduce((a, b) => a + b.height, 0) / players.length; // середній зріст гравців обраної команди
       const newTeam = { ...team };
-      calculateForData(newTeam as TTeam); // додаємо полі діаграмм до значень команди обраного гравця
-      newTeam.age = +teamAge.toFixed(1); // встановлюємо правильний вік
-      newTeam.height = +teamHeight.toFixed(1); // встановлюємо правильний зріст
+      calculateForData(newTeam); // додаємо полі діаграмм до значень команди обраного гравця
       (playerInfo[nameOfZone] as number[]) = loadByZone.map(
         (att, index) => att + (!actionHistory[index] ? 0 : actionHistory[index])
       );

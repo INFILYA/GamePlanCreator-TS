@@ -102,13 +102,9 @@
           td {
             font-size: calc((var(--normal-text-size-value) - 1) * 4vmin + 0.5rem);
             box-sizing: border-box;
-            font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
-
-            img {
-              width: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
-            }
+            height: 2.5vw;
           }
           .rating-player-name {
             padding: 0 0.5vw;
@@ -116,12 +112,6 @@
             white-space: inherit;
             width: 10vw;
           }
-          // .name-wrapper {
-          //   display: flex;
-          //   align-items: center;
-          //   justify-content: space-between;
-          //   padding: 0.5vw;
-          // }
         }
       }
     }

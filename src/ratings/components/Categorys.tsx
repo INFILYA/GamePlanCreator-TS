@@ -10,28 +10,14 @@ type TCategorys = {
 export function Categorys(props: TCategorys) {
   const { filteredPlayers, rankByValue } = props;
   const properWidth = useSetWidth() > 767;
-  const categorys = ["Name", "Club", "S=", "S-", "S+", "S#", "A=", "AB", "A!", "A+", "Effic", "%"];
-  const criterias = [
-    "name",
-    "team",
-    "serviceFailed",
-    "serviceMinus",
-    "servicePlus",
-    "ace",
-    "loosePoints",
-    "attacksInBlock",
-    "leftInGame",
-    "winPoints",
-    "efficencyAttack",
-    "percentOfAttack",
-  ];
+  const categorys = ["name", "+/-", "S=", "S-", "S+", "S++", "A=", "AB", "A!", "A+", "Effic", "%"];
   return (
     <>
       <tr>
         {categorys.map((category, index) => (
           <th
             key={index}
-            onClick={() => rankByValue(criterias[index] as keyof TMix, filteredPlayers)}
+            onClick={() => rankByValue(category as keyof TMix, filteredPlayers)}
             title={`Click to sort by ${category}`}
           >
             <button style={{ transform: properWidth ? "rotate(0deg)" : "rotate(90deg)" }}>

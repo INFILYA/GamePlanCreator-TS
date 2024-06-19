@@ -4,6 +4,8 @@ import { TMix } from "../../types/types";
 import {
   gerPercentOfAttack,
   getAttackEfficency,
+  getPlusMinusAttack,
+  getPlusMinusService,
   setStyleForEfficency,
   setStyleForPercent,
 } from "../../utilities/functions";
@@ -33,9 +35,7 @@ export function Rows(props: TRows) {
           style={lastRow ? { backgroundColor: "gainsboro" } : {}}
         >
           <td className="rating-player-name">{player.name}</td>
-          <td>
-            <img src={`/photos/${"team" in player ? player.team : player.name}.png`} alt="" />
-          </td>
+          <td>{getPlusMinusAttack(player) + getPlusMinusService(player)}</td>
           <td style={lastRow ? { backgroundColor: "orangered" } : { backgroundColor: "khaki" }}>
             {player["S="]}
           </td>
