@@ -139,7 +139,26 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
       newTeam.height = +teamHeight.toFixed(1); // встановлюємо правильний зріст
       (playerInfo[nameOfZone] as number[]) = loadByZone.map(
         (att, index) => att + (!actionHistory[index] ? 0 : actionHistory[index])
-      ); // оновлюємо поля атаки у обраного гравця
+      );
+      // оновлюємо поля атаки у обраного гравця
+      // const cleanArr = new Array(36).fill(parseInt("0")) as number[];
+      // playerInfo["AK1Q"] = cleanArr;
+      // playerInfo["AKCQ"] = cleanArr;
+      // playerInfo["AK7Q"] = cleanArr;
+      // playerInfo["A1Q"] = cleanArr;
+      // playerInfo["A1H"] = cleanArr;
+      // playerInfo["A2Q"] = cleanArr;
+      // playerInfo["A2H"] = cleanArr;
+      // playerInfo["A4Q"] = cleanArr;
+      // playerInfo["A4H"] = cleanArr;
+      // playerInfo["APQ"] = cleanArr;
+      // playerInfo["APH"] = cleanArr;
+      // playerInfo["S1F"] = cleanArr;
+      // playerInfo["S1J"] = cleanArr;
+      // playerInfo["S5F"] = cleanArr;
+      // playerInfo["S5J"] = cleanArr;
+      // playerInfo["S6F"] = cleanArr;
+      // playerInfo["S6J"] = cleanArr;
       await savePlayer(playerInfo); //сохраняю одного игрока
       await saveTeam(newTeam as TTeam); // сохраняю команду
       setIsSaveDataOfActions(!isSaveDataOfActions);
@@ -222,8 +241,8 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
     }
   };
 
-  const choosenActionOne = type === "Attack" ? "FastBall" : "Jump";
-  const choosenActionTwo = type === "Attack" ? "HighBall" : "Float";
+  const choosenActionOne = type === "Attack" ? "Quick" : "Jump";
+  const choosenActionTwo = type === "Attack" ? "High" : "Float";
   function totalPercentOfzone(number1: number, number2: number): number | null {
     if (!Array.isArray(zoneValue)) return null;
     const value = reduce(
@@ -279,9 +298,9 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
         <div className="select-wrapper">
           <select className="typeOfAction" onChange={chooseTypeOfAttack} disabled={choiceIsDone}>
             <option value="choose">{!isShowInputs ? `Choose zone` : `Choose type`}</option>
-            <option value={choosenActionOne}>{choosenActionOne}</option>
-            {(type === "Service" || playerInfo.position !== "MBlocker") && (
-              <option value={choosenActionTwo}>{choosenActionTwo}</option>
+            <option value={choosenActionOne[0]}>{choosenActionOne}</option>
+            {(type === "Service" || playerInfo.position !== "MB") && (
+              <option value={choosenActionTwo[0]}>{choosenActionTwo}</option>
             )}
           </select>
         </div>
@@ -315,7 +334,7 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                   />
                 )
               )
-            : playerInfo.position === "Opposite"
+            : playerInfo.position === "OPP"
             ? zonesStates
                 .slice(0, 3)
                 .map((ball, index) =>
@@ -341,14 +360,14 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                     />
                   )
                 )
-            : playerInfo.position === "Reciever"
+            : playerInfo.position === "OH"
             ? zonesStates
                 .slice(1, 4)
                 .map((ball, index) =>
                   ball.active === false ? (
                     <Balls
                       key={index + 1}
-                      value={ball.zone.replace(/[a-z]/g, "")}
+                      value={ball.zone.replace(/[A]/g, "Z")}
                       className={!isShowInputs ? ball.zone : "none"}
                       index={index + 1}
                       zonesStates={zonesStates}
@@ -367,14 +386,14 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
                     />
                   )
                 )
-            : playerInfo.position === "MBlocker"
+            : playerInfo.position === "MB"
             ? zonesStates
                 .slice(4, 7)
                 .map((ball, index) =>
                   ball.active === false ? (
                     <Balls
                       key={index + 4}
-                      value={ball.zone.replace(/[a-z]/g, "")}
+                      value={ball.zone.replace(/[a-zA]/g, "")}
                       className={!isShowInputs ? ball.zone : "none"}
                       index={index + 4}
                       zonesStates={zonesStates}

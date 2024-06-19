@@ -34,8 +34,8 @@ export function Explain(props: TExplain) {
   } = props;
   const [isRegistratedUser] = useAuthState(auth);
   const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
-  const attack = type === "Attack" && "winPoints" in diagrammValue;
-  const service = type === "Service" && "ace" in diagrammValue;
+  const attack = type === "Attack" && "A+" in diagrammValue;
+  const service = type === "Service" && "S++" in diagrammValue;
   const bgOrangeRed = { backgroundColor: "orangered" };
   return (
     <>
@@ -86,32 +86,32 @@ export function Explain(props: TExplain) {
         <div className="input-wrapper">
           <input
             style={{ backgroundColor: "lightgreen" }}
-            name={attack ? "winPoints" : "ace"}
+            name={attack ? "A+" : "S++"}
             onChange={handleDiagrammValue}
-            value={attack ? diagrammValue.winPoints : service ? diagrammValue.ace : ""}
+            value={attack ? diagrammValue["A+"] : service ? diagrammValue["S++"] : ""}
             required
           ></input>
           <input
             style={{ backgroundColor: "yellow" }}
-            name={attack ? "leftInGame" : "servicePlus"}
+            name={attack ? "A!" : "S+"}
             onChange={handleDiagrammValue}
-            value={attack ? diagrammValue.leftInGame : service ? diagrammValue.servicePlus : ""}
+            value={attack ? diagrammValue["A!"] : service ? diagrammValue["S+"] : ""}
             required
           ></input>
           <input
             style={{ backgroundColor: "orange" }}
-            name={attack ? "attacksInBlock" : "serviceMinus"}
+            name={attack ? "AB" : "S-"}
             onChange={handleDiagrammValue}
             value={
-              attack ? diagrammValue.attacksInBlock : service ? diagrammValue.serviceMinus : ""
+              attack ? diagrammValue["AB"] : service ? diagrammValue["S-"] : ""
             }
             required
           ></input>
           <input
             style={bgOrangeRed}
-            name={attack ? "loosePoints" : "serviceFailed"}
+            name={attack ? "A=" : "S="}
             onChange={handleDiagrammValue}
-            value={attack ? diagrammValue.loosePoints : service ? diagrammValue.serviceFailed : ""}
+            value={attack ? diagrammValue["A="] : service ? diagrammValue["S="] : ""}
             required
           ></input>
         </div>

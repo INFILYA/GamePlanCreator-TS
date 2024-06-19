@@ -3,6 +3,7 @@ import HighchartsReact from "highcharts-react-official";
 import { useSelector } from "react-redux";
 import { selectPlayerInfo } from "../../states/slices/playerInfoSlice";
 import { TMix } from "../../types/types";
+import { getSumofAttacks } from "../../utilities/functions";
 
 type TDiagrammProps = {
   link: string;
@@ -83,21 +84,17 @@ export default function Diagramm(props: TDiagrammProps) {
   function rightPercentageForDiagramm(index: number) {
     if (playerInfo === null) return;
     if (link === "Attack") {
-      const totalAtt = [
-        playerInfo.winPoints,
-        playerInfo.leftInGame,
-        playerInfo.attacksInBlock,
-        playerInfo.loosePoints,
-      ];
-      const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);
-      const percentOfActions = totalAtt.map((att) => +((att / sumOfTotalAtt) * 100).toFixed(1));
+      const totalAtt = [playerInfo["A+"], playerInfo["A!"], playerInfo["AB"], playerInfo["A="]];
+      const percentOfActions = totalAtt.map(
+        (att) => +((att / getSumofAttacks(playerInfo)) * 100).toFixed(1)
+      );
       return percentOfActions[index];
     } else if (link === "Service") {
       const totalService = [
-        playerInfo.ace,
-        playerInfo.servicePlus,
-        playerInfo.serviceMinus,
-        playerInfo.serviceFailed,
+        playerInfo["S++"],
+        playerInfo["S+"],
+        playerInfo["S-"],
+        playerInfo["S="],
       ];
       const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
       const percentOfActions = totalService.map(

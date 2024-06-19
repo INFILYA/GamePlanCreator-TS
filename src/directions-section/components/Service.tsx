@@ -3,15 +3,15 @@ import { useState, ChangeEvent } from "react";
 import { selectPlayerInfo } from "../../states/slices/playerInfoSlice";
 import WrapperForDirections from "./WrapperForDirections";
 import { TPlayer, TServiceDiagramm, TTeam, TZoneStates } from "../../types/types";
-import { getPlusMinusService, getServiceEfficency } from "../../utilities/functions";
+// import { getPlusMinusService, getServiceEfficency } from "../../utilities/functions";
 
 export function Service() {
   const playerInfos = useSelector(selectPlayerInfo);
   const playerInfo = { ...playerInfos };
   const [zonesStates, setZonesStates] = useState<TZoneStates[]>([
-    { zone: "serviceZone1", active: false },
-    { zone: "serviceZone6", active: false },
-    { zone: "serviceZone5", active: false },
+    { zone: "S1", active: false },
+    { zone: "S6", active: false },
+    { zone: "S5", active: false },
   ]);
 
   const handleDiagrammValue = (event: ChangeEvent<HTMLInputElement>) => {
@@ -21,18 +21,18 @@ export function Service() {
     });
   };
   const [diagrammValue, setDiagrammValue] = useState<TServiceDiagramm>({
-    ace: 0,
-    servicePlus: 0,
-    serviceMinus: 0,
-    serviceFailed: 0,
+    "S++": 0,
+    "S+": 0,
+    "S-": 0,
+    "S=": 0,
   });
 
   function calculateForData<T extends TTeam | TPlayer>(obj: T): T {
     for (const key in diagrammValue) {
       (obj[key as keyof T] as number) += diagrammValue[key as keyof TServiceDiagramm];
     }
-    obj.plusMinusOnService = getPlusMinusService(obj); //встановлюємо + - на подачі
-    obj.efficencyService = getServiceEfficency(obj); // встановлюємо ефективність подачі
+    // obj.plusMinusOnService = getPlusMinusService(obj); //встановлюємо + - на подачі
+    // obj.efficencyService = getServiceEfficency(obj); // встановлюємо ефективність подачі
     return obj;
   }
   return (

@@ -69,40 +69,32 @@ export const emptyPlayer: TPlayer = {
   position: "none",
   reach: 0,
   team: "",
-  attackPipeFastBall: [],
-  attackPipeHighBall: [],
-  attackZone2FastBall: [],
-  attackZone2HighBall: [],
-  attackZone4FastBall: [],
-  attackZone4HighBall: [],
-  attackZone1FastBall: [],
-  attackZone1HighBall: [],
-  attackZoneK1FastBall: [],
-  attackZoneK1HighBall: [],
-  attackZoneKCFastBall: [],
-  attackZoneKCHighBall: [],
-  attackZoneK7FastBall: [],
-  attackZoneK7HighBall: [],
-  winPoints: 0,
-  loosePoints: 0,
-  leftInGame: 0,
-  attacksInBlock: 0,
-  plusMinusOnAttack: 0,
-  percentOfAttack: 0,
-  serviceZone1Float: [],
-  serviceZone1Jump: [],
-  serviceZone5Float: [],
-  serviceZone5Jump: [],
-  serviceZone6Float: [],
-  serviceZone6Jump: [],
-  ace: 0,
-  servicePlus: 0,
-  serviceMinus: 0,
-  serviceFailed: 0,
-  plusMinusOnService: 0,
+  APQ: [],
+  APH: [],
+  A2Q: [],
+  A2H: [],
+  A4Q: [],
+  A4H: [],
+  A1Q: [],
+  A1H: [],
+  AK1Q: [],
+  AKCQ: [],
+  AK7Q: [],
+  "A+": 0,
+  "A=": 0,
+  "A!": 0,
+  AB: 0,
+  S1F: [],
+  S1J: [],
+  S5F: [],
+  S5J: [],
+  S6F: [],
+  S6J: [],
+  "S++": 0,
+  "S+": 0,
+  "S-": 0,
+  "S=": 0,
   boardPosition: 0,
-  efficencyAttack: 0,
-  efficencyService: 0,
 };
 
 export const backGroundYellow = { backgroundColor: "#FFD700", color: "#0057B8" };
@@ -138,14 +130,14 @@ export function setStyle(params: number): CSSProperties {
   return { color: params >= 0 ? "green" : "orangered" };
 }
 
-function getSumofAttacks(obj: TMix) {
-  const totalAtt = [obj.winPoints, obj.leftInGame, obj.attacksInBlock, obj.loosePoints];
+export function getSumofAttacks(obj: TMix) {
+  const totalAtt = [obj["A+"], obj["A!"], obj["AB"], obj["A="]];
   const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);
   return +sumOfTotalAtt;
 }
 
 export function gerPercentOfAttack(obj: TMix) {
-  const percents = +((obj.winPoints / getSumofAttacks(obj)) * 100);
+  const percents = +((obj["A+"] / getSumofAttacks(obj)) * 100);
   return Math.round(percents);
 }
 
@@ -155,7 +147,7 @@ export function getAttackEfficency(obj: TMix) {
 }
 
 export function getServiceEfficency(obj: TMix) {
-  const totalService = [obj.ace, obj.servicePlus, obj.serviceMinus, obj.serviceFailed];
+  const totalService = [obj["S++"], obj["S+"], obj["S-"], obj["S="]];
   const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
   if (sumOfTotalService === 0) return 0;
   const efficencyService = +((getPlusMinusService(obj) / sumOfTotalService) * 100);
@@ -163,47 +155,44 @@ export function getServiceEfficency(obj: TMix) {
 }
 
 export function getPlusMinusService(obj: TMix) {
-  return obj.ace - obj.serviceFailed;
+  return obj["S++"] - obj["S="];
 }
 export function getPlusMinusAttack(obj: TMix) {
-  return obj.winPoints - (obj.attacksInBlock + obj.loosePoints);
+  return obj["A+"] - (obj["AB"] + obj["A="]);
 }
 
 export function calculateTotalofActions(obj: TMix[]) {
-  const loosePoints = obj.reduce((acc, val) => (acc += val.loosePoints), 0);
-  const winPoints = obj.reduce((acc, val) => (acc += val.winPoints), 0);
-  const leftInTheGame = obj.reduce((acc, val) => (acc += val.leftInGame), 0);
-  const attacksInBlock = obj.reduce((acc, val) => (acc += val.attacksInBlock), 0);
-  const ace = obj.reduce((acc, val) => (acc += val.ace), 0);
-  const serviceFailed = obj.reduce((acc, val) => (acc += val.serviceFailed), 0);
-  const servicePlus = obj.reduce((acc, val) => (acc += val.servicePlus), 0);
-  const serviceMinus = obj.reduce((acc, val) => (acc += val.serviceMinus), 0);
+  const loosePoints = obj.reduce((acc, val) => (acc += val["A="]), 0);
+  const winPoints = obj.reduce((acc, val) => (acc += val["A+"]), 0);
+  const leftInTheGame = obj.reduce((acc, val) => (acc += val["A!"]), 0);
+  const attacksInBlock = obj.reduce((acc, val) => (acc += val["AB"]), 0);
+  const ace = obj.reduce((acc, val) => (acc += val["S++"]), 0);
+  const serviceFailed = obj.reduce((acc, val) => (acc += val["S="]), 0);
+  const servicePlus = obj.reduce((acc, val) => (acc += val["S+"]), 0);
+  const serviceMinus = obj.reduce((acc, val) => (acc += val["S-"]), 0);
   const sumOfAllPlayersSoloGamesStats = {
-    loosePoints: loosePoints,
-    winPoints: winPoints,
-    leftInGame: leftInTheGame,
-    attacksInBlock: attacksInBlock,
-    ace: ace,
-    serviceFailed: serviceFailed,
-    servicePlus: servicePlus,
-    serviceMinus: serviceMinus,
+    "A=": loosePoints,
+    "A+": winPoints,
+    "A!": leftInTheGame,
+    AB: attacksInBlock,
+    "S++": ace,
+    "S=": serviceFailed,
+    "S+": servicePlus,
+    "S-": serviceMinus,
   };
   return sumOfAllPlayersSoloGamesStats;
 }
 
 export function preparePlayerToSoloGame(obj: TPlayer) {
   const soloGamePlayerStats = { ...obj };
-  soloGamePlayerStats.winPoints = 0;
-  soloGamePlayerStats.loosePoints = 0;
-  soloGamePlayerStats.leftInGame = 0;
-  soloGamePlayerStats.attacksInBlock = 0;
-  soloGamePlayerStats.efficencyAttack = 0;
-  soloGamePlayerStats.plusMinusOnAttack = 0;
-  soloGamePlayerStats.percentOfAttack = 0;
-  soloGamePlayerStats.ace = 0;
-  soloGamePlayerStats.serviceFailed = 0;
-  soloGamePlayerStats.serviceMinus = 0;
-  soloGamePlayerStats.servicePlus = 0;
+  soloGamePlayerStats["A+"] = 0;
+  soloGamePlayerStats["A="] = 0;
+  soloGamePlayerStats["A!"] = 0;
+  soloGamePlayerStats["AB"] = 0;
+  soloGamePlayerStats["S++"] = 0;
+  soloGamePlayerStats["S="] = 0;
+  soloGamePlayerStats["S-"] = 0;
+  soloGamePlayerStats["S+"] = 0;
   return soloGamePlayerStats;
 }
 
@@ -240,28 +229,3 @@ export const listOfOpponents = [
   "REACH Nitro",
   "MAC Titanium",
 ];
-
-export const soloGameStatOfPlayer = {
-  age: 0,
-  birthday: "",
-  hand: "",
-  height: 0,
-  id: "",
-  name: "",
-  number: 0,
-  photo: "",
-  position: "none",
-  reach: 0,
-  team: "",
-  winPoints: 0,
-  loosePoints: 0,
-  leftInGame: 0,
-  attacksInBlock: 0,
-  plusMinusOnAttack: 0,
-  percentOfAttack: 0,
-  boardPosition: 0,
-};
-
-export const soloGameStatOfPlayers: TPlayer[] = Array(6)
-  .fill(soloGameStatOfPlayer)
-  .map((user, index) => ({ ...user, boardPosition: correctPositions(index) }));

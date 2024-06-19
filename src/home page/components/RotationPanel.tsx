@@ -36,7 +36,7 @@ export default function RotationPanel(arg: TRotationPanel) {
 
   useEffect(() => {
     function rigthRotation() {
-      const seTTer = guestTeamOptions.find((plaer) => plaer.position === "Setter");
+      const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
       if (!seTTer) return;
       const indexOfSetter = guestTeamOptions.indexOf(seTTer);
       setNumber(correctZones(indexOfSetter));

@@ -12,9 +12,6 @@ import {
   correctZones,
   emptyPlayers,
   firstLetterCapital,
-  gerPercentOfAttack,
-  getAttackEfficency,
-  getPlusMinusAttack,
   isBoardFull,
 } from "../utilities/functions";
 import { TPlayer, TTeam } from "../types/types";
@@ -107,9 +104,9 @@ export function HomePage() {
       }
       (team[key as keyof TTeam] as number) += obj[key as keyof T] as number;
     }
-    team.percentOfAttack = gerPercentOfAttack(team); //встановлюємо процент зйому
-    team.plusMinusOnAttack = getPlusMinusAttack(team); //встановлюємо + - в атаці
-    team.efficencyAttack = getAttackEfficency(team); // встановлюємо ефективність подачі
+    // team.percentOfAttack = gerPercentOfAttack(team); //встановлюємо процент зйому
+    // team.plusMinusOnAttack = getPlusMinusAttack(team); //встановлюємо + - в атаці
+    // team.efficencyAttack = getAttackEfficency(team); // встановлюємо ефективність подачі
     guestTeam[0] = team;
   }
 
@@ -334,7 +331,7 @@ export function HomePage() {
                   -
                 </RegularButton>
                 {homeTeamOptions.map((player, index) =>
-                  typeof player !== "number" && player && player.position === "Setter" ? (
+                  typeof player !== "number" && player && player.position === "SET" ? (
                     <span key={player.name}>P{correctPositions(index) + 1}</span>
                   ) : null
                 )}

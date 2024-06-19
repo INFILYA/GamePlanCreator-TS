@@ -238,52 +238,52 @@
 }
 .playArea {
   .zones-wrapper {
-    .attackZone2 {
+    .A2 {
       left: -6%;
       top: 45%;
       @include attackShape;
     }
-    .attackZone1 {
+    .A1 {
       left: -6%;
       top: 30%;
       @include attackShape;
     }
-    .attackZone4 {
+    .A4 {
       right: -6%;
       top: 45%;
       @include attackShape;
     }
-    .attackPipe {
+    .AP {
       top: 30%;
       left: 43%;
       @include attackShape;
     }
-    .attackK1 {
+    .AK1 {
       top: 45%;
       right: 58%;
       @include attackShape;
     }
-    .attackKC {
+    .AKC {
       top: 45%;
       right: 43%;
       @include attackShape;
     }
-    .attackK7 {
+    .AK7 {
       top: 45%;
       right: 28%;
       @include attackShape;
     }
-    .serviceZone1 {
+    .S1 {
       left: 8%;
       top: 9.3%;
       @include attackShape;
     }
-    .serviceZone6 {
+    .S6 {
       left: 43%;
       top: 9.3%;
       @include attackShape;
     }
-    .serviceZone5 {
+    .S5 {
       right: 8%;
       top: 9.3%;
       @include attackShape;

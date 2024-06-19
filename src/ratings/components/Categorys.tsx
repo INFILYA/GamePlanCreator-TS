@@ -10,20 +10,7 @@ type TCategorys = {
 export function Categorys(props: TCategorys) {
   const { filteredPlayers, rankByValue } = props;
   const properWidth = useSetWidth() > 767;
-  const categorys = [
-    "Name",
-    "Club",
-    "Errors",
-    "R # +",
-    "R ! - /",
-    "Ace",
-    "Errors",
-    "Block",
-    "Game",
-    "Win",
-    "Effic",
-    "%",
-  ];
+  const categorys = ["Name", "Club", "S=", "S-", "S+", "S#", "A=", "AB", "A!", "A+", "Effic", "%"];
   const criterias = [
     "name",
     "team",

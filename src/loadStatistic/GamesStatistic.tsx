@@ -11,9 +11,6 @@ import SectionWrapper from "../wrappers/SectionWrapper";
 import {
   calculateTotalofActions,
   compare,
-  gerPercentOfAttack,
-  getAttackEfficency,
-  getPlusMinusAttack,
 } from "../utilities/functions";
 import { Categorys } from "../ratings/components/Categorys";
 import { Rows } from "../ratings/components/Rows";
@@ -51,9 +48,9 @@ export default function GamesStatistic() {
       }
       (team[key as keyof TMix] as number) = newObj[key as keyof T] as number;
     }
-    team.percentOfAttack = gerPercentOfAttack(team); //встановлюємо процент зйому
-    team.plusMinusOnAttack = getPlusMinusAttack(team); //встановлюємо + - в атаці
-    team.efficencyAttack = getAttackEfficency(team); // встановлюємо ефективність подачі
+    // team.percentOfAttack = gerPercentOfAttack(team); //встановлюємо процент зйому
+    // team.plusMinusOnAttack = getPlusMinusAttack(team); //встановлюємо + - в атаці
+    // team.efficencyAttack = getAttackEfficency(team); // встановлюємо ефективність подачі
     return team;
   }
 
@@ -98,21 +95,21 @@ export default function GamesStatistic() {
     const newFullObj = { ...fullObj };
     for (const key in newFullObj) {
       if (
-        key === "attacksInBlock" ||
-        key === "loosePoints" ||
-        key === "winPoints" ||
-        key === "leftInGame" ||
-        key === "ace" ||
-        key === "serviceFailed" ||
-        key === "servicePlus" ||
-        key === "serviceMinus"
+        key === "AB" ||
+        key === "A=" ||
+        key === "A+" ||
+        key === "A!" ||
+        key === "S++" ||
+        key === "S=" ||
+        key === "S+" ||
+        key === "S-"
       ) {
         (newFullObj[key as keyof TMix] as number) += newObj[key as keyof T] as number;
       } else continue;
     }
-    newFullObj.percentOfAttack = gerPercentOfAttack(newFullObj); //встановлюємо процент зйому
-    newFullObj.plusMinusOnAttack = getPlusMinusAttack(newFullObj); //встановлюємо + - в атаці
-    newFullObj.efficencyAttack = getAttackEfficency(newFullObj); // встановлюємо ефективність подачі
+    // newFullObj.percentOfAttack = gerPercentOfAttack(newFullObj); //встановлюємо процент зйому
+    // newFullObj.plusMinusOnAttack = getPlusMinusAttack(newFullObj); //встановлюємо + - в атаці
+    // newFullObj.efficencyAttack = getAttackEfficency(newFullObj); // встановлюємо ефективність подачі
     return newFullObj;
   }
 

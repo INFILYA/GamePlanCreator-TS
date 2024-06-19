@@ -37,30 +37,30 @@ export function Rows(props: TRows) {
             <img src={`/photos/${"team" in player ? player.team : player.name}.png`} alt="" />
           </td>
           <td style={lastRow ? { backgroundColor: "orangered" } : { backgroundColor: "khaki" }}>
-            {player.serviceFailed}
+            {player["S="]}
           </td>
           <td style={lastRow ? { backgroundColor: "orange" } : { backgroundColor: "khaki" }}>
-            {player.serviceMinus}
+            {player["S-"]}
           </td>
           <td style={lastRow ? { backgroundColor: "yellow" } : { backgroundColor: "khaki" }}>
-            {player.servicePlus}
+            {player["S+"]}
           </td>
           <td style={lastRow ? { backgroundColor: "lightgreen" } : { backgroundColor: "khaki" }}>
-            {player.ace}
+            {player["S++"]}
           </td>
           <td style={lastRow ? { backgroundColor: "orangered" } : { backgroundColor: "gainsboro" }}>
-            {player.loosePoints}
+            {player["A="]}
           </td>
           <td style={lastRow ? { backgroundColor: "orange" } : { backgroundColor: "gainsboro" }}>
-            {player.attacksInBlock}
+            {player["AB"]}
           </td>
           <td style={lastRow ? { backgroundColor: "yellow" } : { backgroundColor: "gainsboro" }}>
-            {player.leftInGame}
+            {player["A!"]}
           </td>
           <td
             style={lastRow ? { backgroundColor: "lightgreen" } : { backgroundColor: "gainsboro" }}
           >
-            {player.winPoints}
+            {player["A+"]}
           </td>
           <td style={setStyleForEfficency(getAttackEfficency(player))}>
             {getAttackEfficency(player)}%

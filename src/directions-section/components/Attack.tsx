@@ -3,30 +3,25 @@ import { useState, ChangeEvent } from "react";
 import { selectPlayerInfo } from "../../states/slices/playerInfoSlice";
 import WrapperForDirections from "./WrapperForDirections";
 import { TAttackDiagramm, TPlayer, TTeam, TZoneStates } from "../../types/types";
-import {
-  gerPercentOfAttack,
-  getAttackEfficency,
-  getPlusMinusAttack,
-} from "../../utilities/functions";
 
 export function Attack() {
   const playerInfos = useSelector(selectPlayerInfo);
   const playerInfo = { ...playerInfos };
 
   const [zonesStates, setZonesStates] = useState<TZoneStates[]>([
-    { zone: "attackZone1", active: false },
-    { zone: "attackZone2", active: false },
-    { zone: "attackZone4", active: false },
-    { zone: "attackPipe", active: false },
-    { zone: "attackK1", active: false },
-    { zone: "attackKC", active: false },
-    { zone: "attackK7", active: false },
+    { zone: "A1", active: false },
+    { zone: "A2", active: false },
+    { zone: "A4", active: false },
+    { zone: "AP", active: false },
+    { zone: "AK1", active: false },
+    { zone: "AKC", active: false },
+    { zone: "AK7", active: false },
   ]);
   const [diagrammValue, setDiagrammValue] = useState<TAttackDiagramm>({
-    winPoints: 0,
-    leftInGame: 0,
-    attacksInBlock: 0,
-    loosePoints: 0,
+    "A+": 0,
+    "A!": 0,
+    AB: 0,
+    "A=": 0,
   });
   const handleDiagrammValue = (event: ChangeEvent<HTMLInputElement>) => {
     setDiagrammValue({
@@ -38,9 +33,9 @@ export function Attack() {
     for (const key in diagrammValue) {
       (obj[key as keyof T] as number) += diagrammValue[key as keyof TAttackDiagramm];
     }
-    obj.percentOfAttack = gerPercentOfAttack(obj); //встановлюємо процент зйому
-    obj.plusMinusOnAttack = getPlusMinusAttack(obj); //встановлюємо + - в атаці
-    obj.efficencyAttack = getAttackEfficency(obj); // встановлюємо ефективність подачі
+    // obj.percentOfAttack = gerPercentOfAttack(obj); //встановлюємо процент зйому
+    // obj.plusMinusOnAttack = getPlusMinusAttack(obj); //встановлюємо + - в атаці
+    // obj.efficencyAttack = getAttackEfficency(obj); // встановлюємо ефективність подачі
     return obj;
   }
   return (

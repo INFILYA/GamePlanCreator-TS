@@ -14,12 +14,7 @@ import {
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { ChangeEvent, useEffect, useState } from "react";
 import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
-import {
-  emptyPlayer,
-  gerPercentOfAttack,
-  getAttackEfficency,
-  getPlusMinusAttack,
-} from "../../utilities/functions";
+import { emptyPlayer } from "../../utilities/functions";
 import { setSoloGameStats } from "../../states/slices/soloGameStatsSlice";
 import { useSelector } from "react-redux";
 
@@ -61,14 +56,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     for (const key in diagram) {
       if (!soloGame) {
         if (
-          key === "attacksInBlock" ||
-          key === "loosePoints" ||
-          key === "winPoints" ||
-          key === "leftInGame" ||
-          key === "ace" ||
-          key === "serviceFailed" ||
-          key === "servicePlus" ||
-          key === "serviceMinus"
+          key === "AB" ||
+          key === "A=" ||
+          key === "A+" ||
+          key === "A!" ||
+          key === "S++" ||
+          key === "S=" ||
+          key === "S+" ||
+          key === "S-"
         ) {
           (obj[key as keyof T] as number) += diagram[key as keyof TAttackDiagramm];
         } else continue;
@@ -77,9 +72,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
         (obj[key as keyof T] as number) = diagram[key as keyof TAttackDiagramm];
       }
     }
-    obj.percentOfAttack = gerPercentOfAttack(obj); //встановлюємо процент зйому
-    obj.plusMinusOnAttack = getPlusMinusAttack(obj); //встановлюємо + - в атаці
-    obj.efficencyAttack = getAttackEfficency(obj); // встановлюємо ефективність подачі
+    // obj.percentOfAttack = gerPercentOfAttack(obj); //встановлюємо процент зйому
+    // obj.plusMinusOnAttack = getPlusMinusAttack(obj); //встановлюємо + - в атаці
+    // obj.efficencyAttack = getAttackEfficency(obj); // встановлюємо ефективність подачі
     return obj;
   }
 
@@ -134,16 +129,16 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   if (typeof player === "number" || player === null) return;
   const condition = player.number !== 0;
   const attackGradations = [
-    ["winPoints", "lightgreen", "Win"],
-    ["leftInGame", "yellow", "Game"],
-    ["attacksInBlock", "orange", "Block"],
-    ["loosePoints", "orangered", "Error"],
+    ["A+", "lightgreen", "Win"],
+    ["A!", "yellow", "Game"],
+    ["AB", "orange", "Block"],
+    ["A=", "orangered", "Error"],
   ];
   const serviceGradations = [
-    ["ace", "lightgreen", "Ace"],
-    ["servicePlus", "yellow", "(! - /)"],
-    ["serviceMinus", "orange", "(# +)"],
-    ["serviceFailed", "orangered", "Error"],
+    ["S++", "lightgreen", "Ace"],
+    ["S+", "yellow", "(! - /)"],
+    ["S-", "orange", "(# +)"],
+    ["S=", "orangered", "Error"],
   ];
   const choosenGradations = gradations.length ? gradations : attackGradations;
   return (

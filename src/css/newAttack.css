@@ -218,7 +218,7 @@
   display: block;
 }
 
-.playArea .zones-wrapper .attackZone2 {
+.playArea .zones-wrapper .A2 {
   left: -6%;
   top: 45%;
   font-size: 25px;
@@ -233,7 +233,7 @@
   position: absolute;
   box-sizing: border-box;
 }
-.playArea .zones-wrapper .attackZone2:hover {
+.playArea .zones-wrapper .A2:hover {
   transition: 0.3s;
   background-color: orangered;
   border: 3px solid white;
@@ -241,7 +241,7 @@
   opacity: 1;
   scale: 1.15;
 }
-.playArea .zones-wrapper .attackZone1 {
+.playArea .zones-wrapper .A1 {
   left: -6%;
   top: 30%;
   font-size: 25px;
@@ -256,7 +256,7 @@
   position: absolute;
   box-sizing: border-box;
 }
-.playArea .zones-wrapper .attackZone1:hover {
+.playArea .zones-wrapper .A1:hover {
   transition: 0.3s;
   background-color: orangered;
   border: 3px solid white;
@@ -264,7 +264,7 @@
   opacity: 1;
   scale: 1.15;
 }
-.playArea .zones-wrapper .attackZone4 {
+.playArea .zones-wrapper .A4 {
   right: -6%;
   top: 45%;
   font-size: 25px;
@@ -279,7 +279,7 @@
   position: absolute;
   box-sizing: border-box;
 }
-.playArea .zones-wrapper .attackZone4:hover {
+.playArea .zones-wrapper .A4:hover {
   transition: 0.3s;
   background-color: orangered;
   border: 3px solid white;
@@ -287,7 +287,7 @@
   opacity: 1;
   scale: 1.15;
 }
-.playArea .zones-wrapper .attackPipe {
+.playArea .zones-wrapper .AP {
   top: 30%;
   left: 43%;
   font-size: 25px;
@@ -302,7 +302,7 @@
   position: absolute;
   box-sizing: border-box;
 }
-.playArea .zones-wrapper .attackPipe:hover {
+.playArea .zones-wrapper .AP:hover {
   transition: 0.3s;
   background-color: orangered;
   border: 3px solid white;
@@ -310,7 +310,7 @@
   opacity: 1;
   scale: 1.15;
 }
-.playArea .zones-wrapper .attackK1 {
+.playArea .zones-wrapper .AK1 {
   top: 45%;
   right: 58%;
   font-size: 25px;
@@ -325,7 +325,7 @@
   position: absolute;
   box-sizing: border-box;
 }
-.playArea .zones-wrapper .attackK1:hover {
+.playArea .zones-wrapper .AK1:hover {
   transition: 0.3s;
   background-color: orangered;
   border: 3px solid white;
@@ -333,7 +333,7 @@
   opacity: 1;
   scale: 1.15;
 }
-.playArea .zones-wrapper .attackKC {
+.playArea .zones-wrapper .AKC {
   top: 45%;
   right: 43%;
   font-size: 25px;
@@ -348,7 +348,7 @@
   position: absolute;
   box-sizing: border-box;
 }
-.playArea .zones-wrapper .attackKC:hover {
+.playArea .zones-wrapper .AKC:hover {
   transition: 0.3s;
   background-color: orangered;
   border: 3px solid white;
@@ -356,7 +356,7 @@
   opacity: 1;
   scale: 1.15;
 }
-.playArea .zones-wrapper .attackK7 {
+.playArea .zones-wrapper .AK7 {
   top: 45%;
   right: 28%;
   font-size: 25px;
@@ -371,7 +371,7 @@
   position: absolute;
   box-sizing: border-box;
 }
-.playArea .zones-wrapper .attackK7:hover {
+.playArea .zones-wrapper .AK7:hover {
   transition: 0.3s;
   background-color: orangered;
   border: 3px solid white;
@@ -379,7 +379,7 @@
   opacity: 1;
   scale: 1.15;
 }
-.playArea .zones-wrapper .serviceZone1 {
+.playArea .zones-wrapper .S1 {
   left: 8%;
   top: 9.3%;
   font-size: 25px;
@@ -394,7 +394,7 @@
   position: absolute;
   box-sizing: border-box;
 }
-.playArea .zones-wrapper .serviceZone1:hover {
+.playArea .zones-wrapper .S1:hover {
   transition: 0.3s;
   background-color: orangered;
   border: 3px solid white;
@@ -402,7 +402,7 @@
   opacity: 1;
   scale: 1.15;
 }
-.playArea .zones-wrapper .serviceZone6 {
+.playArea .zones-wrapper .S6 {
   left: 43%;
   top: 9.3%;
   font-size: 25px;
@@ -417,7 +417,7 @@
   position: absolute;
   box-sizing: border-box;
 }
-.playArea .zones-wrapper .serviceZone6:hover {
+.playArea .zones-wrapper .S6:hover {
   transition: 0.3s;
   background-color: orangered;
   border: 3px solid white;
@@ -425,7 +425,7 @@
   opacity: 1;
   scale: 1.15;
 }
-.playArea .zones-wrapper .serviceZone5 {
+.playArea .zones-wrapper .S5 {
   right: 8%;
   top: 9.3%;
   font-size: 25px;
@@ -440,7 +440,7 @@
   position: absolute;
   box-sizing: border-box;
 }
-.playArea .zones-wrapper .serviceZone5:hover {
+.playArea .zones-wrapper .S5:hover {
   transition: 0.3s;
   background-color: orangered;
   border: 3px solid white;
