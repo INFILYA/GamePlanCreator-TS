@@ -18,7 +18,7 @@ export function Ratings() {
   const [chosenPosition, setChosenPosition] = useState<string>("");
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [isChoosenFilter, setChoosenFilter] = useState<boolean>(false);
-  const positions = ["Reciever", "Opposite", "MBlocker", "Setter", "Team"];
+  const positions = ["OutsideHitter", "OPPosite", "MBlocker", "SETter", "Team"];
 
   function setPositionFilter(position: string) {
     setChosenPosition(position);
@@ -52,7 +52,7 @@ export function Ratings() {
                     {positions.map((position, index) => (
                       <div key={index}>
                         <RegularButton
-                          onClick={() => setPositionFilter(position)}
+                          onClick={() => setPositionFilter(position.replace(/[a-z]/g, ""))}
                           type="button"
                           $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
                           $background={chosenPosition === position ? "#0057b8" : "#ffd700"}

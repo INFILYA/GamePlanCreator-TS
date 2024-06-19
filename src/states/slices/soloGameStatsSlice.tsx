@@ -35,19 +35,16 @@ export const soloGameStatsSlice = createSlice({
       for (let i = 0; i < startingSix.length; i++) {
         for (let j = 0; j < allPlayers.length; j++) {
           if (startingSix[i] === allPlayers[j].name) {
-            const soloGamePlayer = { ...allPlayers[j] };
-            soloGamePlayer.winPoints = 0;
-            soloGamePlayer.loosePoints = 0;
-            soloGamePlayer.leftInGame = 0;
-            soloGamePlayer.attacksInBlock = 0;
-            soloGamePlayer.efficencyAttack = 0;
-            soloGamePlayer.plusMinusOnAttack = 0;
-            soloGamePlayer.percentOfAttack = 0;
-            soloGamePlayer.ace = 0;
-            soloGamePlayer.serviceFailed = 0;
-            soloGamePlayer.serviceMinus = 0;
-            soloGamePlayer.servicePlus = 0;
-            correctStartingSix.push(soloGamePlayer);
+            const soloGamePlayerStats = { ...allPlayers[j] };
+            soloGamePlayerStats["A+"] = 0;
+            soloGamePlayerStats["A="] = 0;
+            soloGamePlayerStats["A!"] = 0;
+            soloGamePlayerStats["AB"] = 0;
+            soloGamePlayerStats["S++"] = 0;
+            soloGamePlayerStats["S="] = 0;
+            soloGamePlayerStats["S-"] = 0;
+            soloGamePlayerStats["S+"] = 0;
+            correctStartingSix.push(soloGamePlayerStats);
           }
         }
       }
