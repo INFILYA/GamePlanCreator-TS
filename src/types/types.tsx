@@ -1,4 +1,5 @@
 export type TAttackDiagramm = {
+  "A++": number;
   "A+": number;
   "A=": number;
   "A!": number;
@@ -7,8 +8,17 @@ export type TAttackDiagramm = {
 export type TServiceDiagramm = {
   "S++": number;
   "S+": number;
+  "S!": number;
   "S-": number;
   "S=": number;
+};
+
+export type TReceptionDiagramm = {
+  "R++": number;
+  "R+": number;
+  "R!": number;
+  "R-": number;
+  "R=": number;
 };
 
 export type TTeam = {
@@ -20,12 +30,20 @@ export type TTeam = {
   startingSquad: string[];
   "S++": number;
   "S+": number;
+  "S!": number;
   "S-": number;
   "S=": number;
+  "A++": number;
   "A+": number;
   "A=": number;
   "A!": number;
   AB: number;
+  "R++": number;
+  "R+": number;
+  "R!": number;
+  "R-": number;
+  "R=": number;
+  blocks: number;
 };
 
 export type TPlayer = {
@@ -50,6 +68,7 @@ export type TPlayer = {
   AK1Q: number[];
   AKCQ: number[];
   AK7Q: number[];
+  "A++": number;
   "A+": number;
   "A=": number;
   "A!": number;
@@ -62,8 +81,15 @@ export type TPlayer = {
   S6J: number[];
   "S++": number;
   "S+": number;
+  "S!": number;
   "S-": number;
   "S=": number;
+  "R++": number;
+  "R+": number;
+  "R!": number;
+  "R-": number;
+  "R=": number;
+  blocks: number;
   boardPosition: number;
 };
 
@@ -130,17 +156,7 @@ export type TDistributionZones = {
 export type TDiagramm = TAttackDiagramm | TServiceDiagramm;
 
 export type TZoneStates = {
-  zone:
-    | "S1"
-    | "S6"
-    | "S5"
-    | "A1"
-    | "A2"
-    | "A4"
-    | "AP"
-    | "AK1"
-    | "AKC"
-    | "AK7";
+  zone: "S1" | "S6" | "S5" | "A1" | "A2" | "A4" | "AP" | "AK1" | "AKC" | "AK7";
   active: boolean;
 };
 

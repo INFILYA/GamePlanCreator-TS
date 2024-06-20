@@ -80,6 +80,7 @@ export const emptyPlayer: TPlayer = {
   AK1Q: [],
   AKCQ: [],
   AK7Q: [],
+  "A++": 0,
   "A+": 0,
   "A=": 0,
   "A!": 0,
@@ -92,8 +93,15 @@ export const emptyPlayer: TPlayer = {
   S6J: [],
   "S++": 0,
   "S+": 0,
+  "S!": 0,
   "S-": 0,
   "S=": 0,
+  "R++": 0,
+  "R+": 0,
+  "R!": 0,
+  "R-": 0,
+  "R=": 0,
+  blocks: 0,
   boardPosition: 0,
 };
 
@@ -131,13 +139,13 @@ export function setStyle(params: number): CSSProperties {
 }
 
 export function getSumofAttacks(obj: TMix) {
-  const totalAtt = [obj["A+"], obj["A!"], obj["AB"], obj["A="]];
+  const totalAtt = [obj["A++"],obj["A+"], obj["A!"], obj["AB"], obj["A="]];
   const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);
   return +sumOfTotalAtt;
 }
 
 export function gerPercentOfAttack(obj: TMix) {
-  const percents = +((obj["A+"] / getSumofAttacks(obj)) * 100);
+  const percents = +((obj["A++"] / getSumofAttacks(obj)) * 100);
   return Math.round(percents);
 }
 
@@ -147,7 +155,7 @@ export function getAttackEfficency(obj: TMix) {
 }
 
 export function getServiceEfficency(obj: TMix) {
-  const totalService = [obj["S++"], obj["S+"], obj["S-"], obj["S="]];
+  const totalService = [obj["S++"], obj["S+"], obj["S-"], obj["S="], obj["S!"]];
   const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
   if (sumOfTotalService === 0) return 0;
   const efficencyService = +((getPlusMinusService(obj) / sumOfTotalService) * 100);
@@ -158,41 +166,65 @@ export function getPlusMinusService(obj: TMix) {
   return obj["S++"] - obj["S="];
 }
 export function getPlusMinusAttack(obj: TMix) {
-  return obj["A+"] - (obj["AB"] + obj["A="]);
+  return obj["A++"] - (obj["AB"] + obj["A="]);
 }
 
 export function calculateTotalofActions(obj: TMix[]) {
   const loosePoints = obj.reduce((acc, val) => (acc += val["A="]), 0);
-  const winPoints = obj.reduce((acc, val) => (acc += val["A+"]), 0);
-  const leftInTheGame = obj.reduce((acc, val) => (acc += val["A!"]), 0);
+  const winPoints = obj.reduce((acc, val) => (acc += val["A++"]), 0);
+  const leftInTheGamePlus = obj.reduce((acc, val) => (acc += val["A+"]), 0);
+  const leftInTheGameMinus = obj.reduce((acc, val) => (acc += val["A!"]), 0);
   const attacksInBlock = obj.reduce((acc, val) => (acc += val["AB"]), 0);
   const ace = obj.reduce((acc, val) => (acc += val["S++"]), 0);
   const serviceFailed = obj.reduce((acc, val) => (acc += val["S="]), 0);
+  const serviceExclamation = obj.reduce((acc, val) => (acc += val["S!"]), 0);
   const servicePlus = obj.reduce((acc, val) => (acc += val["S+"]), 0);
   const serviceMinus = obj.reduce((acc, val) => (acc += val["S-"]), 0);
+  const rPerfect = obj.reduce((acc, val) => (acc += val["R++"]), 0);
+  const rPlus = obj.reduce((acc, val) => (acc += val["R+"]), 0);
+  const rExclamation = obj.reduce((acc, val) => (acc += val["R!"]), 0);
+  const rAce = obj.reduce((acc, val) => (acc += val["R="]), 0);
+  const rMinus = obj.reduce((acc, val) => (acc += val["R-"]), 0);
+  const blocks = obj.reduce((acc, val) => (acc += val.blocks), 0);
   const sumOfAllPlayersSoloGamesStats = {
     "A=": loosePoints,
-    "A+": winPoints,
-    "A!": leftInTheGame,
+    "A++": winPoints,
+    "A+": leftInTheGamePlus,
+    "A!": leftInTheGameMinus,
     AB: attacksInBlock,
     "S++": ace,
+    "S!": serviceExclamation,
     "S=": serviceFailed,
     "S+": servicePlus,
     "S-": serviceMinus,
+    "R++": rPerfect,
+    "R+": rPlus,
+    "R!": rExclamation,
+    "R-": rMinus,
+    "R=": rAce,
+    blocks: blocks,
   };
   return sumOfAllPlayersSoloGamesStats;
 }
 
 export function preparePlayerToSoloGame(obj: TPlayer) {
   const soloGamePlayerStats = { ...obj };
+  soloGamePlayerStats["A++"] = 0;
   soloGamePlayerStats["A+"] = 0;
   soloGamePlayerStats["A="] = 0;
   soloGamePlayerStats["A!"] = 0;
   soloGamePlayerStats["AB"] = 0;
   soloGamePlayerStats["S++"] = 0;
+  soloGamePlayerStats["S!"] = 0;
   soloGamePlayerStats["S="] = 0;
   soloGamePlayerStats["S-"] = 0;
   soloGamePlayerStats["S+"] = 0;
+  soloGamePlayerStats["R++"] = 0;
+  soloGamePlayerStats["R!"] = 0;
+  soloGamePlayerStats["R="] = 0;
+  soloGamePlayerStats["R-"] = 0;
+  soloGamePlayerStats["R+"] = 0;
+  soloGamePlayerStats.blocks = 0;
   return soloGamePlayerStats;
 }
 

@@ -14,7 +14,7 @@ export default function Diagramm(props: TDiagrammProps) {
   const { link, data } = props;
   const playerInformation = useSelector(selectPlayerInfo);
   const playerInfo = data || playerInformation;
-  const colors = ["lightgreen", "yellow", "orange", "orangered"];
+  const colors = ["lightgreen", "aquamarine", "yellow", "orange", "orangered"];
   const options = {
     chart: {
       type: "pie",
@@ -62,17 +62,14 @@ export default function Diagramm(props: TDiagrammProps) {
         allowPointSelect: false,
         data: [
           [link === "Attack" ? "Win" : "Ace", rightPercentageForDiagramm(0), true],
-          [
-            link === "Attack" ? "Game" : "Reception on (- , / , !)",
-            rightPercentageForDiagramm(1),
-            false,
-          ],
+          [link === "Attack" ? "Game +" : "Reception on (-)", rightPercentageForDiagramm(1), false],
+          [link === "Attack" ? "Game -" : "Reception on (!)", rightPercentageForDiagramm(2), false],
           [
             link === "Attack" ? "Block" : "Reception on (+ , #)",
-            rightPercentageForDiagramm(2),
+            rightPercentageForDiagramm(3),
             false,
           ],
-          ["Error", rightPercentageForDiagramm(3), false],
+          ["Error", rightPercentageForDiagramm(4), false],
         ],
       },
     ],
@@ -84,7 +81,13 @@ export default function Diagramm(props: TDiagrammProps) {
   function rightPercentageForDiagramm(index: number) {
     if (playerInfo === null) return;
     if (link === "Attack") {
-      const totalAtt = [playerInfo["A+"], playerInfo["A!"], playerInfo["AB"], playerInfo["A="]];
+      const totalAtt = [
+        playerInfo["A++"],
+        playerInfo["A+"],
+        playerInfo["A!"],
+        playerInfo["AB"],
+        playerInfo["A="],
+      ];
       const percentOfActions = totalAtt.map(
         (att) => +((att / getSumofAttacks(playerInfo)) * 100).toFixed(1)
       );
@@ -93,6 +96,7 @@ export default function Diagramm(props: TDiagrammProps) {
       const totalService = [
         playerInfo["S++"],
         playerInfo["S+"],
+        playerInfo["S!"],
         playerInfo["S-"],
         playerInfo["S="],
       ];

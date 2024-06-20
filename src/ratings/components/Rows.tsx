@@ -35,7 +35,13 @@ export function Rows(props: TRows) {
           style={lastRow ? { backgroundColor: "gainsboro" } : {}}
         >
           <td className="rating-player-name">{player.name}</td>
-          <td>{getPlusMinusAttack(player) + getPlusMinusService(player)}</td>
+          <td>
+            {getPlusMinusAttack(player) +
+              getPlusMinusService(player) +
+              player.blocks -
+              player["R="]}
+          </td>
+          <td>{player.blocks}</td>
           <td style={lastRow ? { backgroundColor: "orangered" } : { backgroundColor: "khaki" }}>
             {player["S="]}
           </td>
@@ -43,6 +49,9 @@ export function Rows(props: TRows) {
             {player["S-"]}
           </td>
           <td style={lastRow ? { backgroundColor: "yellow" } : { backgroundColor: "khaki" }}>
+            {player["S!"]}
+          </td>
+          <td style={lastRow ? { backgroundColor: "aquamarine" } : { backgroundColor: "khaki" }}>
             {player["S+"]}
           </td>
           <td style={lastRow ? { backgroundColor: "lightgreen" } : { backgroundColor: "khaki" }}>
@@ -58,9 +67,35 @@ export function Rows(props: TRows) {
             {player["A!"]}
           </td>
           <td
-            style={lastRow ? { backgroundColor: "lightgreen" } : { backgroundColor: "gainsboro" }}
+            style={lastRow ? { backgroundColor: "aquamarine" } : { backgroundColor: "gainsboro" }}
           >
             {player["A+"]}
+          </td>
+          <td
+            style={lastRow ? { backgroundColor: "lightgreen" } : { backgroundColor: "gainsboro" }}
+          >
+            {player["A++"]}
+          </td>
+          <td
+            style={lastRow ? { backgroundColor: "orangered" } : { backgroundColor: "darkseagreen" }}
+          >
+            {player["R="]}
+          </td>
+          <td style={lastRow ? { backgroundColor: "orange" } : { backgroundColor: "darkseagreen" }}>
+            {player["R-"]}
+          </td>
+          <td style={lastRow ? { backgroundColor: "yellow" } : { backgroundColor: "darkseagreen" }}>
+            {player["R!"]}
+          </td>
+          <td style={lastRow ? { backgroundColor: "aquamarine" } : { backgroundColor: "darkseagreen" }}>
+            {player["R+"]}
+          </td>
+          <td
+            style={
+              lastRow ? { backgroundColor: "lightgreen" } : { backgroundColor: "darkseagreen" }
+            }
+          >
+            {player["R++"]}
           </td>
           <td style={setStyleForEfficency(getAttackEfficency(player))}>
             {getAttackEfficency(player)}%

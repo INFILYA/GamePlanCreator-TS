@@ -121,16 +121,18 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   if (typeof player === "number" || player === null) return;
   const condition = player.number !== 0;
   const attackGradations = [
-    ["A+", "lightgreen"],
-    ["A!", "yellow"],
-    ["AB", "orange"],
-    ["A=", "orangered"],
+    ["A++", "lightgreen", "#"],
+    ["A+", "aquamarine", "+"],
+    ["A!", "yellow", "!"],
+    ["AB", "orange", "b"],
+    ["A=", "orangered", "="],
   ];
   const serviceGradations = [
-    ["S++", "lightgreen"],
-    ["S+", "yellow"],
-    ["S-", "orange"],
-    ["S=", "orangered"],
+    ["S++", "lightgreen", "#"],
+    ["S+", "aquamarine", "+"],
+    ["S!", "yellow", "!"],
+    ["S-", "orange", "-"],
+    ["S=", "orangered", "="],
   ];
   return (
     <>
@@ -179,7 +181,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                         style={{ backgroundColor: grade[1] }}
                         onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
                       >
-                        +
+                        {grade[2]}
                       </td>
                       <td>
                         <input
@@ -214,7 +216,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                         style={{ backgroundColor: grade[1] }}
                         onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
                       >
-                        +
+                        {grade[2]}
                       </td>
                       <td>
                         <input
