@@ -37,7 +37,6 @@ export function Ratings() {
       : arr.sort((a, b) => compare(a[criteria], b[criteria]));
     setIsBiggest(!isBiggest);
   }
-  console.log(filteredPlayers);
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">

@@ -12,7 +12,7 @@ import {
   selectIndexOfGuestTeamZones,
   updateInfoOfStartingSix,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
 import { emptyPlayer } from "../../utilities/functions";
 import { setSoloGameStats } from "../../states/slices/soloGameStatsSlice";
@@ -31,7 +31,6 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   const { player, soloGameStats, startingSix, type, showSquads, setShowSquads } = props;
   const dispatch = useAppDispatch();
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
-  const [gradations, setGradations] = useState<string[][]>([]);
   const [diagrammValue, setDiagrammValue] = useState<TPlayer>(emptyPlayer);
 
   useEffect(() => {
@@ -119,28 +118,20 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     dispatch(updateInfoOfSubPlayers(updatedPlayer));
   }
 
-  const handleGradationSet = (e: ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    if (value === "attack") {
-      setGradations(attackGradations);
-    } else setGradations(serviceGradations);
-  };
-
   if (typeof player === "number" || player === null) return;
   const condition = player.number !== 0;
   const attackGradations = [
-    ["A+", "lightgreen", "Win"],
-    ["A!", "yellow", "Game"],
-    ["AB", "orange", "Block"],
-    ["A=", "orangered", "Error"],
+    ["A+", "lightgreen"],
+    ["A!", "yellow"],
+    ["AB", "orange"],
+    ["A=", "orangered"],
   ];
   const serviceGradations = [
-    ["S++", "lightgreen", "Ace"],
-    ["S+", "yellow", "(! - /)"],
-    ["S-", "orange", "(# +)"],
-    ["S=", "orangered", "Error"],
+    ["S++", "lightgreen"],
+    ["S+", "yellow"],
+    ["S-", "orange"],
+    ["S=", "orangered"],
   ];
-  const choosenGradations = gradations.length ? gradations : attackGradations;
   return (
     <>
       {condition && (
@@ -175,27 +166,55 @@ export function IconOfPlayer(props: TIconOfPlayer) {
           </div>
           {!showSquads && (
             <div className="errors-field-wrapper">
-              <select
-                onChange={handleGradationSet}
-                style={{ textAlign: "center", fontWeight: "bold" }}
-              >
-                <option value="attack">Attack</option>
-                <option value="service">Service</option>
-              </select>
               <table>
                 <tbody>
                   <tr>
                     <th>+</th>
-                    <th>Amount</th>
+                    <th>A</th>
                     <th>-</th>
                   </tr>
-                  {choosenGradations.map((grade) => (
+                  {attackGradations.map((grade) => (
                     <tr key={grade[0]}>
                       <td
                         style={{ backgroundColor: grade[1] }}
                         onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
                       >
-                        {grade[2]}
+                        +
+                      </td>
+                      <td>
+                        <input
+                          type="text"
+                          min={0}
+                          value={diagrammValue[grade[0] as keyof TAttackDiagramm]}
+                          name={grade[0]}
+                          readOnly
+                        />
+                      </td>
+                      <td
+                        style={{ backgroundColor: grade[1] }}
+                        onClick={() => addAmount(grade[0] as keyof TPlayer, -1)}
+                      >
+                        -
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div className="border-wrapper"></div>
+              <table>
+                <tbody>
+                  <tr>
+                    <th>+</th>
+                    <th>S</th>
+                    <th>-</th>
+                  </tr>
+                  {serviceGradations.map((grade) => (
+                    <tr key={grade[0]}>
+                      <td
+                        style={{ backgroundColor: grade[1] }}
+                        onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
+                      >
+                        +
                       </td>
                       <td>
                         <input

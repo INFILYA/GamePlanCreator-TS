@@ -1,13 +1,6 @@
 .main-content-wrapper .ratings-section {
   width: 100%;
 }
-.main-content-wrapper .ratings-section .diagram-wrapper {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 2vw;
-  align-items: center;
-}
 .main-content-wrapper .ratings-section table {
   table-layout: fixed;
   width: 100%;
@@ -98,17 +91,44 @@
   color: #000;
 }
 .main-content-wrapper .ratings-section table tbody tr td {
-  font-size: calc((var(--normal-text-size-value) - 1) * 4vmin + 0.5rem);
+  font-size: calc((var(--normal-text-size-value) - 1) * 3vmin + 0.5rem);
   box-sizing: border-box;
   white-space: nowrap;
   overflow: hidden;
   height: 2.5vw;
+  font-weight: 600;
 }
 .main-content-wrapper .ratings-section table tbody tr .rating-player-name {
   padding: 0 0.5vw;
   text-align: center;
   white-space: inherit;
   width: 10vw;
+}
+.main-content-wrapper .ratings-section .type-of-actions-wrapper {
+  display: flex;
+  width: 66.4%;
+  justify-content: center;
+}
+.main-content-wrapper .ratings-section .type-of-actions-wrapper .service-content,
+.main-content-wrapper .ratings-section .type-of-actions-wrapper .attack-content {
+  width: 100%;
+  font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.6rem);
+  font-weight: 600;
+}
+.main-content-wrapper .ratings-section .type-of-actions-wrapper .service-content {
+  background-color: khaki;
+  margin-right: 1px;
+}
+.main-content-wrapper .ratings-section .type-of-actions-wrapper .attack-content {
+  background-color: gainsboro;
+  margin-left: 1px;
+}
+.main-content-wrapper .ratings-section .diagram-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 2vw;
+  align-items: center;
 }
 
 /*# sourceMappingURL=newRatings.css.map */
