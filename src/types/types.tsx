@@ -3,7 +3,7 @@ export type TAttackDiagramm = {
   "A+": number;
   "A=": number;
   "A!": number;
-  AB: number;
+  "A-": number;
 };
 export type TServiceDiagramm = {
   "S++": number;
@@ -37,7 +37,7 @@ export type TTeam = {
   "A+": number;
   "A=": number;
   "A!": number;
-  AB: number;
+  "A-": number;
   "R++": number;
   "R+": number;
   "R!": number;
@@ -72,7 +72,7 @@ export type TPlayer = {
   "A+": number;
   "A=": number;
   "A!": number;
-  AB: number;
+  "A-": number;
   S1F: number[];
   S1J: number[];
   S5F: number[];

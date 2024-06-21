@@ -1,8 +1,9 @@
 import { Switch } from "antd";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../../config/firebase";
-import { TDiagramm } from "../../../types/types";
+import { TAttackDiagramm, TDiagramm, TServiceDiagramm } from "../../../types/types";
 import { ChangeEvent } from "react";
+import { rows } from "../../../utilities/functions";
 
 type TExplain = {
   isConfirmReturn: boolean;
@@ -34,7 +35,7 @@ export function Explain(props: TExplain) {
   } = props;
   const [isRegistratedUser] = useAuthState(auth);
   const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
-  const attack = type === "Attack" && "A+" in diagrammValue;
+  const attack = type === "Attack" && "A++" in diagrammValue;
   const service = type === "Service" && "S++" in diagrammValue;
   const bgOrangeRed = { backgroundColor: "orangered" };
   return (
@@ -84,36 +85,21 @@ export function Explain(props: TExplain) {
       )}
       {isSaveDataOfActions && (
         <div className="input-wrapper">
-          <input
-            style={{ backgroundColor: "lightgreen" }}
-            name={attack ? "A+" : "S++"}
-            onChange={handleDiagrammValue}
-            value={attack ? diagrammValue["A+"] : service ? diagrammValue["S++"] : ""}
-            required
-          ></input>
-          <input
-            style={{ backgroundColor: "yellow" }}
-            name={attack ? "A!" : "S+"}
-            onChange={handleDiagrammValue}
-            value={attack ? diagrammValue["A!"] : service ? diagrammValue["S+"] : ""}
-            required
-          ></input>
-          <input
-            style={{ backgroundColor: "orange" }}
-            name={attack ? "AB" : "S-"}
-            onChange={handleDiagrammValue}
-            value={
-              attack ? diagrammValue["AB"] : service ? diagrammValue["S-"] : ""
-            }
-            required
-          ></input>
-          <input
-            style={bgOrangeRed}
-            name={attack ? "A=" : "S="}
-            onChange={handleDiagrammValue}
-            value={attack ? diagrammValue["A="] : service ? diagrammValue["S="] : ""}
-            required
-          ></input>
+          {rows.map((row) => (
+            <input
+              style={{ backgroundColor: row[1] }}
+              name={attack ? `A${row[0]}` : `S${row[0]}`}
+              onChange={handleDiagrammValue}
+              value={
+                attack
+                  ? diagrammValue[`A${row[0]}` as keyof TAttackDiagramm]
+                  : service
+                  ? diagrammValue[`S${row[0]}` as keyof TServiceDiagramm]
+                  : ""
+              }
+              required
+            ></input>
+          ))}
         </div>
       )}
     </>

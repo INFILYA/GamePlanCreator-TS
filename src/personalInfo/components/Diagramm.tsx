@@ -85,7 +85,7 @@ export default function Diagramm(props: TDiagrammProps) {
         playerInfo["A++"],
         playerInfo["A+"],
         playerInfo["A!"],
-        playerInfo["AB"],
+        playerInfo["A-"],
         playerInfo["A="],
       ];
       const percentOfActions = totalAtt.map(

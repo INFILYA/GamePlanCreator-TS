@@ -8,10 +8,7 @@ import {
 import { ChangeEvent, useState } from "react";
 import { TMix, TObjectStats, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
-import {
-  calculateTotalofActions,
-  compare,
-} from "../utilities/functions";
+import { calculateTotalofActions, compare } from "../utilities/functions";
 import { Categorys } from "../ratings/components/Categorys";
 import { Rows } from "../ratings/components/Rows";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
@@ -48,9 +45,6 @@ export default function GamesStatistic() {
       }
       (team[key as keyof TMix] as number) = newObj[key as keyof T] as number;
     }
-    // team.percentOfAttack = gerPercentOfAttack(team); //встановлюємо процент зйому
-    // team.plusMinusOnAttack = getPlusMinusAttack(team); //встановлюємо + - в атаці
-    // team.efficencyAttack = getAttackEfficency(team); // встановлюємо ефективність подачі
     return team;
   }
 
@@ -95,21 +89,20 @@ export default function GamesStatistic() {
     const newFullObj = { ...fullObj };
     for (const key in newFullObj) {
       if (
-        key === "AB" ||
+        key === "A-" ||
         key === "A=" ||
+        key === "A++" ||
         key === "A+" ||
         key === "A!" ||
         key === "S++" ||
         key === "S=" ||
+        key === "S!" ||
         key === "S+" ||
         key === "S-"
       ) {
         (newFullObj[key as keyof TMix] as number) += newObj[key as keyof T] as number;
       } else continue;
     }
-    // newFullObj.percentOfAttack = gerPercentOfAttack(newFullObj); //встановлюємо процент зйому
-    // newFullObj.plusMinusOnAttack = getPlusMinusAttack(newFullObj); //встановлюємо + - в атаці
-    // newFullObj.efficencyAttack = getAttackEfficency(newFullObj); // встановлюємо ефективність подачі
     return newFullObj;
   }
 

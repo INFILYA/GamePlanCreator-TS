@@ -23,6 +23,7 @@ export function Service() {
   const [diagrammValue, setDiagrammValue] = useState<TServiceDiagramm>({
     "S++": 0,
     "S+": 0,
+    "S!": 0,
     "S-": 0,
     "S=": 0,
   });

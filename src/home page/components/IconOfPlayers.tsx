@@ -55,12 +55,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     for (const key in diagram) {
       if (!soloGame) {
         if (
-          key === "AB" ||
+          key === "A-" ||
           key === "A=" ||
           key === "A+" ||
+          key === "A++" ||
           key === "A!" ||
           key === "S++" ||
           key === "S=" ||
+          key === "S!" ||
           key === "S+" ||
           key === "S-"
         ) {
@@ -124,7 +126,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     ["A++", "lightgreen", "#"],
     ["A+", "aquamarine", "+"],
     ["A!", "yellow", "!"],
-    ["AB", "orange", "b"],
+    ["A-", "orange", "b"],
     ["A=", "orangered", "="],
   ];
   const serviceGradations = [

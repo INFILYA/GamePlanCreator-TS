@@ -18,9 +18,10 @@ export function Attack() {
     { zone: "AK7", active: false },
   ]);
   const [diagrammValue, setDiagrammValue] = useState<TAttackDiagramm>({
+    "A++": 0,
     "A+": 0,
     "A!": 0,
-    AB: 0,
+    "A-": 0,
     "A=": 0,
   });
   const handleDiagrammValue = (event: ChangeEvent<HTMLInputElement>) => {

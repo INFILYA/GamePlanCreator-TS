@@ -84,7 +84,7 @@ export const emptyPlayer: TPlayer = {
   "A+": 0,
   "A=": 0,
   "A!": 0,
-  AB: 0,
+  "A-": 0,
   S1F: [],
   S1J: [],
   S5F: [],
@@ -139,9 +139,15 @@ export function setStyle(params: number): CSSProperties {
 }
 
 export function getSumofAttacks(obj: TMix) {
-  const totalAtt = [obj["A++"],obj["A+"], obj["A!"], obj["AB"], obj["A="]];
+  const totalAtt = [obj["A++"], obj["A+"], obj["A!"], obj["A-"], obj["A="]];
   const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);
   return +sumOfTotalAtt;
+}
+
+export function getSumofReceptions(obj: TMix) {
+  const totalAtt = [obj["R++"], obj["R+"], obj["R!"], obj["R-"], obj["R="]];
+  const sumOfTotalRec = totalAtt.reduce((a, b) => a + b, 0);
+  return +sumOfTotalRec;
 }
 
 export function gerPercentOfAttack(obj: TMix) {
@@ -166,7 +172,7 @@ export function getPlusMinusService(obj: TMix) {
   return obj["S++"] - obj["S="];
 }
 export function getPlusMinusAttack(obj: TMix) {
-  return obj["A++"] - (obj["AB"] + obj["A="]);
+  return obj["A++"] - (obj["A-"] + obj["A="]);
 }
 
 export function calculateTotalofActions(obj: TMix[]) {
@@ -174,7 +180,7 @@ export function calculateTotalofActions(obj: TMix[]) {
   const winPoints = obj.reduce((acc, val) => (acc += val["A++"]), 0);
   const leftInTheGamePlus = obj.reduce((acc, val) => (acc += val["A+"]), 0);
   const leftInTheGameMinus = obj.reduce((acc, val) => (acc += val["A!"]), 0);
-  const attacksInBlock = obj.reduce((acc, val) => (acc += val["AB"]), 0);
+  const attacksInBlock = obj.reduce((acc, val) => (acc += val["A-"]), 0);
   const ace = obj.reduce((acc, val) => (acc += val["S++"]), 0);
   const serviceFailed = obj.reduce((acc, val) => (acc += val["S="]), 0);
   const serviceExclamation = obj.reduce((acc, val) => (acc += val["S!"]), 0);
@@ -191,7 +197,7 @@ export function calculateTotalofActions(obj: TMix[]) {
     "A++": winPoints,
     "A+": leftInTheGamePlus,
     "A!": leftInTheGameMinus,
-    AB: attacksInBlock,
+    "A-": attacksInBlock,
     "S++": ace,
     "S!": serviceExclamation,
     "S=": serviceFailed,
@@ -213,7 +219,7 @@ export function preparePlayerToSoloGame(obj: TPlayer) {
   soloGamePlayerStats["A+"] = 0;
   soloGamePlayerStats["A="] = 0;
   soloGamePlayerStats["A!"] = 0;
-  soloGamePlayerStats["AB"] = 0;
+  soloGamePlayerStats["A-"] = 0;
   soloGamePlayerStats["S++"] = 0;
   soloGamePlayerStats["S!"] = 0;
   soloGamePlayerStats["S="] = 0;
@@ -227,6 +233,14 @@ export function preparePlayerToSoloGame(obj: TPlayer) {
   soloGamePlayerStats.blocks = 0;
   return soloGamePlayerStats;
 }
+
+export const rows = [
+  ["=", "orangered"],
+  ["-", "orange"],
+  ["!", "yellow"],
+  ["+", "aquamarine"],
+  ["++", "lightgreen"],
+];
 
 export const listOfOpponents = [
   "Choose Opponent",

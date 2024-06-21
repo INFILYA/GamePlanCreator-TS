@@ -36,12 +36,14 @@ export const soloGameStatsSlice = createSlice({
         for (let j = 0; j < allPlayers.length; j++) {
           if (startingSix[i] === allPlayers[j].name) {
             const soloGamePlayerStats = { ...allPlayers[j] };
+            soloGamePlayerStats["A++"] = 0;
             soloGamePlayerStats["A+"] = 0;
             soloGamePlayerStats["A="] = 0;
             soloGamePlayerStats["A!"] = 0;
-            soloGamePlayerStats["AB"] = 0;
+            soloGamePlayerStats["A-"] = 0;
             soloGamePlayerStats["S++"] = 0;
             soloGamePlayerStats["S="] = 0;
+            soloGamePlayerStats["S!"] = 0;
             soloGamePlayerStats["S-"] = 0;
             soloGamePlayerStats["S+"] = 0;
             correctStartingSix.push(soloGamePlayerStats);

@@ -20,7 +20,7 @@ export function Categorys(props: TCategorys) {
     "S+",
     "S++",
     "A=",
-    "AB",
+    "A-",
     "A!",
     "A+",
     "A++",
