@@ -23,14 +23,10 @@ import {
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { RegularButton } from "../../css/Button.styled";
-import { compare, isBoardFull, preparePlayerToSoloGame } from "../../utilities/functions";
+import { compare, isBoardFull} from "../../utilities/functions";
 import { set } from "firebase/database";
 import { TTeam } from "../../types/types";
-import {
-  setSoloGameStartingSix,
-  setSoloGameStats,
-  setSoloGameSubPlaeyrsStats,
-} from "../../states/slices/soloGameStatsSlice";
+
 
 type TSquadsProps = {
   team: string;
@@ -68,7 +64,6 @@ export function Squads(props: TSquadsProps) {
     dispatch(filterHomePlayers(event.target.value.split(",")[0]));
     const zone = +event.target.value.split(",")[1];
     dispatch(setHomeTeamIndexOfZones({ player, zone }));
-    dispatch(setSoloGameSubPlaeyrsStats(preparePlayerToSoloGame(player)));
   }
   function guestTeamActions(event: ChangeEvent<HTMLSelectElement>) {
     setPlayerToGuestTeamBoard(event);
@@ -79,13 +74,11 @@ export function Squads(props: TSquadsProps) {
     dispatch(filterGuestPlayers(event.target.value.split(",")[0]));
     const zone = +event.target.value.split(",")[1];
     dispatch(setGuestTeamIndexOfZones({ player, zone }));
-    dispatch(setSoloGameStats(preparePlayerToSoloGame(player)));
   }
   function showStartingSix() {
     const guestTeamStartingSix = guestTeam[0].startingSquad;
     dispatch(showGuestTeamStartingSix({ guestPlayers, guestTeamStartingSix }));
     dispatch(setGuestBenchPlayers({ guestPlayers, guestTeamStartingSix }));
-    dispatch(setSoloGameStartingSix({ guestPlayers, guestTeamStartingSix }));
   }
 
   async function saveStartingSix() {

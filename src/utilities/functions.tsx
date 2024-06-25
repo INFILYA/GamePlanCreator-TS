@@ -119,6 +119,10 @@ export const emptyPlayers: TPlayer[] = Array(6)
   .fill(emptyPlayer)
   .map((user, index) => ({ ...user, boardPosition: correctPositions(index) }));
 
+export const myEmptyPlayers: TPlayer[] = Array(6)
+  .fill(emptyPlayer)
+  .map((user, index) => ({ ...user, boardPosition: correctPositions(index) }));
+
 export function setStyleForEfficency(params: number): CSSProperties {
   if (params === 0) {
     return { color: "black" };
@@ -148,6 +152,17 @@ export function getSumofReceptions(obj: TMix) {
   const totalAtt = [obj["R++"], obj["R+"], obj["R!"], obj["R-"], obj["R="]];
   const sumOfTotalRec = totalAtt.reduce((a, b) => a + b, 0);
   return +sumOfTotalRec;
+}
+
+export function gerPercentOfPerfectReception(obj: TMix) {
+  if (getSumofReceptions(obj) === 0) return 0;
+  const percents = +((obj["R++"] / getSumofReceptions(obj)) * 100);
+  return Math.round(percents);
+}
+export function gerPercentOfPositiveReception(obj: TMix) {
+  if (getSumofReceptions(obj) === 0) return 0;
+  const percents = +(((obj["R++"] + obj["R+"]) / getSumofReceptions(obj)) * 100);
+  return Math.round(percents);
 }
 
 export function gerPercentOfAttack(obj: TMix) {
@@ -232,6 +247,39 @@ export function preparePlayerToSoloGame(obj: TPlayer) {
   soloGamePlayerStats["R+"] = 0;
   soloGamePlayerStats.blocks = 0;
   return soloGamePlayerStats;
+}
+
+export function forSoloGameStat(obj: TPlayer): TPlayer {
+  const newObj = {} as TPlayer;
+  const soloGamePlayerStats = { ...obj };
+  newObj.name = soloGamePlayerStats.name;
+  for (const key in soloGamePlayerStats) {
+    if (
+      (key === "blocks" ||
+        key === "boardPosition" ||
+        key === "A-" ||
+        key === "A=" ||
+        key === "A+" ||
+        key === "A++" ||
+        key === "A!" ||
+        key === "S++" ||
+        key === "S=" ||
+        key === "S!" ||
+        key === "S+" ||
+        key === "S-" ||
+        key === "R++" ||
+        key === "R=" ||
+        key === "R!" ||
+        key === "R+" ||
+        key === "R-") &&
+      soloGamePlayerStats[key] !== 0
+    ) {
+      newObj[key] = soloGamePlayerStats[key];
+    } else continue;
+  }
+  return newObj;
+
+  // return Object.keys(forSoloGameStat(newObj)).length < 3 && newObj;
 }
 
 export const rows = [

@@ -3,7 +3,7 @@
 }
 .main-content-wrapper .ratings-section table {
   table-layout: fixed;
-  width: 100%;
+  width: 105%;
 }
 .main-content-wrapper .ratings-section table caption {
   min-width: 340px;
@@ -106,22 +106,25 @@
 }
 .main-content-wrapper .ratings-section .type-of-actions-wrapper {
   display: flex;
-  width: 66.4%;
+  width: 71.2%;
   justify-content: center;
+  margin-left: -4.9%;
 }
 .main-content-wrapper .ratings-section .type-of-actions-wrapper .service-content,
-.main-content-wrapper .ratings-section .type-of-actions-wrapper .attack-content {
+.main-content-wrapper .ratings-section .type-of-actions-wrapper .attack-content,
+.main-content-wrapper .ratings-section .type-of-actions-wrapper .reception-content {
   width: 100%;
   font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.6rem);
   font-weight: 600;
 }
 .main-content-wrapper .ratings-section .type-of-actions-wrapper .service-content {
   background-color: khaki;
-  margin-right: 1px;
 }
 .main-content-wrapper .ratings-section .type-of-actions-wrapper .attack-content {
   background-color: gainsboro;
-  margin-left: 1px;
+}
+.main-content-wrapper .ratings-section .type-of-actions-wrapper .reception-content {
+  background-color: darkseagreen;
 }
 .main-content-wrapper .ratings-section .diagram-wrapper {
   width: 100%;

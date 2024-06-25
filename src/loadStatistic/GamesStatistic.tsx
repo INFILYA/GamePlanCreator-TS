@@ -98,7 +98,12 @@ export default function GamesStatistic() {
         key === "S=" ||
         key === "S!" ||
         key === "S+" ||
-        key === "S-"
+        key === "S-" ||
+        key === "R++" ||
+        key === "R=" ||
+        key === "R!" ||
+        key === "R+" ||
+        key === "R-"
       ) {
         (newFullObj[key as keyof TMix] as number) += newObj[key as keyof T] as number;
       } else continue;
@@ -201,6 +206,7 @@ export default function GamesStatistic() {
                 <div className="type-of-actions-wrapper">
                   <div className="service-content">Service</div>
                   <div className="attack-content">Attack</div>
+                  <div className="reception-content">Reception</div>
                 </div>
                 <div
                   className="diagram-wrapper"

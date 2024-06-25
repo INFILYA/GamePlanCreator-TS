@@ -153,7 +153,7 @@ export type TDistributionZones = {
   4: number;
 };
 
-export type TDiagramm = TAttackDiagramm | TServiceDiagramm;
+export type TDiagramm = TAttackDiagramm | TServiceDiagramm | TReceptionDiagramm;
 
 export type TZoneStates = {
   zone: "S1" | "S6" | "S5" | "A1" | "A2" | "A4" | "AP" | "AK1" | "AKC" | "AK7";

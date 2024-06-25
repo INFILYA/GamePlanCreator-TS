@@ -628,10 +628,18 @@ main {
             .errors-field-wrapper {
               border: 1px solid black;
               width: 90%;
-              display: flex;
+              // display: flex;
               // flex-direction: column;
+              .category-switcher-wrapper {
+                width: 100%;
+                display: flex;
+                select {
+                  width: 100%;
+                  text-align: center;
+                }
+              }
               .border-wrapper {
-                height: 138px;
+                height: 166px;
                 width: 4%;
                 background-color: black;
               }

@@ -9,43 +9,43 @@ import {
 } from "../../states/slices/indexOfHomeTeamZonesSlice";
 import {
   resetGuestTeamIndexOfZones,
-  selectIndexOfGuestTeamZones,
   updateInfoOfStartingSix,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { useEffect, useState } from "react";
 import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
-import { emptyPlayer } from "../../utilities/functions";
-import { setSoloGameStats } from "../../states/slices/soloGameStatsSlice";
-import { useSelector } from "react-redux";
+import {
+  emptyPlayer,
+  forSoloGameStat,
+  preparePlayerToSoloGame,
+  zones,
+} from "../../utilities/functions";
+import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
 
 type TIconOfPlayer = {
   type: string;
   startingSix: TPlayer[];
   player: TPlayer;
-  soloGameStats: TPlayer[];
+  SoloRallyStats: TPlayer[];
   showSquads: boolean;
-  setShowSquads(arg: boolean): void;
+  nextRotation: boolean;
+  setNextRotation(arg: boolean): void;
 };
 
 export function IconOfPlayer(props: TIconOfPlayer) {
-  const { player, soloGameStats, startingSix, type, showSquads, setShowSquads } = props;
+  const { player, nextRotation, setNextRotation, startingSix, type, showSquads } = props;
   const dispatch = useAppDispatch();
-  const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
+  const [category, setCategory] = useState<string>("AS");
   const [diagrammValue, setDiagrammValue] = useState<TPlayer>(emptyPlayer);
-
-  useEffect(() => {
-    const choosenPlayer = soloGameStats.filter((athlete) => athlete.name === player.name);
-    setDiagrammValue(choosenPlayer[0]);
-  }, [player, soloGameStats]);
   const my = type === "my";
 
-  function checkNumbers(element: number): boolean {
-    return typeof element !== "number";
-  }
-
-  const isBoardFull = (arr: TPlayer[]) => {
-    return arr.every((option) => checkNumbers(option.boardPosition));
-  };
+  useEffect(() => {
+    const choosenPlayer = startingSix.filter((athlete) => athlete.name === player.name);
+    const soloGamePlayerStats = preparePlayerToSoloGame(choosenPlayer[0]);
+    if (nextRotation) {
+      setDiagrammValue(soloGamePlayerStats);
+      setNextRotation(false);
+    }
+  }, [player, startingSix, nextRotation, setNextRotation]);
 
   function calculateForPlayerData<T extends TMix>(
     obj: T,
@@ -55,6 +55,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     for (const key in diagram) {
       if (!soloGame) {
         if (
+          key === "blocks" ||
           key === "A-" ||
           key === "A=" ||
           key === "A+" ||
@@ -64,7 +65,12 @@ export function IconOfPlayer(props: TIconOfPlayer) {
           key === "S=" ||
           key === "S!" ||
           key === "S+" ||
-          key === "S-"
+          key === "S-" ||
+          key === "R++" ||
+          key === "R=" ||
+          key === "R!" ||
+          key === "R+" ||
+          key === "R-"
         ) {
           (obj[key as keyof T] as number) += diagram[key as keyof TAttackDiagramm];
         } else continue;
@@ -73,22 +79,20 @@ export function IconOfPlayer(props: TIconOfPlayer) {
         (obj[key as keyof T] as number) = diagram[key as keyof TAttackDiagramm];
       }
     }
-    // obj.percentOfAttack = gerPercentOfAttack(obj); //встановлюємо процент зйому
-    // obj.plusMinusOnAttack = getPlusMinusAttack(obj); //встановлюємо + - в атаці
-    // obj.efficencyAttack = getAttackEfficency(obj); // встановлюємо ефективність подачі
     return obj;
   }
 
   function cancelGuestTeamChoice(player: TPlayer) {
-    if (isBoardFull(guestTeamOptions)) {
-      setShowSquads(true);
+    if (showSquads) {
+      dispatch(pushFromGuestTeamBoard(player));
+      dispatch(resetGuestTeamIndexOfZones({ startingSix, player }));
     }
-    dispatch(pushFromGuestTeamBoard(player));
-    dispatch(resetGuestTeamIndexOfZones({ startingSix, player }));
   }
   function cancelHomeTeamChoice(player: TPlayer) {
-    dispatch(pushFromHomeTeamBoard(player));
-    dispatch(resetHomeTeamIndexOfZones({ startingSix, player }));
+    if (showSquads) {
+      dispatch(pushFromHomeTeamBoard(player));
+      dispatch(resetHomeTeamIndexOfZones({ startingSix, player }));
+    }
   }
 
   function showPlayerInfo() {
@@ -113,7 +117,15 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       },
       true
     );
-    dispatch(setSoloGameStats(soloGameUpdatedPlayer));
+    startingSix.forEach(
+      (player, index) =>
+        player.name === soloGameUpdatedPlayer.name &&
+        dispatch(
+          setSoloRallyStats(
+            forSoloGameStat({ ...soloGameUpdatedPlayer, boardPosition: zones[index] })
+          )
+        )
+    );
     dispatch(setUpdatedPlayers(updatedPlayer));
     dispatch(setInfoOfPlayer(updatedPlayer));
     dispatch(updateInfoOfStartingSix(updatedPlayer));
@@ -122,20 +134,20 @@ export function IconOfPlayer(props: TIconOfPlayer) {
 
   if (typeof player === "number" || player === null) return;
   const condition = player.number !== 0;
-  const attackGradations = [
-    ["A++", "lightgreen", "#"],
-    ["A+", "aquamarine", "+"],
-    ["A!", "yellow", "!"],
-    ["A-", "orange", "b"],
-    ["A=", "orangered", "="],
-  ];
-  const serviceGradations = [
-    ["S++", "lightgreen", "#"],
-    ["S+", "aquamarine", "+"],
-    ["S!", "yellow", "!"],
-    ["S-", "orange", "-"],
-    ["S=", "orangered", "="],
-  ];
+  const attackGradations = properArr("A");
+
+  const AttackService = category === "AS";
+  const ReceptionBlock = category === "RB";
+  const serviceGradations = ReceptionBlock ? properArr("R") : properArr("S");
+  function properArr(letter: string) {
+    return [
+      [`${letter}++`, "lightgreen", "#"],
+      [`${letter}+`, "aquamarine", "+"],
+      [`${letter}!`, "yellow", "!"],
+      [`${letter}-`, "orange", "-"],
+      [`${letter}=`, "orangered", "="],
+    ];
+  }
   return (
     <>
       {condition && (
@@ -170,75 +182,123 @@ export function IconOfPlayer(props: TIconOfPlayer) {
           </div>
           {!showSquads && (
             <div className="errors-field-wrapper">
-              <table>
-                <tbody>
-                  <tr>
-                    <th>+</th>
-                    <th>A</th>
-                    <th>-</th>
-                  </tr>
-                  {attackGradations.map((grade) => (
-                    <tr key={grade[0]}>
-                      <td
-                        style={{ backgroundColor: grade[1] }}
-                        onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
-                      >
-                        {grade[2]}
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          min={0}
-                          value={diagrammValue[grade[0] as keyof TAttackDiagramm]}
-                          name={grade[0]}
-                          readOnly
-                        />
-                      </td>
-                      <td
-                        style={{ backgroundColor: grade[1] }}
-                        onClick={() => addAmount(grade[0] as keyof TPlayer, -1)}
-                      >
-                        -
-                      </td>
+              <div className="category-switcher-wrapper">
+                <select onChange={(e) => setCategory(e.target.value)}>
+                  <option value={"AS"}>Attack & Service</option>
+                  <option value={"RB"}>Recep & block</option>
+                </select>
+              </div>
+              <div style={{ display: "flex" }}>
+                <table>
+                  <tbody>
+                    <tr>
+                      <th>+</th>
+                      <th>{AttackService ? "A" : "Bl"}</th>
+                      <th>-</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="border-wrapper"></div>
-              <table>
-                <tbody>
-                  <tr>
-                    <th>+</th>
-                    <th>S</th>
-                    <th>-</th>
-                  </tr>
-                  {serviceGradations.map((grade) => (
-                    <tr key={grade[0]}>
-                      <td
-                        style={{ backgroundColor: grade[1] }}
-                        onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
-                      >
-                        {grade[2]}
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          min={0}
-                          value={diagrammValue[grade[0] as keyof TAttackDiagramm]}
-                          name={grade[0]}
-                          readOnly
-                        />
-                      </td>
-                      <td
-                        style={{ backgroundColor: grade[1] }}
-                        onClick={() => addAmount(grade[0] as keyof TPlayer, -1)}
-                      >
-                        -
-                      </td>
+                    {AttackService ? (
+                      attackGradations.map((grade) => (
+                        <tr key={grade[0]}>
+                          <td
+                            style={{ backgroundColor: grade[1] }}
+                            onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
+                          >
+                            {grade[2]}
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              min={0}
+                              value={diagrammValue[grade[0] as keyof TAttackDiagramm]}
+                              name={grade[0]}
+                              readOnly
+                            />
+                          </td>
+                          <td
+                            style={{ backgroundColor: grade[1] }}
+                            onClick={() => addAmount(grade[0] as keyof TPlayer, -1)}
+                          >
+                            -
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          style={{ backgroundColor: "llightgreen" }}
+                          onClick={() =>
+                            setDiagrammValue({
+                              ...diagrammValue,
+                              blocks: +diagrammValue.blocks + 1,
+                            })
+                          }
+                        >
+                          B
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            min={0}
+                            value={diagrammValue.blocks}
+                            name="blocks"
+                            readOnly
+                          />
+                        </td>
+                        <td
+                          style={{ backgroundColor: "llightgreen" }}
+                          onClick={() =>
+                            setDiagrammValue(
+                              +diagrammValue.blocks > 0
+                                ? {
+                                    ...diagrammValue,
+                                    blocks: +diagrammValue.blocks - 1,
+                                  }
+                                : diagrammValue
+                            )
+                          }
+                        >
+                          -
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+                <div className="border-wrapper"></div>
+                <table>
+                  <tbody>
+                    <tr>
+                      <th>+</th>
+                      <th>{AttackService ? "S" : "R"}</th>
+                      <th>-</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                    {serviceGradations.map((grade) => (
+                      <tr key={grade[0]}>
+                        <td
+                          style={{ backgroundColor: grade[1] }}
+                          onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
+                        >
+                          {grade[2]}
+                        </td>
+                        <td>
+                          <input
+                            type="text"
+                            min={0}
+                            value={diagrammValue[grade[0] as keyof TAttackDiagramm]}
+                            name={grade[0]}
+                            readOnly
+                          />
+                        </td>
+                        <td
+                          style={{ backgroundColor: grade[1] }}
+                          onClick={() => addAmount(grade[0] as keyof TPlayer, -1)}
+                        >
+                          -
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

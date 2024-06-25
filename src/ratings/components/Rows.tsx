@@ -3,6 +3,8 @@ import { useAppDispatch } from "../../states/store";
 import { TMix } from "../../types/types";
 import {
   gerPercentOfAttack,
+  gerPercentOfPerfectReception,
+  gerPercentOfPositiveReception,
   getAttackEfficency,
   getPlusMinusAttack,
   getPlusMinusService,
@@ -48,15 +50,22 @@ export function Rows(props: TRows) {
             </td>
           ))}
           {rows.map((row) => (
-            <td style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "khaki" }}>
+            <td style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "gainsboro" }}>
               {player[`A${row[0]}` as keyof TMix]}
             </td>
           ))}
           {rows.map((row) => (
-            <td style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "khaki" }}>
+            <td style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "darkseagreen" }}>
               {player[`R${row[0]}` as keyof TMix]}
             </td>
           ))}
+          <td style={setStyleForEfficency(gerPercentOfPerfectReception(player))}>
+            {gerPercentOfPerfectReception(player)}%
+          </td>
+          <td style={setStyleForEfficency(gerPercentOfPositiveReception(player))}>
+            {gerPercentOfPositiveReception(player)}%
+          </td>
+
           <td style={setStyleForEfficency(getAttackEfficency(player))}>
             {getAttackEfficency(player)}%
           </td>

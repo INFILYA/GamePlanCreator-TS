@@ -11,7 +11,7 @@ import isShowedTutorialReducer from "./slices/isShowedTutorialSlice";
 import playerInfoReducer from "./slices/playerInfoSlice";
 import indexOfHomeTeamZonesReducer from "./slices/indexOfHomeTeamZonesSlice";
 import indexOfGuestTeamZonesReducer from "./slices/indexOfGuestTeamZonesSlice";
-import soloGameStatsReducer from "./slices/soloGameStatsSlice";
+import soloRallyStatsReducer from "./slices/soloRallyStatsSlice";
 import gamesStatsReducer from "./slices/gamesStatsSlice";
 
 
@@ -28,7 +28,7 @@ export const store = configureStore({
     playerInfo: playerInfoReducer, //+
     changeLanguage: changeLanguageReducer, //+
     isShowedTutorial: isShowedTutorialReducer, //+
-    soloGameStats: soloGameStatsReducer,
+    soloRallyStats: soloRallyStatsReducer,
     gamesStats: gamesStatsReducer,
   },
 });

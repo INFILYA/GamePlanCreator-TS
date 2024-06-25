@@ -638,13 +638,26 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper {
   border: 1px solid black;
   width: 90%;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper {
+  width: 100%;
   display: flex;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select {
+  width: 100%;
+  text-align: center;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper .border-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper .border-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper .border-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper .border-wrapper {
-  height: 138px;
+  height: 166px;
   width: 4%;
   background-color: black;
 }

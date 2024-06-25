@@ -72,6 +72,7 @@ export function Ratings() {
               <div className="type-of-actions-wrapper">
                 <div className="service-content">Service</div>
                 <div className="attack-content">Attack</div>
+                <div className="reception-content">Reception</div>
               </div>
             )}
           </>

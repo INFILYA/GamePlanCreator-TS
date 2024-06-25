@@ -32,12 +32,19 @@ import {
   setBackHomeTeamSelects,
 } from "../states/slices/indexOfHomeTeamZonesSlice";
 import {
+  rotateBackGuestTeam,
+  rotateForwardGuestTeam,
   selectIndexOfGuestTeamZones,
   setBackGuestTeamSelects,
 } from "../states/slices/indexOfGuestTeamZonesSlice";
 import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
-import { resetGameStats, selectSoloGameStats } from "../states/slices/soloGameStatsSlice";
+import {
+  resetGameStats,
+  rotateBackPositions,
+  rotateForwardPositions,
+  selectSoloRallyStats,
+} from "../states/slices/soloRallyStatsSlice";
 import { currentDate } from "../utilities/currentDate";
 import { selectGamesStats } from "../states/slices/gamesStatsSlice";
 import { set, update } from "firebase/database";
@@ -53,10 +60,15 @@ export function HomePage() {
   const playerInfo = useSelector(selectPlayerInfo);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
-  const soloGameStats = useSelector(selectSoloGameStats);
+  const SoloRallyStats = useSelector(selectSoloRallyStats);
   const [showSquads, setShowSquads] = useState(true);
+  const [nextRotation, setNextRotation] = useState(true);
+  const [gameLog, setGameLog] = useState<TPlayer[][]>([]);
   const [opponentTeamName, setOpponentTeamName] = useState("");
   const [setNumber, setSetNumber] = useState("");
+  const [myScore, setMyScore] = useState(0);
+  const [rivalScore, setRivalScore] = useState(0);
+
   const gamesStats = useSelector(selectGamesStats);
 
   const showGuestTeam = guestTeam.length !== 0;
@@ -74,6 +86,9 @@ export function HomePage() {
     setSetNumber("");
     setShowSquads(true);
     resetTheBoardForHomeTeam();
+    setGameLog([]);
+    setMyScore(0);
+    setRivalScore(0);
   }
   function resetTheBoardForHomeTeam() {
     dispatch(setHomePlayers([]));
@@ -104,9 +119,6 @@ export function HomePage() {
       }
       (team[key as keyof TTeam] as number) += obj[key as keyof T] as number;
     }
-    // team.percentOfAttack = gerPercentOfAttack(team); //встановлюємо процент зйому
-    // team.plusMinusOnAttack = getPlusMinusAttack(team); //встановлюємо + - в атаці
-    // team.efficencyAttack = getAttackEfficency(team); // встановлюємо ефективність подачі
     guestTeam[0] = team;
   }
 
@@ -114,7 +126,8 @@ export function HomePage() {
     event.preventDefault();
     // download solo game statisic
     const matchInfo = `${guestTeam[0].id} - ${opponentTeamName}; ${currentDate()}`;
-    const setStat = { [setNumber]: soloGameStats };
+    if (!gameLog) return;
+    const setStat = { [setNumber]: gameLog };
     const choosenGame = gamesStats.find((game) => game[matchInfo]);
     if (!choosenGame) {
       await set(gamesRef(matchInfo), { [matchInfo]: [setStat] });
@@ -149,7 +162,7 @@ export function HomePage() {
       setPlayersToData(player);
     });
     //add solo game stats
-    calculateForTeamData(calculateTotalofActions(soloGameStats) as TPlayer);
+    calculateForTeamData(calculateTotalofActions(SoloRallyStats) as TPlayer);
     await set(teamsRef(guestTeam[0].name), guestTeam[0]);
     resetTheBoardForGuestTeam();
     setShowSquads(true);
@@ -158,17 +171,49 @@ export function HomePage() {
 
   const hideSquads = () => {
     setShowSquads(!showSquads);
+    dispatch(resetGameStats());
+    setNextRotation(true);
     if (playerInfo !== null) {
       dispatch(setInfoOfPlayer(null));
     }
   };
 
+  function rotateFront() {
+    dispatch(rotateForwardGuestTeam());
+    dispatch(rotateForwardHomeTeam());
+    dispatch(rotateForwardPositions());
+    setNextRotation(true);
+    if (SoloRallyStats.length > 0) {
+      setGameLog([...gameLog, SoloRallyStats]);
+    }
+    dispatch(resetGameStats());
+    setMyScore(myScore + 1);
+    // Сюда!!!!
+  }
+  function rotateBack() {
+    dispatch(rotateBackGuestTeam());
+    dispatch(rotateBackHomeTeam());
+    dispatch(rotateBackPositions());
+    dispatch(resetGameStats());
+    setNextRotation(true);
+  }
+
   const playerInfoWindow = playerInfo && showSquads;
   const saveDataIcon = !opponentTeamName || !setNumber;
+  console.log(gameLog);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
-      {!showSquads && <RotationPanel team={false} />}
+      {!showSquads && (
+        <RotationPanel
+          team={false}
+          score={myScore}
+          setScore={setMyScore}
+          setNextRotation={setNextRotation}
+          gameLog={gameLog}
+          setGameLog={setGameLog}
+        />
+      )}
       <SectionWrapper
         className="playground-section"
         backGround={!playerInfoWindow && <img src="/photos/playarea.jpg" alt="" />}
@@ -176,13 +221,63 @@ export function HomePage() {
         {!showGuestTeam && <ChooseGuestTeam />}
         {playerInfoWindow && <PersonalInformationOfPlayer link="page1" />}
         {!playerInfoWindow && showGuestTeam && (
-          <form className="rotation-field-wrapper" onSubmit={saveSpikeData}>
-            <div className="reset-button-wrapper">
-              {showGuestTeam ? (
-                <>
+          <>
+            <form className="rotation-field-wrapper" onSubmit={saveSpikeData}>
+              <div className="reset-button-wrapper">
+                {showGuestTeam ? (
+                  <>
+                    <div>
+                      <RegularButton
+                        onClick={resetTheBoardForGuestTeam}
+                        type="button"
+                        $color="orangered"
+                        $background="white"
+                      >
+                        Reset
+                      </RegularButton>
+                    </div>
+                    {isBoardFull(guestTeamOptions) && (
+                      <div className="match-number-wrapper">
+                        <div>
+                          <RegularButton
+                            onClick={hideSquads}
+                            type="button"
+                            $color="orangered"
+                            $background="white"
+                          >
+                            Statistic mode
+                          </RegularButton>
+                        </div>
+                        {!showSquads && (
+                          <>
+                            <input
+                              onChange={(e) =>
+                                setOpponentTeamName(firstLetterCapital(e.target.value))
+                              }
+                              value={opponentTeamName}
+                              placeholder="Choose team name"
+                            />
+                            <select
+                              onChange={(e) => setSetNumber(e.target.value)}
+                              value={setNumber}
+                            >
+                              <option value="">Choose set</option>
+                              <option value="Set 1">Set 1</option>
+                              <option value="Set 2">Set 2</option>
+                              <option value="Set 3">Set 3</option>
+                            </select>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div></div>
+                )}
+                {showHomeTeam ? (
                   <div>
                     <RegularButton
-                      onClick={resetTheBoardForGuestTeam}
+                      onClick={resetTheBoardForHomeTeam}
                       type="button"
                       $color="orangered"
                       $background="white"
@@ -190,195 +285,163 @@ export function HomePage() {
                       Reset
                     </RegularButton>
                   </div>
-                  {isBoardFull(guestTeamOptions) && (
-                    <div className="match-number-wrapper">
-                      <div>
-                        <RegularButton
-                          onClick={hideSquads}
-                          type="button"
-                          $color="orangered"
-                          $background="white"
-                        >
-                          Statistic mode
-                        </RegularButton>
-                      </div>
-                      {!showSquads && (
-                        <>
-                          <input
-                            onChange={(e) =>
-                              setOpponentTeamName(firstLetterCapital(e.target.value))
-                            }
-                            value={opponentTeamName}
-                            placeholder="Choose team name"
-                          />
-                          <select onChange={(e) => setSetNumber(e.target.value)} value={setNumber}>
-                            <option value="">Choose set</option>
-                            <option value="Set 1">Set 1</option>
-                            <option value="Set 2">Set 2</option>
-                            <option value="Set 3">Set 3</option>
-                          </select>
-                        </>
-                      )}
+                ) : (
+                  <div></div>
+                )}
+              </div>
+              <div className="row-zones-wrapper">
+                {guestTeamOptions.slice(0, 3).map((option, index) =>
+                  checkNumbers(option.boardPosition) ? (
+                    <div key={index}>
+                      <IconOfPlayer
+                        showSquads={showSquads}
+                        player={option}
+                        SoloRallyStats={SoloRallyStats}
+                        startingSix={guestTeamOptions}
+                        nextRotation={nextRotation}
+                        setNextRotation={setNextRotation}
+                        type="rival"
+                      />
                     </div>
-                  )}
-                </>
-              ) : (
-                <div></div>
-              )}
-              {showHomeTeam ? (
-                <div>
+                  ) : (
+                    <div className="zone-names-wrapper" key={"_" + index}>
+                      P{correctZones(index)}
+                    </div>
+                  )
+                )}
+                {homeTeamOptions.slice(0, 3).map((option, index) =>
+                  checkNumbers(option.boardPosition) ? (
+                    <div key={index}>
+                      <IconOfPlayer
+                        showSquads={showSquads}
+                        player={option}
+                        SoloRallyStats={SoloRallyStats}
+                        startingSix={homeTeamOptions}
+                        nextRotation={nextRotation}
+                        setNextRotation={setNextRotation}
+                        type="my"
+                      />
+                    </div>
+                  ) : (
+                    <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
+                  )
+                )}
+                {guestTeamOptions.slice(3, 6).map((option, index) =>
+                  checkNumbers(option.boardPosition) ? (
+                    <div key={index}>
+                      <IconOfPlayer
+                        showSquads={showSquads}
+                        player={option}
+                        SoloRallyStats={SoloRallyStats}
+                        startingSix={guestTeamOptions}
+                        nextRotation={nextRotation}
+                        setNextRotation={setNextRotation}
+                        type="rival"
+                      />
+                    </div>
+                  ) : (
+                    <div className="zone-names-wrapper" key={"_" + index}>
+                      P{correctZones(index + 3)}
+                    </div>
+                  )
+                )}
+                {homeTeamOptions.slice(3, 6).map((option, index) =>
+                  checkNumbers(option.boardPosition) ? (
+                    <div key={index}>
+                      <IconOfPlayer
+                        showSquads={showSquads}
+                        player={option}
+                        SoloRallyStats={SoloRallyStats}
+                        startingSix={homeTeamOptions}
+                        nextRotation={nextRotation}
+                        setNextRotation={setNextRotation}
+                        type="my"
+                      />
+                    </div>
+                  ) : (
+                    <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
+                  )
+                )}
+              </div>
+
+              <div className="button-save-wrapper">
+                {isBoardFull(guestTeamOptions) && (
+                  <>
+                    {!showSquads && !saveDataIcon && (
+                      <RegularButton type="submit" $color="black" $background="#ffd700">
+                        Save Data
+                      </RegularButton>
+                    )}
+                  </>
+                )}
+              </div>
+              {isBoardFull(homeTeamOptions) && isRegistratedUser && (
+                <div className="plusMinus">
                   <RegularButton
-                    onClick={resetTheBoardForHomeTeam}
-                    type="button"
-                    $color="orangered"
-                    $background="white"
+                    onClick={() => dispatch(rotateForwardHomeTeam())}
+                    $color="black"
+                    $background="#ffd700"
                   >
-                    Reset
+                    -
+                  </RegularButton>
+                  {homeTeamOptions.map((player, index) =>
+                    typeof player !== "number" && player && player.position === "SET" ? (
+                      <span key={player.name}>P{correctPositions(index) + 1}</span>
+                    ) : null
+                  )}
+                  <RegularButton
+                    onClick={() => dispatch(rotateBackHomeTeam())}
+                    $color="black"
+                    $background="#ffd700"
+                  >
+                    +
                   </RegularButton>
                 </div>
-              ) : (
-                <div></div>
               )}
-            </div>
-            <div className="row-zones-wrapper">
-              {guestTeamOptions.slice(0, 3).map((option, index) =>
-                checkNumbers(option.boardPosition) ? (
-                  <div key={index}>
-                    <IconOfPlayer
-                      setShowSquads={setShowSquads}
-                      showSquads={showSquads}
-                      player={option}
-                      soloGameStats={soloGameStats}
-                      startingSix={guestTeamOptions}
-                      type="rival"
-                    />
-                  </div>
-                ) : (
-                  <div className="zone-names-wrapper" key={"_" + index}>
-                    P{correctZones(index)}
-                  </div>
-                )
-              )}
-              {homeTeamOptions.slice(0, 3).map((option, index) =>
-                checkNumbers(option.boardPosition) ? (
-                  <div key={index}>
-                    <IconOfPlayer
-                      showSquads={showSquads}
-                      player={option}
-                      soloGameStats={soloGameStats}
-                      startingSix={homeTeamOptions}
-                      type="my"
-                      setShowSquads={setShowSquads}
-                    />
-                  </div>
-                ) : (
-                  <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
-                )
-              )}
-              {guestTeamOptions.slice(3, 6).map((option, index) =>
-                checkNumbers(option.boardPosition) ? (
-                  <div key={index}>
-                    <IconOfPlayer
-                      setShowSquads={setShowSquads}
-                      showSquads={showSquads}
-                      player={option}
-                      soloGameStats={soloGameStats}
-                      startingSix={guestTeamOptions}
-                      type="rival"
-                    />
-                  </div>
-                ) : (
-                  <div className="zone-names-wrapper" key={"_" + index}>
-                    P{correctZones(index + 3)}
-                  </div>
-                )
-              )}
-              {homeTeamOptions.slice(3, 6).map((option, index) =>
-                checkNumbers(option.boardPosition) ? (
-                  <div key={index}>
-                    <IconOfPlayer
-                      showSquads={showSquads}
-                      player={option}
-                      soloGameStats={soloGameStats}
-                      startingSix={homeTeamOptions}
-                      type="my"
-                      setShowSquads={setShowSquads}
-                    />
-                  </div>
-                ) : (
-                  <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
-                )
-              )}
-            </div>
-            <div className="button-save-wrapper">
-              {isBoardFull(guestTeamOptions) && (
-                <>
-                  {!showSquads && !saveDataIcon && (
-                    <RegularButton type="submit" $color="black" $background="#ffd700">
-                      Save Data
+              {showGuestTeam && showSquads && (
+                <div className="showRatings">
+                  <NavLink to={"/Ratings"}>
+                    <RegularButton
+                      onClick={() => dispatch(setInfoOfPlayer(null))}
+                      type="button"
+                      $color="#0057b8"
+                      $background="#ffd700"
+                    >
+                      Ratings
                     </RegularButton>
-                  )}
-                </>
+                  </NavLink>
+                  <NavLink to={"/Distribution"}>
+                    <RegularButton
+                      onClick={() => dispatch(setInfoOfPlayer(null))}
+                      type="button"
+                      $color="#0057b8"
+                      $background="#ffd700"
+                    >
+                      Distribution
+                    </RegularButton>
+                  </NavLink>
+                  <NavLink to={"/GamesStatistic"}>
+                    <RegularButton
+                      onClick={() => dispatch(setInfoOfPlayer(null))}
+                      type="button"
+                      $color="#0057b8"
+                      $background="#ffd700"
+                    >
+                      Games Statistic
+                    </RegularButton>
+                  </NavLink>
+                </div>
               )}
-            </div>
-            {isBoardFull(homeTeamOptions) && isRegistratedUser && (
-              <div className="plusMinus">
-                <RegularButton
-                  onClick={() => dispatch(rotateForwardHomeTeam())}
-                  $color="black"
-                  $background="#ffd700"
-                >
+            </form>
+            {!showSquads && (
+              <div className="rotation-buttons-wrapper">
+                <button onClick={() => rotateFront()}>+</button>
+                <button onClick={() => rotateBack()} style={{ borderRadius: "0px 20px 20px 0px" }}>
                   -
-                </RegularButton>
-                {homeTeamOptions.map((player, index) =>
-                  typeof player !== "number" && player && player.position === "SET" ? (
-                    <span key={player.name}>P{correctPositions(index) + 1}</span>
-                  ) : null
-                )}
-                <RegularButton
-                  onClick={() => dispatch(rotateBackHomeTeam())}
-                  $color="black"
-                  $background="#ffd700"
-                >
-                  +
-                </RegularButton>
+                </button>
               </div>
             )}
-            {showGuestTeam && showSquads && (
-              <div className="showRatings">
-                <NavLink to={"/Ratings"}>
-                  <RegularButton
-                    onClick={() => dispatch(setInfoOfPlayer(null))}
-                    type="button"
-                    $color="#0057b8"
-                    $background="#ffd700"
-                  >
-                    Ratings
-                  </RegularButton>
-                </NavLink>
-                <NavLink to={"/Distribution"}>
-                  <RegularButton
-                    onClick={() => dispatch(setInfoOfPlayer(null))}
-                    type="button"
-                    $color="#0057b8"
-                    $background="#ffd700"
-                  >
-                    Distribution
-                  </RegularButton>
-                </NavLink>
-                <NavLink to={"/GamesStatistic"}>
-                  <RegularButton
-                    onClick={() => dispatch(setInfoOfPlayer(null))}
-                    type="button"
-                    $color="#0057b8"
-                    $background="#ffd700"
-                  >
-                    Games Statistic
-                  </RegularButton>
-                </NavLink>
-              </div>
-            )}
-          </form>
+          </>
         )}
       </SectionWrapper>
       {showGuestTeam &&
@@ -399,7 +462,17 @@ export function HomePage() {
             )}
           </SectionWrapper>
         ))}
-      {!showSquads && <RotationPanel opponentTeamName={opponentTeamName} team={true} />}
+      {!showSquads && (
+        <RotationPanel
+          opponentTeamName={opponentTeamName}
+          team={true}
+          score={rivalScore}
+          setScore={setRivalScore}
+          setNextRotation={setNextRotation}
+          gameLog={gameLog}
+          setGameLog={setGameLog}
+        />
+      )}
     </article>
   );
 }
