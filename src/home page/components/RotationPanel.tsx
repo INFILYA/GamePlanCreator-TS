@@ -10,7 +10,7 @@ import {
 import { correctZones } from "../../utilities/functions";
 import { resetGameStats, selectSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
 import { useAppDispatch } from "../../states/store";
-import { TPlayer } from "../../types/types";
+import { TGameLogStats } from "../../types/types";
 // import {
 //   rotateBackPositions,
 //   rotateForwardPositions,
@@ -19,15 +19,25 @@ import { TPlayer } from "../../types/types";
 type TRotationPanel = {
   team: boolean;
   score: number;
+  currentScore: string;
   setScore(arg: number): void;
   setNextRotation(arg: boolean): void;
   opponentTeamName?: string;
-  gameLog: TPlayer[][];
-  setGameLog(arg: TPlayer[][]): void;
+  gameLog: TGameLogStats;
+  setGameLog(arg: TGameLogStats): void;
 };
 
 export default function RotationPanel(arg: TRotationPanel) {
-  const { opponentTeamName, team, score, setScore, setNextRotation, gameLog, setGameLog } = arg;
+  const {
+    opponentTeamName,
+    team,
+    score,
+    currentScore,
+    setScore,
+    setNextRotation,
+    gameLog,
+    setGameLog,
+  } = arg;
   const dispatch = useAppDispatch();
   const guestTeam = useSelector(selectGuestTeam);
   const SoloRallyStats = useSelector(selectSoloRallyStats);
@@ -37,7 +47,7 @@ export default function RotationPanel(arg: TRotationPanel) {
   function addScore() {
     setScore(score + 1);
     if (SoloRallyStats.length > 0) {
-      setGameLog([...gameLog, SoloRallyStats]);
+      setGameLog([...gameLog, { score: currentScore, stats: SoloRallyStats }]);
     }
     dispatch(resetGameStats());
     setNextRotation(true);

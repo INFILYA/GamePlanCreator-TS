@@ -29,8 +29,9 @@ export default function GamesStatistic() {
   const teamFilter = useSelector(selectorFilter);
   const [filter, setFilter] = useState("");
   const [filteredGames, setFilteredGames] = useState<TObjectStats[]>([]);
-  const [choosenGameStats, setChoosenGameStats] = useState<TMix[]>([]);
-  const [saveFullGameStats, setSaveFullGameStats] = useState<TMix[]>([]);
+  const [choosenGameStats, setChoosenGameStats] = useState<TPlayer[]>([]);
+  const [choosenSet, setChoosenSet] = useState<string>("full");
+  const [saveFullGameStats, setSaveFullGameStats] = useState<TPlayer[]>([]);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
 
   function calculateForTeamData<T extends TMix>(obj: T): TMix {
@@ -40,9 +41,6 @@ export default function GamesStatistic() {
     const team = { ...filtered[0] };
     const newObj = { ...obj };
     for (const key in team) {
-      if (key === "id" || key === "startingSquad" || key === "name" || key === "logo") {
-        continue;
-      }
       (team[key as keyof TMix] as number) = newObj[key as keyof T] as number;
     }
     return team;
@@ -63,50 +61,31 @@ export default function GamesStatistic() {
     const choosenGame = gamesStats.find((game) => Object.keys(game).find((name) => name === value));
     if (!choosenGame) return;
     const game = Object.values(choosenGame)[0];
+    console.log(game);
     setFilteredGames([...game]);
-    const fullSizeGameStat: TPlayer[] = [];
+    const fullSizeGameStat: TPlayer[][] = [];
     game.forEach((sets) =>
-      Object.values(sets).forEach((set) => set.forEach((player) => fullSizeGameStat.push(player)))
+      Object.values(sets).forEach((set) =>
+        Object.values(set).forEach((player) => fullSizeGameStat.push(player.stats))
+      )
     );
-    let properGameStat: TPlayer[] = [];
-    for (let i = 0; i < fullSizeGameStat.length; i++) {
-      const player = fullSizeGameStat[i];
-      if (properGameStat.some((athlete) => athlete.name === player.name)) {
-        const properPlayer = properGameStat.find((athlete) => athlete.name === player.name);
-        if (!properPlayer) return;
-        const updatedPlayer = calculateForUnion(player, properPlayer);
-        properGameStat = properGameStat.map((athlete) =>
-          athlete.name === updatedPlayer.name ? updatedPlayer : athlete
-        );
-      } else properGameStat = [...properGameStat, player];
-    }
-    setChoosenGameStats(properGameStat);
-    setSaveFullGameStats(properGameStat);
+    const flatFullSizeGameStat = fullSizeGameStat.flat();
+    setChoosenGameStats(properStats(flatFullSizeGameStat));
+    setSaveFullGameStats(properStats(flatFullSizeGameStat));
   }
   // Обраховуємо повторних гравців
-  function calculateForUnion<T extends TMix>(obj: T, fullObj: T) {
+  function calculateForUnion<T extends TPlayer>(obj: T, fullObj: T) {
     const newObj = { ...obj };
     const newFullObj = { ...fullObj };
-    for (const key in newFullObj) {
-      if (
-        key === "A-" ||
-        key === "A=" ||
-        key === "A++" ||
-        key === "A+" ||
-        key === "A!" ||
-        key === "S++" ||
-        key === "S=" ||
-        key === "S!" ||
-        key === "S+" ||
-        key === "S-" ||
-        key === "R++" ||
-        key === "R=" ||
-        key === "R!" ||
-        key === "R+" ||
-        key === "R-"
-      ) {
-        (newFullObj[key as keyof TMix] as number) += newObj[key as keyof T] as number;
-      } else continue;
+    for (const key in newObj) {
+      if (key === "boardPosition" || key === "name") {
+        continue;
+      }
+      if (!(key in newFullObj)) {
+        (newFullObj[key] as number) = +newObj[key];
+      } else if (key in newFullObj) {
+        (newFullObj[key] as number) += +newObj[key];
+      }
     }
     return newFullObj;
   }
@@ -115,12 +94,30 @@ export default function GamesStatistic() {
   function handleChoosenSet(e: ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
     if (value === "full") {
+      setChoosenSet(value);
       setChoosenGameStats(saveFullGameStats);
       return;
     }
     const isFullGame = filteredGames.map((game) => Object.keys(game)[0]);
     const index = isFullGame.indexOf(value);
-    setChoosenGameStats(filteredGames[index][value as keyof TObjectStats]);
+    const choosenSet = filteredGames[index][value].map((rally) => rally.stats);
+    setChoosenGameStats(properStats(choosenSet.flat()));
+    setChoosenSet(value);
+  }
+
+  function properStats(arr: TPlayer[]): TPlayer[] {
+    let properGameStat: TPlayer[] = [];
+    for (let i = 0; i < arr.length; i++) {
+      const player = arr[i];
+      if (properGameStat.some((athlete) => athlete.name === player.name)) {
+        const properPlayer = properGameStat.find((athlete) => athlete.name === player.name);
+        const updatedPlayer = calculateForUnion(player, properPlayer!);
+        properGameStat = properGameStat.map((athlete) =>
+          athlete.name === updatedPlayer.name ? updatedPlayer : athlete
+        );
+      } else properGameStat = [...properGameStat, player];
+    }
+    return properGameStat;
   }
 
   function setGameFilterByTeam(name: string) {
@@ -177,7 +174,7 @@ export default function GamesStatistic() {
                             type="checkbox"
                             value={Object.keys(set)}
                             onChange={handleChoosenSet}
-                            checked={Object.values(set)[0] === choosenGameStats}
+                            checked={Object.keys(set)[0] === choosenSet}
                           />
                         </div>
                       ))}
@@ -187,7 +184,7 @@ export default function GamesStatistic() {
                           type="checkbox"
                           value="full"
                           onChange={handleChoosenSet}
-                          checked={saveFullGameStats === choosenGameStats}
+                          checked={"full" === choosenSet}
                         />
                       </div>
                     </div>
@@ -217,6 +214,9 @@ export default function GamesStatistic() {
                   </div>
                   <div style={{ width: "80%" }}>
                     <Diagramm link="Attack" data={fullGameStats} />
+                  </div>
+                  <div style={{ width: "80%" }}>
+                    <Diagramm link="Reception" data={fullGameStats} />
                   </div>
                 </div>
               </>

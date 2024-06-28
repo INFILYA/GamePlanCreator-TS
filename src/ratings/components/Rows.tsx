@@ -8,6 +8,7 @@ import {
   getAttackEfficency,
   getPlusMinusAttack,
   getPlusMinusService,
+  isFieldExist,
   rows,
   setStyleForEfficency,
   setStyleForPercent,
@@ -27,6 +28,7 @@ export function Rows(props: TRows) {
     if ("startingSquad" in pickedPlayer) return;
     dispatch(setInfoOfPlayer(pickedPlayer));
   }
+
   return (
     <>
       {filteredPlayers.map((player, index) => (
@@ -40,22 +42,31 @@ export function Rows(props: TRows) {
           <td>
             {getPlusMinusAttack(player) +
               getPlusMinusService(player) +
-              player.blocks -
-              player["R="]}
+              isFieldExist(player.blocks) -
+              isFieldExist(player["R="])}
           </td>
           <td>{player.blocks}</td>
           {rows.map((row) => (
-            <td style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "khaki" }}>
+            <td
+              key={row[0]}
+              style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "khaki" }}
+            >
               {player[`S${row[0]}` as keyof TMix]}
             </td>
           ))}
           {rows.map((row) => (
-            <td style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "gainsboro" }}>
+            <td
+              key={row[0]}
+              style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "gainsboro" }}
+            >
               {player[`A${row[0]}` as keyof TMix]}
             </td>
           ))}
           {rows.map((row) => (
-            <td style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "darkseagreen" }}>
+            <td
+              key={row[0]}
+              style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "darkseagreen" }}
+            >
               {player[`R${row[0]}` as keyof TMix]}
             </td>
           ))}

@@ -142,31 +142,49 @@ export function setStyle(params: number): CSSProperties {
   return { color: params >= 0 ? "green" : "orangered" };
 }
 
+export function isFieldExist(arg: number): number {
+  return arg ? arg : 0;
+}
 export function getSumofAttacks(obj: TMix) {
-  const totalAtt = [obj["A++"], obj["A+"], obj["A!"], obj["A-"], obj["A="]];
+  const totalAtt = [
+    isFieldExist(obj["A++"]),
+    isFieldExist(obj["A+"]),
+    isFieldExist(obj["A!"]),
+    isFieldExist(obj["A-"]),
+    isFieldExist(obj["A="]),
+  ];
   const sumOfTotalAtt = totalAtt.reduce((a, b) => a + b, 0);
   return +sumOfTotalAtt;
 }
 
 export function getSumofReceptions(obj: TMix) {
-  const totalAtt = [obj["R++"], obj["R+"], obj["R!"], obj["R-"], obj["R="]];
-  const sumOfTotalRec = totalAtt.reduce((a, b) => a + b, 0);
+  const totalRec = [
+    isFieldExist(obj["R++"]),
+    isFieldExist(obj["R+"]),
+    isFieldExist(obj["R!"]),
+    isFieldExist(obj["R-"]),
+    isFieldExist(obj["R="]),
+  ];
+  const sumOfTotalRec = totalRec.reduce((a, b) => a + b, 0);
   return +sumOfTotalRec;
 }
 
 export function gerPercentOfPerfectReception(obj: TMix) {
   if (getSumofReceptions(obj) === 0) return 0;
-  const percents = +((obj["R++"] / getSumofReceptions(obj)) * 100);
+  const percents = +((isFieldExist(obj["R++"]) / getSumofReceptions(obj)) * 100);
   return Math.round(percents);
 }
 export function gerPercentOfPositiveReception(obj: TMix) {
   if (getSumofReceptions(obj) === 0) return 0;
-  const percents = +(((obj["R++"] + obj["R+"]) / getSumofReceptions(obj)) * 100);
+  const percents = +(
+    ((isFieldExist(obj["R++"]) + isFieldExist(obj["R+"])) / getSumofReceptions(obj)) *
+    100
+  );
   return Math.round(percents);
 }
 
 export function gerPercentOfAttack(obj: TMix) {
-  const percents = +((obj["A++"] / getSumofAttacks(obj)) * 100);
+  const percents = +((isFieldExist(obj["A++"]) / getSumofAttacks(obj)) * 100);
   return Math.round(percents);
 }
 
@@ -184,29 +202,29 @@ export function getServiceEfficency(obj: TMix) {
 }
 
 export function getPlusMinusService(obj: TMix) {
-  return obj["S++"] - obj["S="];
+  return isFieldExist(obj["S++"]) - isFieldExist(obj["S="]);
 }
 export function getPlusMinusAttack(obj: TMix) {
-  return obj["A++"] - (obj["A-"] + obj["A="]);
+  return isFieldExist(obj["A++"]) - (isFieldExist(obj["A-"]) + isFieldExist(obj["A="]));
 }
 
 export function calculateTotalofActions(obj: TMix[]) {
-  const loosePoints = obj.reduce((acc, val) => (acc += val["A="]), 0);
-  const winPoints = obj.reduce((acc, val) => (acc += val["A++"]), 0);
-  const leftInTheGamePlus = obj.reduce((acc, val) => (acc += val["A+"]), 0);
-  const leftInTheGameMinus = obj.reduce((acc, val) => (acc += val["A!"]), 0);
-  const attacksInBlock = obj.reduce((acc, val) => (acc += val["A-"]), 0);
-  const ace = obj.reduce((acc, val) => (acc += val["S++"]), 0);
-  const serviceFailed = obj.reduce((acc, val) => (acc += val["S="]), 0);
-  const serviceExclamation = obj.reduce((acc, val) => (acc += val["S!"]), 0);
-  const servicePlus = obj.reduce((acc, val) => (acc += val["S+"]), 0);
-  const serviceMinus = obj.reduce((acc, val) => (acc += val["S-"]), 0);
-  const rPerfect = obj.reduce((acc, val) => (acc += val["R++"]), 0);
-  const rPlus = obj.reduce((acc, val) => (acc += val["R+"]), 0);
-  const rExclamation = obj.reduce((acc, val) => (acc += val["R!"]), 0);
-  const rAce = obj.reduce((acc, val) => (acc += val["R="]), 0);
-  const rMinus = obj.reduce((acc, val) => (acc += val["R-"]), 0);
-  const blocks = obj.reduce((acc, val) => (acc += val.blocks), 0);
+  const loosePoints = obj.reduce((acc, val) => (acc += val["A="] ? val["A="] : 0), 0);
+  const winPoints = obj.reduce((acc, val) => (acc += val["A++"] ? val["A++"] : 0), 0);
+  const leftInTheGamePlus = obj.reduce((acc, val) => (acc += val["A+"] ? val["A+"] : 0), 0);
+  const leftInTheGameMinus = obj.reduce((acc, val) => (acc += val["A!"] ? val["A!"] : 0), 0);
+  const attacksInBlock = obj.reduce((acc, val) => (acc += val["A-"] ? val["A-"] : 0), 0);
+  const ace = obj.reduce((acc, val) => (acc += val["S++"] ? val["S++"] : 0), 0);
+  const serviceFailed = obj.reduce((acc, val) => (acc += val["S="] ? val["S="] : 0), 0);
+  const serviceExclamation = obj.reduce((acc, val) => (acc += val["S!"] ? val["S!"] : 0), 0);
+  const servicePlus = obj.reduce((acc, val) => (acc += val["S+"] ? val["S+"] : 0), 0);
+  const serviceMinus = obj.reduce((acc, val) => (acc += val["S-"] ? val["S-"] : 0), 0);
+  const rPerfect = obj.reduce((acc, val) => (acc += val["R++"] ? val["R++"] : 0), 0);
+  const rPlus = obj.reduce((acc, val) => (acc += val["R+"] ? val["R+"] : 0), 0);
+  const rExclamation = obj.reduce((acc, val) => (acc += val["R!"] ? val["R!"] : 0), 0);
+  const rAce = obj.reduce((acc, val) => (acc += val["R="] ? val["R="] : 0), 0);
+  const rMinus = obj.reduce((acc, val) => (acc += val["R-"] ? val["R-"] : 0), 0);
+  const blocks = obj.reduce((acc, val) => (acc += val.blocks ? val.blocks : 0), 0);
   const sumOfAllPlayersSoloGamesStats = {
     "A=": loosePoints,
     "A++": winPoints,
@@ -228,7 +246,7 @@ export function calculateTotalofActions(obj: TMix[]) {
   return sumOfAllPlayersSoloGamesStats;
 }
 
-export function preparePlayerToSoloGame(obj: TPlayer) {
+export function preparePlayerToSoloGame(obj: TMix): TMix {
   const soloGamePlayerStats = { ...obj };
   soloGamePlayerStats["A++"] = 0;
   soloGamePlayerStats["A+"] = 0;

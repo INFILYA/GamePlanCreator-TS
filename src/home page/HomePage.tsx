@@ -14,7 +14,7 @@ import {
   firstLetterCapital,
   isBoardFull,
 } from "../utilities/functions";
-import { TPlayer, TTeam } from "../types/types";
+import { TGameLogStats, TPlayer, TTeam } from "../types/types";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { selectHomeTeam, setHomeTeam } from "../states/slices/homeTeamSlice";
 import { setHomePlayers } from "../states/slices/homePlayersSlice";
@@ -63,7 +63,7 @@ export function HomePage() {
   const SoloRallyStats = useSelector(selectSoloRallyStats);
   const [showSquads, setShowSquads] = useState(true);
   const [nextRotation, setNextRotation] = useState(true);
-  const [gameLog, setGameLog] = useState<TPlayer[][]>([]);
+  const [gameLog, setGameLog] = useState<TGameLogStats>([]);
   const [opponentTeamName, setOpponentTeamName] = useState("");
   const [setNumber, setSetNumber] = useState("");
   const [myScore, setMyScore] = useState(0);
@@ -109,17 +109,19 @@ export function HomePage() {
     for (const key in team) {
       if (
         key === "id" ||
-        key === "startingSquad" ||
+        key === "boardPosition" ||
         key === "name" ||
         key === "logo" ||
         key === "age" ||
-        key === "height"
+        key === "height" ||
+        key === "startingSquad"
       ) {
         continue;
       }
-      (team[key as keyof TTeam] as number) += obj[key as keyof T] as number;
+      const realDa = obj[key as keyof T] as number;
+      (team[key as keyof TTeam] as number) += realDa ? realDa : 0;
     }
-    guestTeam[0] = team;
+    return team;
   }
 
   async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
@@ -162,8 +164,8 @@ export function HomePage() {
       setPlayersToData(player);
     });
     //add solo game stats
-    calculateForTeamData(calculateTotalofActions(SoloRallyStats) as TPlayer);
-    await set(teamsRef(guestTeam[0].name), guestTeam[0]);
+    const newTeam = calculateForTeamData(calculateTotalofActions(SoloRallyStats) as TPlayer);
+    await set(teamsRef(newTeam.name), newTeam);
     resetTheBoardForGuestTeam();
     setShowSquads(true);
     dispatch(setInfoOfPlayer(null));
@@ -184,7 +186,7 @@ export function HomePage() {
     dispatch(rotateForwardPositions());
     setNextRotation(true);
     if (SoloRallyStats.length > 0) {
-      setGameLog([...gameLog, SoloRallyStats]);
+      setGameLog([...gameLog, { score: currentScore, stats: SoloRallyStats }]);
     }
     dispatch(resetGameStats());
     setMyScore(myScore + 1);
@@ -197,10 +199,17 @@ export function HomePage() {
     dispatch(resetGameStats());
     setNextRotation(true);
   }
-
+  const currentScore = `${myScore} - ${rivalScore}`;
   const playerInfoWindow = playerInfo && showSquads;
   const saveDataIcon = !opponentTeamName || !setNumber;
-  console.log(gameLog);
+  const tieBreak = setNumber === "Set 3";
+  const tieBreakScore = myScore >= 15 || rivalScore >= 15;
+  const normalSetScore = myScore >= 25 || rivalScore >= 25;
+  const endOfTheSet = tieBreak
+    ? tieBreakScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1)
+    : normalSetScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1);
+  const saveButton = isBoardFull(guestTeamOptions) && !showSquads && !saveDataIcon && endOfTheSet;
+  //
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -208,6 +217,7 @@ export function HomePage() {
         <RotationPanel
           team={false}
           score={myScore}
+          currentScore={currentScore}
           setScore={setMyScore}
           setNextRotation={setNextRotation}
           gameLog={gameLog}
@@ -365,14 +375,10 @@ export function HomePage() {
               </div>
 
               <div className="button-save-wrapper">
-                {isBoardFull(guestTeamOptions) && (
-                  <>
-                    {!showSquads && !saveDataIcon && (
-                      <RegularButton type="submit" $color="black" $background="#ffd700">
-                        Save Data
-                      </RegularButton>
-                    )}
-                  </>
+                {saveButton && (
+                  <RegularButton type="submit" $color="black" $background="#ffd700">
+                    Save Data
+                  </RegularButton>
                 )}
               </div>
               {isBoardFull(homeTeamOptions) && isRegistratedUser && (
@@ -467,6 +473,7 @@ export function HomePage() {
           opponentTeamName={opponentTeamName}
           team={true}
           score={rivalScore}
+          currentScore={currentScore}
           setScore={setRivalScore}
           setNextRotation={setNextRotation}
           gameLog={gameLog}

@@ -93,6 +93,7 @@ export type TPlayer = {
   boardPosition: number;
 };
 
+export type TGameLogStats = { score: string; stats: TPlayer[] }[];
 // export type TPlayerV2 = {
 //   age: string | number;
 //   hand: string;
@@ -169,5 +170,6 @@ export type TGameStats = {
 };
 
 export type TObjectStats = {
-  [key: string]: TPlayer[];
+  [key: string]: TSoloRallyStats[];
 };
+export type TSoloRallyStats = { score: string; stats: TPlayer[] };

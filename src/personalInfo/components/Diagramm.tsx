@@ -27,7 +27,9 @@ export default function Diagramm(props: TDiagrammProps) {
       text:
         link === "Attack"
           ? `<b style="font-size:calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem)">Attack</b>`
-          : `<b style="font-size:calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem)">Service</b>`,
+          : link === "Service"
+          ? `<b style="font-size:calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem)">Service</b>`
+          : `<b style="font-size:calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem)">Reception</b>`,
     },
     tooltip: {
       headerFormat: '<span style="font-size:1.5vw">{series.name}</span><br>',
@@ -57,15 +59,31 @@ export default function Diagramm(props: TDiagrammProps) {
     },
     series: [
       {
-        name: link === "Attack" ? "Attack" : "Service",
+        name: link === "Attack" ? "Attack" : link === "Service" ? "Service" : "Reception",
         type: "pie",
         allowPointSelect: false,
         data: [
-          [link === "Attack" ? "Win" : "Ace", rightPercentageForDiagramm(0), true],
-          [link === "Attack" ? "Game +" : "Reception on (-)", rightPercentageForDiagramm(1), false],
+          [
+            link === "Attack" ? "Win" : link === "Service" ? "Ace" : "Perfect Reception",
+            rightPercentageForDiagramm(0),
+            true,
+          ],
+          [
+            link === "Attack"
+              ? "Game +"
+              : link === "Service"
+              ? "Reception on (-)"
+              : "Reception on (+)",
+            rightPercentageForDiagramm(1),
+            false,
+          ],
           [link === "Attack" ? "Game -" : "Reception on (!)", rightPercentageForDiagramm(2), false],
           [
-            link === "Attack" ? "Block" : "Reception on (+ , #)",
+            link === "Attack"
+              ? "Block"
+              : link === "Service"
+              ? "Reception on (+ , #)"
+              : "Reception on (-)",
             rightPercentageForDiagramm(3),
             false,
           ],
@@ -103,6 +121,19 @@ export default function Diagramm(props: TDiagrammProps) {
       const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
       const percentOfActions = totalService.map(
         (service) => +((service / sumOfTotalService) * 100).toFixed(1)
+      );
+      return percentOfActions[index];
+    } else if (link === "Reception") {
+      const totalReception = [
+        playerInfo["R++"],
+        playerInfo["R+"],
+        playerInfo["R!"],
+        playerInfo["R-"],
+        playerInfo["R="],
+      ];
+      const sumOfTotalReception = totalReception.reduce((a, b) => a + b, 0);
+      const percentOfActions = totalReception.map(
+        (reception) => +((reception / sumOfTotalReception) * 100).toFixed(1)
       );
       return percentOfActions[index];
     }
