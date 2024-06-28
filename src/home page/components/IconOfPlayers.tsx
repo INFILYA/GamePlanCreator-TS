@@ -35,7 +35,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   const { player, nextRotation, setNextRotation, startingSix, type, showSquads } = props;
   const dispatch = useAppDispatch();
   const [category, setCategory] = useState<string>("AS");
-  const [diagrammValue, setDiagrammValue] = useState<TPlayer>(emptyPlayer);
+  const [diagrammValue, setDiagrammValue] = useState<TMix>(emptyPlayer);
   const my = type === "my";
 
   useEffect(() => {
@@ -102,10 +102,10 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   }
 
   function addAmount(type: keyof TPlayer, number: number) {
-    if (diagrammValue[type] === 0 && number === -1) return;
+    if (diagrammValue[type as keyof TMix] === 0 && number === -1) return;
     setDiagrammValue({
       ...diagrammValue,
-      [type]: +diagrammValue[type] + number,
+      [type]: +diagrammValue[type as keyof TMix] + number,
     });
     const obj = { [type]: number } as TAttackDiagramm;
     const updatedPlayer = calculateForPlayerData({ ...player }, obj);
