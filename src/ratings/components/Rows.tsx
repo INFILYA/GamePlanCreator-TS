@@ -51,7 +51,7 @@ export function Rows(props: TRows) {
               key={row[0]}
               style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "khaki" }}
             >
-              {player[`S${row[0]}` as keyof TMix]}
+              {player[`S${row[0]}`]}
             </td>
           ))}
           {rows.map((row) => (
@@ -59,7 +59,7 @@ export function Rows(props: TRows) {
               key={row[0]}
               style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "gainsboro" }}
             >
-              {player[`A${row[0]}` as keyof TMix]}
+              {player[`A${row[0]}`]}
             </td>
           ))}
           {rows.map((row) => (
@@ -67,7 +67,7 @@ export function Rows(props: TRows) {
               key={row[0]}
               style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "darkseagreen" }}
             >
-              {player[`R${row[0]}` as keyof TMix]}
+              {player[`R${row[0]}`]}
             </td>
           ))}
           <td style={setStyleForEfficency(gerPercentOfPerfectReception(player))}>

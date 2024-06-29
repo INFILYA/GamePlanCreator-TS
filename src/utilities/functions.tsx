@@ -306,7 +306,7 @@ export const rows = [
   ["!", "yellow"],
   ["+", "aquamarine"],
   ["++", "lightgreen"],
-];
+] as const;
 
 export const listOfOpponents = [
   "Choose Opponent",

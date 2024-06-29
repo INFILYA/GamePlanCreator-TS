@@ -140,13 +140,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   const ReceptionBlock = category === "RB";
   const serviceGradations = ReceptionBlock ? properArr("R") : properArr("S");
   function properArr(letter: string) {
-    return [
+    const arr = [
       [`${letter}++`, "lightgreen", "#"],
       [`${letter}+`, "aquamarine", "+"],
       [`${letter}!`, "yellow", "!"],
       [`${letter}-`, "orange", "-"],
       [`${letter}=`, "orangered", "="],
     ];
+    return arr;
   }
   return (
     <>
