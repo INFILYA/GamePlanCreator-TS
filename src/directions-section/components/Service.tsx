@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { useState, ChangeEvent } from "react";
 import { selectPlayerInfo } from "../../states/slices/playerInfoSlice";
 import WrapperForDirections from "./WrapperForDirections";
-import { TPlayer, TServiceDiagramm, TTeam, TZoneStates } from "../../types/types";
+import { TDiagramm, TPlayer, TServiceDiagramm, TTeam, TZoneStates } from "../../types/types";
 // import { getPlusMinusService, getServiceEfficency } from "../../utilities/functions";
 
 export function Service() {
@@ -32,14 +32,12 @@ export function Service() {
     for (const key in diagrammValue) {
       (obj[key as keyof T] as number) += diagrammValue[key as keyof TServiceDiagramm];
     }
-    // obj.plusMinusOnService = getPlusMinusService(obj); //встановлюємо + - на подачі
-    // obj.efficencyService = getServiceEfficency(obj); // встановлюємо ефективність подачі
     return obj;
   }
   return (
     <WrapperForDirections
       handleDiagrammValue={handleDiagrammValue}
-      diagrammValue={diagrammValue}
+      diagrammValue={diagrammValue as TDiagramm}
       calculateForData={calculateForData}
       zonesStates={zonesStates}
       setZonesStates={setZonesStates}

@@ -21,32 +21,24 @@ export type TReceptionDiagramm = {
   "R=": number;
 };
 
-export type TTeam = {
+export type TDiagramm = TDiagrammWithoutBlock & { blocks: number };
+
+export type TDiagrammWithoutBlock = TAttackDiagramm & TServiceDiagramm & TReceptionDiagramm;
+
+export type TTeam = TPartTeam & TDiagramm;
+
+export type TPartTeam = {
   age: number;
   height: number;
   id: string;
   logo: string;
   name: string;
   startingSquad: string[];
-  "S++": number;
-  "S+": number;
-  "S!": number;
-  "S-": number;
-  "S=": number;
-  "A++": number;
-  "A+": number;
-  "A=": number;
-  "A!": number;
-  "A-": number;
-  "R++": number;
-  "R+": number;
-  "R!": number;
-  "R-": number;
-  "R=": number;
-  blocks: number;
 };
 
-export type TPlayer = {
+export type TPlayer = TPartPlayer & TDiagramm;
+
+export type TPartPlayer = {
   age: string | number;
   hand: string;
   height: number;
@@ -68,73 +60,15 @@ export type TPlayer = {
   AK1Q: number[];
   AKCQ: number[];
   AK7Q: number[];
-  "A++": number;
-  "A+": number;
-  "A=": number;
-  "A!": number;
-  "A-": number;
   S1F: number[];
   S1J: number[];
   S5F: number[];
   S5J: number[];
   S6F: number[];
   S6J: number[];
-  "S++": number;
-  "S+": number;
-  "S!": number;
-  "S-": number;
-  "S=": number;
-  "R++": number;
-  "R+": number;
-  "R!": number;
-  "R-": number;
-  "R=": number;
-  blocks: number;
   boardPosition: number;
 };
 
-export type TGameLogStats = { score: string; stats: TPlayer[] }[];
-// export type TPlayerV2 = {
-//   age: string | number;
-//   hand: string;
-//   height: number;
-//   id: string;
-//   name: string;
-//   number: number;
-//   photo: string;
-//   position: "Setter" | "Reciever" | "MBlocker" | "Opposite" | "Libero" | "none";
-//   reach: number;
-//   team: string;
-//   attackPipeFastBall: number[];
-//   attackPipeHighBall: number[];
-//   attackZone2FastBall: number[];
-//   attackZone2HighBall: number[];
-//   attackZone4FastBall: number[];
-//   attackZone4HighBall: number[];
-//   attackZone1FastBall: number[];
-//   attackZone1HighBall: number[];
-//   attackZoneK1FastBall: number[];
-//   attackZoneK1HighBall: number[];
-//   attackZoneKCFastBall: number[];
-//   attackZoneKCHighBall: number[];
-//   attackZoneK7FastBall: number[];
-//   attackZoneK7HighBall: number[];
-//   winPoints: number;
-//   loosePoints: number;
-//   leftInGame: number;
-//   attacksInBlock: number;
-//   serviceZone1Float: number[];
-//   serviceZone1Jump: number[];
-//   serviceZone5Float: number[];
-//   serviceZone5Jump: number[];
-//   serviceZone6Float: number[];
-//   serviceZone6Jump: number[];
-//   ace: number;
-//   servicePlus: number;
-//   serviceMinus: number;
-//   serviceFailed: number;
-//   boardPosition: number;
-// };
 export type TMix = TPlayer | TTeam;
 type TPlayerKeys = keyof TPlayer;
 type TTeamKeys = keyof TTeam;
@@ -154,8 +88,6 @@ export type TDistributionZones = {
   4: number;
 };
 
-export type TDiagramm = TAttackDiagramm | TServiceDiagramm | TReceptionDiagramm;
-
 export type TZoneStates = {
   zone: "S1" | "S6" | "S5" | "A1" | "A2" | "A4" | "AP" | "AK1" | "AKC" | "AK7";
   active: boolean;
@@ -170,6 +102,7 @@ export type TGameStats = {
 };
 
 export type TObjectStats = {
-  [key: string]: TSoloRallyStats[];
+  [key: string]: TGameLogStats;
 };
 export type TSoloRallyStats = { score: string; stats: TPlayer[] };
+export type TGameLogStats = TSoloRallyStats[];

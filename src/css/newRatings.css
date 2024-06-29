@@ -3,10 +3,8 @@
 }
 .main-content-wrapper .ratings-section table {
   table-layout: fixed;
-  width: 105%;
-}
-.main-content-wrapper .ratings-section table caption {
-  min-width: 340px;
+  width: 100%;
+  align-self: baseline;
 }
 .main-content-wrapper .ratings-section table caption nav {
   width: 100%;
@@ -106,9 +104,9 @@
 }
 .main-content-wrapper .ratings-section .type-of-actions-wrapper {
   display: flex;
-  width: 71.2%;
+  width: 68%;
   justify-content: center;
-  margin-left: -4.9%;
+  margin-left: -4.7%;
 }
 .main-content-wrapper .ratings-section .type-of-actions-wrapper .service-content,
 .main-content-wrapper .ratings-section .type-of-actions-wrapper .attack-content,
@@ -127,7 +125,7 @@
   background-color: darkseagreen;
 }
 .main-content-wrapper .ratings-section .diagram-wrapper {
-  width: 100%;
+  width: 99%;
   display: flex;
   justify-content: center;
   margin-top: 2vw;

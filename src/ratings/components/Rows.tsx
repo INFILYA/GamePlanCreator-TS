@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { useAppDispatch } from "../../states/store";
 import { TMix } from "../../types/types";
@@ -13,6 +14,7 @@ import {
   setStyleForEfficency,
   setStyleForPercent,
 } from "../../utilities/functions";
+import { selectListOfPlayers } from "../../states/slices/listOfPlayersSlice";
 
 type TRows = {
   filteredPlayers: TMix[];
@@ -22,8 +24,10 @@ type TRows = {
 export function Rows(props: TRows) {
   const { filteredPlayers, lastRow } = props;
   const dispatch = useAppDispatch();
+  const listOfPlayers = useSelector(selectListOfPlayers);
+
   function showInfoOfPlayer(name: string) {
-    const pickedPlayer = filteredPlayers.find((player) => player.name === name);
+    const pickedPlayer = listOfPlayers.find((player) => player.name === name);
     if (pickedPlayer === undefined || pickedPlayer === null) return;
     if ("startingSquad" in pickedPlayer) return;
     dispatch(setInfoOfPlayer(pickedPlayer));

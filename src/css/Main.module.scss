@@ -184,8 +184,10 @@ main {
       max-width: 340px;
     }
     .ratings-section {
-      @media screen and (max-width: 1200px) {
-        width: 90vw;
+      @media screen and (max-width: 1600px) {
+        width: 95%;
+        display: flex;
+        justify-content: center;
       }
     }
     // Кінець

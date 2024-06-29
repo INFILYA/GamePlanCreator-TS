@@ -2,19 +2,11 @@ import { useSelector } from "react-redux";
 import SectionWrapper from "../../wrappers/SectionWrapper";
 import { selectGuestTeam } from "../../states/slices/guestTeamSlice";
 import { useEffect, useState } from "react";
-import {
-  // rotateBackGuestTeam,
-  // rotateForwardGuestTeam,
-  selectIndexOfGuestTeamZones,
-} from "../../states/slices/indexOfGuestTeamZonesSlice";
+import { selectIndexOfGuestTeamZones } from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { correctZones } from "../../utilities/functions";
 import { resetGameStats, selectSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
 import { useAppDispatch } from "../../states/store";
 import { TGameLogStats } from "../../types/types";
-// import {
-//   rotateBackPositions,
-//   rotateForwardPositions,
-// } from "../../states/slices/soloGameStatsSlice";
 
 type TRotationPanel = {
   team: boolean;
@@ -91,16 +83,6 @@ export default function RotationPanel(arg: TRotationPanel) {
           </button>
         ))}
       </div>
-      {/* {!team ? (
-        <div className="rotation-buttons-wrapper">
-          <button onClick={() => rotateFront()}>+</button>
-          <button onClick={() => rotateBack()} style={{ borderRadius: "0px 20px 20px 0px" }}>
-            -
-          </button>
-        </div>
-      ) : (
-        <div className="rotation-buttons-wrapper"></div>
-      )} */}
     </SectionWrapper>
   );
 }

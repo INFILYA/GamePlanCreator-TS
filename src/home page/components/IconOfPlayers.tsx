@@ -101,11 +101,11 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     }
   }
 
-  function addAmount(type: keyof TPlayer, number: number) {
-    if (diagrammValue[type as keyof TMix] === 0 && number === -1) return;
+  function addAmount(type: keyof TMix, number: number) {
+    if (diagrammValue[type] === 0 && number === -1) return;
     setDiagrammValue({
       ...diagrammValue,
-      [type]: +diagrammValue[type as keyof TMix] + number,
+      [type]: +diagrammValue[type] + number,
     });
     const obj = { [type]: number } as TAttackDiagramm;
     const updatedPlayer = calculateForPlayerData({ ...player }, obj);
@@ -202,7 +202,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                         <tr key={grade[0]}>
                           <td
                             style={{ backgroundColor: grade[1] }}
-                            onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
+                            onClick={() => addAmount(grade[0] as keyof TMix, 1)}
                           >
                             {grade[2]}
                           </td>
@@ -210,14 +210,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                             <input
                               type="text"
                               min={0}
-                              value={diagrammValue[grade[0] as keyof TAttackDiagramm]}
+                              value={diagrammValue[grade[0] as keyof TMix]}
                               name={grade[0]}
                               readOnly
                             />
                           </td>
                           <td
                             style={{ backgroundColor: grade[1] }}
-                            onClick={() => addAmount(grade[0] as keyof TPlayer, -1)}
+                            onClick={() => addAmount(grade[0] as keyof TMix, -1)}
                           >
                             -
                           </td>
@@ -276,7 +276,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                       <tr key={grade[0]}>
                         <td
                           style={{ backgroundColor: grade[1] }}
-                          onClick={() => addAmount(grade[0] as keyof TPlayer, 1)}
+                          onClick={() => addAmount(grade[0] as keyof TMix, 1)}
                         >
                           {grade[2]}
                         </td>
@@ -291,7 +291,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                         </td>
                         <td
                           style={{ backgroundColor: grade[1] }}
-                          onClick={() => addAmount(grade[0] as keyof TPlayer, -1)}
+                          onClick={() => addAmount(grade[0] as keyof TMix, -1)}
                         >
                           -
                         </td>

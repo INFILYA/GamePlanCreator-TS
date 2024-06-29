@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { useState, ChangeEvent } from "react";
 import { selectPlayerInfo } from "../../states/slices/playerInfoSlice";
 import WrapperForDirections from "./WrapperForDirections";
-import { TAttackDiagramm, TPlayer, TTeam, TZoneStates } from "../../types/types";
+import { TAttackDiagramm, TDiagramm, TPlayer, TTeam, TZoneStates } from "../../types/types";
 
 export function Attack() {
   const playerInfos = useSelector(selectPlayerInfo);
@@ -34,14 +34,11 @@ export function Attack() {
     for (const key in diagrammValue) {
       (obj[key as keyof T] as number) += diagrammValue[key as keyof TAttackDiagramm];
     }
-    // obj.percentOfAttack = gerPercentOfAttack(obj); //встановлюємо процент зйому
-    // obj.plusMinusOnAttack = getPlusMinusAttack(obj); //встановлюємо + - в атаці
-    // obj.efficencyAttack = getAttackEfficency(obj); // встановлюємо ефективність подачі
     return obj;
   }
   return (
     <WrapperForDirections
-      diagrammValue={diagrammValue}
+      diagrammValue={diagrammValue as TDiagramm}
       handleDiagrammValue={handleDiagrammValue}
       calculateForData={calculateForData}
       zonesStates={zonesStates}

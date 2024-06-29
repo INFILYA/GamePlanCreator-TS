@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { TMix, TPlayer } from "../types/types";
+import { TDiagramm, TMix, TPlayer } from "../types/types";
 
 export const later = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -145,7 +145,7 @@ export function setStyle(params: number): CSSProperties {
 export function isFieldExist(arg: number): number {
   return arg ? arg : 0;
 }
-export function getSumofAttacks(obj: TMix) {
+export function getSumofAttacks(obj: TDiagramm) {
   const totalAtt = [
     isFieldExist(obj["A++"]),
     isFieldExist(obj["A+"]),
@@ -157,7 +157,7 @@ export function getSumofAttacks(obj: TMix) {
   return +sumOfTotalAtt;
 }
 
-export function getSumofReceptions(obj: TMix) {
+export function getSumofReceptions(obj: TDiagramm) {
   const totalRec = [
     isFieldExist(obj["R++"]),
     isFieldExist(obj["R+"]),
@@ -169,12 +169,20 @@ export function getSumofReceptions(obj: TMix) {
   return +sumOfTotalRec;
 }
 
-export function gerPercentOfPerfectReception(obj: TMix) {
+export function getServiceEfficency(obj: TDiagramm) {
+  const totalService = [obj["S++"], obj["S+"], obj["S-"], obj["S="], obj["S!"]];
+  const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
+  if (sumOfTotalService === 0) return 0;
+  const efficencyService = +((getPlusMinusService(obj) / sumOfTotalService) * 100);
+  return Math.round(efficencyService);
+}
+
+export function gerPercentOfPerfectReception(obj: TDiagramm) {
   if (getSumofReceptions(obj) === 0) return 0;
   const percents = +((isFieldExist(obj["R++"]) / getSumofReceptions(obj)) * 100);
   return Math.round(percents);
 }
-export function gerPercentOfPositiveReception(obj: TMix) {
+export function gerPercentOfPositiveReception(obj: TDiagramm) {
   if (getSumofReceptions(obj) === 0) return 0;
   const percents = +(
     ((isFieldExist(obj["R++"]) + isFieldExist(obj["R+"])) / getSumofReceptions(obj)) *
@@ -183,48 +191,42 @@ export function gerPercentOfPositiveReception(obj: TMix) {
   return Math.round(percents);
 }
 
-export function gerPercentOfAttack(obj: TMix) {
+export function gerPercentOfAttack(obj: TDiagramm) {
+  if (getSumofAttacks(obj) === 0) return 0;
   const percents = +((isFieldExist(obj["A++"]) / getSumofAttacks(obj)) * 100);
   return Math.round(percents);
 }
 
-export function getAttackEfficency(obj: TMix) {
+export function getAttackEfficency(obj: TDiagramm) {
+  if (getSumofAttacks(obj) === 0) return 0;
   const efficencyAttack = +((getPlusMinusAttack(obj) / getSumofAttacks(obj)) * 100);
   return Math.round(efficencyAttack);
 }
 
-export function getServiceEfficency(obj: TMix) {
-  const totalService = [obj["S++"], obj["S+"], obj["S-"], obj["S="], obj["S!"]];
-  const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
-  if (sumOfTotalService === 0) return 0;
-  const efficencyService = +((getPlusMinusService(obj) / sumOfTotalService) * 100);
-  return Math.round(efficencyService);
-}
-
-export function getPlusMinusService(obj: TMix) {
+export function getPlusMinusService(obj: TDiagramm) {
   return isFieldExist(obj["S++"]) - isFieldExist(obj["S="]);
 }
-export function getPlusMinusAttack(obj: TMix) {
+export function getPlusMinusAttack(obj: TDiagramm) {
   return isFieldExist(obj["A++"]) - (isFieldExist(obj["A-"]) + isFieldExist(obj["A="]));
 }
 
-export function calculateTotalofActions(obj: TMix[]) {
-  const loosePoints = obj.reduce((acc, val) => (acc += val["A="] ? val["A="] : 0), 0);
-  const winPoints = obj.reduce((acc, val) => (acc += val["A++"] ? val["A++"] : 0), 0);
-  const leftInTheGamePlus = obj.reduce((acc, val) => (acc += val["A+"] ? val["A+"] : 0), 0);
-  const leftInTheGameMinus = obj.reduce((acc, val) => (acc += val["A!"] ? val["A!"] : 0), 0);
-  const attacksInBlock = obj.reduce((acc, val) => (acc += val["A-"] ? val["A-"] : 0), 0);
-  const ace = obj.reduce((acc, val) => (acc += val["S++"] ? val["S++"] : 0), 0);
-  const serviceFailed = obj.reduce((acc, val) => (acc += val["S="] ? val["S="] : 0), 0);
-  const serviceExclamation = obj.reduce((acc, val) => (acc += val["S!"] ? val["S!"] : 0), 0);
-  const servicePlus = obj.reduce((acc, val) => (acc += val["S+"] ? val["S+"] : 0), 0);
-  const serviceMinus = obj.reduce((acc, val) => (acc += val["S-"] ? val["S-"] : 0), 0);
-  const rPerfect = obj.reduce((acc, val) => (acc += val["R++"] ? val["R++"] : 0), 0);
-  const rPlus = obj.reduce((acc, val) => (acc += val["R+"] ? val["R+"] : 0), 0);
-  const rExclamation = obj.reduce((acc, val) => (acc += val["R!"] ? val["R!"] : 0), 0);
-  const rAce = obj.reduce((acc, val) => (acc += val["R="] ? val["R="] : 0), 0);
-  const rMinus = obj.reduce((acc, val) => (acc += val["R-"] ? val["R-"] : 0), 0);
-  const blocks = obj.reduce((acc, val) => (acc += val.blocks ? val.blocks : 0), 0);
+export function calculateTotalofActions(obj: TMix[]): TDiagramm {
+  const loosePoints = obj.reduce((acc, val) => (acc += isFieldExist(val["A="])), 0);
+  const winPoints = obj.reduce((acc, val) => (acc += isFieldExist(val["A++"])), 0);
+  const leftInTheGamePlus = obj.reduce((acc, val) => (acc += isFieldExist(val["A+"])), 0);
+  const leftInTheGameMinus = obj.reduce((acc, val) => (acc += isFieldExist(val["A!"])), 0);
+  const attacksInBlock = obj.reduce((acc, val) => (acc += isFieldExist(val["A-"])), 0);
+  const ace = obj.reduce((acc, val) => (acc += isFieldExist(val["S++"])), 0);
+  const serviceFailed = obj.reduce((acc, val) => (acc += isFieldExist(val["S="])), 0);
+  const serviceExclamation = obj.reduce((acc, val) => (acc += isFieldExist(val["S!"])), 0);
+  const servicePlus = obj.reduce((acc, val) => (acc += isFieldExist(val["S+"])), 0);
+  const serviceMinus = obj.reduce((acc, val) => (acc += isFieldExist(val["S-"])), 0);
+  const rPerfect = obj.reduce((acc, val) => (acc += isFieldExist(val["R++"])), 0);
+  const rPlus = obj.reduce((acc, val) => (acc += isFieldExist(val["R+"])), 0);
+  const rExclamation = obj.reduce((acc, val) => (acc += isFieldExist(val["R!"])), 0);
+  const rAce = obj.reduce((acc, val) => (acc += isFieldExist(val["R="])), 0);
+  const rMinus = obj.reduce((acc, val) => (acc += isFieldExist(val["R-"])), 0);
+  const blocks = obj.reduce((acc, val) => (acc += isFieldExist(val.blocks)), 0);
   const sumOfAllPlayersSoloGamesStats = {
     "A=": loosePoints,
     "A++": winPoints,
@@ -296,8 +298,6 @@ export function forSoloGameStat(obj: TPlayer): TPlayer {
     } else continue;
   }
   return newObj;
-
-  // return Object.keys(forSoloGameStat(newObj)).length < 3 && newObj;
 }
 
 export const rows = [

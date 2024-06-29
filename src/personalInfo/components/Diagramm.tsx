@@ -3,7 +3,7 @@ import HighchartsReact from "highcharts-react-official";
 import { useSelector } from "react-redux";
 import { selectPlayerInfo } from "../../states/slices/playerInfoSlice";
 import { TMix } from "../../types/types";
-import { getSumofAttacks } from "../../utilities/functions";
+import { getSumofAttacks, isFieldExist } from "../../utilities/functions";
 
 type TDiagrammProps = {
   link: string;
@@ -26,10 +26,10 @@ export default function Diagramm(props: TDiagrammProps) {
       enabled: false,
       text:
         link === "Attack"
-          ? `<b style="font-size:calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem)">Attack</b>`
+          ? `<b style="font-size:calc((var(--normal-text-size-value) - 1) * 4vmax + 0.2rem)">Attack</b>`
           : link === "Service"
-          ? `<b style="font-size:calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem)">Service</b>`
-          : `<b style="font-size:calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem)">Reception</b>`,
+          ? `<b style="font-size:calc((var(--normal-text-size-value) - 1) * 4vmax + 0.2rem)">Service</b>`
+          : `<b style="font-size:calc((var(--normal-text-size-value) - 1) * 4vmax + 0.2rem)">Reception</b>`,
     },
     tooltip: {
       headerFormat: '<span style="font-size:1.5vw">{series.name}</span><br>',
@@ -50,7 +50,7 @@ export default function Diagramm(props: TDiagrammProps) {
           distance: "-25%",
           style: {
             fontWeight: "bold",
-            fontSize: "calc((var(--normal-text-size-value) - 1) * 5vmax + 0.1rem)",
+            fontSize: "calc((var(--normal-text-size-value) - 1) * 1vmax + 0.8rem)",
             color: "black",
           },
         },
@@ -100,11 +100,11 @@ export default function Diagramm(props: TDiagrammProps) {
     if (playerInfo === null) return;
     if (link === "Attack") {
       const totalAtt = [
-        playerInfo["A++"],
-        playerInfo["A+"],
-        playerInfo["A!"],
-        playerInfo["A-"],
-        playerInfo["A="],
+        isFieldExist(playerInfo["A++"]),
+        isFieldExist(playerInfo["A+"]),
+        isFieldExist(playerInfo["A!"]),
+        isFieldExist(playerInfo["A-"]),
+        isFieldExist(playerInfo["A="]),
       ];
       const percentOfActions = totalAtt.map(
         (att) => +((att / getSumofAttacks(playerInfo)) * 100).toFixed(1)
@@ -112,11 +112,11 @@ export default function Diagramm(props: TDiagrammProps) {
       return percentOfActions[index];
     } else if (link === "Service") {
       const totalService = [
-        playerInfo["S++"],
-        playerInfo["S+"],
-        playerInfo["S!"],
-        playerInfo["S-"],
-        playerInfo["S="],
+        isFieldExist(playerInfo["S++"]),
+        isFieldExist(playerInfo["S+"]),
+        isFieldExist(playerInfo["S!"]),
+        isFieldExist(playerInfo["S-"]),
+        isFieldExist(playerInfo["S="]),
       ];
       const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
       const percentOfActions = totalService.map(
@@ -125,11 +125,11 @@ export default function Diagramm(props: TDiagrammProps) {
       return percentOfActions[index];
     } else if (link === "Reception") {
       const totalReception = [
-        playerInfo["R++"],
-        playerInfo["R+"],
-        playerInfo["R!"],
-        playerInfo["R-"],
-        playerInfo["R="],
+        isFieldExist(playerInfo["R++"]),
+        isFieldExist(playerInfo["R+"]),
+        isFieldExist(playerInfo["R!"]),
+        isFieldExist(playerInfo["R-"]),
+        isFieldExist(playerInfo["R="]),
       ];
       const sumOfTotalReception = totalReception.reduce((a, b) => a + b, 0);
       const percentOfActions = totalReception.map(
