@@ -92,7 +92,7 @@ main .main-content-wrapper {
   justify-content: center;
 }
 main .main-content-wrapper section .diagram-content {
-  width: 100%;
+  width: 99%;
 }
 main .main-content-wrapper section .diagram-content .split-arrow-wrapper .arrow-content {
   margin-top: -40px;
