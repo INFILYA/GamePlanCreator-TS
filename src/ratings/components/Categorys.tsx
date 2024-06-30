@@ -1,10 +1,10 @@
-import { TMix } from "../../types/types";
+import { TMix, TMixKeys } from "../../types/types";
 import { Rows } from "./Rows";
 
 type TCategorys = {
   filteredPlayers: TMix[];
-  rankByValue<T extends TMix>(criteria: keyof T, arr: T[]): void;
-  categorys: string[];
+  rankByValue<const T extends TMix>(criteria: keyof T, arr: T[]): void;
+  categorys: TMixKeys[];
 };
 
 export function Categorys(props: TCategorys) {
@@ -16,7 +16,7 @@ export function Categorys(props: TCategorys) {
         {categorys.map((category, index) => (
           <th
             key={index}
-            onClick={() => rankByValue(category as keyof TMix, filteredPlayers)}
+            onClick={() => rankByValue(category, filteredPlayers)}
             title={`Click to sort by ${category}`}
             style={
               !isFull

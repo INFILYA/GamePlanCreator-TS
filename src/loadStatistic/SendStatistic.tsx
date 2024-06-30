@@ -14,7 +14,6 @@ export default function SendStatistic() {
     } catch (e) {
       console.error(e);
     }
-    console.log("done");
   }
   return (
     <SectionWrapper>

@@ -90,64 +90,7 @@ export default function GamePlanCreator() {
       }
     }
     appIsReady();
-    // async function checkVersionOfData() {
-    //   try {
-    //     setIsLoading(true);
-    //     await later(2500);
-    //     const data = await getDocs(collection(dataBase, "dataVersion"));
-    //     const adminVersion = data.docs[0].data().currentVersion;
-    //     dispatch(setUserVersion(adminVersion));
-    //     if (adminVersion === userVersion) {
-    //       dispatch(setAllPlayers(getFromLocalStorage("players")));
-    //       dispatch(setAllTeams(getFromLocalStorage("teams")));
-    //       console.log(`Versions of DATA are equal ${userVersion} = ${adminVersion}`);
-    //       return;
-    //     }
-    //     if (adminVersion !== userVersion) {
-    //       dispatch(setisShowedTutorial(false));
-    //       localStorage.setItem("isShowedTutorial", JSON.stringify(false));
-    //       localStorage.setItem("currentUserVersion", JSON.stringify(adminVersion));
-    //       getTeams();
-    //       getPlayers();
-    //       console.log(`Versions of DATA are not equal ${userVersion} != ${adminVersion}`);
-    //       return;
-    //     }
-    //   } catch (error) {
-    //     console.error(error);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // }
-    // async function getPlayers() {
-    //   try {
-    //     const data = await getDocs(collection(dataBase, "players"));
-    //     const players = data.docs.map((doc) => ({ ...doc.data() })) as unknown as TPlayer[];
-    //     dispatch(setAllPlayers(players));
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // }
-    // async function getTeams() {
-    //   try {
-    //     const data = await getDocs(collection(dataBase, "teams"));
-    //     const teams = data.docs.map((doc) => ({ ...doc.data() })) as unknown as TTeam[];
-    //     dispatch(setAllTeams(teams));
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // }
-    // async function loadGames() {
-    //   try {
-    //     dispatch(fetchGamesStats());
-    //   } catch (e) {
-    //     console.error(e);
-    //     alert("something go wrong");
-    //   }
-    // }
-    // loadGames();
-    // checkVersionOfData();
   }, [dispatch, isRegistratedUser]);
-
   const TUTORIAL = !changeLanguage ? UKRTUTORIAL : ENGTUTORIAL;
   return (
     <>

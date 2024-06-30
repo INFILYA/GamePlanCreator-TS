@@ -26,6 +26,7 @@ export type TDiagramm = TDiagrammWithoutBlock & { blocks: number };
 export type TDiagrammWithoutBlock = TAttackDiagramm & TServiceDiagramm & TReceptionDiagramm;
 
 export type TTeam = TPartTeam & TDiagramm;
+export type TMixKeys = keyof TMix;
 
 export type TPartTeam = {
   age: number;

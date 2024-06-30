@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { TDiagramm, TMix, TPlayer } from "../types/types";
+import { TDiagramm, TMix, TMixKeys, TPlayer } from "../types/types";
 
 export const later = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -352,7 +352,7 @@ export const categorys = [
   "S+",
   "S++",
   "blocks",
-];
+] as TMixKeys[];
 
 export const listOfOpponents = [
   "Choose Opponent",
