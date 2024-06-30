@@ -8,7 +8,13 @@ import {
 import { ChangeEvent, useState } from "react";
 import { TMix, TObjectStats, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
-import { calculateTotalofActions, categorys, compare, isFieldExist, jusName } from "../utilities/functions";
+import {
+  calculateTotalofActions,
+  categorys,
+  compare,
+  isFieldExist,
+  jusName,
+} from "../utilities/functions";
 import { Categorys } from "../ratings/components/Categorys";
 import { Rows } from "../ratings/components/Rows";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
@@ -45,12 +51,13 @@ export default function GamesStatistic() {
     }
     return team;
   }
-  function rankByValue<T extends TMix>(criteria: keyof T, arr: T[]) {
+  function rankByValue<T extends TMix>(criteria: keyof TMix, arr: T[]) {
+    const properArr = criteria === "name" ? choosenGameStats : arr;
     !isBiggest
-      ? arr.sort((a, b) =>
+      ? properArr.sort((a, b) =>
           compare(isFieldExist(b[criteria] as number), isFieldExist(a[criteria] as number))
         )
-      : arr.sort((a, b) =>
+      : properArr.sort((a, b) =>
           compare(isFieldExist(a[criteria] as number), isFieldExist(b[criteria] as number))
         );
     setIsBiggest(!isBiggest);

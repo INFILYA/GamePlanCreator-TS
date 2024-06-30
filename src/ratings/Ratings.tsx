@@ -31,12 +31,13 @@ export function Ratings() {
     const choosenAmplua = listOfPlayers.filter((player) => player.position === position);
     setFilteredPlayers(choosenAmplua);
   }
-  function rankByValue<T extends TMix>(criteria: keyof T, arr: T[]) {
+  function rankByValue<T extends TMix>(criteria: keyof TMix, arr: T[]) {
+    const properArr = criteria === "name" ? filteredPlayers : arr;
     !isBiggest
-      ? arr.sort((a, b) =>
+      ? properArr.sort((a, b) =>
           compare(isFieldExist(b[criteria] as number), isFieldExist(a[criteria] as number))
         )
-      : arr.sort((a, b) =>
+      : properArr.sort((a, b) =>
           compare(isFieldExist(a[criteria] as number), isFieldExist(b[criteria] as number))
         );
     setIsBiggest(!isBiggest);
