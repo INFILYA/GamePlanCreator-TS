@@ -148,12 +148,13 @@ main {
     .ratings-section,
     .playground-section {
       align-self: center;
-      width: 60%;
+      width: 80%;
       position: relative;
       z-index: 6;
     }
     .playground-section {
       align-self: baseline;
+      width: 60%;
       .section-border {
         .section-background {
           display: flex;
@@ -186,8 +187,6 @@ main {
     .ratings-section {
       @media screen and (max-width: 1600px) {
         width: 95%;
-        display: flex;
-        justify-content: center;
       }
     }
     // Кінець

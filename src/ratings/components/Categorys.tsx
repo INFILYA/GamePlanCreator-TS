@@ -4,34 +4,12 @@ import { Rows } from "./Rows";
 type TCategorys = {
   filteredPlayers: TMix[];
   rankByValue<T extends TMix>(criteria: keyof T, arr: T[]): void;
+  categorys: string[];
 };
 
 export function Categorys(props: TCategorys) {
-  const { filteredPlayers, rankByValue } = props;
-  const categorys = [
-    "name",
-    "+/-",
-    "blocks",
-    "S=",
-    "S-",
-    "S!",
-    "S+",
-    "S++",
-    "A=",
-    "A-",
-    "A!",
-    "A+",
-    "A++",
-    "R=",
-    "R-",
-    "R!",
-    "R+",
-    "R++",
-    "R#%",
-    "R+%",
-    "Effic",
-    "A%",
-  ];
+  const { filteredPlayers, categorys, rankByValue } = props;
+  const isFull = Object.values(filteredPlayers[0]).length === 1;
   return (
     <>
       <tr>
@@ -40,8 +18,27 @@ export function Categorys(props: TCategorys) {
             key={index}
             onClick={() => rankByValue(category as keyof TMix, filteredPlayers)}
             title={`Click to sort by ${category}`}
+            style={
+              !isFull
+                ? {}
+                : {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }
+            }
           >
-            <button style={{ transform: "rotate(90deg)" }}>{category}</button>
+            <button
+              style={
+                isFull
+                  ? {}
+                  : {
+                      transform: "rotate(90deg)",
+                    }
+              }
+            >
+              {category}
+            </button>
           </th>
         ))}
       </tr>

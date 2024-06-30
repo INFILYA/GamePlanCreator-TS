@@ -4,7 +4,7 @@ import { selectPlayerInfo } from "../states/slices/playerInfoSlice";
 import { PersonalInformationOfPlayer } from "../personalInfo/PersonalInformationOfPlayer";
 import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
 import { useState } from "react";
-import { compare } from "../utilities/functions";
+import { categorys, compare, isFieldExist, jusName } from "../utilities/functions";
 import { TMix } from "../types/types";
 import { Categorys } from "./components/Categorys";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
@@ -33,10 +33,17 @@ export function Ratings() {
   }
   function rankByValue<T extends TMix>(criteria: keyof T, arr: T[]) {
     !isBiggest
-      ? arr.sort((a, b) => compare(b[criteria], a[criteria]))
-      : arr.sort((a, b) => compare(a[criteria], b[criteria]));
+      ? arr.sort((a, b) =>
+          compare(isFieldExist(b[criteria] as number), isFieldExist(a[criteria] as number))
+        )
+      : arr.sort((a, b) =>
+          compare(isFieldExist(a[criteria] as number), isFieldExist(b[criteria] as number))
+        );
     setIsBiggest(!isBiggest);
   }
+
+  const playersNames = filteredPlayers.map((player) => jusName(player));
+
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">
@@ -45,34 +52,47 @@ export function Ratings() {
           <PersonalInformationOfPlayer link="page1" />
         ) : (
           <>
-            <table>
-              <caption className="showRatings-wrapper">
-                <nav>
-                  <div className="team-filter-wrapper">
-                    {positions.map((position, index) => (
-                      <div key={index}>
-                        <RegularButton
-                          onClick={() => setPositionFilter(position.replace(/[a-z]/g, ""))}
-                          type="button"
-                          $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
-                          $background={chosenPosition === position ? "#0057b8" : "#ffd700"}
-                        >{`${position}s`}</RegularButton>
-                      </div>
-                    ))}
+            <nav>
+              <div className="team-filter-wrapper">
+                {positions.map((position, index) => (
+                  <div key={index}>
+                    <RegularButton
+                      onClick={() => setPositionFilter(position.replace(/[a-z]/g, ""))}
+                      type="button"
+                      $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
+                      $background={chosenPosition === position ? "#0057b8" : "#ffd700"}
+                    >{`${position}s`}</RegularButton>
                   </div>
-                </nav>
-              </caption>
-              {isChoosenFilter && (
-                <tbody className="rating-table-wrapper">
-                  <Categorys filteredPlayers={filteredPlayers} rankByValue={rankByValue} />
-                </tbody>
-              )}
-            </table>
+                ))}
+              </div>
+            </nav>
             {isChoosenFilter && (
-              <div className="type-of-actions-wrapper">
-                <div className="service-content">Service</div>
-                <div className="attack-content">Attack</div>
-                <div className="reception-content">Reception</div>
+              <div style={{ display: "flex" }}>
+                <table>
+                  <tbody className="rating-table-wrapper">
+                    <Categorys
+                      filteredPlayers={playersNames}
+                      rankByValue={rankByValue}
+                      categorys={["name"]}
+                    />
+                  </tbody>
+                </table>
+                <div>
+                  <table style={{ width: "100%" }}>
+                    <tbody className="rating-table-wrapper">
+                      <Categorys
+                        filteredPlayers={filteredPlayers}
+                        rankByValue={rankByValue}
+                        categorys={categorys}
+                      />
+                    </tbody>
+                  </table>
+                  <div className="type-of-actions-wrapper">
+                    <div className="service-content">Service</div>
+                    <div className="attack-content">Attack</div>
+                    <div className="reception-content">Reception</div>
+                  </div>
+                </div>
               </div>
             )}
           </>

@@ -11,6 +11,7 @@ import {
   getPlusMinusService,
   isFieldExist,
   rows,
+  setStyle,
   setStyleForEfficency,
   setStyleForPercent,
 } from "../../utilities/functions";
@@ -32,63 +33,67 @@ export function Rows(props: TRows) {
     if ("startingSquad" in pickedPlayer) return;
     dispatch(setInfoOfPlayer(pickedPlayer));
   }
+  const isFull = Object.values(filteredPlayers[0]).length === 1;
 
+  function plusMinus(obj: TMix) {
+    const result =
+      getPlusMinusAttack(obj) +
+      getPlusMinusService(obj) +
+      isFieldExist(obj.blocks) -
+      isFieldExist(obj["R="]);
+    return result;
+  }
   return (
     <>
-      {filteredPlayers.map((player, index) => (
-        <tr
-          onClick={() => showInfoOfPlayer(player.name)}
-          key={index}
-          className="rating-row"
-          style={lastRow ? { backgroundColor: "gainsboro" } : {}}
-        >
-          <td className="rating-player-name">{player.name}</td>
-          <td>
-            {getPlusMinusAttack(player) +
-              getPlusMinusService(player) +
-              isFieldExist(player.blocks) -
-              isFieldExist(player["R="])}
-          </td>
-          <td>{player.blocks}</td>
-          {rows.map((row) => (
-            <td
-              key={row[0]}
-              style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "khaki" }}
+      {!isFull
+        ? filteredPlayers.map((player, index) => (
+            <tr
+              onClick={() => showInfoOfPlayer(player.name)}
+              key={index}
+              className="rating-row"
+              style={lastRow ? { backgroundColor: "gainsboro" } : {}}
             >
-              {player[`S${row[0]}`]}
-            </td>
-          ))}
-          {rows.map((row) => (
-            <td
-              key={row[0]}
-              style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "gainsboro" }}
+              <td style={setStyle(plusMinus(player))}>{plusMinus(player)}</td>
+              <td style={setStyleForEfficency(gerPercentOfPerfectReception(player))}>
+                {gerPercentOfPerfectReception(player)}%
+              </td>
+              <td style={setStyleForEfficency(gerPercentOfPositiveReception(player))}>
+                {gerPercentOfPositiveReception(player)}%
+              </td>
+              {rows.map((row) => (
+                <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
+                  {player[`S${row[0]}`]}
+                </td>
+              ))}
+              {rows.map((row) => (
+                <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
+                  {player[`A${row[0]}`]}
+                </td>
+              ))}
+              {rows.map((row) => (
+                <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
+                  {player[`R${row[0]}`]}
+                </td>
+              ))}
+              <td style={setStyleForEfficency(getAttackEfficency(player))}>
+                {getAttackEfficency(player)}%
+              </td>
+              <td style={setStyleForPercent(gerPercentOfAttack(player))}>
+                {gerPercentOfAttack(player)}%
+              </td>
+              <td>{player.blocks}</td>
+            </tr>
+          ))
+        : filteredPlayers.map((player, index) => (
+            <tr
+              onClick={() => showInfoOfPlayer(player.name)}
+              key={index}
+              className="rating-row"
+              style={lastRow ? { backgroundColor: "gainsboro" } : {}}
             >
-              {player[`A${row[0]}`]}
-            </td>
+              <td className="rating-player-name">{player.name}</td>
+            </tr>
           ))}
-          {rows.map((row) => (
-            <td
-              key={row[0]}
-              style={lastRow ? { backgroundColor: row[1] } : { backgroundColor: "darkseagreen" }}
-            >
-              {player[`R${row[0]}`]}
-            </td>
-          ))}
-          <td style={setStyleForEfficency(gerPercentOfPerfectReception(player))}>
-            {gerPercentOfPerfectReception(player)}%
-          </td>
-          <td style={setStyleForEfficency(gerPercentOfPositiveReception(player))}>
-            {gerPercentOfPositiveReception(player)}%
-          </td>
-
-          <td style={setStyleForEfficency(getAttackEfficency(player))}>
-            {getAttackEfficency(player)}%
-          </td>
-          <td style={setStyleForPercent(gerPercentOfAttack(player))}>
-            {gerPercentOfAttack(player)}%
-          </td>
-        </tr>
-      ))}
     </>
   );
 }

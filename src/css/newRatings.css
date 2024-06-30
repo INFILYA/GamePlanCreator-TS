@@ -1,68 +1,59 @@
 .main-content-wrapper .ratings-section {
   width: 100%;
 }
-.main-content-wrapper .ratings-section table {
-  table-layout: fixed;
-  width: 100%;
-  align-self: baseline;
-}
-.main-content-wrapper .ratings-section table caption nav {
+.main-content-wrapper .ratings-section nav {
   width: 100%;
   margin: 1vw 0;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
 }
-.main-content-wrapper .ratings-section table caption nav .team-filter-wrapper {
+.main-content-wrapper .ratings-section nav .team-filter-wrapper {
   display: flex;
   justify-content: center;
   margin-top: 1vw;
 }
-.main-content-wrapper .ratings-section table caption nav .choosen-game-filter-wrapper {
+.main-content-wrapper .ratings-section nav .choosen-game-filter-wrapper {
   margin: 1vw 0 1vw 0;
 }
-.main-content-wrapper .ratings-section table caption nav .choosen-game-filter-wrapper div {
+.main-content-wrapper .ratings-section nav .choosen-game-filter-wrapper div {
   font-size: 1.25vmax;
   margin: 0.1vmax 0 0.1vmax 0;
 }
-.main-content-wrapper .ratings-section table caption nav .choosen-game-filter-wrapper select,
-.main-content-wrapper .ratings-section table caption nav .choosen-game-filter-wrapper input {
+.main-content-wrapper .ratings-section nav .choosen-game-filter-wrapper select,
+.main-content-wrapper .ratings-section nav .choosen-game-filter-wrapper input {
   border: 2px solid black;
   font-size: 1.25vmax;
   background-color: darkorange;
   border-radius: 5px;
   text-align: center;
 }
-.main-content-wrapper .ratings-section table caption nav .choosen-game-filter-wrapper input {
+.main-content-wrapper .ratings-section nav .choosen-game-filter-wrapper select option,
+.main-content-wrapper .ratings-section nav .choosen-game-filter-wrapper input option {
+  font-weight: 600;
+}
+.main-content-wrapper .ratings-section nav .choosen-game-filter-wrapper select {
+  font-weight: 600;
+}
+.main-content-wrapper .ratings-section nav .choosen-game-filter-wrapper input {
   background-color: transparent;
 }
-.main-content-wrapper .ratings-section table caption nav .set-selection-wrapper {
+.main-content-wrapper .ratings-section nav .set-selection-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.main-content-wrapper .ratings-section table caption nav .set-selection-wrapper div {
+.main-content-wrapper .ratings-section nav .set-selection-wrapper div {
   font-size: 1.25vmax;
   font-weight: bold;
 }
-.main-content-wrapper .ratings-section table caption nav .set-selection-wrapper input {
+.main-content-wrapper .ratings-section nav .set-selection-wrapper input {
   font-size: 1.25vmax;
   margin: 1vw 2vw 0 2vw;
 }
-.main-content-wrapper .ratings-section table tbody .showInfo-wrapper {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  position: fixed;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
+.main-content-wrapper .ratings-section table {
+  table-layout: fixed;
+  align-self: baseline;
 }
-.main-content-wrapper .ratings-section table tbody .showInfo-wrapper .hidden-player-information-wrapper {
-  width: 55vw;
+.main-content-wrapper .ratings-section table tbody tr {
+  text-align: center;
 }
 .main-content-wrapper .ratings-section table tbody tr th {
   background-color: rgb(100, 149, 237);
@@ -78,40 +69,40 @@
 }
 .main-content-wrapper .ratings-section table tbody tr th button {
   height: 10vmin;
-  width: 100%;
+  width: 3vw;
   background-color: transparent;
   border: none;
   font-size: calc((var(--normal-text-size-value) - 1) * 3.5vmin + 0.4rem);
   font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   color: #000;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
 .main-content-wrapper .ratings-section table tbody tr td {
-  font-size: calc((var(--normal-text-size-value) - 1) * 1.5vw + 0.5rem);
+  font-size: calc((var(--normal-text-size-value) - 1) * 2.5vw + 0.3rem);
   box-sizing: border-box;
   white-space: nowrap;
   overflow: hidden;
   height: 2.5vw;
-  font-weight: 600;
+  border: 1px solid;
 }
 .main-content-wrapper .ratings-section table tbody tr .rating-player-name {
   padding: 0 0.5vw;
   text-align: center;
-  white-space: inherit;
   width: 10vw;
+  font-weight: 600;
 }
 .main-content-wrapper .ratings-section .type-of-actions-wrapper {
   display: flex;
-  width: 68%;
   justify-content: center;
-  margin-left: -4.7%;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
 }
 .main-content-wrapper .ratings-section .type-of-actions-wrapper .service-content,
 .main-content-wrapper .ratings-section .type-of-actions-wrapper .attack-content,
 .main-content-wrapper .ratings-section .type-of-actions-wrapper .reception-content {
-  width: 100%;
+  width: 23.8%;
   font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.6rem);
   font-weight: 600;
 }

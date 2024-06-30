@@ -8,7 +8,7 @@ import {
 import { ChangeEvent, useState } from "react";
 import { TMix, TObjectStats, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
-import { calculateTotalofActions, compare } from "../utilities/functions";
+import { calculateTotalofActions, categorys, compare, jusName } from "../utilities/functions";
 import { Categorys } from "../ratings/components/Categorys";
 import { Rows } from "../ratings/components/Rows";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
@@ -130,6 +130,7 @@ export default function GamesStatistic() {
   const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats) as TMix);
   const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
   const namesOfTeams = listOfTeams.map((team) => team.name);
+  const playersNames = choosenGameStats.map((player) => jusName(player));
 
   return (
     <article className="main-content-wrapper">
@@ -138,88 +139,99 @@ export default function GamesStatistic() {
           <PersonalInformationOfPlayer link="page1" />
         ) : (
           <>
-            <table>
-              <caption className="showRatings-wrapper">
-                <nav>
-                  <div className="team-filter-wrapper">
-                    {namesOfTeams.map((name) => (
-                      <div key={name}>
-                        <RegularButton
-                          onClick={() => setGameFilterByTeam(name)}
-                          type="button"
-                          $color={teamFilter.team === name ? "#ffd700" : "#0057b8"}
-                          $background={teamFilter.team === name ? "#0057b8" : "#ffd700"}
-                        >
-                          {name}
-                        </RegularButton>
-                      </div>
-                    ))}
+            <nav>
+              <div className="team-filter-wrapper">
+                {namesOfTeams.map((name) => (
+                  <div key={name}>
+                    <RegularButton
+                      onClick={() => setGameFilterByTeam(name)}
+                      type="button"
+                      $color={teamFilter.team === name ? "#ffd700" : "#0057b8"}
+                      $background={teamFilter.team === name ? "#0057b8" : "#ffd700"}
+                    >
+                      {name}
+                    </RegularButton>
                   </div>
-                  <div className="choosen-game-filter-wrapper">
-                    <select onChange={handleGameFilter} value={filter}>
-                      <option value="">Choose Game ({sortedGameStats.length})</option>
-                      {sortedGameStats.map((game, index) => (
-                        <option value={Object.keys(game)} key={index}>
-                          {Object.keys(game)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {filteredGames.length !== 0 && (
-                    <div className="set-selection-wrapper">
-                      {filteredGames.map((set) => (
-                        <div key={Object.keys(set)[0]}>
-                          <div>{Object.keys(set)}</div>
-                          <input
-                            type="checkbox"
-                            value={Object.keys(set)}
-                            onChange={handleChoosenSet}
-                            checked={Object.keys(set)[0] === choosenSet}
-                          />
-                        </div>
-                      ))}
-                      <div>
-                        <div>Full game</div>
-                        <input
-                          type="checkbox"
-                          value="full"
-                          onChange={handleChoosenSet}
-                          checked={"full" === choosenSet}
-                        />
-                      </div>
+                ))}
+              </div>
+              <div className="choosen-game-filter-wrapper">
+                <select onChange={handleGameFilter} value={filter}>
+                  <option value="">Choose Game ({sortedGameStats.length})</option>
+                  {sortedGameStats.map((game, index) => (
+                    <option value={Object.keys(game)} key={index}>
+                      {Object.keys(game)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {filteredGames.length !== 0 && (
+                <div className="set-selection-wrapper">
+                  {filteredGames.map((set) => (
+                    <div key={Object.keys(set)[0]}>
+                      <div>{Object.keys(set)}</div>
+                      <input
+                        type="checkbox"
+                        value={Object.keys(set)}
+                        onChange={handleChoosenSet}
+                        checked={Object.keys(set)[0] === choosenSet}
+                      />
                     </div>
-                  )}
-                </nav>
-              </caption>
-              {filter && (
-                <tbody className="rating-table-wrapper">
-                  <Categorys filteredPlayers={choosenGameStats} rankByValue={rankByValue} />
-                  <Rows filteredPlayers={[fullGameStats]} lastRow={true} />
-                </tbody>
+                  ))}
+                  <div>
+                    <div>Full game</div>
+                    <input
+                      type="checkbox"
+                      value="full"
+                      onChange={handleChoosenSet}
+                      checked={"full" === choosenSet}
+                    />
+                  </div>
+                </div>
               )}
-            </table>
+            </nav>
             {filter && (
-              <>
-                <div className="type-of-actions-wrapper">
-                  <div className="service-content">Service</div>
-                  <div className="attack-content">Attack</div>
-                  <div className="reception-content">Reception</div>
+              <div style={{ display: "flex" }}>
+                <table>
+                  <tbody className="rating-table-wrapper">
+                    <Categorys
+                      filteredPlayers={playersNames}
+                      rankByValue={rankByValue}
+                      categorys={["name"]}
+                    />
+                  </tbody>
+                </table>
+                <div>
+                  <table style={{ width: "100%" }}>
+                    <tbody className="rating-table-wrapper">
+                      <Categorys
+                        filteredPlayers={choosenGameStats}
+                        rankByValue={rankByValue}
+                        categorys={categorys}
+                      />
+                      <Rows filteredPlayers={[fullGameStats]} lastRow={true} />
+                    </tbody>
+                  </table>
+                  <div className="type-of-actions-wrapper">
+                    <div className="service-content">Service</div>
+                    <div className="attack-content">Attack</div>
+                    <div className="reception-content">Reception</div>
+                  </div>
+                  <div
+                    className="diagram-wrapper"
+                    style={!isBurger ? { flexDirection: "column" } : {}}
+                  >
+                    <div style={{ width: "80%" }}>
+                      <Diagramm link="Service" data={fullGameStats} />
+                    </div>
+                    <div style={{ width: "80%" }}>
+                      <Diagramm link="Attack" data={fullGameStats} />
+                    </div>
+                    <div style={{ width: "80%" }}>
+                      <Diagramm link="Reception" data={fullGameStats} />
+                    </div>
+                  </div>
                 </div>
-                <div
-                  className="diagram-wrapper"
-                  style={!isBurger ? { flexDirection: "column" } : {}}
-                >
-                  <div style={{ width: "80%" }}>
-                    <Diagramm link="Service" data={fullGameStats} />
-                  </div>
-                  <div style={{ width: "80%" }}>
-                    <Diagramm link="Attack" data={fullGameStats} />
-                  </div>
-                  <div style={{ width: "80%" }}>
-                    <Diagramm link="Reception" data={fullGameStats} />
-                  </div>
-                </div>
-              </>
+              </div>
             )}
           </>
         )}

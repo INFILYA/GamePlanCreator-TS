@@ -4,6 +4,16 @@ import { TDiagramm, TMix, TPlayer } from "../types/types";
 export const later = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+export function jusName(arg: TMix) {
+  const newObj = {} as TMix;
+  for (const key in arg) {
+    if (key === "name") {
+      newObj[key] = arg[key];
+    } else continue;
+  }
+  return newObj;
+}
+
 export function getFromLocalStorage(name: string) {
   const value = localStorage.getItem(name);
   if (!value) return null;
@@ -127,19 +137,31 @@ export function setStyleForEfficency(params: number): CSSProperties {
   if (params === 0) {
     return { color: "black" };
   }
-  return { color: params >= 30 ? "green" : params <= 30 && params >= 25 ? "black" : "red" };
+  return {
+    color: params >= 30 ? "green" : params <= 30 && params >= 25 ? "black" : "red",
+    backgroundColor: params >= 30 ? "palegreen" : params <= 30 && params >= 25 ? "" : "pink",
+    fontWeight: params >= 30 ? "600" : params <= 30 && params >= 25 ? "" : 600,
+  };
 }
 
 export function setStyleForPercent(params: number): CSSProperties {
   if (params === 0) {
     return { color: "black" };
   }
-  return { color: params >= 50 ? "green" : params <= 50 && params >= 45 ? "black" : "red" };
+  return {
+    color: params >= 50 ? "green" : params <= 50 && params >= 40 ? "black" : "red",
+    backgroundColor: params >= 50 ? "palegreen" : params <= 50 && params >= 40 ? "" : "pink",
+    fontWeight: params >= 50 ? "600" : params <= 50 && params >= 40 ? "" : 600,
+  };
 }
 
 export function setStyle(params: number): CSSProperties {
   if (params === 0) return {};
-  return { color: params >= 0 ? "green" : "orangered" };
+  return {
+    color: params >= 0 ? "" : "orangered",
+    backgroundColor: params >= 0 ? "" : "pink",
+    fontWeight: params >= 0 ? "" : 600,
+  };
 }
 
 export function isFieldExist(arg: number): number {
@@ -307,6 +329,30 @@ export const rows = [
   ["+", "aquamarine"],
   ["++", "lightgreen"],
 ] as const;
+
+export const categorys = [
+  "+/-",
+  "R#%",
+  "R+%",
+  "S=",
+  "S-",
+  "S!",
+  "S+",
+  "S++",
+  "A=",
+  "A-",
+  "A!",
+  "A+",
+  "A++",
+  "R=",
+  "R-",
+  "R!",
+  "R+",
+  "R++",
+  "Effic",
+  "A%",
+  "blocks",
+];
 
 export const listOfOpponents = [
   "Choose Opponent",

@@ -137,12 +137,13 @@ main .main-content-wrapper .rotation-panel-wrapper {
 main .main-content-wrapper .ratings-section,
 main .main-content-wrapper .playground-section {
   align-self: center;
-  width: 60%;
+  width: 80%;
   position: relative;
   z-index: 6;
 }
 main .main-content-wrapper .playground-section {
   align-self: baseline;
+  width: 60%;
 }
 main .main-content-wrapper .playground-section .section-border .section-background {
   display: flex;
@@ -173,8 +174,6 @@ main .main-content-wrapper .distribution-section {
 @media screen and (max-width: 1600px) {
   main .main-content-wrapper .ratings-section {
     width: 95%;
-    display: flex;
-    justify-content: center;
   }
 }
 main .main-content-wrapper .section-border {
