@@ -212,22 +212,22 @@ export default function GamesStatistic() {
                     </tbody>
                   </table>
                   <div className="type-of-actions-wrapper">
-                    <div className="service-content">Service</div>
-                    <div className="attack-content">Attack</div>
                     <div className="reception-content">Reception</div>
+                    <div className="attack-content">Attack</div>
+                    <div className="service-content">Service</div>
                   </div>
                   <div
                     className="diagram-wrapper"
                     style={!isBurger ? { flexDirection: "column" } : {}}
                   >
                     <div style={{ width: "80%" }}>
-                      <Diagramm link="Service" data={fullGameStats} />
+                      <Diagramm link="Reception" data={fullGameStats} />
                     </div>
                     <div style={{ width: "80%" }}>
                       <Diagramm link="Attack" data={fullGameStats} />
                     </div>
                     <div style={{ width: "80%" }}>
-                      <Diagramm link="Reception" data={fullGameStats} />
+                      <Diagramm link="Service" data={fullGameStats} />
                     </div>
                   </div>
                 </div>

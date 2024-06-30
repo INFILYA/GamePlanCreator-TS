@@ -54,6 +54,12 @@ export function Rows(props: TRows) {
               style={lastRow ? { backgroundColor: "gainsboro" } : {}}
             >
               <td style={setStyle(plusMinus(player))}>{plusMinus(player)}</td>
+              {rows.map((row) => (
+                <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
+                  {player[`R${row[0]}`]}
+                </td>
+              ))}
+
               <td style={setStyleForEfficency(gerPercentOfPerfectReception(player))}>
                 {gerPercentOfPerfectReception(player)}%
               </td>
@@ -62,17 +68,7 @@ export function Rows(props: TRows) {
               </td>
               {rows.map((row) => (
                 <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
-                  {player[`S${row[0]}`]}
-                </td>
-              ))}
-              {rows.map((row) => (
-                <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
                   {player[`A${row[0]}`]}
-                </td>
-              ))}
-              {rows.map((row) => (
-                <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
-                  {player[`R${row[0]}`]}
                 </td>
               ))}
               <td style={setStyleForEfficency(getAttackEfficency(player))}>
@@ -81,6 +77,11 @@ export function Rows(props: TRows) {
               <td style={setStyleForPercent(gerPercentOfAttack(player))}>
                 {gerPercentOfAttack(player)}%
               </td>
+              {rows.map((row) => (
+                <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
+                  {player[`S${row[0]}`]}
+                </td>
+              ))}
               <td>{player.blocks}</td>
             </tr>
           ))

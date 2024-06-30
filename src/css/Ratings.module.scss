@@ -102,9 +102,12 @@
       .service-content,
       .attack-content,
       .reception-content {
-        width: 23.8%;
+        width: 23.4%;
         font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.6rem);
         font-weight: 600;
+        margin: auto;
+        margin-top: -2px;
+        border: 1px solid;
       }
       .service-content {
         background-color: khaki;
