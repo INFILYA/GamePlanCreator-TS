@@ -50,7 +50,7 @@ export default function Diagramm(props: TDiagrammProps) {
           distance: "-25%",
           style: {
             fontWeight: "bold",
-            fontSize: "calc((var(--normal-text-size-value) - 1) * 1vmax + 0.8rem)",
+            fontSize: "calc((var(--normal-text-size-value) - 1) * 1.75vmax + 0.5rem)",
             color: "black",
           },
         },

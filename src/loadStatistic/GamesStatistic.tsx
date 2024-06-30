@@ -190,48 +190,50 @@ export default function GamesStatistic() {
               )}
             </nav>
             {filter && (
-              <div style={{ display: "flex" }}>
-                <table>
-                  <tbody className="rating-table-wrapper">
-                    <Categorys
-                      filteredPlayers={playersNames}
-                      rankByValue={rankByValue}
-                      categorys={["name"]}
-                    />
-                  </tbody>
-                </table>
-                <div>
-                  <table style={{ width: "100%" }}>
+              <>
+                <div style={{ display: "flex" }}>
+                  <table>
                     <tbody className="rating-table-wrapper">
                       <Categorys
-                        filteredPlayers={choosenGameStats}
+                        filteredPlayers={playersNames}
                         rankByValue={rankByValue}
-                        categorys={categorys}
+                        categorys={["name"]}
                       />
-                      <Rows filteredPlayers={[fullGameStats]} lastRow={true} />
                     </tbody>
                   </table>
-                  <div className="type-of-actions-wrapper">
-                    <div className="reception-content">Reception</div>
-                    <div className="attack-content">Attack</div>
-                    <div className="service-content">Service</div>
-                  </div>
-                  <div
-                    className="diagram-wrapper"
-                    style={!isBurger ? { flexDirection: "column" } : {}}
-                  >
-                    <div style={{ width: "80%" }}>
-                      <Diagramm link="Reception" data={fullGameStats} />
-                    </div>
-                    <div style={{ width: "80%" }}>
-                      <Diagramm link="Attack" data={fullGameStats} />
-                    </div>
-                    <div style={{ width: "80%" }}>
-                      <Diagramm link="Service" data={fullGameStats} />
+                  <div>
+                    <table style={{ width: "100%" }}>
+                      <tbody className="rating-table-wrapper">
+                        <Categorys
+                          filteredPlayers={choosenGameStats}
+                          rankByValue={rankByValue}
+                          categorys={categorys}
+                        />
+                        <Rows filteredPlayers={[fullGameStats]} lastRow={true} />
+                      </tbody>
+                    </table>
+                    <div className="type-of-actions-wrapper">
+                      <div className="reception-content">Reception</div>
+                      <div className="attack-content">Attack</div>
+                      <div className="service-content">Service</div>
                     </div>
                   </div>
                 </div>
-              </div>
+                <div
+                  className="diagram-wrapper"
+                  style={!isBurger ? { flexDirection: "column" } : {}}
+                >
+                  <div style={{ width: "80%" }}>
+                    <Diagramm link="Reception" data={fullGameStats} />
+                  </div>
+                  <div style={{ width: "80%" }}>
+                    <Diagramm link="Attack" data={fullGameStats} />
+                  </div>
+                  <div style={{ width: "80%" }}>
+                    <Diagramm link="Service" data={fullGameStats} />
+                  </div>
+                </div>
+              </>
             )}
           </>
         )}
