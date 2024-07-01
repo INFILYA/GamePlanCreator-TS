@@ -218,6 +218,12 @@
   display: block;
 }
 
+.playArea .zones-wrapper:hover > :not(:hover) {
+  opacity: 0.5;
+}
+.playArea .zones-wrapper button:hover {
+  transform: translateY(-10px);
+}
 .playArea .zones-wrapper .A2 {
   left: -6%;
   top: 45%;

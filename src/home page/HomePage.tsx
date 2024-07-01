@@ -64,6 +64,7 @@ export function HomePage() {
   const [showSquads, setShowSquads] = useState(true);
   const [nextRotation, setNextRotation] = useState(true);
   const [gameLog, setGameLog] = useState<TGameLogStats>([]);
+  const [statsForTeam, setstatsForTeam] = useState<TPlayer[][]>([]);
   const [opponentTeamName, setOpponentTeamName] = useState("");
   const [setNumber, setSetNumber] = useState("");
   const [myScore, setMyScore] = useState(0);
@@ -87,6 +88,7 @@ export function HomePage() {
     setShowSquads(true);
     resetTheBoardForHomeTeam();
     setGameLog([]);
+    setstatsForTeam([]);
     setMyScore(0);
     setRivalScore(0);
   }
@@ -164,8 +166,10 @@ export function HomePage() {
       setPlayersToData(player);
     });
     //add solo game stats
-    const newTeam = calculateForTeamData(calculateTotalofActions(SoloRallyStats) as TPlayer);
+
+    const newTeam = calculateForTeamData(calculateTotalofActions(statsForTeam.flat()) as TPlayer);
     await set(teamsRef(newTeam.name), newTeam);
+    setstatsForTeam([]);
     resetTheBoardForGuestTeam();
     setShowSquads(true);
     dispatch(setInfoOfPlayer(null));
@@ -187,6 +191,7 @@ export function HomePage() {
     setNextRotation(true);
     if (SoloRallyStats.length > 0) {
       setGameLog([...gameLog, { score: currentScore, stats: SoloRallyStats }]);
+      setstatsForTeam([...statsForTeam, SoloRallyStats]);
     }
     dispatch(resetGameStats());
     setMyScore(myScore + 1);
@@ -210,6 +215,7 @@ export function HomePage() {
     : normalSetScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1);
   const saveButton = isBoardFull(guestTeamOptions) && !showSquads && !saveDataIcon && endOfTheSet;
   //
+
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -222,6 +228,8 @@ export function HomePage() {
           setNextRotation={setNextRotation}
           gameLog={gameLog}
           setGameLog={setGameLog}
+          setstatsForTeam={setstatsForTeam}
+          statsForTeam={statsForTeam}
         />
       )}
       <SectionWrapper
@@ -478,6 +486,8 @@ export function HomePage() {
           setNextRotation={setNextRotation}
           gameLog={gameLog}
           setGameLog={setGameLog}
+          setstatsForTeam={setstatsForTeam}
+          statsForTeam={statsForTeam}
         />
       )}
     </article>

@@ -48,7 +48,6 @@ export function Rows(props: TRows) {
       {!isFull
         ? filteredPlayers.map((player, index) => (
             <tr
-              onClick={() => showInfoOfPlayer(player.name)}
               key={index}
               className="rating-row"
               style={lastRow ? { backgroundColor: "gainsboro" } : {}}
@@ -87,12 +86,13 @@ export function Rows(props: TRows) {
           ))
         : filteredPlayers.map((player, index) => (
             <tr
-              onClick={() => showInfoOfPlayer(player.name)}
               key={index}
               className="rating-row"
               style={lastRow ? { backgroundColor: "gainsboro" } : {}}
             >
-              <td className="rating-player-name">{player.name}</td>
+              <td onClick={() => showInfoOfPlayer(player.name)} className="rating-player-name">
+                {player.name}
+              </td>
             </tr>
           ))}
     </>

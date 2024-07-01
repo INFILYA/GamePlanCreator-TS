@@ -126,10 +126,7 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                     <Diagramm link="Service" />
                   </div>
                   <div className="efficency-wrapper">
-                    Efficency :
-                    <div style={setStyle(getServiceEfficency(playerInfo))}>
-                      &nbsp;{getServiceEfficency(playerInfo)}%
-                    </div>
+                    Efficency :<div>&nbsp;{getServiceEfficency(playerInfo)}%</div>
                   </div>
                 </>
               )}
@@ -139,10 +136,7 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                     <Diagramm link="Attack" />
                   </div>
                   <div className="efficency-wrapper">
-                    Efficency :
-                    <div style={setStyle(getAttackEfficency(playerInfo))}>
-                      &nbsp;{getAttackEfficency(playerInfo)}%
-                    </div>
+                    Efficency :<div>&nbsp;{getAttackEfficency(playerInfo)}%</div>
                   </div>
                 </>
               )}

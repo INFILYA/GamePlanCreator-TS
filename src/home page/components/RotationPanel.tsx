@@ -6,7 +6,7 @@ import { selectIndexOfGuestTeamZones } from "../../states/slices/indexOfGuestTea
 import { correctZones } from "../../utilities/functions";
 import { resetGameStats, selectSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
 import { useAppDispatch } from "../../states/store";
-import { TGameLogStats } from "../../types/types";
+import { TGameLogStats, TPlayer } from "../../types/types";
 
 type TRotationPanel = {
   team: boolean;
@@ -17,6 +17,8 @@ type TRotationPanel = {
   opponentTeamName?: string;
   gameLog: TGameLogStats;
   setGameLog(arg: TGameLogStats): void;
+  setstatsForTeam(arg: TPlayer[][]): void;
+  statsForTeam: TPlayer[][];
 };
 
 export default function RotationPanel(arg: TRotationPanel) {
@@ -29,6 +31,8 @@ export default function RotationPanel(arg: TRotationPanel) {
     setNextRotation,
     gameLog,
     setGameLog,
+    setstatsForTeam,
+    statsForTeam,
   } = arg;
   const dispatch = useAppDispatch();
   const guestTeam = useSelector(selectGuestTeam);
@@ -40,6 +44,7 @@ export default function RotationPanel(arg: TRotationPanel) {
     setScore(score + 1);
     if (SoloRallyStats.length > 0) {
       setGameLog([...gameLog, { score: currentScore, stats: SoloRallyStats }]);
+      setstatsForTeam([...statsForTeam, SoloRallyStats]);
     }
     dispatch(resetGameStats());
     setNextRotation(true);
