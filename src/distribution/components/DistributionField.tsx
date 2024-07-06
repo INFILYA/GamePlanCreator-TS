@@ -1,52 +1,64 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { Block } from "./Block";
 import SectionWrapper from "../../wrappers/SectionWrapper";
 import { InputDistribution } from "./InputDistribution";
-import { reduce } from "../../utilities/functions";
 import { TDistributionZones } from "../../types/types";
 
 export function DistributionField() {
-  const [zoneValue, setZoneValue] = useState<TDistributionZones | number[]>([]);
+  const [zoneValue, setZoneValue] = useState<TDistributionZones>({
+    4: 0,
+    3: 0,
+    2: 0,
+    5: 0,
+    6: 0,
+    1: 0,
+  });
   const [isShowButtonCount, setIsShowButtonCount] = useState<boolean>(false);
-  const typesOfSituations = [
-    "K1",
-    "K2",
-    "KC",
-    "K7",
-    "KE",
-    "KP",
-    "KM",
-    "P1",
-    "P2",
-    "P3",
-    "P4",
-    "P5",
-    "P6",
-    "Service in 1",
-    "Service in 5",
-    "Reception #",
-    "Reception +",
-    "Free balls",
-    "Setter front row",
-    "Setter back row",
-  ];
+  // const typesOfSituations = [
+  //   "K1",
+  //   "K2",
+  //   "KC",
+  //   "K7",
+  //   "KE",
+  //   "KP",
+  //   "KM",
+  //   "P1",
+  //   "P2",
+  //   "P3",
+  //   "P4",
+  //   "P5",
+  //   "P6",
+  //   "Service in 1",
+  //   "Service in 5",
+  //   "Reception #",
+  //   "Reception +",
+  //   "Free balls",
+  //   "Setter front row",
+  //   "Setter back row",
+  // ];
 
-  function handleZoneValue(event: ChangeEvent<HTMLInputElement>) {
-    setZoneValue({
-      ...zoneValue,
-      [event.target.name]: +event.target.value.replace(/\D+/g, ""),
-    });
-  }
-  function handleSelectOption() {
-    setZoneValue({ 0: 0, 1: 0, 2: 0, 3: 0, 4: 0 });
-  }
+  // function handleZoneValue(event: ChangeEvent<HTMLInputElement>) {
+  //   setZoneValue({
+  //     ...zoneValue,
+  //     [event.target.name]: +event.target.value.replace(/\D+/g, ""),
+  //   });
+  // }
+
   function onHandleCountClick(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const final = Object.values(zoneValue);
-    const total = reduce(final, 0.0001);
-    const result = final.map((obj) => Math.round((obj / total) * 100));
-    setZoneValue(result);
+    // const final = Object.values(zoneValue);
+    // const total = reduce(final, 0.0001);
+    // const result = final.map((obj) => Math.round((obj / total) * 100));
+    // setZoneValue(result);
     setIsShowButtonCount(true);
+    setZoneValue({
+      4: 0,
+      3: 0,
+      2: 0,
+      5: 0,
+      6: 0,
+      1: 0,
+    });
   }
   const disabled = Array.isArray(zoneValue);
   return (
@@ -56,7 +68,7 @@ export function DistributionField() {
     >
       <div className="distribution-wrapper">
         <form className="distrfield-wrapper" onSubmit={onHandleCountClick}>
-          <div className="select-wrapper">
+          {/* <div className="select-wrapper">
             <select
               className="typeOfCall"
               defaultValue="Choose type of call"
@@ -74,7 +86,7 @@ export function DistributionField() {
                 )
               )}
             </select>
-          </div>
+          </div> */}
           <div className="block-wrapper">
             {Object.keys(zoneValue).map((input) => (
               <Block key={input} />
@@ -89,7 +101,6 @@ export function DistributionField() {
                     <InputDistribution
                       key={input}
                       zoneValue={zoneValue[+input as keyof TDistributionZones]}
-                      handleZoneValue={handleZoneValue}
                       name={input}
                       readOnly={disabled}
                     />
@@ -105,7 +116,6 @@ export function DistributionField() {
                     <InputDistribution
                       key={input}
                       zoneValue={zoneValue[+input as keyof TDistributionZones]}
-                      handleZoneValue={handleZoneValue}
                       name={input}
                       readOnly={disabled}
                     />

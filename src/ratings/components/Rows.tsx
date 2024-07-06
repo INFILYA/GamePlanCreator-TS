@@ -1,5 +1,5 @@
-import { useSelector } from "react-redux";
-import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
+// import { useSelector } from "react-redux";
+import { setDetailedStatsOfPlayer } from "../../states/slices/detailedStatsOfPlayerSlice";
 import { useAppDispatch } from "../../states/store";
 import { TMix } from "../../types/types";
 import {
@@ -15,7 +15,7 @@ import {
   setStyleForEfficency,
   setStyleForPercent,
 } from "../../utilities/functions";
-import { selectListOfPlayers } from "../../states/slices/listOfPlayersSlice";
+// import { selectListOfPlayers } from "../../states/slices/listOfPlayersSlice";
 
 type TRows = {
   filteredPlayers: TMix[];
@@ -25,13 +25,12 @@ type TRows = {
 export function Rows(props: TRows) {
   const { filteredPlayers, lastRow } = props;
   const dispatch = useAppDispatch();
-  const listOfPlayers = useSelector(selectListOfPlayers);
+  // const listOfPlayers = useSelector(selectListOfPlayers);
 
-  function showInfoOfPlayer(name: string) {
-    const pickedPlayer = listOfPlayers.find((player) => player.name === name);
-    if (pickedPlayer === undefined || pickedPlayer === null) return;
-    if ("startingSquad" in pickedPlayer) return;
-    dispatch(setInfoOfPlayer(pickedPlayer));
+  function showInfoOfPlayer(player: TMix) {
+    if (player === undefined || player === null) return;
+    if ("startingSquad" in player) return;
+    dispatch(setDetailedStatsOfPlayer(player.name));
   }
   const isFull = Object.values(filteredPlayers[0]).length === 1;
 
@@ -90,7 +89,7 @@ export function Rows(props: TRows) {
               className="rating-row"
               style={lastRow ? { backgroundColor: "gainsboro" } : {}}
             >
-              <td onClick={() => showInfoOfPlayer(player.name)} className="rating-player-name">
+              <td onClick={() => showInfoOfPlayer(player)} className="rating-player-name">
                 {player.name}
               </td>
             </tr>

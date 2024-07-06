@@ -13,7 +13,7 @@ import indexOfHomeTeamZonesReducer from "./slices/indexOfHomeTeamZonesSlice";
 import indexOfGuestTeamZonesReducer from "./slices/indexOfGuestTeamZonesSlice";
 import soloRallyStatsReducer from "./slices/soloRallyStatsSlice";
 import gamesStatsReducer from "./slices/gamesStatsSlice";
-
+import detailedStatsOfPlayerReducer from "./slices/detailedStatsOfPlayerSlice";
 
 export const store = configureStore({
   reducer: {
@@ -30,6 +30,7 @@ export const store = configureStore({
     isShowedTutorial: isShowedTutorialReducer, //+
     soloRallyStats: soloRallyStatsReducer,
     gamesStats: gamesStatsReducer,
+    detailedStatsOfPlayer: detailedStatsOfPlayerReducer,
   },
 });
 

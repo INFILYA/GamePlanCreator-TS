@@ -7,7 +7,6 @@ import { selectIsShowedTutorial } from "./states/slices/isShowedTutorialSlice";
 import { Header } from "./header/Header";
 import { Tutorial } from "./Tutorial";
 import { Auth } from "./header/components/Auth";
-// import { collection, getDocs } from "firebase/firestore";
 import { auth, gamesRef, playersRef, teamsRef } from "./config/firebase";
 import { TGameStats, TPlayer, TTeam } from "./types/types";
 import { setAllPlayers } from "./states/slices/listOfPlayersSlice";
@@ -16,9 +15,7 @@ import { HomePage } from "./home page/HomePage";
 import { Ratings } from "./ratings/Ratings";
 import { UKRTUTORIAL } from "./utilities/ukrTutorial";
 import { ENGTUTORIAL } from "./utilities/engTutorial";
-import Distribution from "./distribution/Distribution";
 import Directions from "./directions-section/Directions";
-import SendStatistic from "./loadStatistic/SendStatistic";
 import MyLogo from "./myLogo/MyLogo";
 import GamesStatistic from "./loadStatistic/GamesStatistic";
 import { setAllGameStats } from "./states/slices/gamesStatsSlice";
@@ -119,9 +116,8 @@ export default function GamePlanCreator() {
               <Route path="/" element={<HomePage />} />
               <Route path="/Auth" element={<Auth />} />
               <Route path="/Ratings" element={<Ratings />} />
-              <Route path="/Distribution" element={<Distribution />} />
+              {/* <Route path="/Distribution" element={<Distribution />} /> */}
               <Route path="/Directions" element={<Directions />} />
-              <Route path="/SendStatistic" element={<SendStatistic />} />
               <Route path="/GamesStatistic" element={<GamesStatistic />} />
             </Routes>
           </>

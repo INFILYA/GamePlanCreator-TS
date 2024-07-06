@@ -6,7 +6,7 @@ import {
   setgameFilterByTeam,
 } from "../states/slices/gamesStatsSlice";
 import { ChangeEvent, useState } from "react";
-import { TMix, TObjectStats, TPlayer } from "../types/types";
+import { TGameLogStats, TMix, TObjectStats, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import {
   calculateTotalofActions,
@@ -24,6 +24,8 @@ import { useAppDispatch } from "../states/store";
 import { RegularButton } from "../css/Button.styled";
 import Diagramm from "../personalInfo/components/Diagramm";
 import { useSetWidth } from "../utilities/useSetWidth";
+import DetailedStats from "./DetailedStats";
+import { selectDetailedStatsOfPlayer } from "../states/slices/detailedStatsOfPlayerSlice";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
@@ -32,9 +34,11 @@ export default function GamesStatistic() {
   const listOfTeams = useSelector(selectListOfTeams);
   const playerInfo = useSelector(selectPlayerInfo);
   const filteredGamesStats = useSelector(selectFilteredGameStats);
+  const detailedStatsOfPlayer = useSelector(selectDetailedStatsOfPlayer);
   const teamFilter = useSelector(selectorFilter);
   const [filter, setFilter] = useState("");
   const [filteredGames, setFilteredGames] = useState<TObjectStats[]>([]);
+  const [detailedStats, setDetailedStats] = useState<TGameLogStats>([]);
   const [choosenGameStats, setChoosenGameStats] = useState<TPlayer[]>([]);
   const [choosenSet, setChoosenSet] = useState<string>("full");
   const [saveFullGameStats, setSaveFullGameStats] = useState<TPlayer[]>([]);
@@ -68,11 +72,12 @@ export default function GamesStatistic() {
     setFilter(value);
     setFilteredGames([]);
     setChoosenGameStats([]);
+    setDetailedStats([]);
     const choosenGame = gamesStats.find((game) => Object.keys(game).find((name) => name === value));
     if (!choosenGame) return;
     const game = Object.values(choosenGame)[0];
-    console.log(game);
     setFilteredGames([...game]);
+    setDetailedStats(game.map((set) => Object.values(set).flat()).flat());
     const fullSizeGameStat: TPlayer[][] = [];
     game.forEach((sets) =>
       Object.values(sets).forEach((set) =>
@@ -106,10 +111,13 @@ export default function GamesStatistic() {
     if (value === "full") {
       setChoosenSet(value);
       setChoosenGameStats(saveFullGameStats);
+      setDetailedStats(filteredGames.map((set) => Object.values(set).flat()).flat());
       return;
     }
     const isFullGame = filteredGames.map((game) => Object.keys(game)[0]);
     const index = isFullGame.indexOf(value);
+    const chio = filteredGames[index][value].map((rally) => rally);
+    setDetailedStats(chio);
     const choosenSet = filteredGames[index][value].map((rally) => rally.stats);
     setChoosenGameStats(properStats(choosenSet.flat()));
     setChoosenSet(value);
@@ -141,7 +149,6 @@ export default function GamesStatistic() {
   const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
   const namesOfTeams = listOfTeams.map((team) => team.name);
   const playersNames = choosenGameStats.map((player) => jusName(player));
-
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">
@@ -229,20 +236,24 @@ export default function GamesStatistic() {
                     </div>
                   </div>
                 </div>
-                <div
-                  className="diagram-wrapper"
-                  style={!isBurger ? { flexDirection: "column" } : {}}
-                >
-                  <div style={{ width: "80%" }}>
-                    <Diagramm link="Reception" data={fullGameStats} />
+                {detailedStatsOfPlayer ? (
+                  <DetailedStats detailedStats={detailedStats} />
+                ) : (
+                  <div
+                    className="diagram-wrapper"
+                    style={!isBurger ? { flexDirection: "column" } : {}}
+                  >
+                    <div style={{ width: "80%" }}>
+                      <Diagramm link="Reception" data={fullGameStats} />
+                    </div>
+                    <div style={{ width: "80%" }}>
+                      <Diagramm link="Attack" data={fullGameStats} />
+                    </div>
+                    <div style={{ width: "80%" }}>
+                      <Diagramm link="Service" data={fullGameStats} />
+                    </div>
                   </div>
-                  <div style={{ width: "80%" }}>
-                    <Diagramm link="Attack" data={fullGameStats} />
-                  </div>
-                  <div style={{ width: "80%" }}>
-                    <Diagramm link="Service" data={fullGameStats} />
-                  </div>
-                </div>
+                )}
               </>
             )}
           </>
