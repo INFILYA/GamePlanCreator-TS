@@ -291,6 +291,27 @@ export function preparePlayerToSoloGame(obj: TMix): TMix {
   return soloGamePlayerStats;
 }
 
+export function emptyDiagramm(): TDiagramm {
+  const soloGamePlayerStats = {} as TDiagramm;
+  soloGamePlayerStats["A++"] = 0;
+  soloGamePlayerStats["A+"] = 0;
+  soloGamePlayerStats["A="] = 0;
+  soloGamePlayerStats["A!"] = 0;
+  soloGamePlayerStats["A-"] = 0;
+  soloGamePlayerStats["S++"] = 0;
+  soloGamePlayerStats["S!"] = 0;
+  soloGamePlayerStats["S="] = 0;
+  soloGamePlayerStats["S-"] = 0;
+  soloGamePlayerStats["S+"] = 0;
+  soloGamePlayerStats["R++"] = 0;
+  soloGamePlayerStats["R!"] = 0;
+  soloGamePlayerStats["R="] = 0;
+  soloGamePlayerStats["R-"] = 0;
+  soloGamePlayerStats["R+"] = 0;
+  soloGamePlayerStats.blocks = 0;
+  return soloGamePlayerStats;
+}
+
 export function forSoloGameStat(obj: TPlayer): TPlayer {
   const newObj = {} as TPlayer;
   const soloGamePlayerStats = { ...obj };

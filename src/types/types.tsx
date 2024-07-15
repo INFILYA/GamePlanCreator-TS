@@ -82,12 +82,12 @@ export type TSectionWrapper = {
 };
 
 export type TDistributionZones = {
-  1: number;
-  2: number;
-  3: number;
-  4: number;
-  5: number;
-  6: number;
+  1: TDiagramm;
+  2: TDiagramm;
+  3: TDiagramm;
+  4: TDiagramm;
+  5: TDiagramm;
+  6: TDiagramm;
 };
 
 export type TZoneStates = {

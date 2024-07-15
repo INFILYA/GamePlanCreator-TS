@@ -1,7 +1,7 @@
 import { useState, FormEvent } from "react";
 import { Block } from "./Block";
 import SectionWrapper from "../../wrappers/SectionWrapper";
-import { InputDistribution } from "./InputDistribution";
+import { InputDistribution } from "./DetailedZoneValue";
 import { TDistributionZones } from "../../types/types";
 
 export function DistributionField() {
