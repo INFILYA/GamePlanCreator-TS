@@ -49,7 +49,7 @@ export function Rows(props: TRows) {
     .map((player) => calculateTotalofActionsV2(filteredPlayers, player.name))
     .map((player) => preparePlayerToSoloGameV2(player));
   const lol = [...new Set(correctPlayersInfo)];
-  console.log(lol);
+  console.log(lol); 
 
   return (
     <>
