@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import {
   selectFilteredGameStats,
-  // selectGamesStats,
   selectorFilter,
   setgameFilterByTeam,
 } from "../states/slices/gamesStatsSlice";
@@ -33,7 +32,6 @@ import {
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
   const isBurger = useSetWidth() > 767;
-  // const gamesStats = useSelector(selectGamesStats);
   const listOfTeams = useSelector(selectListOfTeams);
   const playerInfo = useSelector(selectPlayerInfo);
   const filteredGamesStats = useSelector(selectFilteredGameStats);

@@ -11,13 +11,12 @@ import {
   getPlusMinusAttack,
   getPlusMinusService,
   isFieldExist,
-  preparePlayerToSoloGameV2,
+  preparePlayerToSoloGameV3,
   rows,
   setStyle,
   setStyleForEfficency,
   setStyleForPercent,
 } from "../../utilities/functions";
-// import { selectListOfPlayers } from "../../states/slices/listOfPlayersSlice";
 
 type TRows = {
   filteredPlayers: TMix[];
@@ -27,7 +26,6 @@ type TRows = {
 export function Rows(props: TRows) {
   const { filteredPlayers, lastRow } = props;
   const dispatch = useAppDispatch();
-  // const listOfPlayers = useSelector(selectListOfPlayers);
 
   function showInfoOfPlayer(player: TMix) {
     if (player === undefined || player === null) return;
@@ -45,16 +43,36 @@ export function Rows(props: TRows) {
     return result;
   }
 
-  const correctPlayersInfo = filteredPlayers
-    .map((player) => calculateTotalofActionsV2(filteredPlayers, player.name))
-    .map((player) => preparePlayerToSoloGameV2(player));
-  const lol = [...new Set(correctPlayersInfo)];
-  console.log(lol); 
+  function getCorrectPlayersInfo(obj: TMix[]) {
+    const result = obj
+      .map((player) => calculateTotalofActionsV2(filteredPlayers, player.name))
+      .map((player) => preparePlayerToSoloGameV3(player));
+    const sorted = [] as TMix[];
+    for (let i = 0; i < result.length; i++) {
+      const plaer = result[i];
+      if (sorted.some((athlete) => athlete.name === plaer.name)) {
+        continue;
+      } else sorted.push(plaer);
+    }
+    return sorted;
+  }
+
+  function getPlayersNames(obj: TMix[]) {
+    const result = obj.map((player) => preparePlayerToSoloGameV3(player));
+    const sorted = [] as TMix[];
+    for (let i = 0; i < result.length; i++) {
+      const plaer = result[i];
+      if (sorted.some((athlete) => athlete.name === plaer.name)) {
+        continue;
+      } else sorted.push(plaer);
+    }
+    return sorted;
+  }
 
   return (
     <>
       {!isFull
-        ? lol.map((player, index) => (
+        ? getCorrectPlayersInfo(filteredPlayers).map((player, index) => (
             <tr
               key={index}
               className="rating-row"
@@ -92,7 +110,7 @@ export function Rows(props: TRows) {
               <td>{player.blocks}</td>
             </tr>
           ))
-        : filteredPlayers.map((player, index) => (
+        : getPlayersNames(filteredPlayers).map((player, index) => (
             <tr
               key={index}
               className="rating-row"

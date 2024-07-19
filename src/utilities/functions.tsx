@@ -341,24 +341,25 @@ export function calculateTotalofActionsV2(obj: TMix[], name: string): TMix {
   return sumOfAllPlayersSoloGamesStats as TMix;
 }
 
-export function preparePlayerToSoloGameV2(obj: TMix): TMix {
+export function preparePlayerToSoloGameV3(obj: TMix): TMix {
   const sumOfAllPlayersSoloGamesStats = {
-    "A=": obj["A="],
-    "A++": obj["A++"],
-    "A+": obj["A+"],
-    "A!": obj["A!"],
-    "A-": obj["A-"],
-    "S++": obj["S++"],
-    "S!": obj["S!"],
-    "S=": obj["S="],
-    "S+": obj["S+"],
-    "S-": obj["S-"],
-    "R++": obj["R++"],
-    "R+": obj["R+"],
-    "R!": obj["R!"],
-    "R-": obj["R-"],
-    "R=": obj["R="],
-    blocks: obj.blocks,
+    "A=": isFieldExist(obj["A="]),
+    "A++": isFieldExist(obj["A++"]),
+    "A+": isFieldExist(obj["A+"]),
+    "A!": isFieldExist(obj["A!"]),
+    "A-": isFieldExist(obj["A-"]),
+    "S++": isFieldExist(obj["S++"]),
+    "S!": isFieldExist(obj["S!"]),
+    "S=": isFieldExist(obj["S="]),
+    "S+": isFieldExist(obj["S+"]),
+    "S-": isFieldExist(obj["S-"]),
+    "R++": isFieldExist(obj["R++"]),
+    "R+": isFieldExist(obj["R+"]),
+    "R!": isFieldExist(obj["R!"]),
+    "R-": isFieldExist(obj["R-"]),
+    "R=": isFieldExist(obj["R="]),
+    blocks: isFieldExist(obj.blocks),
+    name: obj.name,
   };
   return sumOfAllPlayersSoloGamesStats as TMix;
 }

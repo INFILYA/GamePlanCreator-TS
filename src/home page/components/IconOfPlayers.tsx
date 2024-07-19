@@ -1,4 +1,4 @@
-import { TAttackDiagramm, TMix, TPlayer } from "../../types/types";
+import { TAttackDiagramm, TDiagramm, TMix, TPlayer } from "../../types/types";
 import { useAppDispatch } from "../../states/store";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { pushFromHomeTeamBoard } from "../../states/slices/homePlayersSlice";
@@ -19,7 +19,8 @@ import {
   preparePlayerToSoloGame,
   zones,
 } from "../../utilities/functions";
-import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
+import { selectSoloRallyStats, setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
+import { useSelector } from "react-redux";
 
 type TIconOfPlayer = {
   type: string;
@@ -36,6 +37,8 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   const dispatch = useAppDispatch();
   const [category, setCategory] = useState<string>("AS");
   const [diagrammValue, setDiagrammValue] = useState<TMix>(emptyPlayer);
+  const SoloRallyStats = useSelector(selectSoloRallyStats);
+
   const my = type === "my";
 
   useEffect(() => {
@@ -49,7 +52,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
 
   function calculateForPlayerData<T extends TMix>(
     obj: T,
-    diagram: TAttackDiagramm,
+    diagram: TDiagramm,
     soloGame?: boolean
   ): T {
     for (const key in diagram) {
@@ -107,13 +110,13 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       ...diagrammValue,
       [type]: +diagrammValue[type] + number,
     });
-    const obj = { [type]: number } as TAttackDiagramm;
+    const obj = { [type]: number } as TDiagramm;
     const updatedPlayer = calculateForPlayerData({ ...player }, obj);
     const soloGameUpdatedPlayer = calculateForPlayerData(
       { ...player },
       {
         ...diagrammValue,
-        [type]: diagrammValue[type as keyof TAttackDiagramm] + number,
+        [type]: diagrammValue[type as keyof TDiagramm] + number,
       },
       true
     );
@@ -149,6 +152,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     ];
     return arr;
   }
+  console.log(SoloRallyStats);
   return (
     <>
       {condition && (
@@ -227,12 +231,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                       <tr>
                         <td
                           style={{ backgroundColor: "llightgreen" }}
-                          onClick={() =>
-                            setDiagrammValue({
-                              ...diagrammValue,
-                              blocks: +diagrammValue.blocks + 1,
-                            })
-                          }
+                          onClick={() => addAmount("blocks", 1)}
                         >
                           B
                         </td>
@@ -247,16 +246,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                         </td>
                         <td
                           style={{ backgroundColor: "llightgreen" }}
-                          onClick={() =>
-                            setDiagrammValue(
-                              +diagrammValue.blocks > 0
-                                ? {
-                                    ...diagrammValue,
-                                    blocks: +diagrammValue.blocks - 1,
-                                  }
-                                : diagrammValue
-                            )
-                          }
+                          onClick={() => addAmount("blocks", -1)}
                         >
                           -
                         </td>
