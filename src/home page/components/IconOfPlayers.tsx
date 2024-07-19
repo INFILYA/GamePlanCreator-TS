@@ -19,8 +19,7 @@ import {
   preparePlayerToSoloGame,
   zones,
 } from "../../utilities/functions";
-import { selectSoloRallyStats, setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
-import { useSelector } from "react-redux";
+import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
 
 type TIconOfPlayer = {
   type: string;
@@ -37,8 +36,6 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   const dispatch = useAppDispatch();
   const [category, setCategory] = useState<string>("AS");
   const [diagrammValue, setDiagrammValue] = useState<TMix>(emptyPlayer);
-  const SoloRallyStats = useSelector(selectSoloRallyStats);
-
   const my = type === "my";
 
   useEffect(() => {
@@ -152,7 +149,6 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     ];
     return arr;
   }
-  console.log(SoloRallyStats);
   return (
     <>
       {condition && (
