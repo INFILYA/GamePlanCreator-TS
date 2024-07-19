@@ -41,8 +41,8 @@ export function DetailedZoneValue(props: TInputDistribution) {
           <div className="detailed-info-box-wrapper">
             <div>{typeOfAction}</div>
             <div style={{ color: "lightgreen" }}>{zoneValue[`${action}++` as keyof TDiagramm]}</div>
-            <div style={{ color: "orange" }}>{zoneValue[`${action}!` as keyof TDiagramm]}</div>
-            <div style={{ color: "orangered" }}>{zoneValue[`${action}-` as keyof TDiagramm]}</div>
+            <div style={{ color: "orange" }}>{zoneValue[`${action}-` as keyof TDiagramm]}</div>
+            <div style={{ color: "orangered" }}>{zoneValue[`${action}=` as keyof TDiagramm]}</div>
           </div>
         )}
       </div>

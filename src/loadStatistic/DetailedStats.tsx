@@ -6,7 +6,7 @@ import {
   setDetailedStatsOfPlayer,
 } from "../states/slices/detailedStatsOfPlayerSlice";
 import { RegularButton } from "../css/Button.styled";
-import { TDistributionZones, TGameLogStats } from "../types/types";
+import { TDistributionZones,  TPlayer } from "../types/types";
 import { Block } from "../distribution/components/Block";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { DetailedZoneValue } from "../distribution/components/DetailedZoneValue";
@@ -19,7 +19,7 @@ import {
 } from "../utilities/functions";
 
 type TDetailedStats = {
-  detailedStats: TGameLogStats;
+  detailedStats: TPlayer[];
 };
 
 export default function DetailedStats(arg: TDetailedStats) {
@@ -36,8 +36,9 @@ export default function DetailedStats(arg: TDetailedStats) {
     6: emptyDiagramm(),
     1: emptyDiagramm(),
   });
-  const fullGame = detailedStats.map((rally) => rally.stats).flat();
-  const choosenActionsOfPlayer = fullGame.filter((player) => player.name === detailedStatsOfPlayer);
+  const choosenActionsOfPlayer = detailedStats.filter(
+    (player) => player.name === detailedStatsOfPlayer
+  );
 
   function getSumOfActionsPerZone(zone: number) {
     const result = calculateTotalofActions(

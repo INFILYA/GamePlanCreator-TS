@@ -30,6 +30,10 @@
       }
       .choosen-game-filter-wrapper {
         margin: 1vw 0 1vw 0;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
         div {
           font-size: 1.25vmax;
           margin: 0.1vmax 0 0.1vmax 0;

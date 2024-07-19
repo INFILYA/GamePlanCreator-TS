@@ -1,12 +1,12 @@
 import { useSelector } from "react-redux";
 import {
   selectFilteredGameStats,
-  selectGamesStats,
+  // selectGamesStats,
   selectorFilter,
   setgameFilterByTeam,
 } from "../states/slices/gamesStatsSlice";
 import { ChangeEvent, useState } from "react";
-import { TGameLogStats, TMix, TObjectStats, TPlayer } from "../types/types";
+import { TGameStats, TMix, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import {
   calculateTotalofActions,
@@ -25,20 +25,23 @@ import { RegularButton } from "../css/Button.styled";
 import Diagramm from "../personalInfo/components/Diagramm";
 import { useSetWidth } from "../utilities/useSetWidth";
 import DetailedStats from "./DetailedStats";
-import { selectDetailedStatsOfPlayer } from "../states/slices/detailedStatsOfPlayerSlice";
+import {
+  selectDetailedStatsOfPlayer,
+  setDetailedStatsOfPlayer,
+} from "../states/slices/detailedStatsOfPlayerSlice";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
   const isBurger = useSetWidth() > 767;
-  const gamesStats = useSelector(selectGamesStats);
+  // const gamesStats = useSelector(selectGamesStats);
   const listOfTeams = useSelector(selectListOfTeams);
   const playerInfo = useSelector(selectPlayerInfo);
   const filteredGamesStats = useSelector(selectFilteredGameStats);
   const detailedStatsOfPlayer = useSelector(selectDetailedStatsOfPlayer);
   const teamFilter = useSelector(selectorFilter);
   const [filter, setFilter] = useState("");
-  const [filteredGames, setFilteredGames] = useState<TObjectStats[]>([]);
-  const [detailedStats, setDetailedStats] = useState<TGameLogStats>([]);
+  const [filteredGames, setFilteredGames] = useState<TGameStats[]>([]);
+  const [detailedStats, setDetailedStats] = useState<TPlayer[]>([]);
   const [choosenGameStats, setChoosenGameStats] = useState<TPlayer[]>([]);
   const [choosenSet, setChoosenSet] = useState<string>("full");
   const [saveFullGameStats, setSaveFullGameStats] = useState<TPlayer[]>([]);
@@ -67,29 +70,33 @@ export default function GamesStatistic() {
     setIsBiggest(!isBiggest);
   }
 
-  function handleGameFilter(e: ChangeEvent<HTMLSelectElement>) {
-    const value = e.target.value;
-    setFilter(value);
-    setFilteredGames([]);
+  function setFilterForGames(game: TGameStats) {
     setChoosenGameStats([]);
-    setDetailedStats([]);
-    const choosenGame = gamesStats.find((game) => Object.keys(game).find((name) => name === value));
-    if (!choosenGame) return;
-    const game = Object.values(choosenGame)[0];
-    setFilteredGames([...game]);
-    setDetailedStats(game.map((set) => Object.values(set).flat()).flat());
-    const fullSizeGameStat: TPlayer[][] = [];
-    game.forEach((sets) =>
-      Object.values(sets).forEach((set) =>
-        Object.values(set).forEach((player) => fullSizeGameStat.push(player.stats))
-      )
-    );
-    const flatFullSizeGameStat = fullSizeGameStat.flat();
-    setChoosenGameStats(properStats(flatFullSizeGameStat));
-    setSaveFullGameStats(properStats(flatFullSizeGameStat));
+    if (filteredGames.some((match) => match === game)) {
+      setFilteredGames(filteredGames.filter((match) => match !== game));
+    } else {
+      filteredGames.push(game);
+      setFilteredGames(filteredGames);
+    }
   }
+
+  function setChoosenGames() {
+    dispatch(setDetailedStatsOfPlayer(""));
+    setChoosenSet("full");
+    const choosenDetailedStats = filteredGames.map((set) => Object.values(set).flat()).flat();
+    const flatFullSizeGameStat = choosenDetailedStats
+      .map((rally) => Object.values(rally).flat())
+      .flat();
+    const finalResult = properStats(flatFullSizeGameStat.map((rall) => rall.stats).flat(), "+");
+    setChoosenGameStats(finalResult);
+    setDetailedStats(finalResult);
+    if (filteredGames.length === 1) {
+      setSaveFullGameStats(finalResult);
+    }
+  }
+
   // Обраховуємо повторних гравців
-  function calculateForUnion<T extends TPlayer>(obj: T, fullObj: T) {
+  function calculateForUnion<T extends TPlayer>(obj: T, fullObj: T, mark: "+" | "-") {
     const newObj = { ...obj };
     const newFullObj = { ...fullObj };
     for (const key in newObj) {
@@ -99,7 +106,12 @@ export default function GamesStatistic() {
       if (!(key in newFullObj)) {
         (newFullObj[key] as number) = +newObj[key];
       } else if (key in newFullObj) {
-        (newFullObj[key] as number) += +newObj[key];
+        if (mark === "+") {
+          (newFullObj[key] as number) += +newObj[key];
+        }
+        if (mark === "-") {
+          (newFullObj[key] as number) -= +newObj[key];
+        }
       }
     }
     return newFullObj;
@@ -111,28 +123,44 @@ export default function GamesStatistic() {
     if (value === "full") {
       setChoosenSet(value);
       setChoosenGameStats(saveFullGameStats);
-      setDetailedStats(filteredGames.map((set) => Object.values(set).flat()).flat());
       return;
     }
-    const isFullGame = filteredGames.map((game) => Object.keys(game)[0]);
-    const index = isFullGame.indexOf(value);
-    const chio = filteredGames[index][value].map((rally) => rally);
-    setDetailedStats(chio);
-    const choosenSet = filteredGames[index][value].map((rally) => rally.stats);
-    setChoosenGameStats(properStats(choosenSet.flat()));
+    const soloGame = filteredGames.map((game) => Object.values(game).map((set) => set)).flat()[0];
+    const properGame = soloGame.map((set) => Object.keys(set)[0]);
+    const index = properGame.indexOf(value);
+    const choosenSet = soloGame[index][value].map((rally) => rally.stats).flat();
+    setChoosenGameStats(properStats(choosenSet, "+"));
     setChoosenSet(value);
   }
 
-  function properStats(arr: TPlayer[]): TPlayer[] {
+  function properStats(arr: TPlayer[], mark: "+" | "-"): TPlayer[] {
     let properGameStat: TPlayer[] = [];
     for (let i = 0; i < arr.length; i++) {
       const player = arr[i];
-      if (properGameStat.some((athlete) => athlete.name === player.name)) {
-        const properPlayer = properGameStat.find((athlete) => athlete.name === player.name);
-        const updatedPlayer = calculateForUnion(player, properPlayer!);
-        properGameStat = properGameStat.map((athlete) =>
-          athlete.name === updatedPlayer.name ? updatedPlayer : athlete
+      if (
+        properGameStat.some(
+          (athlete) =>
+            athlete.name === player.name && athlete.boardPosition === player.boardPosition
+        )
+      ) {
+        const properPlayer = properGameStat.find(
+          (athlete) =>
+            athlete.name === player.name && athlete.boardPosition === player.boardPosition
         );
+        const updatedPlayer = calculateForUnion(player, properPlayer!, mark);
+        if (
+          Object.entries(updatedPlayer)
+            .filter(([key]) => key !== "boardPosition" && key !== "name")
+            .every(([key, stat]) => stat === 0 && key)
+        ) {
+          properGameStat = properGameStat.filter((athlete) => athlete.name !== updatedPlayer.name);
+        } else
+          properGameStat = properGameStat.map((athlete) =>
+            athlete.name === updatedPlayer.name &&
+            athlete.boardPosition === updatedPlayer.boardPosition
+              ? updatedPlayer
+              : athlete
+          );
       } else properGameStat = [...properGameStat, player];
     }
     return properGameStat;
@@ -149,6 +177,7 @@ export default function GamesStatistic() {
   const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
   const namesOfTeams = listOfTeams.map((team) => team.name);
   const playersNames = choosenGameStats.map((player) => jusName(player));
+  const soloGame = filteredGames.map((game) => Object.values(game).map((set) => set)).flat()[0];
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">
@@ -172,23 +201,28 @@ export default function GamesStatistic() {
                 ))}
               </div>
               <div className="choosen-game-filter-wrapper">
-                <select onChange={handleGameFilter} value={filter}>
-                  <option value="">Choose Game ({sortedGameStats.length})</option>
-                  {sortedGameStats.map((game, index) => (
-                    <option value={Object.keys(game)} key={index}>
-                      {Object.keys(game)}
-                    </option>
-                  ))}
-                </select>
+                {sortedGameStats.map((game, index) => (
+                  <div style={{ display: "flex" }} key={index}>
+                    <input
+                      onChange={() => setFilterForGames(game)}
+                      value={Object.keys(game)}
+                      type="checkbox"
+                    />
+                    <div>{Object.keys(game)}</div>
+                  </div>
+                ))}
+                <RegularButton onClick={setChoosenGames} type="button">
+                  Submit
+                </RegularButton>
               </div>
-              {filteredGames.length !== 0 && (
+              {filteredGames.length === 1 && choosenGameStats.length > 0 && (
                 <div className="set-selection-wrapper">
-                  {filteredGames.map((set) => (
+                  {soloGame.map((set) => (
                     <div key={Object.keys(set)[0]}>
-                      <div>{Object.keys(set)}</div>
+                      <div>{Object.keys(set)[0]}</div>
                       <input
                         type="checkbox"
-                        value={Object.keys(set)}
+                        value={Object.keys(set)[0]}
                         onChange={handleChoosenSet}
                         checked={Object.keys(set)[0] === choosenSet}
                       />
@@ -206,7 +240,7 @@ export default function GamesStatistic() {
                 </div>
               )}
             </nav>
-            {filter && (
+            {choosenGameStats.length > 0 && (
               <>
                 <div style={{ display: "flex" }}>
                   <table>

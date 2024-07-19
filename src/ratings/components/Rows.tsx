@@ -3,6 +3,7 @@ import { setDetailedStatsOfPlayer } from "../../states/slices/detailedStatsOfPla
 import { useAppDispatch } from "../../states/store";
 import { TMix } from "../../types/types";
 import {
+  calculateTotalofActionsV2,
   gerPercentOfAttack,
   gerPercentOfPerfectReception,
   gerPercentOfPositiveReception,
@@ -10,6 +11,7 @@ import {
   getPlusMinusAttack,
   getPlusMinusService,
   isFieldExist,
+  preparePlayerToSoloGameV2,
   rows,
   setStyle,
   setStyleForEfficency,
@@ -42,10 +44,16 @@ export function Rows(props: TRows) {
       isFieldExist(obj["R="]);
     return result;
   }
+
+  const correctPlayersInfo = filteredPlayers
+    .map((player) => calculateTotalofActionsV2(filteredPlayers, player.name))
+    .map((player) => preparePlayerToSoloGameV2(player));
+  const lol = [...new Set(correctPlayersInfo)];
+
   return (
     <>
       {!isFull
-        ? filteredPlayers.map((player, index) => (
+        ? lol.map((player, index) => (
             <tr
               key={index}
               className="rating-row"
