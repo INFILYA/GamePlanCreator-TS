@@ -11,6 +11,7 @@ import { TGameLogStats, TPlayer } from "../../types/types";
 type TRotationPanel = {
   team: boolean;
   score: number;
+  rivalScore: number;
   currentScore: string;
   setScore(arg: number): void;
   setNextRotation(arg: boolean): void;
@@ -19,6 +20,7 @@ type TRotationPanel = {
   setGameLog(arg: TGameLogStats): void;
   setstatsForTeam(arg: TPlayer[][]): void;
   statsForTeam: TPlayer[][];
+  tieBreak: boolean;
 };
 
 export default function RotationPanel(arg: TRotationPanel) {
@@ -26,6 +28,7 @@ export default function RotationPanel(arg: TRotationPanel) {
     opponentTeamName,
     team,
     score,
+    rivalScore,
     currentScore,
     setScore,
     setNextRotation,
@@ -33,13 +36,14 @@ export default function RotationPanel(arg: TRotationPanel) {
     setGameLog,
     setstatsForTeam,
     statsForTeam,
+    tieBreak,
   } = arg;
   const dispatch = useAppDispatch();
   const guestTeam = useSelector(selectGuestTeam);
   const SoloRallyStats = useSelector(selectSoloRallyStats);
-
   const [number, setNumber] = useState(1);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
+
   function addScore() {
     setScore(score + 1);
     if (SoloRallyStats.length > 0) {
@@ -64,11 +68,21 @@ export default function RotationPanel(arg: TRotationPanel) {
   });
   const zones = [4, 3, 2, 5, 6, 1];
   const nameOfTheTeam = team ? opponentTeamName : guestTeam[0]?.name;
-
+  const tieBreakScore = score >= 15 && rivalScore >= 15;
+  const normalSetScore = score >= 25 && rivalScore >= 25;
+  const endOfTheSet = tieBreak
+    ? (tieBreakScore && score - rivalScore === (2 || -2)) || (score - rivalScore > 1 && score >= 15)
+    : (normalSetScore && score - rivalScore === (2 || -2)) ||
+      (score - rivalScore > 1 && score >= 25);
+  const isAddScoreBtnDisabled = endOfTheSet;
   return (
     <SectionWrapper className="rotation-panel-wrapper">
       <div className="rotation-buttons-wrapper">
-        <button style={{ borderRadius: "50%" }} onClick={() => addScore()}>
+        <button
+          style={{ borderRadius: "50%" }}
+          onClick={() => addScore()}
+          disabled={isAddScoreBtnDisabled}
+        >
           +
         </button>
       </div>

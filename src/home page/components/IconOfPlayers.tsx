@@ -149,6 +149,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     ];
     return arr;
   }
+  // console.log(startingSix);
   return (
     <>
       {condition && (

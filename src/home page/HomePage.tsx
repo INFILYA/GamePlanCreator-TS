@@ -211,8 +211,10 @@ export function HomePage() {
   const tieBreakScore = myScore >= 15 || rivalScore >= 15;
   const normalSetScore = myScore >= 25 || rivalScore >= 25;
   const endOfTheSet = tieBreak
-    ? tieBreakScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1)
-    : normalSetScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1);
+    ? (tieBreakScore && myScore - rivalScore === (2 || -2)) ||
+      (tieBreakScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1))
+    : (normalSetScore && myScore - rivalScore === (2 || -2)) ||
+      (normalSetScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1));
   const saveButton = isBoardFull(guestTeamOptions) && !showSquads && !saveDataIcon && endOfTheSet;
   //
 
@@ -223,6 +225,7 @@ export function HomePage() {
         <RotationPanel
           team={false}
           score={myScore}
+          rivalScore={rivalScore}
           currentScore={currentScore}
           setScore={setMyScore}
           setNextRotation={setNextRotation}
@@ -230,6 +233,7 @@ export function HomePage() {
           setGameLog={setGameLog}
           setstatsForTeam={setstatsForTeam}
           statsForTeam={statsForTeam}
+          tieBreak={tieBreak}
         />
       )}
       <SectionWrapper
@@ -449,7 +453,9 @@ export function HomePage() {
             </form>
             {!showSquads && (
               <div className="rotation-buttons-wrapper">
-                <button onClick={() => rotateFront()}>+</button>
+                <button onClick={() => rotateFront()} disabled={endOfTheSet}>
+                  +
+                </button>
                 <button onClick={() => rotateBack()} style={{ borderRadius: "0px 20px 20px 0px" }}>
                   -
                 </button>
@@ -481,6 +487,7 @@ export function HomePage() {
           opponentTeamName={opponentTeamName}
           team={true}
           score={rivalScore}
+          rivalScore={myScore}
           currentScore={currentScore}
           setScore={setRivalScore}
           setNextRotation={setNextRotation}
@@ -488,6 +495,7 @@ export function HomePage() {
           setGameLog={setGameLog}
           setstatsForTeam={setstatsForTeam}
           statsForTeam={statsForTeam}
+          tieBreak={tieBreak}
         />
       )}
     </article>
