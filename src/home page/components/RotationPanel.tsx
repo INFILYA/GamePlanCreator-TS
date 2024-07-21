@@ -53,21 +53,22 @@ export default function RotationPanel(arg: TRotationPanel) {
   const dispatch = useAppDispatch();
   const guestTeam = useSelector(selectGuestTeam);
   const SoloRallyStats = useSelector(selectSoloRallyStats);
-  const [number, setNumber] = useState(1);
+  const [myZone, setMyZone] = useState(1);
+  const [rivalZone, setRivalZone] = useState(1);
   const [previousRivalScore, setPreviousRivalScore] = useState(0);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
 
   useEffect(() => {
-    function MyTeamRigthRotation() {
+    function myTeamRigthRotation() {
       const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
       if (!seTTer) return;
       const indexOfSetter = guestTeamOptions.indexOf(seTTer);
-      setNumber(correctZones(indexOfSetter));
+      setMyZone(correctZones(indexOfSetter));
     }
     if (!rivalTeam) {
-      MyTeamRigthRotation();
+      myTeamRigthRotation();
     }
-  });
+  }, [guestTeamOptions, rivalTeam]);
 
   function addScore() {
     if ((zeroZero && !weServe && !rivalTeam) || (previousRivalScore !== rivalScore && !rivalTeam)) {
@@ -75,6 +76,11 @@ export default function RotationPanel(arg: TRotationPanel) {
       dispatch(rotateForwardHomeTeam());
       dispatch(rotateForwardPositions());
       setPreviousRivalScore(rivalScore);
+    }
+    if ((zeroZero && !weServe && rivalTeam) || (previousRivalScore !== rivalScore && rivalTeam)) {
+      setPreviousRivalScore(rivalScore);
+      const properRivalZone = rivalZone === 1 ? 6 : rivalZone <= 6 ? rivalZone - 1 : rivalZone;
+      setRivalZone(properRivalZone);
     }
     setScore(score + 1);
     if (SoloRallyStats.length > 0) {
@@ -86,7 +92,8 @@ export default function RotationPanel(arg: TRotationPanel) {
     setWeServe(!rivalTeam);
   }
 
-  const zones = [4, 3, 2, 5, 6, 1];
+  const myZones = [4, 3, 2, 5, 6, 1];
+  const zones = rivalTeam ? setRivalZone : setMyZone;
   const nameOfTheTeam = rivalTeam ? opponentTeamName : guestTeam[0]?.name;
   const zeroZero = score === 0 && rivalScore === 0;
   return (
@@ -107,12 +114,14 @@ export default function RotationPanel(arg: TRotationPanel) {
         <h1 className="rivalTeam-name">{nameOfTheTeam}</h1>
       </div>
       <div className="rotation-panel-content">
-        {zones.map((zone) => (
+        {myZones.map((zone) => (
           <button
             key={zone}
             value={zone}
-            style={{ backgroundColor: number === zone ? "orangered" : "" }}
-            onClick={() => setNumber(zone)}
+            style={{
+              backgroundColor: (rivalTeam ? rivalZone : myZone) === zone ? "orangered" : "",
+            }}
+            onClick={zeroZero ? () => zones(zone) : () => null}
           >
             {zone}
           </button>
