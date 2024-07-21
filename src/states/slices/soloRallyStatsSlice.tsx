@@ -52,7 +52,7 @@ export const soloRallyStatsSlice = createSlice({
     //   }
     //   state.soloGameStats = correctStartingSix;
     // },
-    resetGameStats: (state) => {
+    resetRallyStats: (state) => {
       state.soloRallyStats = [];
     },
     rotateForwardPositions: (state) => {
@@ -73,7 +73,7 @@ export const {
   setSoloRallyStats,
   setSoloRallySubPlaeyrsStats,
   // setSoloGameStartingSix,
-  resetGameStats,
+  resetRallyStats,
   rotateForwardPositions,
   rotateBackPositions,
 } = soloRallyStatsSlice.actions;

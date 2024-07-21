@@ -233,6 +233,20 @@ main .main-content-wrapper .section-content-wrapper .section-content {
   flex-direction: column;
   align-items: center;
 }
+main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: absolute;
+  top: 10%;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper div {
+  font-size: 5vmax;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper input {
+  margin-top: 1vmax;
+}
 main .main-content-wrapper .section-content-wrapper .section-content .team-name-wrapper {
   width: 15vw;
   display: flex;

@@ -40,7 +40,7 @@ import {
 import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
 import {
-  resetGameStats,
+  resetRallyStats,
   rotateBackPositions,
   rotateForwardPositions,
   selectSoloRallyStats,
@@ -63,6 +63,7 @@ export function HomePage() {
   const SoloRallyStats = useSelector(selectSoloRallyStats);
   const [showSquads, setShowSquads] = useState(true);
   const [nextRotation, setNextRotation] = useState(true);
+  const [weServe, setWeServe] = useState(false);
   const [gameLog, setGameLog] = useState<TGameLogStats>([]);
   const [statsForTeam, setstatsForTeam] = useState<TPlayer[][]>([]);
   const [opponentTeamName, setOpponentTeamName] = useState("");
@@ -82,7 +83,7 @@ export function HomePage() {
     dispatch(setGuestTeam(""));
     dispatch(setBackGuestTeamSelects(emptyPlayers));
     dispatch(setInfoOfPlayer(null));
-    dispatch(resetGameStats());
+    dispatch(resetRallyStats());
     setOpponentTeamName("");
     setSetNumber("");
     setShowSquads(true);
@@ -91,6 +92,7 @@ export function HomePage() {
     setstatsForTeam([]);
     setMyScore(0);
     setRivalScore(0);
+    setWeServe(false);
   }
   function resetTheBoardForHomeTeam() {
     dispatch(setHomePlayers([]));
@@ -177,7 +179,7 @@ export function HomePage() {
 
   const hideSquads = () => {
     setShowSquads(!showSquads);
-    dispatch(resetGameStats());
+    dispatch(resetRallyStats());
     setNextRotation(true);
     if (playerInfo !== null) {
       dispatch(setInfoOfPlayer(null));
@@ -189,19 +191,13 @@ export function HomePage() {
     dispatch(rotateForwardHomeTeam());
     dispatch(rotateForwardPositions());
     setNextRotation(true);
-    if (SoloRallyStats.length > 0) {
-      setGameLog([...gameLog, { score: currentScore, stats: SoloRallyStats }]);
-      setstatsForTeam([...statsForTeam, SoloRallyStats]);
-    }
-    dispatch(resetGameStats());
-    setMyScore(myScore + 1);
-    // Сюда!!!!
+    dispatch(resetRallyStats());
   }
   function rotateBack() {
     dispatch(rotateBackGuestTeam());
     dispatch(rotateBackHomeTeam());
     dispatch(rotateBackPositions());
-    dispatch(resetGameStats());
+    dispatch(resetRallyStats());
     setNextRotation(true);
   }
   const currentScore = `${myScore} - ${rivalScore}`;
@@ -216,14 +212,16 @@ export function HomePage() {
     : (normalSetScore && myScore - rivalScore === (2 || -2)) ||
       (normalSetScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1));
   const saveButton = isBoardFull(guestTeamOptions) && !showSquads && !saveDataIcon && endOfTheSet;
-  //
+  const zeroZero = myScore === 0 && rivalScore === 0;
 
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
       {!showSquads && (
         <RotationPanel
-          team={false}
+          rivalTeam={false}
+          weServe={weServe}
+          setWeServe={setWeServe}
           score={myScore}
           rivalScore={rivalScore}
           currentScore={currentScore}
@@ -233,7 +231,7 @@ export function HomePage() {
           setGameLog={setGameLog}
           setstatsForTeam={setstatsForTeam}
           statsForTeam={statsForTeam}
-          tieBreak={tieBreak}
+          endOfTheSet={endOfTheSet}
         />
       )}
       <SectionWrapper
@@ -451,7 +449,7 @@ export function HomePage() {
                 </div>
               )}
             </form>
-            {!showSquads && (
+            {!showSquads && zeroZero && (
               <div className="rotation-buttons-wrapper">
                 <button onClick={() => rotateFront()} disabled={endOfTheSet}>
                   +
@@ -485,7 +483,9 @@ export function HomePage() {
       {!showSquads && (
         <RotationPanel
           opponentTeamName={opponentTeamName}
-          team={true}
+          rivalTeam={true}
+          weServe={!weServe}
+          setWeServe={setWeServe}
           score={rivalScore}
           rivalScore={myScore}
           currentScore={currentScore}
@@ -495,7 +495,7 @@ export function HomePage() {
           setGameLog={setGameLog}
           setstatsForTeam={setstatsForTeam}
           statsForTeam={statsForTeam}
-          tieBreak={tieBreak}
+          endOfTheSet={endOfTheSet}
         />
       )}
     </article>
