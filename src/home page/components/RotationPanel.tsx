@@ -55,8 +55,19 @@ export default function RotationPanel(arg: TRotationPanel) {
   const SoloRallyStats = useSelector(selectSoloRallyStats);
   const [number, setNumber] = useState(1);
   const [previousRivalScore, setPreviousRivalScore] = useState(0);
-
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
+
+  useEffect(() => {
+    function MyTeamRigthRotation() {
+      const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
+      if (!seTTer) return;
+      const indexOfSetter = guestTeamOptions.indexOf(seTTer);
+      setNumber(correctZones(indexOfSetter));
+    }
+    if (!rivalTeam) {
+      MyTeamRigthRotation();
+    }
+  });
 
   function addScore() {
     if ((zeroZero && !weServe && !rivalTeam) || (previousRivalScore !== rivalScore && !rivalTeam)) {
@@ -75,18 +86,6 @@ export default function RotationPanel(arg: TRotationPanel) {
     setWeServe(!rivalTeam);
   }
 
-  useEffect(() => {
-    function MyTeamRigthRotation() {
-      const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
-      if (!seTTer) return;
-      const indexOfSetter = guestTeamOptions.indexOf(seTTer);
-      setNumber(correctZones(indexOfSetter));
-    }
-    if (!rivalTeam) {
-      MyTeamRigthRotation();
-    }
-  });
-
   const zones = [4, 3, 2, 5, 6, 1];
   const nameOfTheTeam = rivalTeam ? opponentTeamName : guestTeam[0]?.name;
   const zeroZero = score === 0 && rivalScore === 0;
@@ -94,16 +93,12 @@ export default function RotationPanel(arg: TRotationPanel) {
     <SectionWrapper className="rotation-panel-wrapper">
       <div className="service-ball-wrapper">
         {weServe && <div>🏐</div>}
-        {zeroZero && (
-          <input type="checkbox" onChange={() => setWeServe(!weServe)} checked={weServe} />
+        {zeroZero && !rivalTeam && (
+          <input type="button" onClick={() => setWeServe(!weServe)} value={weServe ? ">" : "<"} />
         )}
       </div>
       <div className="rotation-buttons-wrapper">
-        <button
-          style={{ borderRadius: "50%" }}
-          onClick={() => addScore()}
-          disabled={endOfTheSet}
-        >
+        <button style={{ borderRadius: "50%" }} onClick={() => addScore()} disabled={endOfTheSet}>
           +
         </button>
       </div>

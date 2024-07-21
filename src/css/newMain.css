@@ -246,6 +246,9 @@ main .main-content-wrapper .section-content-wrapper .section-content .service-ba
 }
 main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper input {
   margin-top: 1vmax;
+  font-size: 2vmax;
+  font-weight: bold;
+  border: 2px solid black;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .team-name-wrapper {
   width: 15vw;
