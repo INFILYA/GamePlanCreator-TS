@@ -44,6 +44,7 @@ export default function GamesStatistic() {
   const [choosenSet, setChoosenSet] = useState<string>("full");
   const [saveFullGameStats, setSaveFullGameStats] = useState<TPlayer[]>([]);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
+  const [isShowDistribution, setIsShowDistribution] = useState<boolean>(false);
 
   function calculateForTeamData<T extends TMix>(obj: T): TMix {
     if (filter.length === 0) return obj;
@@ -172,7 +173,12 @@ export default function GamesStatistic() {
   }
 
   const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats) as TMix);
-  const sortedGameStats = [...filteredGamesStats].sort((a, b) => compare(b, a));
+  const sortedGameStats = [...filteredGamesStats].sort((a, b) =>
+    compare(
+      new Date(Object.keys(b)[0].split(";")[0]).getTime(),
+      new Date(Object.keys(a)[0].split(";")[0]).getTime()
+    )
+  );
   const namesOfTeams = listOfTeams.map((team) => team.name);
   const playersNames = choosenGameStats.map((player) => jusName(player));
   const soloGame = filteredGames.map((game) => Object.values(game).map((set) => set)).flat()[0];
@@ -268,9 +274,25 @@ export default function GamesStatistic() {
                     </div>
                   </div>
                 </div>
-                {detailedStatsOfPlayer ? (
-                  <DetailedStats detailedStats={detailedStats} />
-                ) : (
+                {!detailedStatsOfPlayer && (
+                  <div style={{ marginTop: "1vmax" }}>
+                    <RegularButton
+                      onClick={() => setIsShowDistribution(!isShowDistribution)}
+                      type="button"
+                      $color="black"
+                      $background="orangered"
+                    >
+                      {!isShowDistribution ? "Show Distribution" : "Hide Distribution"}
+                    </RegularButton>
+                  </div>
+                )}
+                {isShowDistribution && !detailedStatsOfPlayer && (
+                  <DetailedStats detailedStats={detailedStats} distribution={true} />
+                )}
+                {detailedStatsOfPlayer && (
+                  <DetailedStats detailedStats={detailedStats} distribution={false} />
+                )}
+                {!isShowDistribution && !detailedStatsOfPlayer && (
                   <div
                     className="diagram-wrapper"
                     style={!isBurger ? { flexDirection: "column" } : {}}

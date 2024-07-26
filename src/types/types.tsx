@@ -68,12 +68,15 @@ export type TPartPlayer = {
   S6F: number[];
   S6J: number[];
   boardPosition: number;
+  setterBoardPosition: number;
 };
 
 export type TMix = TPlayer | TTeam;
 type TPlayerKeys = keyof TPlayer;
 type TTeamKeys = keyof TTeam;
 export type TMixInterSectionKeys = TPlayerKeys & TTeamKeys;
+export type TSetterPosition = { setterBoardPosition: number };
+export type TPlayerAndSetterPosition = TPlayer & TSetterPosition;
 
 export type TSectionWrapper = {
   className?: string;

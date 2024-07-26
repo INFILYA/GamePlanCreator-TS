@@ -6,7 +6,7 @@ import {
   setDetailedStatsOfPlayer,
 } from "../states/slices/detailedStatsOfPlayerSlice";
 import { RegularButton } from "../css/Button.styled";
-import { TDistributionZones,  TPlayer } from "../types/types";
+import { TDistributionZones, TPlayer } from "../types/types";
 import { Block } from "../distribution/components/Block";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { DetailedZoneValue } from "../distribution/components/DetailedZoneValue";
@@ -20,13 +20,15 @@ import {
 
 type TDetailedStats = {
   detailedStats: TPlayer[];
+  distribution: boolean;
 };
 
 export default function DetailedStats(arg: TDetailedStats) {
-  const { detailedStats } = arg;
+  const { detailedStats, distribution } = arg;
   const dispatch = useAppDispatch();
   const detailedStatsOfPlayer = useSelector(selectDetailedStatsOfPlayer);
-  const [action, setAction] = useState("");
+  const [action, setAction] = useState("A");
+  const [position, setPosition] = useState<number>(1);
   const [isShowButtonCount, setIsShowButtonCount] = useState<boolean>(false);
   const [zoneValue, setZoneValue] = useState<TDistributionZones>({
     4: emptyDiagramm(),
@@ -36,8 +38,8 @@ export default function DetailedStats(arg: TDetailedStats) {
     6: emptyDiagramm(),
     1: emptyDiagramm(),
   });
-  const choosenActionsOfPlayer = detailedStats.filter(
-    (player) => player.name === detailedStatsOfPlayer
+  const choosenActionsOfPlayer = detailedStats.filter((player) =>
+    distribution ? player.setterBoardPosition === position : player.name === detailedStatsOfPlayer
   );
 
   function getSumOfActionsPerZone(zone: number) {
@@ -69,7 +71,10 @@ export default function DetailedStats(arg: TDetailedStats) {
   }
   function setChoosenAspect(e: ChangeEvent<HTMLInputElement>) {
     const value = e.target.value;
-    setAction(value);
+    setIsShowButtonCount(false);
+    if (distribution) {
+      setPosition(+value);
+    } else setAction(value);
     setZoneValue({
       ...zoneValue,
       4: emptyDiagramm(),
@@ -79,7 +84,6 @@ export default function DetailedStats(arg: TDetailedStats) {
       6: emptyDiagramm(),
       1: emptyDiagramm(),
     });
-    setIsShowButtonCount(false);
   }
 
   const properFunc = action === "A" ? getSumofAttacks : getSumofReceptions;
@@ -92,28 +96,60 @@ export default function DetailedStats(arg: TDetailedStats) {
     properFunc(zoneValue[4]),
     properFunc(zoneValue[5]),
   ]);
+  const myZones = [1, 2, 3, 4, 5, 6];
+
   return (
     <SectionWrapper>
-      <div className="detailed-stats-name-wrapper">
-        <RegularButton
-          onClick={() => dispatch(setDetailedStatsOfPlayer(""))}
-          type="button"
-          $color="black"
-          $background="orangered"
-        >
-          Back
-        </RegularButton>
-        <div className="choosen-player-name-content">{detailedStatsOfPlayer}</div>
-      </div>
+      {!distribution ? (
+        <div className="detailed-stats-name-wrapper">
+          <RegularButton
+            onClick={() => dispatch(setDetailedStatsOfPlayer(""))}
+            type="button"
+            $color="black"
+            $background="orangered"
+          >
+            Back
+          </RegularButton>
+          <div className="choosen-player-name-content">{detailedStatsOfPlayer}</div>
+        </div>
+      ) : (
+        <h1>Distribution</h1>
+      )}
       <div className="aspect-selection-wrapper">
-        <div>
-          <div>Attack</div>
-          <input type="checkbox" value="A" onChange={setChoosenAspect} checked={"A" === action} />
-        </div>
-        <div>
-          <div>Reception</div>
-          <input type="checkbox" value="R" onChange={setChoosenAspect} checked={"R" === action} />
-        </div>
+        {!distribution ? (
+          <>
+            <div>
+              <div>Attack</div>
+              <input
+                type="checkbox"
+                value="A"
+                onChange={setChoosenAspect}
+                checked={"A" === action}
+              />
+            </div>
+            <div>
+              <div>Reception</div>
+              <input
+                type="checkbox"
+                value="R"
+                onChange={setChoosenAspect}
+                checked={"R" === action}
+              />
+            </div>
+          </>
+        ) : (
+          myZones.map((zone) => (
+            <div key={zone}>
+              <div>Zone {zone}</div>
+              <input
+                type="checkbox"
+                value={zone}
+                onChange={setChoosenAspect}
+                checked={zone === position}
+              />
+            </div>
+          ))
+        )}
       </div>
       <div className="playArea-sections-wrapper">
         <SectionWrapper

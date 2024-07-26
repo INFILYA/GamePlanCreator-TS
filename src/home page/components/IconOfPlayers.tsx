@@ -9,17 +9,20 @@ import {
 } from "../../states/slices/indexOfHomeTeamZonesSlice";
 import {
   resetGuestTeamIndexOfZones,
+  selectIndexOfGuestTeamZones,
   updateInfoOfStartingSix,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { useEffect, useState } from "react";
 import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
 import {
+  correctZones,
   emptyPlayer,
   forSoloGameStat,
   preparePlayerToSoloGame,
   zones,
 } from "../../utilities/functions";
 import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
+import { useSelector } from "react-redux";
 
 type TIconOfPlayer = {
   type: string;
@@ -34,6 +37,7 @@ type TIconOfPlayer = {
 export function IconOfPlayer(props: TIconOfPlayer) {
   const { player, nextRotation, setNextRotation, startingSix, type, showSquads } = props;
   const dispatch = useAppDispatch();
+  const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const [category, setCategory] = useState<string>("AS");
   const [diagrammValue, setDiagrammValue] = useState<TMix>(emptyPlayer);
   const my = type === "my";
@@ -103,6 +107,12 @@ export function IconOfPlayer(props: TIconOfPlayer) {
 
   function addAmount(type: keyof TMix, number: number) {
     if (diagrammValue[type] === 0 && number === -1) return;
+    if (
+      !(type === "A-" || type === "A+" || type === "A!") &&
+      diagrammValue[type] === 1 &&
+      number === 1
+    )
+      return;
     setDiagrammValue({
       ...diagrammValue,
       [type]: +diagrammValue[type] + number,
@@ -117,12 +127,19 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       },
       true
     );
+    const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
+    if (!seTTer) return;
+    const indexOfSetter = guestTeamOptions.indexOf(seTTer);
     startingSix.forEach(
       (player, index) =>
         player.name === soloGameUpdatedPlayer.name &&
         dispatch(
           setSoloRallyStats(
-            forSoloGameStat({ ...soloGameUpdatedPlayer, boardPosition: zones[index] })
+            forSoloGameStat({
+              ...soloGameUpdatedPlayer,
+              boardPosition: zones[index],
+              setterBoardPosition: correctZones(indexOfSetter),
+            })
           )
         )
     );
@@ -149,7 +166,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     ];
     return arr;
   }
-  // console.log(startingSix);
+
   return (
     <>
       {condition && (

@@ -131,7 +131,7 @@ export function HomePage() {
   async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // download solo game statisic
-    const matchInfo = `${guestTeam[0].id} - ${opponentTeamName}; ${currentDate()}`;
+    const matchInfo = `${currentDate()}; ${guestTeam[0].id} - ${opponentTeamName}`;
     if (!gameLog) return;
     const setStat = { [setNumber]: gameLog };
     const choosenGame = gamesStats.find((game) => game[matchInfo]);
