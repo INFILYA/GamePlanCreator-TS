@@ -44,7 +44,7 @@ export default function DetailedStats(arg: TDetailedStats) {
 
   function getSumOfActionsPerZone(zone: number) {
     const result = calculateTotalofActions(
-      choosenActionsOfPlayer.filter((player) => player.boardPosition === zone)
+      choosenActionsOfPlayer.filter((player) => player.zoneOfAttack === zone)
     );
     return result;
   }
@@ -97,7 +97,7 @@ export default function DetailedStats(arg: TDetailedStats) {
     properFunc(zoneValue[5]),
   ]);
   const myZones = [1, 2, 3, 4, 5, 6];
-
+  console.log(detailedStats.filter((zone) => zone.setterBoardPosition === 3));
   return (
     <SectionWrapper>
       {!distribution ? (

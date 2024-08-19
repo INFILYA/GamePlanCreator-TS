@@ -69,6 +69,7 @@ export type TPartPlayer = {
   S6J: number[];
   boardPosition: number;
   setterBoardPosition: number;
+  zoneOfAttack: number;
 };
 
 export type TMix = TPlayer | TTeam;

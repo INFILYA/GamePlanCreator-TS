@@ -1,4 +1,3 @@
-// import { useSelector } from "react-redux";
 import { setDetailedStatsOfPlayer } from "../../states/slices/detailedStatsOfPlayerSlice";
 import { useAppDispatch } from "../../states/store";
 import { TMix } from "../../types/types";
@@ -61,10 +60,10 @@ export function Rows(props: TRows) {
     const result = obj.map((player) => preparePlayerToSoloGameV3(player));
     const sorted = [] as TMix[];
     for (let i = 0; i < result.length; i++) {
-      const plaer = result[i];
-      if (sorted.some((athlete) => athlete.name === plaer.name)) {
+      const player = result[i];
+      if (sorted.some((athlete) => athlete.name === player.name)) {
         continue;
-      } else sorted.push(plaer);
+      } else sorted.push(player);
     }
     return sorted;
   }

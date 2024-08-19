@@ -114,6 +114,7 @@ export const emptyPlayer: TPlayer = {
   blocks: 0,
   boardPosition: 0,
   setterBoardPosition: 0,
+  zoneOfAttack: 0,
 };
 
 export const backGroundYellow = { backgroundColor: "#FFD700", color: "#0057B8" };
@@ -416,6 +417,7 @@ export function forSoloGameStat(obj: TPlayer): TPlayer {
       (key === "blocks" ||
         key === "setterBoardPosition" ||
         key === "boardPosition" ||
+        key === "zoneOfAttack" ||
         key === "A-" ||
         key === "A=" ||
         key === "A+" ||
@@ -436,7 +438,7 @@ export function forSoloGameStat(obj: TPlayer): TPlayer {
       newObj[key] = soloGamePlayerStats[key];
     } else continue;
   }
-  return newObj;
+  return { ...newObj, position: obj.position };
 }
 
 export const rows = [
