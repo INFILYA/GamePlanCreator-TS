@@ -113,5 +113,5 @@ export type TObjectStats = {
 export type TSoloRallyStats = { score: string; stats: TPlayer[] };
 export type TGameLogStats = TSoloRallyStats[];
 
-export type TSettersZone = { [key: number]: number };
-export type TSettersZones = { [key: number]: TSettersZone };
+export type TSettersPosition = { [key: number]: number };
+export type TSettersPositions = { [key: number]: TSettersPosition };

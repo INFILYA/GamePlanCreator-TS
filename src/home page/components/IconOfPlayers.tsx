@@ -19,7 +19,7 @@ import {
   emptyPlayer,
   forSoloGameStat,
   preparePlayerToSoloGame,
-  setterZone,
+  spikersPositions,
   zones,
 } from "../../utilities/functions";
 import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
@@ -155,9 +155,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     const seTTer = guestTeamOptions.find((player) => player.position === "SET");
     if (!seTTer) return 0;
     const indexOfSetter = guestTeamOptions.indexOf(seTTer);
-    const actualZone = zones[index];
-    const properSetterZone = setterZone(correctZones(indexOfSetter));
-    return properSetterZone[actualZone];
+    const playerBoardPosition = zones[index];
+    const playerProperZonesOfSpike = spikersPositions(correctZones(indexOfSetter));
+    return playerProperZonesOfSpike[playerBoardPosition];
   }
 
   if (typeof player === "number" || player === null) return;

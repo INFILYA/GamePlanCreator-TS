@@ -1,5 +1,12 @@
 import { CSSProperties } from "react";
-import { TDiagramm, TMix, TMixKeys, TPlayer, TSettersZone, TSettersZones } from "../types/types";
+import {
+  TDiagramm,
+  TMix,
+  TMixKeys,
+  TPlayer,
+  TSettersPosition,
+  TSettersPositions,
+} from "../types/types";
 
 export const later = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -506,7 +513,7 @@ export const listOfOpponents = [
   "REACH Nitro",
   "MAC Titanium",
 ];
-export const setterZoneOne = {
+export const P1 = {
   1: 1,
   2: 2,
   3: 3,
@@ -514,7 +521,7 @@ export const setterZoneOne = {
   5: 6,
   6: 5,
 };
-export const setterZoneTwo = {
+export const P2 = {
   1: 5,
   2: 2,
   3: 4,
@@ -522,7 +529,7 @@ export const setterZoneTwo = {
   5: 1,
   6: 6,
 };
-export const setterZoneThree = {
+export const P3 = {
   1: 6,
   2: 3,
   3: 2,
@@ -530,7 +537,7 @@ export const setterZoneThree = {
   5: 5,
   6: 1,
 };
-export const setterZoneFour = {
+export const P4 = {
   1: 1,
   2: 4,
   3: 3,
@@ -539,7 +546,7 @@ export const setterZoneFour = {
   6: 5,
 };
 
-export const setterZoneFive = {
+export const P5 = {
   1: 5,
   2: 2,
   3: 4,
@@ -548,7 +555,7 @@ export const setterZoneFive = {
   6: 6,
 };
 
-export const setterZoneSix = {
+export const P6 = {
   1: 6,
   2: 3,
   3: 2,
@@ -557,15 +564,15 @@ export const setterZoneSix = {
   6: 1,
 };
 
-const setterZones:TSettersZones = {
-  1: setterZoneOne,
-  2: setterZoneTwo,
-  3: setterZoneThree,
-  4: setterZoneFour,
-  5: setterZoneFive,
-  6: setterZoneSix,
+const setterPositions: TSettersPositions = {
+  1: P1,
+  2: P2,
+  3: P3,
+  4: P4,
+  5: P5,
+  6: P6,
 };
 
-export function setterZone(zone: number):TSettersZone  {
-  return setterZones[zone];
+export function spikersPositions(position: number): TSettersPosition {
+  return setterPositions[position];
 }
