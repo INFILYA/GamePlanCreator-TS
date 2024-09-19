@@ -213,6 +213,7 @@ export function HomePage() {
       (normalSetScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1));
   const saveButton = isBoardFull(guestTeamOptions) && !showSquads && !saveDataIcon && endOfTheSet;
   const zeroZero = myScore === 0 && rivalScore === 0;
+  console.log(SoloRallyStats);
 
   return (
     <article className="main-content-wrapper">

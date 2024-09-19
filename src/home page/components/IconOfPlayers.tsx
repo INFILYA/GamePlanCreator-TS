@@ -19,6 +19,7 @@ import {
   emptyPlayer,
   forSoloGameStat,
   preparePlayerToSoloGame,
+  setterZone,
   zones,
 } from "../../utilities/functions";
 import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
@@ -139,7 +140,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
               ...soloGameUpdatedPlayer,
               boardPosition: zones[index],
               setterBoardPosition: correctZones(indexOfSetter),
-              zoneOfAttack: getZoneOfAttack(player, index),
+              zoneOfAttack: getZoneOfAttack(index),
             })
           )
         )
@@ -150,84 +151,13 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     dispatch(updateInfoOfSubPlayers(updatedPlayer));
   }
 
-  function getZoneOfAttack(player: TPlayer, index: number): number {
-    const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
+  function getZoneOfAttack(index: number): number {
+    const seTTer = guestTeamOptions.find((player) => player.position === "SET");
     if (!seTTer) return 0;
     const indexOfSetter = guestTeamOptions.indexOf(seTTer);
-    let properZone = 0;
-    // SEtter frontRow
-    if (zones[index] === 2 && correctZones(indexOfSetter) === 1) {
-      properZone = 2;
-    } else if (zones[index] === 3 && correctZones(indexOfSetter) === 1) {
-      properZone = 3;
-    } else if (zones[index] === 4 && correctZones(indexOfSetter) === 1) {
-      properZone = 4;
-    } else if (zones[index] === 5 && correctZones(indexOfSetter) === 1) {
-      properZone = 6;
-    } else if (zones[index] === 6 && correctZones(indexOfSetter) === 1) {
-      properZone = 5;
-    } else if (zones[index] === 5 && correctZones(indexOfSetter) === 2) {
-      properZone = 1;
-    } else if (zones[index] === 6 && correctZones(indexOfSetter) === 2) {
-      properZone = 6;
-    } else if (zones[index] === 1 && correctZones(indexOfSetter) === 2) {
-      properZone = 5;
-    } else if (zones[index] === 3 && correctZones(indexOfSetter) === 2) {
-      properZone = 4;
-    } else if (zones[index] === 4 && correctZones(indexOfSetter) === 2) {
-      properZone = 3;
-    } else if (zones[index] === 6 && correctZones(indexOfSetter) === 3) {
-      properZone = 1;
-    } else if (zones[index] === 5 && correctZones(indexOfSetter) === 3) {
-      properZone = 5;
-    } else if (zones[index] === 4 && correctZones(indexOfSetter) === 3) {
-      properZone = 4;
-    } else if (zones[index] === 2 && correctZones(indexOfSetter) === 3) {
-      properZone = 3;
-    } else if (zones[index] === 1 && correctZones(indexOfSetter) === 3) {
-      properZone = 6;
-    }
-    // SEtter backRow
-    if (zones[index] === 2 && correctZones(indexOfSetter) === 4) {
-      properZone = 4;
-    } else if (zones[index] === 3 && correctZones(indexOfSetter) === 4) {
-      properZone = 3;
-    } else if (zones[index] === 5 && correctZones(indexOfSetter) === 4) {
-      properZone = 6;
-    } else if (zones[index] === 6 && correctZones(indexOfSetter) === 4) {
-      properZone = 5;
-    } else if (zones[index] === 1 && correctZones(indexOfSetter) === 4) {
-      properZone = 1;
-    } else if (zones[index] === 4 && correctZones(indexOfSetter) === 5) {
-      properZone = 3;
-    } else if (zones[index] === 3 && correctZones(indexOfSetter) === 5) {
-      properZone = 4;
-    } else if (zones[index] === 2 && correctZones(indexOfSetter) === 5) {
-      properZone = 2;
-    } else if (zones[index] === 1 && correctZones(indexOfSetter) === 5) {
-      properZone = 5;
-    } else if (zones[index] === 6 && correctZones(indexOfSetter) === 5) {
-      properZone = 6;
-    } else if (zones[index] === 1 && correctZones(indexOfSetter) === 6) {
-      properZone = 6;
-    } else if (zones[index] === 2 && correctZones(indexOfSetter) === 6) {
-      properZone = 3;
-    } else if (zones[index] === 3 && correctZones(indexOfSetter) === 6) {
-      properZone = 2;
-    } else if (zones[index] === 4 && correctZones(indexOfSetter) === 6) {
-      properZone = 4;
-    } else if (zones[index] === 5 && correctZones(indexOfSetter) === 6) {
-      properZone = 5;
-    }
-    if (
-      player.position === "SET" &&
-      (correctZones(indexOfSetter) === 4 ||
-        correctZones(indexOfSetter) === 3 ||
-        correctZones(indexOfSetter) === 2)
-    ) {
-      properZone = 2;
-    }
-    return properZone;
+    const actualZone = zones[index];
+    const properSetterZone = setterZone(correctZones(indexOfSetter));
+    return properSetterZone[actualZone];
   }
 
   if (typeof player === "number" || player === null) return;

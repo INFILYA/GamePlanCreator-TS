@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-import { TDiagramm, TMix, TMixKeys, TPlayer } from "../types/types";
+import { TDiagramm, TMix, TMixKeys, TPlayer, TSettersZone, TSettersZones } from "../types/types";
 
 export const later = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -506,3 +506,66 @@ export const listOfOpponents = [
   "REACH Nitro",
   "MAC Titanium",
 ];
+export const setterZoneOne = {
+  1: 1,
+  2: 2,
+  3: 3,
+  4: 4,
+  5: 6,
+  6: 5,
+};
+export const setterZoneTwo = {
+  1: 5,
+  2: 2,
+  3: 4,
+  4: 3,
+  5: 1,
+  6: 6,
+};
+export const setterZoneThree = {
+  1: 6,
+  2: 3,
+  3: 2,
+  4: 4,
+  5: 5,
+  6: 1,
+};
+export const setterZoneFour = {
+  1: 1,
+  2: 4,
+  3: 3,
+  4: 2,
+  5: 6,
+  6: 5,
+};
+
+export const setterZoneFive = {
+  1: 5,
+  2: 2,
+  3: 4,
+  4: 3,
+  5: 1,
+  6: 6,
+};
+
+export const setterZoneSix = {
+  1: 6,
+  2: 3,
+  3: 2,
+  4: 4,
+  5: 5,
+  6: 1,
+};
+
+const setterZones:TSettersZones = {
+  1: setterZoneOne,
+  2: setterZoneTwo,
+  3: setterZoneThree,
+  4: setterZoneFour,
+  5: setterZoneFive,
+  6: setterZoneSix,
+};
+
+export function setterZone(zone: number):TSettersZone  {
+  return setterZones[zone];
+}
