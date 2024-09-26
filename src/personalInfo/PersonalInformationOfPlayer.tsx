@@ -32,7 +32,6 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   const service = link === "Service";
   const attack = link === "Attack";
   const libero = playerInfo.position === "LIB";
-  // const setter = playerInfo.position === "Setter";
   const servicePM = getPlusMinusService(playerInfo);
   const attackPM = getPlusMinusAttack(playerInfo);
   return (

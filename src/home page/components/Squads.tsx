@@ -23,10 +23,9 @@ import {
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { RegularButton } from "../../css/Button.styled";
-import { compare, isBoardFull} from "../../utilities/functions";
+import { compare, isBoardFull } from "../../utilities/functions";
 import { set } from "firebase/database";
 import { TTeam } from "../../types/types";
-
 
 type TSquadsProps = {
   team: string;
@@ -41,7 +40,6 @@ export function Squads(props: TSquadsProps) {
   const homePlayers = useSelector(selectHomePlayers);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
-  // const playerInfo = useSelector(selectPlayerInfo);
   const [isRegistratedUser] = useAuthState(auth);
   const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
   const myTeam = team === "my";
@@ -54,7 +52,6 @@ export function Squads(props: TSquadsProps) {
     isRegistratedUser &&
     guestPlayers.length > 1;
 
-  //???????????????????????
   function homeTeamActions(event: ChangeEvent<HTMLSelectElement>) {
     setPlayerToHomeTeamBoard(event);
   }
@@ -117,7 +114,6 @@ export function Squads(props: TSquadsProps) {
             >
               <div className="playerNumber-wrapper">
                 <button type="button" disabled className={myTeam ? "playerNumber" : ""}>
-                  {/* {player.number > 9 ? player.number : `0${player.number}`} */}
                   {player.number}
                 </button>
               </div>

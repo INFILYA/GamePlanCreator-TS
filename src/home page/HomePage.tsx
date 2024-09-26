@@ -213,7 +213,6 @@ export function HomePage() {
       (normalSetScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1));
   const saveButton = isBoardFull(guestTeamOptions) && !showSquads && !saveDataIcon && endOfTheSet;
   const zeroZero = myScore === 0 && rivalScore === 0;
-  console.log(SoloRallyStats);
 
   return (
     <article className="main-content-wrapper">
@@ -415,6 +414,23 @@ export function HomePage() {
                   </RegularButton>
                 </div>
               )}
+              {showSquads &&
+                zeroZero &&
+                !opponentTeamName &&
+                !setNumber &&
+                isBoardFull(guestTeamOptions) && (
+                  <div className="rotation-buttons-wrapper">
+                    <button onClick={() => rotateFront()} disabled={endOfTheSet}>
+                      +
+                    </button>
+                    <button
+                      onClick={() => rotateBack()}
+                      style={{ borderRadius: "0px 20px 20px 0px" }}
+                    >
+                      -
+                    </button>
+                  </div>
+                )}
               {showGuestTeam && showSquads && (
                 <div className="showRatings">
                   <NavLink to={"/Ratings"}>
@@ -450,16 +466,6 @@ export function HomePage() {
                 </div>
               )}
             </form>
-            {!showSquads && zeroZero && (
-              <div className="rotation-buttons-wrapper">
-                <button onClick={() => rotateFront()} disabled={endOfTheSet}>
-                  +
-                </button>
-                <button onClick={() => rotateBack()} style={{ borderRadius: "0px 20px 20px 0px" }}>
-                  -
-                </button>
-              </div>
-            )}
           </>
         )}
       </SectionWrapper>
