@@ -10,14 +10,14 @@ import "./css/newDistribution.css";
 import "./css/newAttack.css";
 import "./css/newRatings.css";
 import { store } from "./states/store";
-import React from "react";
+// import React from "react";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter>
         <GamePlanCreator />
       </BrowserRouter>
     </Provider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

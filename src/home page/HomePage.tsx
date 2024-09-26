@@ -152,23 +152,11 @@ export function HomePage() {
     async function setPlayersToData(player: TPlayer) {
       await set(playersRef(player.name), player);
     }
-    const names = guestTeamOptions.map((player) => player.name);
-    const updatedStartingSix = listOfPlayers.filter(
-      (player) => player.name === names[names.indexOf(player.name)]
-    );
-    updatedStartingSix.forEach((player) => {
+    const updatedPlayers = listOfPlayers.filter((player) => player.team === guestTeam[0].name);
+    updatedPlayers.forEach((player) => {
       setPlayersToData(player);
     });
-    // // Refresh SubstitutionPlayers players
-    const benchNames = homeTeamOptions.map((player) => player.name);
-    const updatedSubstitutionPlayers = listOfPlayers.filter(
-      (player) => player.name === benchNames[benchNames.indexOf(player.name)]
-    );
-    updatedSubstitutionPlayers.forEach((player) => {
-      setPlayersToData(player);
-    });
-    //add solo game stats
-
+    // //add solo game stats
     const newTeam = calculateForTeamData(calculateTotalofActions(statsForTeam.flat()) as TPlayer);
     await set(teamsRef(newTeam.name), newTeam);
     setstatsForTeam([]);
@@ -214,6 +202,11 @@ export function HomePage() {
   const saveButton = isBoardFull(guestTeamOptions) && !showSquads && !saveDataIcon && endOfTheSet;
   const zeroZero = myScore === 0 && rivalScore === 0;
 
+  function getSetterPosition() {
+    const seTTer = guestTeamOptions?.find((plaer) => plaer.position === "SET");
+    if (!seTTer) return 0;
+    return correctZones(guestTeamOptions.indexOf(seTTer));
+  }
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -423,6 +416,7 @@ export function HomePage() {
                     <button onClick={() => rotateFront()} disabled={endOfTheSet}>
                       +
                     </button>
+                    <h1>P{getSetterPosition()}</h1>
                     <button
                       onClick={() => rotateBack()}
                       style={{ borderRadius: "0px 20px 20px 0px" }}

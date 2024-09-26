@@ -177,6 +177,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     ];
     return arr;
   }
+
   return (
     <>
       {condition && (

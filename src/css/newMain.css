@@ -279,6 +279,12 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-p
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content button:hover {
   background-color: #0272be;
 }
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper button {
   width: 3vw;
   aspect-ratio: 1/1;

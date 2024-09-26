@@ -287,6 +287,10 @@ main {
           }
         }
         .rotation-buttons-wrapper {
+          display: flex;
+          width: 100%;
+          justify-content: center;
+          align-items: center;
           button {
             width: 3vw;
             aspect-ratio: 1/1;
