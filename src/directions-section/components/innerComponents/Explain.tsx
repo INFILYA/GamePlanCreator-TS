@@ -34,7 +34,9 @@ export function Explain(props: TExplain) {
     isShowDataOfActions,
   } = props;
   const [isRegistratedUser] = useAuthState(auth);
-  const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
+  const admin =
+    isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2" ||
+    isRegistratedUser?.uid === "wFlNnrG4piWkebseNPzDW1qejC22";
   const attack = type === "Attack" && "A++" in diagrammValue;
   const service = type === "Service" && "S++" in diagrammValue;
   const bgOrangeRed = { backgroundColor: "orangered" };

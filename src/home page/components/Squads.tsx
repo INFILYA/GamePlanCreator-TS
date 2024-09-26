@@ -41,7 +41,9 @@ export function Squads(props: TSquadsProps) {
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
   const [isRegistratedUser] = useAuthState(auth);
-  const admin = isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2";
+  const admin =
+    isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2" ||
+    isRegistratedUser?.uid === "wFlNnrG4piWkebseNPzDW1qejC22";
   const myTeam = team === "my";
   const club = myTeam ? homeTeam[0] : guestTeam[0];
   const players = myTeam ? [...homePlayers] : [...guestPlayers];
