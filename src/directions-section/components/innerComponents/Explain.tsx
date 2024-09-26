@@ -36,7 +36,8 @@ export function Explain(props: TExplain) {
   const [isRegistratedUser] = useAuthState(auth);
   const admin =
     isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2" ||
-    isRegistratedUser?.uid === "wFlNnrG4piWkebseNPzDW1qejC22";
+    isRegistratedUser?.uid === "wFlNnrG4piWkebseNPzDW1qejC22" ||
+    isRegistratedUser?.uid === "ehKOX9XhJpgfCRR2iRquHlGWO2n2";
   const attack = type === "Attack" && "A++" in diagrammValue;
   const service = type === "Service" && "S++" in diagrammValue;
   const bgOrangeRed = { backgroundColor: "orangered" };
