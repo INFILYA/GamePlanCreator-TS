@@ -30,7 +30,7 @@ export function DetailedZoneValue(props: TInputDistribution) {
     return isNumber ? (
       <div
         className="zone-wrapper"
-        onClick={() => setIsNumber(!isNumber)}
+        onMouseDown={() => setIsNumber(!isNumber)}
         style={noData ? {} : backgroundColor}
       >
         {!noData && <div>{getPercentage(typeOfAction, sumOfZones)}%</div>}
@@ -40,7 +40,9 @@ export function DetailedZoneValue(props: TInputDistribution) {
         {!noData && (
           <div className="detailed-info-box-wrapper">
             <div>{typeOfAction}</div>
-            <div style={{ color: "lightgreen" }}>{zoneValue[`${action}++` as keyof TDiagramm]}</div>
+            <div style={{ color: "lightgreen" }}>
+              {getPercentage(zoneValue[`${action}++` as keyof TDiagramm], typeOfAction)}%
+            </div>
             <div style={{ color: "orange" }}>{zoneValue[`${action}-` as keyof TDiagramm]}</div>
             <div style={{ color: "orangered" }}>{zoneValue[`${action}=` as keyof TDiagramm]}</div>
           </div>

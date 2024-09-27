@@ -86,34 +86,12 @@ export default function GamesStatistic() {
     const flatFullSizeGameStat = choosenDetailedStats
       .map((rally) => Object.values(rally).flat())
       .flat();
-    const finalResult = properStats(flatFullSizeGameStat.map((rall) => rall.stats).flat(), "+");
+    const finalResult = flatFullSizeGameStat.map((rall) => rall.stats).flat();
     setChoosenGameStats(finalResult);
     setDetailedStats(finalResult);
     if (filteredGames.length === 1) {
       setSaveFullGameStats(finalResult);
     }
-  }
-
-  // Обраховуємо повторних гравців
-  function calculateForUnion<T extends TPlayer>(obj: T, fullObj: T, mark: "+" | "-") {
-    const newObj = { ...obj };
-    const newFullObj = { ...fullObj };
-    for (const key in newObj) {
-      if (key === "boardPosition" || key === "name") {
-        continue;
-      }
-      if (!(key in newFullObj)) {
-        (newFullObj[key] as number) = +newObj[key];
-      } else if (key in newFullObj) {
-        if (mark === "+") {
-          (newFullObj[key] as number) += +newObj[key];
-        }
-        if (mark === "-") {
-          (newFullObj[key] as number) -= +newObj[key];
-        }
-      }
-    }
-    return newFullObj;
   }
 
   //Обираємо потрібний сет
@@ -122,47 +100,16 @@ export default function GamesStatistic() {
     if (value === "full") {
       setChoosenSet(value);
       setChoosenGameStats(saveFullGameStats);
+      setDetailedStats(saveFullGameStats);
       return;
     }
     const soloGame = filteredGames.map((game) => Object.values(game).map((set) => set)).flat()[0];
     const properGame = soloGame.map((set) => Object.keys(set)[0]);
     const index = properGame.indexOf(value);
     const choosenSet = soloGame[index][value].map((rally) => rally.stats).flat();
-    setChoosenGameStats(properStats(choosenSet, "+"));
+    setChoosenGameStats(choosenSet);
+    setDetailedStats(choosenSet);
     setChoosenSet(value);
-  }
-
-  function properStats(arr: TPlayer[], mark: "+" | "-"): TPlayer[] {
-    let properGameStat: TPlayer[] = [];
-    for (let i = 0; i < arr.length; i++) {
-      const player = arr[i];
-      if (
-        properGameStat.some(
-          (athlete) =>
-            athlete.name === player.name && athlete.boardPosition === player.boardPosition
-        )
-      ) {
-        const properPlayer = properGameStat.find(
-          (athlete) =>
-            athlete.name === player.name && athlete.boardPosition === player.boardPosition
-        );
-        const updatedPlayer = calculateForUnion(player, properPlayer!, mark);
-        if (
-          Object.entries(updatedPlayer)
-            .filter(([key]) => key !== "boardPosition" && key !== "name")
-            .every(([key, stat]) => stat === 0 && key)
-        ) {
-          properGameStat = properGameStat.filter((athlete) => athlete.name !== updatedPlayer.name);
-        } else
-          properGameStat = properGameStat.map((athlete) =>
-            athlete.name === updatedPlayer.name &&
-            athlete.boardPosition === updatedPlayer.boardPosition
-              ? updatedPlayer
-              : athlete
-          );
-      } else properGameStat = [...properGameStat, player];
-    }
-    return properGameStat;
   }
 
   function setGameFilterByTeam(name: string) {
@@ -182,6 +129,7 @@ export default function GamesStatistic() {
   const namesOfTeams = listOfTeams.map((team) => team.name);
   const playersNames = choosenGameStats.map((player) => jusName(player));
   const soloGame = filteredGames.map((game) => Object.values(game).map((set) => set)).flat()[0];
+  
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">

@@ -97,7 +97,6 @@ export default function DetailedStats(arg: TDetailedStats) {
     properFunc(zoneValue[5]),
   ]);
   const myZones = [1, 2, 3, 4, 5, 6];
-  console.log(detailedStats.filter((zone) => zone.setterBoardPosition === 3));
   return (
     <SectionWrapper>
       {!distribution ? (
@@ -127,7 +126,7 @@ export default function DetailedStats(arg: TDetailedStats) {
                 checked={"A" === action}
               />
             </div>
-            <div>
+            {/* <div>
               <div>Reception</div>
               <input
                 type="checkbox"
@@ -135,7 +134,7 @@ export default function DetailedStats(arg: TDetailedStats) {
                 onChange={setChoosenAspect}
                 checked={"R" === action}
               />
-            </div>
+            </div> */}
           </>
         ) : (
           myZones.map((zone) => (
