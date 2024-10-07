@@ -20,6 +20,11 @@
 .main-content-wrapper .ratings-section .aspect-selection-wrapper div {
   margin: 0 0.5vmax;
 }
+.main-content-wrapper .ratings-section .aspect-selection-wrapper .checkbox-row-wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
 .main-content-wrapper .ratings-section nav {
   width: 100%;
   margin: 1vw 0;

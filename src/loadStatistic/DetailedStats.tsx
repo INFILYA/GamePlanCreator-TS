@@ -19,16 +19,18 @@ import {
 } from "../utilities/functions";
 
 type TDetailedStats = {
-  detailedStats: TPlayer[];
+  detailedStats: TPlayer[][];
   distribution: boolean;
 };
+type TKeyOfPlayers = keyof TPlayer;
 
 export default function DetailedStats(arg: TDetailedStats) {
   const { detailedStats, distribution } = arg;
   const dispatch = useAppDispatch();
   const detailedStatsOfPlayer = useSelector(selectDetailedStatsOfPlayer);
   const [action, setAction] = useState("A");
-  const [position, setPosition] = useState<number>(1);
+  const [position, setPosition] = useState<number>(0);
+  const [receptionType, setReceptionType] = useState<TKeyOfPlayers | "All">("All");
   const [isShowButtonCount, setIsShowButtonCount] = useState<boolean>(false);
   const [zoneValue, setZoneValue] = useState<TDistributionZones>({
     4: emptyDiagramm(),
@@ -38,9 +40,15 @@ export default function DetailedStats(arg: TDetailedStats) {
     6: emptyDiagramm(),
     1: emptyDiagramm(),
   });
-  const choosenActionsOfPlayer = detailedStats.filter((player) =>
-    distribution ? player.setterBoardPosition === position : player.name === detailedStatsOfPlayer
-  );
+  const choosenActionsOfPlayer = distribution
+    ? detailedStats
+        .filter((elem) => (receptionType !== "All" ? elem.some((el) => el[receptionType]) : elem))
+        .flat()
+        .filter((player) => player.setterBoardPosition === position)
+    : detailedStats
+        .filter((elem) => (receptionType !== "All" ? elem.some((el) => el[receptionType]) : elem))
+        .flat()
+        .filter((player) => player.name === detailedStatsOfPlayer);
 
   function getSumOfActionsPerZone(zone: number) {
     const result = calculateTotalofActions(
@@ -86,6 +94,12 @@ export default function DetailedStats(arg: TDetailedStats) {
     });
   }
 
+  function setChoosenReception(e: ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setReceptionType(value as keyof TPlayer);
+    setIsShowButtonCount(false);
+  }
+
   const properFunc = action === "A" ? getSumofAttacks : getSumofReceptions;
 
   const sumOfZones = reduce([
@@ -97,6 +111,7 @@ export default function DetailedStats(arg: TDetailedStats) {
     properFunc(zoneValue[5]),
   ]);
   const myZones = [1, 2, 3, 4, 5, 6];
+  const receptionTypes = ["R++", "R+", "R!", "R-", "All"];
   return (
     <SectionWrapper>
       {!distribution ? (
@@ -126,6 +141,19 @@ export default function DetailedStats(arg: TDetailedStats) {
                 checked={"A" === action}
               />
             </div>
+            <div className="checkbox-row-wrapper">
+              {receptionTypes.map((Type) => (
+                <div key={Type}>
+                  <div>{Type}</div>
+                  <input
+                    type="checkbox"
+                    value={Type}
+                    onChange={setChoosenReception}
+                    checked={Type === receptionType}
+                  />
+                </div>
+              ))}
+            </div>
             {/* <div>
               <div>Reception</div>
               <input
@@ -137,17 +165,35 @@ export default function DetailedStats(arg: TDetailedStats) {
             </div> */}
           </>
         ) : (
-          myZones.map((zone) => (
-            <div key={zone}>
-              <div>Zone {zone}</div>
-              <input
-                type="checkbox"
-                value={zone}
-                onChange={setChoosenAspect}
-                checked={zone === position}
-              />
+          <div>
+            <div className="checkbox-row-wrapper">
+              {myZones.map((zone) => (
+                <div key={zone}>
+                  <div>Zone {zone}</div>
+                  <input
+                    type="checkbox"
+                    value={zone}
+                    onChange={setChoosenAspect}
+                    checked={zone === position}
+                  />
+                </div>
+              ))}
             </div>
-          ))
+            <div className="checkbox-row-wrapper">
+              {position !== 0 &&
+                receptionTypes.map((Type) => (
+                  <div key={Type}>
+                    <div>{Type}</div>
+                    <input
+                      type="checkbox"
+                      value={Type}
+                      onChange={setChoosenReception}
+                      checked={Type === receptionType}
+                    />
+                  </div>
+                ))}
+            </div>
+          </div>
         )}
       </div>
       <div className="playArea-sections-wrapper">

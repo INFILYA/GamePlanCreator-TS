@@ -39,10 +39,10 @@ export default function GamesStatistic() {
   const teamFilter = useSelector(selectorFilter);
   const [filter, setFilter] = useState("");
   const [filteredGames, setFilteredGames] = useState<TGameStats[]>([]);
-  const [detailedStats, setDetailedStats] = useState<TPlayer[]>([]);
-  const [choosenGameStats, setChoosenGameStats] = useState<TPlayer[]>([]);
+  const [detailedStats, setDetailedStats] = useState<TPlayer[][]>([]);
+  const [choosenGameStats, setChoosenGameStats] = useState<TPlayer[][]>([]);
   const [choosenSet, setChoosenSet] = useState<string>("full");
-  const [saveFullGameStats, setSaveFullGameStats] = useState<TPlayer[]>([]);
+  const [saveFullGameStats, setSaveFullGameStats] = useState<TPlayer[][]>([]);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [isShowDistribution, setIsShowDistribution] = useState<boolean>(false);
 
@@ -58,7 +58,7 @@ export default function GamesStatistic() {
     return team;
   }
   function rankByValue<T extends TMix>(criteria: keyof TMix, arr: T[]) {
-    const properArr = criteria === "name" ? choosenGameStats : arr;
+    const properArr = criteria === "name" ? choosenGameStats.flat() : arr;
     !isBiggest
       ? properArr.sort((a, b) =>
           compare(isFieldExist(b[criteria] as number), isFieldExist(a[criteria] as number))
@@ -86,14 +86,7 @@ export default function GamesStatistic() {
     const flatFullSizeGameStat = choosenDetailedStats
       .map((rally) => Object.values(rally).flat())
       .flat();
-    const finalResult = flatFullSizeGameStat.map((rall) => rall.stats).flat();
-
-    // HERE !!!
-    console.log(
-      flatFullSizeGameStat
-        .map((rall) => rall.stats)
-        .filter((elem) => elem.some((el) => el["R++"] || el["R+"]))
-    ); // HERE !!!
+    const finalResult = flatFullSizeGameStat.map((rall) => rall.stats);
 
     setChoosenGameStats(finalResult);
     setDetailedStats(finalResult);
@@ -114,7 +107,7 @@ export default function GamesStatistic() {
     const soloGame = filteredGames.map((game) => Object.values(game).map((set) => set)).flat()[0];
     const properGame = soloGame.map((set) => Object.keys(set)[0]);
     const index = properGame.indexOf(value);
-    const choosenSet = soloGame[index][value].map((rally) => rally.stats).flat();
+    const choosenSet = soloGame[index][value].map((rally) => rally.stats);
     setChoosenGameStats(choosenSet);
     setDetailedStats(choosenSet);
     setChoosenSet(value);
@@ -127,7 +120,7 @@ export default function GamesStatistic() {
     setFilter("");
   }
 
-  const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats) as TMix);
+  const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats.flat()) as TMix);
   const sortedGameStats = [...filteredGamesStats].sort((a, b) =>
     compare(
       new Date(Object.keys(b)[0].split(";")[0]).getTime(),
@@ -135,7 +128,7 @@ export default function GamesStatistic() {
     )
   );
   const namesOfTeams = listOfTeams.map((team) => team.name);
-  const playersNames = choosenGameStats.map((player) => jusName(player));
+  const playersNames = choosenGameStats.flat().map((player) => jusName(player));
   const soloGame = filteredGames.map((game) => Object.values(game).map((set) => set)).flat()[0];
 
   return (
@@ -216,7 +209,7 @@ export default function GamesStatistic() {
                     <table style={{ width: "100%" }}>
                       <tbody className="rating-table-wrapper">
                         <Categorys
-                          filteredPlayers={choosenGameStats}
+                          filteredPlayers={choosenGameStats.flat()}
                           rankByValue={rankByValue}
                           categorys={categorys}
                         />
