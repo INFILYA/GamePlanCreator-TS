@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
-import { auth, gamesRef, playersRef, teamsRef } from "../config/firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { gamesRef, playersRef, teamsRef } from "../config/firebase";
 import { NavLink } from "react-router-dom";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import { useAppDispatch } from "../states/store";
@@ -8,7 +7,6 @@ import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import {
   calculateTotalofActions,
   checkNumbers,
-  correctPositions,
   correctZones,
   emptyPlayers,
   firstLetterCapital,
@@ -52,7 +50,6 @@ import RotationPanel from "./components/RotationPanel";
 
 export function HomePage() {
   const dispatch = useAppDispatch();
-  const [isRegistratedUser] = useAuthState(auth);
   const listOfTeams = useSelector(selectListOfTeams);
   const listOfPlayers = useSelector(selectListOfPlayers);
   const homeTeam = useSelector(selectHomeTeam);
@@ -207,6 +204,80 @@ export function HomePage() {
     if (!seTTer) return 0;
     return correctZones(guestTeamOptions.indexOf(seTTer));
   }
+
+  {
+    /* Reset Stats  */
+  }
+  // const resetplaers = () => {
+  //   async function setPlayersToData(player: TPlayer) {
+  //     await set(playersRef(player.name), player);
+  //   }
+  //   const updatedPlayers = listOfPlayers.filter((player) => player.team === guestTeam[0].name);
+  //   function creeNew(player: TPlayer) {
+  //     const newObj = {} as TPlayer;
+  //     const soloGamePlayerStats = { ...player };
+  //     for (const key in soloGamePlayerStats) {
+  //       if (
+  //         key === "blocks" ||
+  //         key === "A-" ||
+  //         key === "A=" ||
+  //         key === "A+" ||
+  //         key === "A++" ||
+  //         key === "A!" ||
+  //         key === "S++" ||
+  //         key === "S=" ||
+  //         key === "S!" ||
+  //         key === "S+" ||
+  //         key === "S-" ||
+  //         key === "R++" ||
+  //         key === "R=" ||
+  //         key === "R!" ||
+  //         key === "R+" ||
+  //         key === "R-"
+  //       ) {
+  //         newObj[key] = 0;
+  //       } else newObj[key] = soloGamePlayerStats[key as keyof TPlayer];
+  //     }
+  //     return newObj;
+  //   }
+
+  //   updatedPlayers.forEach((player) => {
+  //     setPlayersToData(creeNew(player));
+  //   });
+  // };
+
+  // const resetteam = () => {
+  //   async function setTeamToData(Team: TTeam) {
+  //     await set(teamsRef(Team.name), Team);
+  //   }
+  //   function creeNew(Team: TTeam) {
+  //     const guestTeamNew = {} as TTeam;
+  //     guestTeamNew["A++"] = 0;
+  //     guestTeamNew["A+"] = 0;
+  //     guestTeamNew["A="] = 0;
+  //     guestTeamNew["A!"] = 0;
+  //     guestTeamNew["A-"] = 0;
+  //     guestTeamNew["S++"] = 0;
+  //     guestTeamNew["S!"] = 0;
+  //     guestTeamNew["S="] = 0;
+  //     guestTeamNew["S-"] = 0;
+  //     guestTeamNew["S+"] = 0;
+  //     guestTeamNew["R++"] = 0;
+  //     guestTeamNew["R!"] = 0;
+  //     guestTeamNew["R="] = 0;
+  //     guestTeamNew["R-"] = 0;
+  //     guestTeamNew["R+"] = 0;
+  //     guestTeamNew.blocks = 0;
+  //     guestTeamNew.name = Team.name;
+  //     guestTeamNew.logo = Team.logo;
+  //     guestTeamNew.id = Team.id;
+  //     guestTeamNew.startingSquad = Team.startingSquad;
+  //     return guestTeamNew;
+  //   }
+  //   setTeamToData(creeNew(guestTeam[0]));
+  // };
+  // END HERE
+  console.log(SoloRallyStats);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -376,7 +447,12 @@ export function HomePage() {
                   )
                 )}
               </div>
-
+              {/* Reset Stats  */}
+              {/* <div>
+                <button onClick={() => resetteam()}>team</button>
+                <button onClick={() => resetplaers()}>plaers</button>
+              </div> */}
+              {/* HERE */}
               <div className="button-save-wrapper">
                 {saveButton && (
                   <RegularButton type="submit" $color="black" $background="#ffd700">
@@ -384,29 +460,6 @@ export function HomePage() {
                   </RegularButton>
                 )}
               </div>
-              {isBoardFull(homeTeamOptions) && isRegistratedUser && (
-                <div className="plusMinus">
-                  <RegularButton
-                    onClick={() => dispatch(rotateForwardHomeTeam())}
-                    $color="black"
-                    $background="#ffd700"
-                  >
-                    -
-                  </RegularButton>
-                  {homeTeamOptions.map((player, index) =>
-                    typeof player !== "number" && player && player.position === "SET" ? (
-                      <span key={player.name}>P{correctPositions(index) + 1}</span>
-                    ) : null
-                  )}
-                  <RegularButton
-                    onClick={() => dispatch(rotateBackHomeTeam())}
-                    $color="black"
-                    $background="#ffd700"
-                  >
-                    +
-                  </RegularButton>
-                </div>
-              )}
               {showSquads &&
                 zeroZero &&
                 !opponentTeamName &&

@@ -87,7 +87,7 @@ export function Rows(props: TRows) {
               <td style={setStyleForEfficency(gerPercentOfPerfectReception(player))}>
                 {gerPercentOfPerfectReception(player)}%
               </td>
-              <td style={setStyleForEfficency(gerPercentOfPositiveReception(player))}>
+              <td style={setStyleForPercent(gerPercentOfPositiveReception(player))}>
                 {gerPercentOfPositiveReception(player)}%
               </td>
               {rows.map((row) => (

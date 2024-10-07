@@ -87,6 +87,14 @@ export default function GamesStatistic() {
       .map((rally) => Object.values(rally).flat())
       .flat();
     const finalResult = flatFullSizeGameStat.map((rall) => rall.stats).flat();
+
+    // HERE !!!
+    console.log(
+      flatFullSizeGameStat
+        .map((rall) => rall.stats)
+        .filter((elem) => elem.some((el) => el["R++"] || el["R+"]))
+    ); // HERE !!!
+
     setChoosenGameStats(finalResult);
     setDetailedStats(finalResult);
     if (filteredGames.length === 1) {
@@ -129,7 +137,7 @@ export default function GamesStatistic() {
   const namesOfTeams = listOfTeams.map((team) => team.name);
   const playersNames = choosenGameStats.map((player) => jusName(player));
   const soloGame = filteredGames.map((game) => Object.values(game).map((set) => set)).flat()[0];
-  
+
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">

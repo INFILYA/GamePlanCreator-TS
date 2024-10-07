@@ -50,6 +50,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       setDiagrammValue(soloGamePlayerStats);
       setNextRotation(false);
     }
+    if (player.position === "LIB") {
+      setCategory("RB");
+    }
   }, [player, startingSix, nextRotation, setNextRotation]);
 
   function calculateForPlayerData<T extends TMix>(
@@ -214,7 +217,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
             <div className="errors-field-wrapper">
               <div className="category-switcher-wrapper">
                 <select onChange={(e) => setCategory(e.target.value)}>
-                  <option value={"AS"}>Attack & Service</option>
+                  {player.position !== "LIB" && <option value={"AS"}>Attack & Service</option>}
                   <option value={"RB"}>Recep & block</option>
                 </select>
               </div>
