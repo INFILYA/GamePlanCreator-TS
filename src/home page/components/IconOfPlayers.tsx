@@ -29,7 +29,6 @@ type TIconOfPlayer = {
   type: string;
   startingSix: TPlayer[];
   player: TPlayer;
-  SoloRallyStats: TPlayer[];
   showSquads: boolean;
   nextRotation: boolean;
   setNextRotation(arg: boolean): void;
@@ -39,7 +38,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   const { player, nextRotation, setNextRotation, startingSix, type, showSquads } = props;
   const dispatch = useAppDispatch();
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
-  const [category, setCategory] = useState<string>("AS");
+  const [category, setCategory] = useState<string>("SR");
   const [diagrammValue, setDiagrammValue] = useState<TMix>(emptyPlayer);
   const my = type === "my";
 
@@ -51,7 +50,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       setNextRotation(false);
     }
     if (player.position === "LIB") {
-      setCategory("RB");
+      setCategory("SR");
     }
   }, [player, startingSix, nextRotation, setNextRotation]);
 
@@ -165,11 +164,11 @@ export function IconOfPlayer(props: TIconOfPlayer) {
 
   if (typeof player === "number" || player === null) return;
   const condition = player.number !== 0;
-  const attackGradations = properArr("A");
+  const serviceGradations = properArr("S");
 
-  const AttackService = category === "AS";
-  const ReceptionBlock = category === "RB";
-  const serviceGradations = ReceptionBlock ? properArr("R") : properArr("S");
+  const ServiceReception = category === "SR";
+  const BlockAttack = category === "BA";
+  const attackGradations = BlockAttack ? properArr("A") : properArr("R");
   function properArr(letter: string) {
     const arr = [
       [`${letter}++`, "lightgreen", "#"],
@@ -180,7 +179,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     ];
     return arr;
   }
-
+  // player.name === "Cameron Gibson" && console.log(player);
   return (
     <>
       {condition && (
@@ -217,8 +216,8 @@ export function IconOfPlayer(props: TIconOfPlayer) {
             <div className="errors-field-wrapper">
               <div className="category-switcher-wrapper">
                 <select onChange={(e) => setCategory(e.target.value)}>
-                  {player.position !== "LIB" && <option value={"AS"}>Attack & Service</option>}
-                  <option value={"RB"}>Recep & block</option>
+                  <option value={"SR"}>Service/Reception</option>
+                  {player.position !== "LIB" && <option value={"BA"}>Block/Attack</option>}
                 </select>
               </div>
               <div style={{ display: "flex" }}>
@@ -226,11 +225,11 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                   <tbody>
                     <tr>
                       <th>+</th>
-                      <th>{AttackService ? "A" : "Bl"}</th>
+                      <th>{ServiceReception ? "S" : "BL"}</th>
                       <th>-</th>
                     </tr>
-                    {AttackService ? (
-                      attackGradations.map((grade) => (
+                    {ServiceReception ? (
+                      serviceGradations.map((grade) => (
                         <tr key={grade[0]}>
                           <td
                             style={{ backgroundColor: grade[1] }}
@@ -287,10 +286,10 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                   <tbody>
                     <tr>
                       <th>+</th>
-                      <th>{AttackService ? "S" : "R"}</th>
+                      <th>{ServiceReception ? "R" : "A"}</th>
                       <th>-</th>
                     </tr>
-                    {serviceGradations.map((grade) => (
+                    {attackGradations.map((grade) => (
                       <tr key={grade[0]}>
                         <td
                           style={{ backgroundColor: grade[1] }}

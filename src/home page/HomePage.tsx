@@ -41,7 +41,7 @@ import {
   resetRallyStats,
   rotateBackPositions,
   rotateForwardPositions,
-  selectSoloRallyStats,
+  // selectSoloRallyStats,
 } from "../states/slices/soloRallyStatsSlice";
 import { currentDate } from "../utilities/currentDate";
 import { selectGamesStats } from "../states/slices/gamesStatsSlice";
@@ -57,7 +57,7 @@ export function HomePage() {
   const playerInfo = useSelector(selectPlayerInfo);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
-  const SoloRallyStats = useSelector(selectSoloRallyStats);
+  // const SoloRallyStats = useSelector(selectSoloRallyStats);
   const [showSquads, setShowSquads] = useState(true);
   const [nextRotation, setNextRotation] = useState(true);
   const [weServe, setWeServe] = useState(false);
@@ -145,6 +145,7 @@ export function HomePage() {
         });
       }
     }
+    // Here IS PROBLEM!!!
     // Refresh StartingSix players
     async function setPlayersToData(player: TPlayer) {
       await set(playersRef(player.name), player);
@@ -192,9 +193,9 @@ export function HomePage() {
   const tieBreakScore = myScore >= 15 || rivalScore >= 15;
   const normalSetScore = myScore >= 25 || rivalScore >= 25;
   const endOfTheSet = tieBreak
-    ? (tieBreakScore && myScore - rivalScore === (2 || -2)) ||
+    ? (tieBreakScore && myScore - rivalScore === (+2 || -2)) ||
       (tieBreakScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1))
-    : (normalSetScore && myScore - rivalScore === (2 || -2)) ||
+    : (normalSetScore && myScore - rivalScore === (+2 || -2)) ||
       (normalSetScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1));
   const saveButton = isBoardFull(guestTeamOptions) && !showSquads && !saveDataIcon && endOfTheSet;
   const zeroZero = myScore === 0 && rivalScore === 0;
@@ -277,7 +278,9 @@ export function HomePage() {
   //   setTeamToData(creeNew(guestTeam[0]));
   // };
   // END HERE
-  console.log(SoloRallyStats);
+
+
+
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -380,7 +383,6 @@ export function HomePage() {
                       <IconOfPlayer
                         showSquads={showSquads}
                         player={option}
-                        SoloRallyStats={SoloRallyStats}
                         startingSix={guestTeamOptions}
                         nextRotation={nextRotation}
                         setNextRotation={setNextRotation}
@@ -399,7 +401,6 @@ export function HomePage() {
                       <IconOfPlayer
                         showSquads={showSquads}
                         player={option}
-                        SoloRallyStats={SoloRallyStats}
                         startingSix={homeTeamOptions}
                         nextRotation={nextRotation}
                         setNextRotation={setNextRotation}
@@ -416,7 +417,6 @@ export function HomePage() {
                       <IconOfPlayer
                         showSquads={showSquads}
                         player={option}
-                        SoloRallyStats={SoloRallyStats}
                         startingSix={guestTeamOptions}
                         nextRotation={nextRotation}
                         setNextRotation={setNextRotation}
@@ -435,7 +435,6 @@ export function HomePage() {
                       <IconOfPlayer
                         showSquads={showSquads}
                         player={option}
-                        SoloRallyStats={SoloRallyStats}
                         startingSix={homeTeamOptions}
                         nextRotation={nextRotation}
                         setNextRotation={setNextRotation}

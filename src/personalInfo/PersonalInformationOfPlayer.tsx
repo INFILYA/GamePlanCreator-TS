@@ -15,6 +15,7 @@ import {
   upgradeAge,
 } from "../utilities/functions";
 import { RegularButton } from "../css/Button.styled";
+// import { set } from "firebase/database";
 
 type TPersonalInfoProps = {
   link: string;
@@ -34,6 +35,20 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   const libero = playerInfo.position === "LIB";
   const servicePM = getPlusMinusService(playerInfo);
   const attackPM = getPlusMinusAttack(playerInfo);
+
+  // ADD NEW PLAER
+  // async function setNewPlayersToData() {
+  //   const newPlaer = {
+  //     ...playerInfo,
+  //     name: "Noah Lee",
+  //     id: "Noah Lee",
+  //     number: "11",
+  //     age: "2009-03-17",
+  //   };
+  //   await set(playersRef("Noah Lee"), newPlaer);
+  // }
+  // ADD NEW PLAER
+
   return (
     <div className="hidden-player-information-wrapper">
       <div className="player-surname-wrapper">
@@ -100,6 +115,7 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                       Service
                     </RegularButton>
                   </NavLink>
+                  {/* <RegularButton onClick={setNewPlayersToData}>add plaer</RegularButton> */}
                 </>
               )}
               {page1 && (
