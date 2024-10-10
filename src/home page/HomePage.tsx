@@ -67,7 +67,8 @@ export function HomePage() {
   const [setNumber, setSetNumber] = useState("");
   const [myScore, setMyScore] = useState(0);
   const [rivalScore, setRivalScore] = useState(0);
-
+  const [previousMyScore, setPreviousMyScore] = useState(0);
+  const [previousRivalScore, setPreviousRivalScore] = useState(0);
   const gamesStats = useSelector(selectGamesStats);
 
   const showGuestTeam = guestTeam.length !== 0;
@@ -279,8 +280,6 @@ export function HomePage() {
   // };
   // END HERE
 
-
-
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -299,6 +298,8 @@ export function HomePage() {
           setstatsForTeam={setstatsForTeam}
           statsForTeam={statsForTeam}
           endOfTheSet={endOfTheSet}
+          setPreviousScore={setPreviousMyScore}
+          previousScore={previousMyScore}
         />
       )}
       <SectionWrapper
@@ -549,6 +550,8 @@ export function HomePage() {
           setstatsForTeam={setstatsForTeam}
           statsForTeam={statsForTeam}
           endOfTheSet={endOfTheSet}
+          setPreviousScore={setPreviousRivalScore}
+          previousScore={previousRivalScore}
         />
       )}
     </article>

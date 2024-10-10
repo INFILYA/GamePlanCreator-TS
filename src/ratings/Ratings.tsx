@@ -18,7 +18,7 @@ export function Ratings() {
   const [chosenPosition, setChosenPosition] = useState<string>("");
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [isChoosenFilter, setChoosenFilter] = useState<boolean>(false);
-  const positions = ["OHitter", "OPPosite", "MBlocker", "SETter", "Team"];
+  const positions = ["OHitter", "OPPosite", "MBlocker", "SETter", "LIBero", "Team"];
 
   function setPositionFilter(position: string) {
     setChosenPosition(position);
