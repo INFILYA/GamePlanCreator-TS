@@ -170,7 +170,9 @@
   display: flex;
   justify-content: center;
   margin: 1vmax;
-  font-size: 18px;
+}
+.distribution-wrapper .distrfield-wrapper .playarea-wrapper .count-wrapper h2 {
+  font-size: 24px;
 }
 .distribution-wrapper .distrfield-wrapper .playarea-wrapper .count-wrapper .count {
   background-color: #0272be;

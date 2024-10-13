@@ -138,7 +138,9 @@
         display: flex;
         justify-content: center;
         margin: 1vmax;
-        font-size: 18px;
+        h2 {
+          font-size: 24px;
+        }
         .count {
           background-color: #0272be;
           cursor: pointer;
