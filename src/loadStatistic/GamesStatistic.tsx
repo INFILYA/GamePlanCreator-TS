@@ -28,6 +28,7 @@ import {
   selectDetailedStatsOfPlayer,
   setDetailedStatsOfPlayer,
 } from "../states/slices/detailedStatsOfPlayerSlice";
+import GameLogs from "./GameLogs";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
@@ -69,14 +70,17 @@ export default function GamesStatistic() {
     setIsBiggest(!isBiggest);
   }
 
+  function setAllGames() {
+    setChoosenGameStats([]);
+    filteredGames === sortedGameStats ? setFilteredGames([]) : setFilteredGames(sortedGameStats);
+  }
+
   function setFilterForGames(game: TGameStats) {
     setChoosenGameStats([]);
-    if (filteredGames.some((match) => match === game)) {
-      setFilteredGames(filteredGames.filter((match) => match !== game));
-    } else {
-      filteredGames.push(game);
-      setFilteredGames(filteredGames);
-    }
+    filteredGames.some((match) => match === game)
+      ? setFilteredGames(filteredGames.filter((match) => match !== game))
+      : filteredGames.push(game);
+    setFilteredGames(filteredGames);
   }
 
   function setChoosenGames() {
@@ -123,7 +127,7 @@ export default function GamesStatistic() {
   const fullGameStats = calculateForTeamData(
     calculateTotalofActions(choosenGameStats.flat()) as TMix
   );
-  const sortedGameStats = [...filteredGamesStats].sort((a, b) =>
+  const sortedGameStats = filteredGamesStats.sort((a, b) =>
     compare(
       new Date(Object.keys(b)[0].split(";")[0]).getTime(),
       new Date(Object.keys(a)[0].split(";")[0]).getTime()
@@ -162,10 +166,20 @@ export default function GamesStatistic() {
                       onChange={() => setFilterForGames(game)}
                       value={Object.keys(game)}
                       type="checkbox"
+                      checked={filteredGames.some((match) => match === game)}
                     />
                     <div>{Object.keys(game)}</div>
                   </div>
                 ))}
+                <div style={{ display: "flex" }}>
+                  <input
+                    type="checkbox"
+                    value={"Check all"}
+                    onChange={setAllGames}
+                    checked={filteredGames === sortedGameStats}
+                  />
+                  <div>Check All</div>
+                </div>
               </div>
               <RegularButton onClick={setChoosenGames} type="button">
                 Submit
@@ -225,8 +239,9 @@ export default function GamesStatistic() {
                     </div>
                   </div>
                 </div>
-                {!detailedStatsOfPlayer && (
-                  <div style={{ marginTop: "1vmax" }}>
+                <nav>
+                  <GameLogs games={filteredGames} />
+                  {!detailedStatsOfPlayer && (
                     <RegularButton
                       onClick={() => setIsShowDistribution(!isShowDistribution)}
                       type="button"
@@ -235,8 +250,8 @@ export default function GamesStatistic() {
                     >
                       {!isShowDistribution ? "Show Distribution" : "Hide Distribution"}
                     </RegularButton>
-                  </div>
-                )}
+                  )}
+                </nav>
                 {isShowDistribution && !detailedStatsOfPlayer && (
                   <DetailedStats detailedStats={detailedStats} distribution={true} />
                 )}
@@ -248,15 +263,15 @@ export default function GamesStatistic() {
                     className="diagram-wrapper"
                     style={!isBurger ? { flexDirection: "column" } : {}}
                   >
-                    <div style={{ width: "80%" }}>
+                    <pre>
                       <Diagramm link="Reception" data={fullGameStats} />
-                    </div>
-                    <div style={{ width: "80%" }}>
+                    </pre>
+                    <pre>
                       <Diagramm link="Attack" data={fullGameStats} />
-                    </div>
-                    <div style={{ width: "80%" }}>
+                    </pre>
+                    <pre>
                       <Diagramm link="Service" data={fullGameStats} />
-                    </div>
+                    </pre>
                   </div>
                 )}
               </>

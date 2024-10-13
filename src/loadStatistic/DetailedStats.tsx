@@ -250,7 +250,7 @@ export default function DetailedStats(arg: TDetailedStats) {
                         Errors: <strong style={{ color: "orangered" }}>{attackErrors}</strong>
                       </h2>
                       <h2>
-                        Percentage:
+                        Percentage:{" "}
                         <strong style={{ color: "lightgreen" }}>{executePercentage}%</strong>
                       </h2>
                     </div>

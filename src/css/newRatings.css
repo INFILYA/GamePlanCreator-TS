@@ -153,5 +153,8 @@
   margin-top: 2vw;
   align-items: center;
 }
+.main-content-wrapper .ratings-section .diagram-wrapper pre {
+  width: 80%;
+}
 
 /*# sourceMappingURL=newRatings.css.map */
