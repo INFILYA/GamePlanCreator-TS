@@ -120,7 +120,9 @@ export default function GamesStatistic() {
     setFilter("");
   }
 
-  const fullGameStats = calculateForTeamData(calculateTotalofActions(choosenGameStats.flat()) as TMix);
+  const fullGameStats = calculateForTeamData(
+    calculateTotalofActions(choosenGameStats.flat()) as TMix
+  );
   const sortedGameStats = [...filteredGamesStats].sort((a, b) =>
     compare(
       new Date(Object.keys(b)[0].split(";")[0]).getTime(),
@@ -164,10 +166,10 @@ export default function GamesStatistic() {
                     <div>{Object.keys(game)}</div>
                   </div>
                 ))}
-                <RegularButton onClick={setChoosenGames} type="button">
-                  Submit
-                </RegularButton>
               </div>
+              <RegularButton onClick={setChoosenGames} type="button">
+                Submit
+              </RegularButton>
               {filteredGames.length === 1 && choosenGameStats.length > 0 && (
                 <div className="set-selection-wrapper">
                   {soloGame.map((set) => (

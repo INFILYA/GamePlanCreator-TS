@@ -169,6 +169,7 @@
 .distribution-wrapper .distrfield-wrapper .playarea-wrapper .count-wrapper {
   display: flex;
   justify-content: center;
+  margin: 1vmax;
 }
 .distribution-wrapper .distrfield-wrapper .playarea-wrapper .count-wrapper .count {
   background-color: #0272be;
@@ -180,7 +181,6 @@
   z-index: 2;
   font-size: 18px;
   font-weight: 600;
-  margin-top: 20px;
 }
 .distribution-wrapper .distrfield-wrapper .playarea-wrapper .count-wrapper .count:hover {
   transition: 0.3s;

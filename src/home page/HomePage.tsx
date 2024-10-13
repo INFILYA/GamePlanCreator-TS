@@ -190,7 +190,7 @@ export function HomePage() {
   const currentScore = `${myScore} - ${rivalScore}`;
   const playerInfoWindow = playerInfo && showSquads;
   const saveDataIcon = !opponentTeamName || !setNumber;
-  const tieBreak = setNumber === "Set 3";
+  const tieBreak = setNumber === "Set 4";
   const tieBreakScore = myScore >= 15 || rivalScore >= 15;
   const normalSetScore = myScore >= 25 || rivalScore >= 25;
   const endOfTheSet = tieBreak

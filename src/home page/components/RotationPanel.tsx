@@ -86,7 +86,7 @@ export default function RotationPanel(arg: TRotationPanel) {
       dispatch(rotateForwardHomeTeam());
       setPreviousScore(rivalScore);
     }
-    if ((zeroZero && weServe && rivalTeam) || (previousScore !== rivalScore && rivalTeam)) {
+    if ((zeroZero && !weServe && rivalTeam) || (previousScore !== rivalScore && rivalTeam)) {
       setPreviousScore(rivalScore);
       const properRivalZone = rivalZone === 1 ? 6 : rivalZone <= 6 ? rivalZone - 1 : rivalZone;
       setRivalZone(properRivalZone);

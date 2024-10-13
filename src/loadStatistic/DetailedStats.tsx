@@ -13,6 +13,7 @@ import { DetailedZoneValue } from "../distribution/components/DetailedZoneValue"
 import {
   calculateTotalofActions,
   emptyDiagramm,
+  gerPercentOfAttack,
   getSumofAttacks,
   getSumofReceptions,
   reduce,
@@ -112,6 +113,10 @@ export default function DetailedStats(arg: TDetailedStats) {
   ]);
   const myZones = [1, 2, 3, 4, 5, 6];
   const receptionTypes = ["R++", "R+", "R!", "R-", "All"];
+  const attackErrors = calculateTotalofActions(choosenActionsOfPlayer)["A="];
+  const amountOfSets = properFunc(calculateTotalofActions(choosenActionsOfPlayer));
+  const executePercentage = gerPercentOfAttack(calculateTotalofActions(choosenActionsOfPlayer));
+
   return (
     <SectionWrapper>
       {!distribution ? (
@@ -234,10 +239,21 @@ export default function DetailedStats(arg: TDetailedStats) {
                     ))}
                 </div>
                 <div className="count-wrapper">
-                  {!isShowButtonCount && action && (
+                  {!isShowButtonCount && action ? (
                     <button className="count" type="submit">
                       Show
                     </button>
+                  ) : (
+                    <div>
+                      <h2>Amount: {amountOfSets}</h2>
+                      <h2>
+                        Errors: <strong style={{ color: "orangered" }}>{attackErrors}</strong>
+                      </h2>
+                      <h2>
+                        Percentage:
+                        <strong style={{ color: "lightgreen" }}>{executePercentage}%</strong>
+                      </h2>
+                    </div>
                   )}
                 </div>
               </div>

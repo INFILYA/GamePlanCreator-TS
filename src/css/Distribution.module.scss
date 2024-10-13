@@ -137,6 +137,7 @@
       .count-wrapper {
         display: flex;
         justify-content: center;
+        margin: 1vmax;
         .count {
           background-color: #0272be;
           cursor: pointer;
@@ -147,7 +148,6 @@
           z-index: 2;
           font-size: 18px;
           font-weight: 600;
-          margin-top: 20px;
           &:hover {
             transition: 0.3s;
             opacity: 1;
