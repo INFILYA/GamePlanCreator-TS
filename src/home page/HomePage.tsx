@@ -341,8 +341,8 @@ export function HomePage() {
                                 setOpponentTeamName(firstLetterCapital(e.target.value))
                               }
                               value={opponentTeamName}
-                              placeholder="Choose team name"
                             >
+                              <option value="">Choose Opponent</option>
                               {listOfOpponents.map((opponent) => (
                                 <option value={opponent}>{opponent}</option>
                               ))}

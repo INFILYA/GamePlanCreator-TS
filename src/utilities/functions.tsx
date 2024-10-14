@@ -481,7 +481,6 @@ export const categorys = [
 ] as TMixKeys[];
 
 export const listOfOpponents = [
-  "Choose Opponent",
   "MAC Titanium", //
   "Maverick Mustangs", //
   "Toronto Thunderbolts Smash Shihua", //
