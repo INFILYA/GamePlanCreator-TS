@@ -482,36 +482,25 @@ export const categorys = [
 
 export const listOfOpponents = [
   "Choose Opponent",
-  "Maverick Longhorns",
-  "Pakmen Gold Jessy",
-  "Pakmen Gold Omar",
-  "Durham Attack Power",
-  "Maverick Rangers",
-  "Toronto Thunderbolts Smash",
-  "FCVC Hyperion",
-  "KW Preds Invictus",
-  "MAC Iron",
-  "Kingston Rock Black",
-  "Niagara Rapids Alliance",
-  "Titans Black",
-  "Storm Voltage",
-  "Phoenix Skybirds",
-  "Scorpions Menace",
-  "Unity Valour",
-  "Pakmen Black Lam",
-  "Leaside Lobsters",
-  "Reach Rampage",
-  "Barie Elites Phoenix",
-  "Ottawa fusion Purple",
-  "Durham Attack Blast",
-  "KW Preds Wolwerines",
-  "41SIX Bounce",
-  "Ancaster Lions Fury",
-  "Halton Hurricanes Category 8BB",
-  "Niagara Rapids Crush",
-  "FCVC Baobab",
-  "REACH Nitro",
-  "MAC Titanium",
+  "MAC Titanium", //
+  "Maverick Mustangs", //
+  "Toronto Thunderbolts Smash Shihua", //
+  "Ottawa Fusion Purple Matt", //
+  "Kingston Rock Obsidian", //
+  "FCVC Baobab", //
+  "Scorpions Legion", //
+  "Pakmen Gold Jessy", //
+  "Pakmen Gold Omar", //
+  "Durham Attack Power", //
+  "KW Preds Invictus", //
+  "Niagara Rapids Alliance", //
+  "Storm Voltage", //
+  "Phoenix Skybirds", //
+  "Durham Attack Blast", //
+  "REACH Rampage", //
+  "Pakmen Black Lam", //
+  "Thundercats Bushido", //
+  "Maverick Rangers", //
 ];
 export const P1 = {
   1: 1,

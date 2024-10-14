@@ -11,6 +11,7 @@ import {
   emptyPlayers,
   firstLetterCapital,
   isBoardFull,
+  listOfOpponents,
 } from "../utilities/functions";
 import { TGameLogStats, TPlayer, TTeam } from "../types/types";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -335,13 +336,17 @@ export function HomePage() {
                         </div>
                         {!showSquads && (
                           <>
-                            <input
+                            <select
                               onChange={(e) =>
                                 setOpponentTeamName(firstLetterCapital(e.target.value))
                               }
                               value={opponentTeamName}
                               placeholder="Choose team name"
-                            />
+                            >
+                              {listOfOpponents.map((opponent) => (
+                                <option value={opponent}>{opponent}</option>
+                              ))}
+                            </select>
                             <select
                               onChange={(e) => setSetNumber(e.target.value)}
                               value={setNumber}

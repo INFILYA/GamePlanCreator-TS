@@ -15,7 +15,7 @@ import {
 import { useAppDispatch } from "../../states/store";
 import { TGameLogStats, TPlayer } from "../../types/types";
 import { rotateForwardHomeTeam } from "../../states/slices/indexOfHomeTeamZonesSlice";
-import { RegularButton } from "../../css/Button.styled";
+import ConfirmField from "../../utilities/ConfimField.";
 
 type TRotationPanel = {
   rivalTeam: boolean;
@@ -110,29 +110,7 @@ export default function RotationPanel(arg: TRotationPanel) {
   return (
     <>
       {openConfirmWindow && (
-        <div className="hideBackground">
-          <div className="confirmationForExit">
-            <div>
-              <h2>Are you sure?</h2>
-              <RegularButton
-                type="button"
-                onClick={addScore}
-                $color="#0057b8"
-                $background="#ffd700"
-              >
-                Yes
-              </RegularButton>
-              <RegularButton
-                type="button"
-                onClick={() => setOpenConfirmWindow(false)}
-                $color="#0057b8"
-                $background="#ffd700"
-              >
-                No
-              </RegularButton>
-            </div>
-          </div>
-        </div>
+        <ConfirmField onClick={addScore} setOpenConfirmWindow={setOpenConfirmWindow} />
       )}
       <SectionWrapper className="rotation-panel-wrapper">
         <div className="service-ball-wrapper">
@@ -152,7 +130,7 @@ export default function RotationPanel(arg: TRotationPanel) {
         </div>
         <div style={{ fontSize: "8vw" }}>{score}</div>
         <div className="rivalTeam-name-wrapper">
-          <h1 className="rivalTeam-name">{nameOfTheTeam}</h1>
+          <h2 className="rivalTeam-name">{nameOfTheTeam}</h2>
         </div>
         <div className="rotation-panel-content">
           {myZones.map((zone) => (

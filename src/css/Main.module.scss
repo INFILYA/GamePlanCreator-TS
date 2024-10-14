@@ -325,6 +325,11 @@ main {
             font-weight: bold;
           }
         }
+        .rivalTeam-name-wrapper {
+          height: 5vmax;
+          display: flex;
+          align-items: center;
+        }
         // Іконки гравців
         .playerNumber-wrapper {
           .playerNumber {
