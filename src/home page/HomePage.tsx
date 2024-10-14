@@ -41,7 +41,6 @@ import {
   resetRallyStats,
   rotateBackPositions,
   rotateForwardPositions,
-  // selectSoloRallyStats,
 } from "../states/slices/soloRallyStatsSlice";
 import { currentDate } from "../utilities/currentDate";
 import { selectGamesStats } from "../states/slices/gamesStatsSlice";
@@ -57,7 +56,6 @@ export function HomePage() {
   const playerInfo = useSelector(selectPlayerInfo);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
-  // const SoloRallyStats = useSelector(selectSoloRallyStats);
   const [showSquads, setShowSquads] = useState(true);
   const [nextRotation, setNextRotation] = useState(true);
   const [weServe, setWeServe] = useState(false);
@@ -134,15 +132,14 @@ export function HomePage() {
     const setStat = { [setNumber]: gameLog };
     const choosenGame = gamesStats.find((game) => game[matchInfo]);
     if (!choosenGame) {
-      await set(gamesRef(matchInfo), { [matchInfo]: [setStat] });
+      await set(gamesRef(matchInfo), { [matchInfo]: setStat });
     } else {
-      const isSetExist = choosenGame[matchInfo].some((sets) => Object.keys(sets)[0] === setNumber);
-      if (isSetExist) {
+      if (setNumber in choosenGame[matchInfo]) {
         alert("Set already exist");
         return;
       } else {
         await update(gamesRef(matchInfo), {
-          [matchInfo]: [...choosenGame[matchInfo], setStat],
+          [matchInfo]: { ...choosenGame[matchInfo], ...setStat },
         });
       }
     }
@@ -190,7 +187,7 @@ export function HomePage() {
   const currentScore = `${myScore} - ${rivalScore}`;
   const playerInfoWindow = playerInfo && showSquads;
   const saveDataIcon = !opponentTeamName || !setNumber;
-  const tieBreak = setNumber === "Set 4";
+  const tieBreak = setNumber === "Set 3 (short)";
   const tieBreakScore = myScore >= 15 || rivalScore >= 15;
   const normalSetScore = myScore >= 25 || rivalScore >= 25;
   const endOfTheSet = tieBreak
@@ -353,6 +350,7 @@ export function HomePage() {
                               <option value="Set 1">Set 1</option>
                               <option value="Set 2">Set 2</option>
                               <option value="Set 3">Set 3</option>
+                              <option value="Set 3 (short)">Set 3 (short)</option>
                             </select>
                           </>
                         )}
@@ -488,16 +486,6 @@ export function HomePage() {
                       $background="#ffd700"
                     >
                       Ratings
-                    </RegularButton>
-                  </NavLink>
-                  <NavLink to={"/Distribution"}>
-                    <RegularButton
-                      onClick={() => dispatch(setInfoOfPlayer(null))}
-                      type="button"
-                      $color="#0057b8"
-                      $background="#ffd700"
-                    >
-                      Distribution
                     </RegularButton>
                   </NavLink>
                   <NavLink to={"/GamesStatistic"}>

@@ -11,7 +11,6 @@ export default function GameLogs(arg: TGameLogs) {
   const [showLogs, setShowLogs] = useState(false);
 //   const [filteredPlayers, setFilteredPlayers] = useState<TMix[]>([]);
 
-  console.log(games);
   return (
     <>
       <RegularButton

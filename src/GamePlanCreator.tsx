@@ -116,7 +116,6 @@ export default function GamePlanCreator() {
               <Route path="/" element={<HomePage />} />
               <Route path="/Auth" element={<Auth />} />
               <Route path="/Ratings" element={<Ratings />} />
-              {/* <Route path="/Distribution" element={<Distribution />} /> */}
               <Route path="/Directions" element={<Directions />} />
               <Route path="/GamesStatistic" element={<GamesStatistic />} />
             </Routes>

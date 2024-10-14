@@ -104,7 +104,7 @@ export type TZoneValue = {
 };
 
 export type TGameStats = {
-  [key: string]: TObjectStats[];
+  [key: string]: TObjectStats;
 };
 
 export type TObjectStats = {

@@ -90,8 +90,7 @@ export default function GamesStatistic() {
     const flatFullSizeGameStat = choosenDetailedStats
       .map((rally) => Object.values(rally).flat())
       .flat();
-    const finalResult = flatFullSizeGameStat.map((rall) => rall.stats);
-
+    const finalResult = flatFullSizeGameStat.map((rally) => rally.stats);
     setChoosenGameStats(finalResult);
     setDetailedStats(finalResult);
     if (filteredGames.length === 1) {
@@ -108,10 +107,7 @@ export default function GamesStatistic() {
       setDetailedStats(saveFullGameStats);
       return;
     }
-    const soloGame = filteredGames.map((game) => Object.values(game).map((set) => set)).flat()[0];
-    const properGame = soloGame.map((set) => Object.keys(set)[0]);
-    const index = properGame.indexOf(value);
-    const choosenSet = soloGame[index][value].map((rally) => rally.stats);
+    const choosenSet = soloGame[value].map((rally) => rally.stats);
     setChoosenGameStats(choosenSet);
     setDetailedStats(choosenSet);
     setChoosenSet(value);
@@ -135,8 +131,7 @@ export default function GamesStatistic() {
   );
   const namesOfTeams = listOfTeams.map((team) => team.name);
   const playersNames = choosenGameStats.flat().map((player) => jusName(player));
-  const soloGame = filteredGames.map((game) => Object.values(game).map((set) => set)).flat()[0];
-
+  const soloGame = filteredGames.map((game) => Object.values(game)).flat()[0];
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">
@@ -186,14 +181,14 @@ export default function GamesStatistic() {
               </RegularButton>
               {filteredGames.length === 1 && choosenGameStats.length > 0 && (
                 <div className="set-selection-wrapper">
-                  {soloGame.map((set) => (
-                    <div key={Object.keys(set)[0]}>
-                      <div>{Object.keys(set)[0]}</div>
+                  {Object.keys(soloGame).map((set) => (
+                    <div key={set}>
+                      <div>{set}</div>
                       <input
                         type="checkbox"
-                        value={Object.keys(set)[0]}
+                        value={set}
                         onChange={handleChoosenSet}
-                        checked={Object.keys(set)[0] === choosenSet}
+                        checked={set === choosenSet}
                       />
                     </div>
                   ))}
