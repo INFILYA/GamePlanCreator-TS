@@ -114,9 +114,18 @@ export default function RotationPanel(arg: TRotationPanel) {
       )}
       <SectionWrapper className="rotation-panel-wrapper">
         <div className="service-ball-wrapper">
-          {weServe && <div>🏐</div>}
-          {zeroZero && !rivalTeam && (
-            <input type="button" onClick={() => setWeServe(!weServe)} value={weServe ? ">" : "<"} />
+          {zeroZero ? (
+            !weServe ? (
+              <input
+                type="button"
+                onClick={!rivalTeam ? () => setWeServe(true) : () => setWeServe(false)}
+                value={rivalTeam ? ">" : "<"}
+              />
+            ) : (
+              <div>🏐</div>
+            )
+          ) : (
+            weServe && <div>🏐</div>
           )}
         </div>
         <div className="rotation-buttons-wrapper">

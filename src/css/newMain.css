@@ -260,16 +260,14 @@ main .main-content-wrapper .section-content-wrapper .section-content {
 main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-direction: column;
   position: absolute;
   top: 10%;
+  height: 7vmax;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper div {
   font-size: 5vmax;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper input {
-  margin-top: 1vmax;
   font-size: 2vmax;
   font-weight: bold;
   border: 2px solid black;
@@ -310,7 +308,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-b
   align-items: center;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper button {
-  width: 3vw;
+  width: 3vmax;
   aspect-ratio: 1/1;
   margin: 1vw;
   border: 2px solid black;

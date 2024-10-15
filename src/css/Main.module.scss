@@ -267,15 +267,13 @@ main {
         .service-ball-wrapper {
           display: flex;
           align-items: center;
-          justify-content: center;
-          flex-direction: column;
           position: absolute;
           top: 10%;
+          height: 7vmax;
           div {
             font-size: 5vmax;
           }
           input {
-            margin-top: 1vmax;
             font-size: 2vmax;
             font-weight: bold;
             border: 2px solid black;
@@ -316,7 +314,7 @@ main {
           justify-content: center;
           align-items: center;
           button {
-            width: 3vw;
+            width: 3vmax;
             aspect-ratio: 1/1;
             margin: 1vw;
             border: 2px solid black;
