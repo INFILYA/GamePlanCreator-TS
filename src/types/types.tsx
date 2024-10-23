@@ -110,7 +110,7 @@ export type TGameStats = {
 export type TObjectStats = {
   [key: string]: TGameLogStats;
 };
-export type TSoloRallyStats = { score: string; stats: TPlayer[] };
+export type TSoloRallyStats = { score: string; weServe: boolean; stats: TPlayer[] };
 export type TGameLogStats = TSoloRallyStats[];
 
 export type TSettersPosition = { [key: number]: number };

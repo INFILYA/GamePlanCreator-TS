@@ -188,7 +188,7 @@ export function HomePage() {
   const currentScore = `${myScore} - ${rivalScore}`;
   const playerInfoWindow = playerInfo && showSquads;
   const saveDataIcon = !opponentTeamName || !setNumber;
-  const tieBreak = setNumber === "Set 3 (short)";
+  const tieBreak = setNumber === "Set 3 (short)" || setNumber === "Set 5 (short)";
   const tieBreakScore = myScore >= 15 || rivalScore >= 15;
   const normalSetScore = myScore >= 25 || rivalScore >= 25;
   const endOfTheSet = tieBreak
@@ -277,7 +277,6 @@ export function HomePage() {
   //   setTeamToData(creeNew(guestTeam[0]));
   // };
   // END HERE
-
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -344,7 +343,9 @@ export function HomePage() {
                             >
                               <option value="">Choose Opponent</option>
                               {listOfOpponents.map((opponent) => (
-                                <option value={opponent}>{opponent}</option>
+                                <option value={opponent} key={opponent}>
+                                  {opponent}
+                                </option>
                               ))}
                             </select>
                             <select
@@ -355,6 +356,8 @@ export function HomePage() {
                               <option value="Set 1">Set 1</option>
                               <option value="Set 2">Set 2</option>
                               <option value="Set 3">Set 3</option>
+                              <option value="Set 4">Set 4</option>
+                              <option value="Set 5 (short)">Set 5 (short)</option>
                               <option value="Set 3 (short)">Set 3 (short)</option>
                             </select>
                           </>

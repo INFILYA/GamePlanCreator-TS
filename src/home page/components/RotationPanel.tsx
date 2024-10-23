@@ -93,7 +93,14 @@ export default function RotationPanel(arg: TRotationPanel) {
     }
     setScore(score + 1);
     if (SoloRallyStats.length > 0) {
-      setGameLog([...gameLog, { score: currentScore, stats: SoloRallyStats }]);
+      setGameLog([
+        ...gameLog,
+        {
+          score: currentScore,
+          weServe: zeroZero ? weServe : previousScore !== rivalScore ? rivalTeam : !rivalTeam,
+          stats: SoloRallyStats,
+        },
+      ]);
       setstatsForTeam([...statsForTeam, SoloRallyStats]);
     }
     dispatch(resetRallyStats());
