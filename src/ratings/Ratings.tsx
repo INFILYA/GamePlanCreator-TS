@@ -16,6 +16,7 @@ export function Ratings() {
   const listOfTeams = useSelector(selectListOfTeams);
   const [filteredPlayers, setFilteredPlayers] = useState<TMix[]>([]);
   const [chosenPosition, setChosenPosition] = useState<string>("");
+  const [chosenTeam, setChosenTeam] = useState<string>("");
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [isChoosenFilter, setChoosenFilter] = useState<boolean>(false);
   const positions = ["OHitter", "OPPosite", "MBlocker", "SETter", "LIBero", "Team"];
@@ -31,6 +32,19 @@ export function Ratings() {
     const choosenAmplua = listOfPlayers.filter((player) => player.position === position);
     setFilteredPlayers(choosenAmplua);
   }
+
+  function setTeamFilter(name: string) {
+    setChosenTeam(name);
+    setFilteredPlayers([]);
+    setChoosenFilter(true);
+    if (name === "all") {
+      setFilteredPlayers(listOfPlayers.filter((player) => player.position === chosenPosition));
+    } else
+      setFilteredPlayers(
+        listOfPlayers.filter((player) => player.team === name && player.position === chosenPosition)
+      );
+  }
+
   function rankByValue<T extends TMix>(criteria: keyof TMix, arr: T[]) {
     const properArr = criteria === "name" ? filteredPlayers : arr;
     !isBiggest
@@ -60,12 +74,42 @@ export function Ratings() {
                     <RegularButton
                       onClick={() => setPositionFilter(position.replace(/[a-z]/g, ""))}
                       type="button"
-                      $color={chosenPosition === position ? "#ffd700" : "#0057b8"}
-                      $background={chosenPosition === position ? "#0057b8" : "#ffd700"}
+                      $color={
+                        chosenPosition === position.replace(/[a-z]/g, "") ? "#ffd700" : "#0057b8"
+                      }
+                      $background={
+                        chosenPosition === position.replace(/[a-z]/g, "") ? "#0057b8" : "#ffd700"
+                      }
                     >{`${position}s`}</RegularButton>
                   </div>
                 ))}
               </div>
+              {chosenPosition && chosenPosition !== "T" && (
+                <div className="team-filter-wrapper">
+                  {listOfTeams.map((team, index) => (
+                    <div key={index}>
+                      <RegularButton
+                        onClick={() => setTeamFilter(team.name)}
+                        type="button"
+                        $color={chosenTeam === team.name ? "#ffd700" : "#0057b8"}
+                        $background={chosenTeam === team.name ? "#0057b8" : "#ffd700"}
+                      >
+                        {team.name}
+                      </RegularButton>
+                    </div>
+                  ))}
+                  <div>
+                    <RegularButton
+                      onClick={() => setTeamFilter("all")}
+                      type="button"
+                      $color={chosenTeam === "all" ? "#ffd700" : "#0057b8"}
+                      $background={chosenTeam === "all" ? "#0057b8" : "#ffd700"}
+                    >
+                      All Teams
+                    </RegularButton>
+                  </div>
+                </div>
+              )}
             </nav>
             {isChoosenFilter && (
               <div style={{ display: "flex" }}>
