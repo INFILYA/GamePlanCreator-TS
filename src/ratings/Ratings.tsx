@@ -24,6 +24,7 @@ export function Ratings() {
   function setPositionFilter(position: string) {
     setChosenPosition(position);
     setFilteredPlayers([]);
+    setChosenTeam("");
     setChoosenFilter(true);
     if (position === "T") {
       setFilteredPlayers([...listOfTeams]);

@@ -206,9 +206,8 @@ export function HomePage() {
     return correctZones(guestTeamOptions.indexOf(seTTer));
   }
 
-  {
-    /* Reset Stats  */
-  }
+  /* Reset Stats  */
+
   // const resetplaers = () => {
   //   async function setPlayersToData(player: TPlayer) {
   //     await set(playersRef(player.name), player);
@@ -278,9 +277,10 @@ export function HomePage() {
   //   setTeamToData(creeNew(guestTeam[0]));
   // };
   // END HERE
-  
+
   const listOfOpponents =
     guestTeam[0]?.name === "Warriors-18U" ? listOfOpponents18U : listOfOpponents16U;
+
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
