@@ -5,7 +5,7 @@ import {
   setgameFilterByTeam,
 } from "../states/slices/gamesStatsSlice";
 import { ChangeEvent, useState } from "react";
-import { TGameStats, TMix, TPlayer } from "../types/types";
+import { TGameStats, TMix, TObjectStats, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import {
   calculateTotalofActions,
@@ -40,6 +40,7 @@ export default function GamesStatistic() {
   const teamFilter = useSelector(selectorFilter);
   const [filter, setFilter] = useState("");
   const [filteredGames, setFilteredGames] = useState<TGameStats[]>([]);
+  const [gameLogs, setGameLogs] = useState<TObjectStats[]>([]);
   const [detailedStats, setDetailedStats] = useState<TPlayer[][]>([]);
   const [choosenGameStats, setChoosenGameStats] = useState<TPlayer[][]>([]);
   const [choosenSet, setChoosenSet] = useState<string>("full");
@@ -72,7 +73,7 @@ export default function GamesStatistic() {
 
   function setAllGames() {
     setChoosenGameStats([]);
-    filteredGames === sortedGameStats ? setFilteredGames([]) : setFilteredGames(sortedGameStats);
+    filteredGames === sortedGames ? setFilteredGames([]) : setFilteredGames(sortedGames);
   }
 
   function setFilterForGames(game: TGameStats) {
@@ -80,13 +81,13 @@ export default function GamesStatistic() {
     filteredGames.some((match) => match === game)
       ? setFilteredGames(filteredGames.filter((match) => match !== game))
       : filteredGames.push(game);
-    setFilteredGames(filteredGames);
   }
 
   function setChoosenGames() {
     dispatch(setDetailedStatsOfPlayer(""));
     setChoosenSet("full");
     const choosenDetailedStats = filteredGames.map((set) => Object.values(set).flat()).flat();
+    setGameLogs(choosenDetailedStats);
     const flatFullSizeGameStat = choosenDetailedStats
       .map((rally) => Object.values(rally).flat())
       .flat();
@@ -105,25 +106,29 @@ export default function GamesStatistic() {
       setChoosenSet(value);
       setChoosenGameStats(saveFullGameStats);
       setDetailedStats(saveFullGameStats);
+      setGameLogs([soloGame]);
       return;
     }
     const choosenSet = soloGame[value].map((rally) => rally.stats);
     setChoosenGameStats(choosenSet);
     setDetailedStats(choosenSet);
     setChoosenSet(value);
+    setGameLogs([{ value: soloGame[value] }]);
   }
 
   function setGameFilterByTeam(name: string) {
     dispatch(setgameFilterByTeam(name));
     setFilteredGames([]);
     setChoosenGameStats([]);
+    setGameLogs([]);
+    setDetailedStats([]);
     setFilter("");
   }
 
   const fullGameStats = calculateForTeamData(
     calculateTotalofActions(choosenGameStats.flat()) as TMix
   );
-  const sortedGameStats = filteredGamesStats.sort((a, b) =>
+  const sortedGames = filteredGamesStats.sort((a, b) =>
     compare(
       new Date(Object.keys(b)[0].split(";")[0]).getTime(),
       new Date(Object.keys(a)[0].split(";")[0]).getTime()
@@ -132,6 +137,10 @@ export default function GamesStatistic() {
   const namesOfTeams = listOfTeams.map((team) => team.name);
   const playersNames = choosenGameStats.flat().map((player) => jusName(player));
   const soloGame = filteredGames.map((game) => Object.values(game)).flat()[0];
+  const oneGame = filteredGames.length === 1 && choosenGameStats.length > 0;
+  console.log(filteredGames);
+  console.log(sortedGames);
+
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">
@@ -153,9 +162,17 @@ export default function GamesStatistic() {
                     </RegularButton>
                   </div>
                 ))}
+                <RegularButton
+                  onClick={() => setGameFilterByTeam("")}
+                  type="button"
+                  $color={!teamFilter.team ? "#ffd700" : "#0057b8"}
+                  $background={!teamFilter.team ? "#0057b8" : "#ffd700"}
+                >
+                  All
+                </RegularButton>
               </div>
               <div className="choosen-game-filter-wrapper">
-                {sortedGameStats.map((game, index) => (
+                {sortedGames.map((game, index) => (
                   <div style={{ display: "flex" }} key={index}>
                     <input
                       onChange={() => setFilterForGames(game)}
@@ -171,15 +188,17 @@ export default function GamesStatistic() {
                     type="checkbox"
                     value={"Check all"}
                     onChange={setAllGames}
-                    checked={filteredGames === sortedGameStats}
+                    checked={filteredGames.length === sortedGames.length}
                   />
-                  <div>Check All</div>
+                  <div>
+                    {filteredGames.length === sortedGames.length ? "Remove All" : "Check All"}
+                  </div>
                 </div>
               </div>
               <RegularButton onClick={setChoosenGames} type="button">
                 Submit
               </RegularButton>
-              {filteredGames.length === 1 && choosenGameStats.length > 0 && (
+              {oneGame && (
                 <div className="set-selection-wrapper">
                   {Object.keys(soloGame).map((set) => (
                     <div key={set}>
@@ -235,7 +254,7 @@ export default function GamesStatistic() {
                   </div>
                 </div>
                 <nav>
-                  <GameLogs games={filteredGames} />
+                  {oneGame && <GameLogs games={gameLogs} />}
                   {!detailedStatsOfPlayer && (
                     <RegularButton
                       onClick={() => setIsShowDistribution(!isShowDistribution)}

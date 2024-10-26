@@ -107,11 +107,12 @@ export type TGameStats = {
   [key: string]: TObjectStats;
 };
 
+// const sets = "Set 1" || "Set 2" || "Set 3" || "Set 4" || "Set 5 (short)" || "Set 3 (short)";
 export type TObjectStats = {
   [key: string]: TGameLogStats;
 };
-export type TSoloRallyStats = { score: string; weServe: boolean; stats: TPlayer[] };
 export type TGameLogStats = TSoloRallyStats[];
+export type TSoloRallyStats = { score: string; weServe: boolean; stats: TPlayer[] };
 
 export type TSettersPosition = { [key: number]: number };
 export type TSettersPositions = { [key: number]: TSettersPosition };

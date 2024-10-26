@@ -480,7 +480,7 @@ export const categorys = [
   "blocks",
 ] as TMixKeys[];
 
-export const listOfOpponents = [
+export const listOfOpponents18U = [
   "MAC Titanium 18U", //
   "Maverick Mustangs 18U", //
   "Toronto Thunderbolts Smash Shihua 18U", //
@@ -501,6 +501,23 @@ export const listOfOpponents = [
   "Thundercats Bushido 17U", //
   "Maverick Rangers 18U", //
 ];
+
+export const listOfOpponents16U = [
+  "Pakmen Black", //
+  "Reach Flow", //
+  "Storm Bolts", //
+  "Venom Mambas", //
+  "Scorpions Apex", //
+  "Reach Impact", //
+  "Reach Elevate", //
+  "Mac Platinum", //
+  "Forest City", //
+  "Venom Vipers", //
+  "Opponent 1",
+  "Opponent 2",
+  "Opponent 3",
+];
+
 export const P1 = {
   1: 1,
   2: 2,

@@ -96,6 +96,41 @@ export function Squads(props: TSquadsProps) {
     }
   };
 
+  // function addteam() {
+  //   const creeNew = (Team: TTeam) => {
+  //     const guestTeamNew = {} as TTeam;
+  //     guestTeamNew["A++"] = 0;
+  //     guestTeamNew["A+"] = 0;
+  //     guestTeamNew["A="] = 0;
+  //     guestTeamNew["A!"] = 0;
+  //     guestTeamNew["A-"] = 0;
+  //     guestTeamNew["S++"] = 0;
+  //     guestTeamNew["S!"] = 0;
+  //     guestTeamNew["S="] = 0;
+  //     guestTeamNew["S-"] = 0;
+  //     guestTeamNew["S+"] = 0;
+  //     guestTeamNew["R++"] = 0;
+  //     guestTeamNew["R!"] = 0;
+  //     guestTeamNew["R="] = 0;
+  //     guestTeamNew["R-"] = 0;
+  //     guestTeamNew["R+"] = 0;
+  //     guestTeamNew.blocks = 0;
+  //     guestTeamNew.name = "Valour-16U";
+  //     guestTeamNew.logo = Team.logo;
+  //     guestTeamNew.id = "Valour-16U";
+  //     guestTeamNew.startingSquad = Team.startingSquad;
+  //     return guestTeamNew;
+  //   };
+  //   async function setTeamToData(team: TTeam) {
+  //     try {
+  //       await set(teamsRef("Valour-16U"), team);
+  //     } catch (error) {
+  //       console.error(error);
+  //     }
+  //   }
+  //   setTeamToData(creeNew(guestTeam[0]));
+  // }  add TEAM
+
   return (
     <SectionWrapper className="teamsquad-section">
       <div className="team-title-wrapper" style={myTeam ? { direction: "rtl" } : {}}>
@@ -176,6 +211,9 @@ export function Squads(props: TSquadsProps) {
             Save starting six
           </RegularButton>
         )}
+        {/* <RegularButton onClick={addteam} type="button" $color="black" $background="#ffd700">
+          add team
+        </RegularButton> */}
       </div>
     </SectionWrapper>
   );

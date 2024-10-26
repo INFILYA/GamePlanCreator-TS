@@ -11,7 +11,8 @@ import {
   emptyPlayers,
   firstLetterCapital,
   isBoardFull,
-  listOfOpponents,
+  listOfOpponents16U,
+  listOfOpponents18U,
 } from "../utilities/functions";
 import { TGameLogStats, TPlayer, TTeam } from "../types/types";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -277,6 +278,9 @@ export function HomePage() {
   //   setTeamToData(creeNew(guestTeam[0]));
   // };
   // END HERE
+  
+  const listOfOpponents =
+    guestTeam[0]?.name === "Warriors-18U" ? listOfOpponents18U : listOfOpponents16U;
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
