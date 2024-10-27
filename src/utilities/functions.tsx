@@ -481,25 +481,30 @@ export const categorys = [
 ] as TMixKeys[];
 
 export const listOfOpponents18U = [
-  "MAC Titanium 18U", //
-  "Maverick Mustangs 18U", //
-  "Toronto Thunderbolts Smash Shihua 18U", //
-  "Ottawa Fusion Purple Matt 18U", //
-  "Kingston Rock Obsidian 18U", //
-  "FCVC Baobab 18U", //
-  "Scorpions Legion 18U", //
+  "MAC Titanium", //
+  "Maverick Mustangs", //
+  "Toronto Thunderbolts Smash Shihua", //
+  "Ottawa Fusion Purple Matt", //
+  "Kingston Rock Obsidian", //
+  "FCVC Baobab", //
+  "Scorpions Legion", //
   "Pakmen Gold Jessy", //
   "Pakmen Gold Omar", //
-  "Durham Attack Power 18U", //
-  "KW Preds Invictus 18U", //
-  "Niagara Rapids Alliance 18U", //
-  "Storm Voltage 18U", //
-  "Phoenix Skybirds 18U", //
-  "Durham Attack Blast 18U", //
-  "REACH Rampage 18U", //
-  "Pakmen Black Lam 18U", //
+  "Durham Attack Power", //
+  "KW Preds Invictus", //
+  "Niagara Rapids Alliance", //
+  "Storm Voltage", //
+  "Phoenix Skybirds", //
+  "Durham Attack Blast", //
+  "REACH Rampage", //
+  "Pakmen Black Lam", //
   "Thundercats Bushido 17U", //
-  "Maverick Rangers 18U", //
+  "Maverick Rangers",
+  "Thundercats Ronin",
+  "Ancaster Lions",
+  "Barrie Elites - Phoenix", //
+  "Barrie Elites - Frost",
+  "Bluewater Ballistix", //
 ];
 
 export const listOfOpponents16U = [
@@ -513,9 +518,6 @@ export const listOfOpponents16U = [
   "Mac Platinum", //
   "Forest City", //
   "Venom Vipers", //
-  "Opponent 1",
-  "Opponent 2",
-  "Opponent 3",
 ];
 
 export const P1 = {

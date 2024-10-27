@@ -34,6 +34,8 @@ type TRotationPanel = {
   endOfTheSet: boolean;
   setPreviousScore(arg: number): void;
   previousScore: number;
+  rivalRotation: number;
+  setRivalRotation(arg: number): void;
 };
 
 export default function RotationPanel(arg: TRotationPanel) {
@@ -54,12 +56,13 @@ export default function RotationPanel(arg: TRotationPanel) {
     endOfTheSet,
     setPreviousScore,
     previousScore,
+    rivalRotation,
+    setRivalRotation,
   } = arg;
   const dispatch = useAppDispatch();
   const guestTeam = useSelector(selectGuestTeam);
   const SoloRallyStats = useSelector(selectSoloRallyStats);
   const [myZone, setMyZone] = useState(1);
-  const [rivalZone, setRivalZone] = useState(1);
   const [openConfirmWindow, setOpenConfirmWindow] = useState(false);
 
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
@@ -88,8 +91,9 @@ export default function RotationPanel(arg: TRotationPanel) {
     }
     if ((zeroZero && !weServe && rivalTeam) || (previousScore !== rivalScore && rivalTeam)) {
       setPreviousScore(rivalScore);
-      const properRivalZone = rivalZone === 1 ? 6 : rivalZone <= 6 ? rivalZone - 1 : rivalZone;
-      setRivalZone(properRivalZone);
+      const properRivalZone =
+        rivalRotation === 1 ? 6 : rivalRotation <= 6 ? rivalRotation - 1 : rivalRotation;
+      setRivalRotation(properRivalZone);
     }
     setScore(score + 1);
     if (SoloRallyStats.length > 0) {
@@ -110,7 +114,7 @@ export default function RotationPanel(arg: TRotationPanel) {
   }
 
   const myZones = [4, 3, 2, 5, 6, 1];
-  const zones = rivalTeam ? setRivalZone : setMyZone;
+  const zones = rivalTeam ? setRivalRotation : setMyZone;
   const nameOfTheTeam = rivalTeam ? opponentTeamName : guestTeam[0]?.name;
   const zeroZero = score === 0 && rivalScore === 0;
 
@@ -154,7 +158,7 @@ export default function RotationPanel(arg: TRotationPanel) {
               key={zone}
               value={zone}
               style={{
-                backgroundColor: (rivalTeam ? rivalZone : myZone) === zone ? "orangered" : "",
+                backgroundColor: (rivalTeam ? rivalRotation : myZone) === zone ? "orangered" : "",
               }}
               onClick={zeroZero ? () => zones(zone) : () => null}
             >

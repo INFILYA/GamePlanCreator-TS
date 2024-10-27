@@ -69,6 +69,7 @@ export function HomePage() {
   const [rivalScore, setRivalScore] = useState(0);
   const [previousMyScore, setPreviousMyScore] = useState(0);
   const [previousRivalScore, setPreviousRivalScore] = useState(0);
+  const [rivalRotation, setRivalRotation] = useState(1);
   const gamesStats = useSelector(selectGamesStats);
 
   const showGuestTeam = guestTeam.length !== 0;
@@ -301,6 +302,8 @@ export function HomePage() {
           endOfTheSet={endOfTheSet}
           setPreviousScore={setPreviousMyScore}
           previousScore={previousMyScore}
+          rivalRotation={rivalRotation}
+          setRivalRotation={setRivalRotation}
         />
       )}
       <SectionWrapper
@@ -552,6 +555,8 @@ export function HomePage() {
           endOfTheSet={endOfTheSet}
           setPreviousScore={setPreviousRivalScore}
           previousScore={previousRivalScore}
+          rivalRotation={rivalRotation}
+          setRivalRotation={setRivalRotation}
         />
       )}
     </article>
