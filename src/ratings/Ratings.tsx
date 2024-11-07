@@ -9,14 +9,15 @@ import { TMix } from "../types/types";
 import { Categorys } from "./components/Categorys";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import { RegularButton } from "../css/Button.styled";
+import { selectGuestTeam } from "../states/slices/guestTeamSlice";
 
 export function Ratings() {
   const playerInfo = useSelector(selectPlayerInfo);
   const listOfPlayers = useSelector(selectListOfPlayers);
   const listOfTeams = useSelector(selectListOfTeams);
+  const guestTeam = useSelector(selectGuestTeam);
   const [filteredPlayers, setFilteredPlayers] = useState<TMix[]>([]);
   const [chosenPosition, setChosenPosition] = useState<string>("");
-  const [chosenTeam, setChosenTeam] = useState<string>("");
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [isChoosenFilter, setChoosenFilter] = useState<boolean>(false);
   const positions = ["OHitter", "OPPosite", "MBlocker", "SETter", "LIBero", "Team"];
@@ -24,26 +25,15 @@ export function Ratings() {
   function setPositionFilter(position: string) {
     setChosenPosition(position);
     setFilteredPlayers([]);
-    setChosenTeam("");
     setChoosenFilter(true);
     if (position === "T") {
       setFilteredPlayers([...listOfTeams]);
       return;
     }
     const choosenAmplua = listOfPlayers.filter((player) => player.position === position);
-    setFilteredPlayers(choosenAmplua);
-  }
-
-  function setTeamFilter(name: string) {
-    setChosenTeam(name);
-    setFilteredPlayers([]);
-    setChoosenFilter(true);
-    if (name === "all") {
-      setFilteredPlayers(listOfPlayers.filter((player) => player.position === chosenPosition));
-    } else
-      setFilteredPlayers(
-        listOfPlayers.filter((player) => player.team === name && player.position === chosenPosition)
-      );
+    if (guestTeam[0]?.name) {
+      setFilteredPlayers(choosenAmplua.filter((player) => player.team === guestTeam[0]?.name));
+    } else setFilteredPlayers(choosenAmplua);
   }
 
   function rankByValue<T extends TMix>(criteria: keyof TMix, arr: T[]) {
@@ -59,7 +49,7 @@ export function Ratings() {
   }
 
   const playersNames = filteredPlayers.map((player) => jusName(player));
-
+  console.log(guestTeam);
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">
@@ -85,32 +75,6 @@ export function Ratings() {
                   </div>
                 ))}
               </div>
-              {chosenPosition && chosenPosition !== "T" && (
-                <div className="team-filter-wrapper">
-                  {listOfTeams.map((team, index) => (
-                    <div key={index}>
-                      <RegularButton
-                        onClick={() => setTeamFilter(team.name)}
-                        type="button"
-                        $color={chosenTeam === team.name ? "#ffd700" : "#0057b8"}
-                        $background={chosenTeam === team.name ? "#0057b8" : "#ffd700"}
-                      >
-                        {team.name}
-                      </RegularButton>
-                    </div>
-                  ))}
-                  <div>
-                    <RegularButton
-                      onClick={() => setTeamFilter("all")}
-                      type="button"
-                      $color={chosenTeam === "all" ? "#ffd700" : "#0057b8"}
-                      $background={chosenTeam === "all" ? "#0057b8" : "#ffd700"}
-                    >
-                      All Teams
-                    </RegularButton>
-                  </div>
-                </div>
-              )}
             </nav>
             {isChoosenFilter && (
               <div style={{ display: "flex" }}>

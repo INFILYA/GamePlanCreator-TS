@@ -64,7 +64,6 @@ export default function RotationPanel(arg: TRotationPanel) {
   const SoloRallyStats = useSelector(selectSoloRallyStats);
   const [myZone, setMyZone] = useState(1);
   const [openConfirmWindow, setOpenConfirmWindow] = useState(false);
-
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
 
   useEffect(() => {

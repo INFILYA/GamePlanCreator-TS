@@ -1,10 +1,6 @@
 import { useSelector } from "react-redux";
-import {
-  selectFilteredGameStats,
-  selectorFilter,
-  setgameFilterByTeam,
-} from "../states/slices/gamesStatsSlice";
-import { ChangeEvent, useState } from "react";
+import { selectFilteredGameStats, setgameFilterByTeam } from "../states/slices/gamesStatsSlice";
+import { ChangeEvent, useEffect, useState } from "react";
 import { TGameStats, TMix, TObjectStats, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import {
@@ -29,6 +25,7 @@ import {
   setDetailedStatsOfPlayer,
 } from "../states/slices/detailedStatsOfPlayerSlice";
 import GameLogs from "./GameLogs";
+import { selectGuestTeam } from "../states/slices/guestTeamSlice";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
@@ -37,8 +34,8 @@ export default function GamesStatistic() {
   const playerInfo = useSelector(selectPlayerInfo);
   const filteredGamesStats = useSelector(selectFilteredGameStats);
   const detailedStatsOfPlayer = useSelector(selectDetailedStatsOfPlayer);
-  const teamFilter = useSelector(selectorFilter);
-  const [filter, setFilter] = useState("");
+  const guestTeam = useSelector(selectGuestTeam);
+  const [filter] = useState("");
   const [filteredGames, setFilteredGames] = useState<TGameStats[]>([]);
   const [gameLogs, setGameLogs] = useState<TObjectStats[]>([]);
   const [detailedStats, setDetailedStats] = useState<TPlayer[][]>([]);
@@ -47,6 +44,10 @@ export default function GamesStatistic() {
   const [saveFullGameStats, setSaveFullGameStats] = useState<TPlayer[][]>([]);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [isShowDistribution, setIsShowDistribution] = useState<boolean>(false);
+
+  useEffect(() => {
+    dispatch(setgameFilterByTeam(guestTeam[0].name));
+  }, [dispatch, guestTeam]);
 
   function calculateForTeamData<T extends TMix>(obj: T): TMix {
     if (filter.length === 0) return obj;
@@ -116,15 +117,6 @@ export default function GamesStatistic() {
     setGameLogs([{ value: soloGame[value] }]);
   }
 
-  function setGameFilterByTeam(name: string) {
-    dispatch(setgameFilterByTeam(name));
-    setFilteredGames([]);
-    setChoosenGameStats([]);
-    setGameLogs([]);
-    setDetailedStats([]);
-    setFilter("");
-  }
-
   const fullGameStats = calculateForTeamData(
     calculateTotalofActions(choosenGameStats.flat()) as TMix
   );
@@ -134,12 +126,9 @@ export default function GamesStatistic() {
       new Date(Object.keys(a)[0].split(";")[0]).getTime()
     )
   );
-  const namesOfTeams = listOfTeams.map((team) => team.name);
   const playersNames = choosenGameStats.flat().map((player) => jusName(player));
   const soloGame = filteredGames.map((game) => Object.values(game)).flat()[0];
   const oneGame = filteredGames.length === 1 && choosenGameStats.length > 0;
-  console.log(filteredGames);
-  console.log(sortedGames);
 
   return (
     <article className="main-content-wrapper">
@@ -149,28 +138,6 @@ export default function GamesStatistic() {
         ) : (
           <>
             <nav>
-              <div className="team-filter-wrapper">
-                {namesOfTeams.map((name) => (
-                  <div key={name}>
-                    <RegularButton
-                      onClick={() => setGameFilterByTeam(name)}
-                      type="button"
-                      $color={teamFilter.team === name ? "#ffd700" : "#0057b8"}
-                      $background={teamFilter.team === name ? "#0057b8" : "#ffd700"}
-                    >
-                      {name}
-                    </RegularButton>
-                  </div>
-                ))}
-                <RegularButton
-                  onClick={() => setGameFilterByTeam("")}
-                  type="button"
-                  $color={!teamFilter.team ? "#ffd700" : "#0057b8"}
-                  $background={!teamFilter.team ? "#0057b8" : "#ffd700"}
-                >
-                  All
-                </RegularButton>
-              </div>
               <div className="choosen-game-filter-wrapper">
                 {sortedGames.map((game, index) => (
                   <div style={{ display: "flex" }} key={index}>
