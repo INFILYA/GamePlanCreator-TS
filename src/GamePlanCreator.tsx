@@ -77,6 +77,7 @@ export default function GamePlanCreator() {
         if (isRegistratedUser) {
           onValue(gamesRef(""), (snapshot) => {
             const data = snapshot.val();
+            if (!data) return;
             const games = Object.values(data) as TGameStats[];
             dispatch(setAllGameStats(games));
             console.log("games");
