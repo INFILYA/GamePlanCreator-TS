@@ -46,7 +46,7 @@ export default function GamesStatistic() {
   const [isShowDistribution, setIsShowDistribution] = useState<boolean>(false);
 
   useEffect(() => {
-    dispatch(setgameFilterByTeam(guestTeam[0].name));
+    dispatch(setgameFilterByTeam(guestTeam[0]?.name));
   }, [dispatch, guestTeam]);
 
   function calculateForTeamData<T extends TMix>(obj: T): TMix {
