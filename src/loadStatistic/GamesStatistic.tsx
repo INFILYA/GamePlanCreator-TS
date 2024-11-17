@@ -129,7 +129,6 @@ export default function GamesStatistic() {
   const playersNames = choosenGameStats.flat().map((player) => jusName(player));
   const soloGame = filteredGames.map((game) => Object.values(game)).flat()[0];
   const oneGame = filteredGames.length === 1 && choosenGameStats.length > 0;
-
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">
@@ -221,7 +220,7 @@ export default function GamesStatistic() {
                   </div>
                 </div>
                 <nav>
-                  {oneGame && <GameLogs games={gameLogs} />}
+                  <GameLogs games={gameLogs} listOfGames={sortedGames}/>
                   {!detailedStatsOfPlayer && (
                     <RegularButton
                       onClick={() => setIsShowDistribution(!isShowDistribution)}
