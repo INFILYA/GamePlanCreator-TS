@@ -518,6 +518,12 @@ export const listOfOpponents16U = [
   "Mac Platinum", //
   "Forest City", //
   "Venom Vipers", //
+  "KW Preds Reign", //
+  "Pakmen Gold Saad", //
+  "Niagara Rapids Shockwave", //
+  "Reach Flow", //
+  "FCVC Icarus", //
+  "Halton Hurricane Category 6", //
 ];
 
 export const P1 = {
