@@ -49,7 +49,6 @@ export function Ratings() {
   }
 
   const playersNames = filteredPlayers.map((player) => jusName(player));
-  console.log(guestTeam);
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">

@@ -6,15 +6,19 @@ import { useAppDispatch } from "../states/store";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import {
   calculateTotalofActions,
+  categorys,
   checkNumbers,
+  compare,
   correctZones,
   emptyPlayers,
   firstLetterCapital,
   isBoardFull,
+  isFieldExist,
+  jusName,
   listOfOpponents16U,
   listOfOpponents18U,
 } from "../utilities/functions";
-import { TGameLogStats, TPlayer, TTeam } from "../types/types";
+import { TGameLogStats, TMix, TPlayer, TTeam } from "../types/types";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { selectHomeTeam, setHomeTeam } from "../states/slices/homeTeamSlice";
 import { setHomePlayers } from "../states/slices/homePlayersSlice";
@@ -48,9 +52,14 @@ import { currentDate } from "../utilities/currentDate";
 import { selectGamesStats } from "../states/slices/gamesStatsSlice";
 import { set, update } from "firebase/database";
 import RotationPanel from "./components/RotationPanel";
+import Diagramm from "../personalInfo/components/Diagramm";
+import { Rows } from "../ratings/components/Rows";
+import { Categorys } from "../ratings/components/Categorys";
+import { useSetWidth } from "../utilities/useSetWidth";
 
 export function HomePage() {
   const dispatch = useAppDispatch();
+  const isBurger = useSetWidth() > 767;
   const listOfTeams = useSelector(selectListOfTeams);
   const listOfPlayers = useSelector(selectListOfPlayers);
   const homeTeam = useSelector(selectHomeTeam);
@@ -59,6 +68,8 @@ export function HomePage() {
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
   const [showSquads, setShowSquads] = useState(true);
+  const [showCurrentGameStats, setShowCurrentGameStats] = useState(false);
+  const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [nextRotation, setNextRotation] = useState(true);
   const [weServe, setWeServe] = useState(false);
   const [gameLog, setGameLog] = useState<TGameLogStats>([]);
@@ -86,6 +97,7 @@ export function HomePage() {
     setOpponentTeamName("");
     setSetNumber("");
     setShowSquads(true);
+    setShowCurrentGameStats(false);
     resetTheBoardForHomeTeam();
     setGameLog([]);
     setstatsForTeam([]);
@@ -166,6 +178,7 @@ export function HomePage() {
 
   const hideSquads = () => {
     setShowSquads(!showSquads);
+    setShowCurrentGameStats(false);
     dispatch(resetRallyStats());
     setNextRotation(true);
     if (playerInfo !== null) {
@@ -207,6 +220,17 @@ export function HomePage() {
     return correctZones(guestTeamOptions.indexOf(seTTer));
   }
 
+  function rankByValue<T extends TMix>(criteria: keyof TMix, arr: T[]) {
+    const properArr = criteria === "name" ? currentGameStats : arr;
+    !isBiggest
+      ? properArr.sort((a, b) =>
+          compare(isFieldExist(b[criteria] as number), isFieldExist(a[criteria] as number))
+        )
+      : properArr.sort((a, b) =>
+          compare(isFieldExist(a[criteria] as number), isFieldExist(b[criteria] as number))
+        );
+    setIsBiggest(!isBiggest);
+  }
   /* Reset Stats  */
 
   // const resetplaers = () => {
@@ -278,9 +302,24 @@ export function HomePage() {
   //   setTeamToData(creeNew(guestTeam[0]));
   // };
   // END HERE
-
+  const filter = "";
   const listOfOpponents =
     guestTeam[0]?.name === "Warriors-18U" ? listOfOpponents18U : listOfOpponents16U;
+
+  function calculateForTeamDataV2<T extends TMix>(obj: T): TMix {
+    if (filter.length === 0) return obj;
+    const teamName = filter.split(" ")[0];
+    const filtered = listOfTeams.filter((team) => team.name === teamName);
+    const team = { ...filtered[0] };
+    const newObj = { ...obj };
+    for (const key in team) {
+      (team[key as keyof TMix] as number) = newObj[key as keyof T] as number;
+    }
+    return team;
+  }
+  const currentGameStats = gameLog.map((rall) => rall.stats).flat();
+  const playersNames = currentGameStats.map((player) => jusName(player));
+  const fullGameStats = calculateForTeamDataV2(calculateTotalofActions(currentGameStats) as TMix);
 
   return (
     <article className="main-content-wrapper">
@@ -340,7 +379,7 @@ export function HomePage() {
                             Statistic mode
                           </RegularButton>
                         </div>
-                        {!showSquads && (
+                        {!showSquads && !showCurrentGameStats && (
                           <>
                             <select
                               onChange={(e) =>
@@ -390,76 +429,133 @@ export function HomePage() {
                   <div></div>
                 )}
               </div>
-              <div className="row-zones-wrapper">
-                {guestTeamOptions.slice(0, 3).map((option, index) =>
-                  checkNumbers(option.boardPosition) ? (
-                    <div key={index}>
-                      <IconOfPlayer
-                        showSquads={showSquads}
-                        player={option}
-                        startingSix={guestTeamOptions}
-                        nextRotation={nextRotation}
-                        setNextRotation={setNextRotation}
-                        type="rival"
-                      />
+              {showCurrentGameStats ? (
+                <SectionWrapper className="ratings-section">
+                  <div style={{ display: "flex", marginTop: "2vmax" }}>
+                    <table>
+                      <tbody className="rating-table-wrapper">
+                        <Categorys
+                          filteredPlayers={playersNames}
+                          rankByValue={rankByValue}
+                          categorys={["name"]}
+                        />
+                      </tbody>
+                    </table>
+                    <div>
+                      <table style={{ width: "100%" }}>
+                        <tbody className="rating-table-wrapper">
+                          <Categorys
+                            filteredPlayers={currentGameStats}
+                            rankByValue={rankByValue}
+                            categorys={categorys}
+                          />
+                          <Rows filteredPlayers={[fullGameStats]} lastRow={true} />
+                        </tbody>
+                      </table>
+                      <div className="type-of-actions-wrapper">
+                        <div className="reception-content">Reception</div>
+                        <div className="attack-content">Attack</div>
+                        <div className="service-content">Service</div>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="zone-names-wrapper" key={"_" + index}>
-                      P{correctZones(index)}
-                    </div>
-                  )
-                )}
-                {homeTeamOptions.slice(0, 3).map((option, index) =>
-                  checkNumbers(option.boardPosition) ? (
-                    <div key={index}>
-                      <IconOfPlayer
-                        showSquads={showSquads}
-                        player={option}
-                        startingSix={homeTeamOptions}
-                        nextRotation={nextRotation}
-                        setNextRotation={setNextRotation}
-                        type="my"
-                      />
-                    </div>
-                  ) : (
-                    <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
-                  )
-                )}
-                {guestTeamOptions.slice(3, 6).map((option, index) =>
-                  checkNumbers(option.boardPosition) ? (
-                    <div key={index}>
-                      <IconOfPlayer
-                        showSquads={showSquads}
-                        player={option}
-                        startingSix={guestTeamOptions}
-                        nextRotation={nextRotation}
-                        setNextRotation={setNextRotation}
-                        type="rival"
-                      />
-                    </div>
-                  ) : (
-                    <div className="zone-names-wrapper" key={"_" + index}>
-                      P{correctZones(index + 3)}
-                    </div>
-                  )
-                )}
-                {homeTeamOptions.slice(3, 6).map((option, index) =>
-                  checkNumbers(option.boardPosition) ? (
-                    <div key={index}>
-                      <IconOfPlayer
-                        showSquads={showSquads}
-                        player={option}
-                        startingSix={homeTeamOptions}
-                        nextRotation={nextRotation}
-                        setNextRotation={setNextRotation}
-                        type="my"
-                      />
-                    </div>
-                  ) : (
-                    <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
-                  )
-                )}
-              </div>
+                  </div>
+                  <div
+                    className="diagram-wrapper"
+                    style={!isBurger ? { flexDirection: "column" } : {}}
+                  >
+                    <pre>
+                      <Diagramm link="Reception" data={fullGameStats} />
+                    </pre>
+                    <pre>
+                      <Diagramm link="Attack" data={fullGameStats} />
+                    </pre>
+                    <pre>
+                      <Diagramm link="Service" data={fullGameStats} />
+                    </pre>
+                  </div>
+                </SectionWrapper>
+              ) : (
+                <div className="row-zones-wrapper">
+                  {guestTeamOptions.slice(0, 3).map((option, index) =>
+                    checkNumbers(option.boardPosition) ? (
+                      <div key={index}>
+                        <IconOfPlayer
+                          showSquads={showSquads}
+                          player={option}
+                          startingSix={guestTeamOptions}
+                          nextRotation={nextRotation}
+                          setNextRotation={setNextRotation}
+                          type="rival"
+                        />
+                      </div>
+                    ) : (
+                      <div className="zone-names-wrapper" key={"_" + index}>
+                        P{correctZones(index)}
+                      </div>
+                    )
+                  )}
+                  {homeTeamOptions.slice(0, 3).map((option, index) =>
+                    checkNumbers(option.boardPosition) ? (
+                      <div key={index}>
+                        <IconOfPlayer
+                          showSquads={showSquads}
+                          player={option}
+                          startingSix={homeTeamOptions}
+                          nextRotation={nextRotation}
+                          setNextRotation={setNextRotation}
+                          type="my"
+                        />
+                      </div>
+                    ) : (
+                      <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
+                    )
+                  )}
+                  {guestTeamOptions.slice(3, 6).map((option, index) =>
+                    checkNumbers(option.boardPosition) ? (
+                      <div key={index}>
+                        <IconOfPlayer
+                          showSquads={showSquads}
+                          player={option}
+                          startingSix={guestTeamOptions}
+                          nextRotation={nextRotation}
+                          setNextRotation={setNextRotation}
+                          type="rival"
+                        />
+                      </div>
+                    ) : (
+                      <div className="zone-names-wrapper" key={"_" + index}>
+                        P{correctZones(index + 3)}
+                      </div>
+                    )
+                  )}
+                  {homeTeamOptions.slice(3, 6).map((option, index) =>
+                    checkNumbers(option.boardPosition) ? (
+                      <div key={index}>
+                        <IconOfPlayer
+                          showSquads={showSquads}
+                          player={option}
+                          startingSix={homeTeamOptions}
+                          nextRotation={nextRotation}
+                          setNextRotation={setNextRotation}
+                          type="my"
+                        />
+                      </div>
+                    ) : (
+                      <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
+                    )
+                  )}
+                </div>
+              )}
+              {currentGameStats.length > 0 && !showSquads && (
+                <RegularButton
+                  onClick={() => setShowCurrentGameStats(!showCurrentGameStats)}
+                  type="button"
+                  $color="#0057b8"
+                  $background="#ffd700"
+                >
+                  Live Stats
+                </RegularButton>
+              )}
               {/* Reset Stats  */}
               {/* <div>
                 <button onClick={() => resetteam()}>team</button>

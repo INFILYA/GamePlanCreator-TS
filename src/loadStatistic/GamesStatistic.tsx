@@ -220,7 +220,7 @@ export default function GamesStatistic() {
                   </div>
                 </div>
                 <nav>
-                  <GameLogs games={gameLogs} listOfGames={sortedGames}/>
+                  <GameLogs games={gameLogs} listOfGames={sortedGames} />
                   {!detailedStatsOfPlayer && (
                     <RegularButton
                       onClick={() => setIsShowDistribution(!isShowDistribution)}

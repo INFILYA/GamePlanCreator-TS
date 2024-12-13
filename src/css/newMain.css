@@ -610,6 +610,8 @@ main .main-content-wrapper .section-content-wrapper .section-content .showRating
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .reset-button-wrapper {
   margin: -10px 0;

@@ -157,6 +157,7 @@
   white-space: nowrap;
   height: 2.5vmax;
   border: 1px solid;
+  background-color: white;
 }
 .main-content-wrapper .ratings-section table tbody tr .rating-player-name {
   padding: 0 0.5vw;
