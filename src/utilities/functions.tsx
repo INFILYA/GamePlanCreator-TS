@@ -242,109 +242,51 @@ export function getPlusMinusAttack(obj: TDiagramm) {
 }
 
 export function calculateTotalofActions(obj: TMix[]): TDiagramm {
-  const loosePoints = obj.reduce((acc, val) => (acc += isFieldExist(val["A="])), 0);
-  const winPoints = obj.reduce((acc, val) => (acc += isFieldExist(val["A++"])), 0);
-  const leftInTheGamePlus = obj.reduce((acc, val) => (acc += isFieldExist(val["A+"])), 0);
-  const leftInTheGameMinus = obj.reduce((acc, val) => (acc += isFieldExist(val["A!"])), 0);
-  const attacksInBlock = obj.reduce((acc, val) => (acc += isFieldExist(val["A-"])), 0);
-  const ace = obj.reduce((acc, val) => (acc += isFieldExist(val["S++"])), 0);
-  const serviceFailed = obj.reduce((acc, val) => (acc += isFieldExist(val["S="])), 0);
-  const serviceExclamation = obj.reduce((acc, val) => (acc += isFieldExist(val["S!"])), 0);
-  const servicePlus = obj.reduce((acc, val) => (acc += isFieldExist(val["S+"])), 0);
-  const serviceMinus = obj.reduce((acc, val) => (acc += isFieldExist(val["S-"])), 0);
-  const rPerfect = obj.reduce((acc, val) => (acc += isFieldExist(val["R++"])), 0);
-  const rPlus = obj.reduce((acc, val) => (acc += isFieldExist(val["R+"])), 0);
-  const rExclamation = obj.reduce((acc, val) => (acc += isFieldExist(val["R!"])), 0);
-  const rAce = obj.reduce((acc, val) => (acc += isFieldExist(val["R="])), 0);
-  const rMinus = obj.reduce((acc, val) => (acc += isFieldExist(val["R-"])), 0);
-  const blocks = obj.reduce((acc, val) => (acc += isFieldExist(val.blocks)), 0);
+  function getCalculation( type: keyof TMix ):number {
+    return obj.reduce((acc, val) => (acc += isFieldExist(val[type]  as number)), 0);  
+ } 
   const sumOfAllPlayersSoloGamesStats = {
-    "A=": loosePoints,
-    "A++": winPoints,
-    "A+": leftInTheGamePlus,
-    "A!": leftInTheGameMinus,
-    "A-": attacksInBlock,
-    "S++": ace,
-    "S!": serviceExclamation,
-    "S=": serviceFailed,
-    "S+": servicePlus,
-    "S-": serviceMinus,
-    "R++": rPerfect,
-    "R+": rPlus,
-    "R!": rExclamation,
-    "R-": rMinus,
-    "R=": rAce,
-    blocks: blocks,
+    "A=": getCalculation("A="),
+    "A++": getCalculation("A++"),
+    "A+": getCalculation("A+"),
+    "A!": getCalculation("A!"),
+    "A-": getCalculation("A-"),
+    "S++": getCalculation("S++"),
+    "S!": getCalculation("S!"),
+    "S=": getCalculation("S="),
+    "S+": getCalculation("S+"),
+    "S-": getCalculation("S-"),
+    "R++": getCalculation("R++"),
+    "R+": getCalculation("R+"),
+    "R!": getCalculation("R!"),
+    "R-": getCalculation("R-"),
+    "R=": getCalculation("R="),
+    blocks: getCalculation("blocks"),
   };
   return sumOfAllPlayersSoloGamesStats;
 }
 
 export function calculateTotalofActionsV2(obj: TMix[], name: string): TMix {
-  const loosePoints = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["A="])), 0);
-  const winPoints = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["A++"])), 0);
-  const leftInTheGamePlus = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["A+"])), 0);
-  const leftInTheGameMinus = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["A!"])), 0);
-  const attacksInBlock = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["A-"])), 0);
-  const ace = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["S++"])), 0);
-  const serviceFailed = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["S="])), 0);
-  const serviceExclamation = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["S!"])), 0);
-  const servicePlus = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["S+"])), 0);
-  const serviceMinus = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["S-"])), 0);
-  const rPerfect = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["R++"])), 0);
-  const rPlus = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["R+"])), 0);
-  const rExclamation = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["R!"])), 0);
-  const rAce = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["R="])), 0);
-  const rMinus = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val["R-"])), 0);
-  const blocks = obj
-    .filter((a) => a.name === name)
-    .reduce((acc, val) => (acc += isFieldExist(val.blocks)), 0);
+  function getCalculation( type: keyof TMix ):number {
+     return obj.filter((a) => a.name === name).reduce((acc, val) => (acc += isFieldExist(val[type]  as number)), 0);  
+  }  
   const sumOfAllPlayersSoloGamesStats = {
-    "A=": loosePoints,
-    "A++": winPoints,
-    "A+": leftInTheGamePlus,
-    "A!": leftInTheGameMinus,
-    "A-": attacksInBlock,
-    "S++": ace,
-    "S!": serviceExclamation,
-    "S=": serviceFailed,
-    "S+": servicePlus,
-    "S-": serviceMinus,
-    "R++": rPerfect,
-    "R+": rPlus,
-    "R!": rExclamation,
-    "R-": rMinus,
-    "R=": rAce,
-    blocks: blocks,
+    "A=": getCalculation("A="),
+    "A++": getCalculation("A++"),
+    "A+": getCalculation("A+"),
+    "A!": getCalculation("A!"),
+    "A-": getCalculation("A-"),
+    "S++": getCalculation("S++"),
+    "S!": getCalculation("S!"),
+    "S=": getCalculation("S="),
+    "S+": getCalculation("S+"),
+    "S-": getCalculation("S-"),
+    "R++": getCalculation("R++"),
+    "R+": getCalculation("R+"),
+    "R!": getCalculation("R!"),
+    "R-": getCalculation("R-"),
+    "R=": getCalculation("R="),
+    blocks: getCalculation("blocks"),
     name: name,
   };
   return sumOfAllPlayersSoloGamesStats as TMix;
