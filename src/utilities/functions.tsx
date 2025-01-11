@@ -465,7 +465,12 @@ export const listOfOpponents16U = [
   "Niagara Rapids Shockwave", //
   "Reach Flow", //
   "FCVC Icarus", //
-  "Halton Hurricane Category 6", //
+  "Halton Hurricane Category 6", // 
+  "Hurricanes Category 7 Stef",
+  "KW Preds Summit",
+  "Durham Attack Impact",
+  "Leaside Knights",
+  "Flames Inferno"
 ];
 
 export const P1 = {
