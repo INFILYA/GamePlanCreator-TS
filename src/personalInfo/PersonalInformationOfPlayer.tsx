@@ -40,13 +40,13 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   // async function setNewPlayersToData() {
   //   const newPlaer = {
   //     ...playerInfo,
-  //     name: "Cole Tseng",
-  //     id: "Cole Tseng",
-  //     number: "13",
-  //     age: "2009-05-31",
-  //     team: "Valour-16U",
+  //     name: "Sam Etemadi",
+  //     id: "Sam Etemadi",
+  //     number: "22",
+  //     age: "2007-05-31",
+  //     team: "Warriors-18U",
   //   };
-  //   await set(playersRef("Cole Tseng"), newPlaer);
+  //   await set(playersRef("Sam Etemadi"), newPlaer);
   // }
   // ADD NEW PLAER
 
