@@ -463,14 +463,19 @@ export const listOfOpponents16U = [
   "KW Preds Reign", //
   "Pakmen Gold Saad", //
   "Niagara Rapids Shockwave", //
-  "Reach Flow", //
   "FCVC Icarus", //
   "Halton Hurricane Category 6", // 
   "Hurricanes Category 7 Stef",
   "KW Preds Summit",
   "Durham Attack Impact",
   "Leaside Knights",
-  "Flames Inferno"
+  "Flames Inferno",
+  "Maverick Toros",
+  "REACH Ignite",
+  "Maverick Bulls",
+  "Durham Attack Raiders",
+  "Kingston Rock Quartz",
+  "Ottawa Fusion Purple - Kevin"
 ];
 
 export const P1 = {
