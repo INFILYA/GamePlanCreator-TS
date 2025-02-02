@@ -150,7 +150,8 @@ export function HomePage() {
     // download solo game statisic
     const matchInfo = `${currentDate()}; ${
       guestTeam[0].id
-    } - ${opponentTeamName}`;
+    } - ${opponentTeamName} ${exhibitionGame ? "|| Exhibition game" : ""}`;
+
     if (!gameLog) return;
     const setStat = { [setNumber]: gameLog };
     const choosenGame = gamesStats.find((game) => game[matchInfo]);
