@@ -124,7 +124,10 @@ export const emptyPlayer: TPlayer = {
   zoneOfAttack: 0,
 };
 
-export const backGroundYellow = { backgroundColor: "#FFD700", color: "#0057B8" };
+export const backGroundYellow = {
+  backgroundColor: "#FFD700",
+  color: "#0057B8",
+};
 export const backGroundBlue = { backgroundColor: "#0057B8", color: "#FFD700" };
 
 export function correctPositions(number: number): number {
@@ -147,8 +150,10 @@ export function setStyleForEfficency(params: number): CSSProperties {
     return { color: "black" };
   }
   return {
-    color: params >= 30 ? "green" : params <= 30 && params >= 25 ? "black" : "red",
-    backgroundColor: params >= 30 ? "palegreen" : params <= 30 && params >= 25 ? "" : "pink",
+    color:
+      params >= 30 ? "green" : params <= 30 && params >= 25 ? "black" : "red",
+    backgroundColor:
+      params >= 30 ? "palegreen" : params <= 30 && params >= 25 ? "" : "pink",
     fontWeight: params >= 30 ? "600" : params <= 30 && params >= 25 ? "" : 600,
   };
 }
@@ -158,8 +163,10 @@ export function setStyleForPercent(params: number): CSSProperties {
     return { color: "black" };
   }
   return {
-    color: params >= 50 ? "green" : params <= 50 && params >= 40 ? "black" : "red",
-    backgroundColor: params >= 50 ? "palegreen" : params <= 50 && params >= 40 ? "" : "pink",
+    color:
+      params >= 50 ? "green" : params <= 50 && params >= 40 ? "black" : "red",
+    backgroundColor:
+      params >= 50 ? "palegreen" : params <= 50 && params >= 40 ? "" : "pink",
     fontWeight: params >= 50 ? "600" : params <= 50 && params >= 40 ? "" : 600,
   };
 }
@@ -204,19 +211,26 @@ export function getServiceEfficency(obj: TDiagramm) {
   const totalService = [obj["S++"], obj["S+"], obj["S-"], obj["S="], obj["S!"]];
   const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
   if (sumOfTotalService === 0) return 0;
-  const efficencyService = +((getPlusMinusService(obj) / sumOfTotalService) * 100);
+  const efficencyService = +(
+    (getPlusMinusService(obj) / sumOfTotalService) *
+    100
+  );
   return Math.round(efficencyService);
 }
 
 export function gerPercentOfPerfectReception(obj: TDiagramm) {
   if (getSumofReceptions(obj) === 0) return 0;
-  const percents = +((isFieldExist(obj["R++"]) / getSumofReceptions(obj)) * 100);
+  const percents = +(
+    (isFieldExist(obj["R++"]) / getSumofReceptions(obj)) *
+    100
+  );
   return Math.round(percents);
 }
 export function gerPercentOfPositiveReception(obj: TDiagramm) {
   if (getSumofReceptions(obj) === 0) return 0;
   const percents = +(
-    ((isFieldExist(obj["R++"]) + isFieldExist(obj["R+"])) / getSumofReceptions(obj)) *
+    ((isFieldExist(obj["R++"]) + isFieldExist(obj["R+"])) /
+      getSumofReceptions(obj)) *
     100
   );
   return Math.round(percents);
@@ -230,7 +244,10 @@ export function gerPercentOfAttack(obj: TDiagramm) {
 
 export function getAttackEfficency(obj: TDiagramm) {
   if (getSumofAttacks(obj) === 0) return 0;
-  const efficencyAttack = +((getPlusMinusAttack(obj) / getSumofAttacks(obj)) * 100);
+  const efficencyAttack = +(
+    (getPlusMinusAttack(obj) / getSumofAttacks(obj)) *
+    100
+  );
   return Math.round(efficencyAttack);
 }
 
@@ -238,13 +255,19 @@ export function getPlusMinusService(obj: TDiagramm) {
   return isFieldExist(obj["S++"]) - isFieldExist(obj["S="]);
 }
 export function getPlusMinusAttack(obj: TDiagramm) {
-  return isFieldExist(obj["A++"]) - (isFieldExist(obj["A-"]) + isFieldExist(obj["A="]));
+  return (
+    isFieldExist(obj["A++"]) -
+    (isFieldExist(obj["A-"]) + isFieldExist(obj["A="]))
+  );
 }
 
 export function calculateTotalofActions(obj: TMix[]): TDiagramm {
-  function getCalculation( type: keyof TMix ):number {
-    return obj.reduce((acc, val) => (acc += isFieldExist(val[type]  as number)), 0);  
- } 
+  function getCalculation(type: keyof TMix): number {
+    return obj.reduce(
+      (acc, val) => (acc += isFieldExist(val[type] as number)),
+      0
+    );
+  }
   const sumOfAllPlayersSoloGamesStats = {
     "A=": getCalculation("A="),
     "A++": getCalculation("A++"),
@@ -267,9 +290,11 @@ export function calculateTotalofActions(obj: TMix[]): TDiagramm {
 }
 
 export function calculateTotalofActionsV2(obj: TMix[], name: string): TMix {
-  function getCalculation( type: keyof TMix ):number {
-     return obj.filter((a) => a.name === name).reduce((acc, val) => (acc += isFieldExist(val[type]  as number)), 0);  
-  }  
+  function getCalculation(type: keyof TMix): number {
+    return obj
+      .filter((a) => a.name === name)
+      .reduce((acc, val) => (acc += isFieldExist(val[type] as number)), 0);
+  }
   const sumOfAllPlayersSoloGamesStats = {
     "A=": getCalculation("A="),
     "A++": getCalculation("A++"),
@@ -434,6 +459,7 @@ export const listOfOpponents18U = [
   "Pakmen Gold Omar", //
   "Durham Attack Power", //
   "KW Preds Invictus", //
+  "KW Preds Vision", //
   "Niagara Rapids Alliance", //
   "Storm Voltage", //
   "Phoenix Skybirds", //
@@ -447,6 +473,14 @@ export const listOfOpponents18U = [
   "Barrie Elites - Phoenix", //
   "Barrie Elites - Frost",
   "Bluewater Ballistix", //
+  "Leaside Knights",
+  "Hyperion",
+  "LVC Heat",
+  "KW Preds Wolverine", //
+  "ST Thomas Express", //
+  "KW Preds B", //
+  "LVC Detonate", //
+  "West Align",
 ];
 
 export const listOfOpponents16U = [
@@ -464,7 +498,7 @@ export const listOfOpponents16U = [
   "Pakmen Gold Saad", //
   "Niagara Rapids Shockwave", //
   "FCVC Icarus", //
-  "Halton Hurricane Category 6", // 
+  "Halton Hurricane Category 6", //
   "Hurricanes Category 7 Stef",
   "KW Preds Summit",
   "Durham Attack Impact",
@@ -475,7 +509,7 @@ export const listOfOpponents16U = [
   "Maverick Bulls",
   "Durham Attack Raiders",
   "Kingston Rock Quartz",
-  "Ottawa Fusion Purple - Kevin"
+  "Ottawa Fusion Purple - Kevin",
 ];
 
 export const P1 = {

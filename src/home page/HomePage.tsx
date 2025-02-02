@@ -27,7 +27,10 @@ import { IconOfPlayer } from "./components/IconOfPlayers";
 import { Squads } from "./components/Squads";
 import { ChooseGuestTeam } from "./components/ChooseGuestTeam";
 import { setGuestPlayers } from "../states/slices/guestPlayersSlice";
-import { selectPlayerInfo, setInfoOfPlayer } from "../states/slices/playerInfoSlice";
+import {
+  selectPlayerInfo,
+  setInfoOfPlayer,
+} from "../states/slices/playerInfoSlice";
 import { PersonalInformationOfPlayer } from "../personalInfo/PersonalInformationOfPlayer";
 import {
   rotateBackHomeTeam,
@@ -72,6 +75,7 @@ export function HomePage() {
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [nextRotation, setNextRotation] = useState(true);
   const [weServe, setWeServe] = useState(false);
+  const [exhibitionGame, setExhibitionGame] = useState(false);
   const [gameLog, setGameLog] = useState<TGameLogStats>([]);
   const [statsForTeam, setstatsForTeam] = useState<TPlayer[][]>([]);
   const [opponentTeamName, setOpponentTeamName] = useState("");
@@ -114,7 +118,9 @@ export function HomePage() {
 
   function handleSetMyTeam(event: ChangeEvent<HTMLSelectElement>) {
     const name = event.target.value;
-    const homeTeamPlayers = listOfPlayers.filter((player) => player.team === name);
+    const homeTeamPlayers = listOfPlayers.filter(
+      (player) => player.team === name
+    );
     dispatch(setHomePlayers(homeTeamPlayers));
     dispatch(setHomeTeam(name));
   }
@@ -142,7 +148,9 @@ export function HomePage() {
   async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // download solo game statisic
-    const matchInfo = `${currentDate()}; ${guestTeam[0].id} - ${opponentTeamName}`;
+    const matchInfo = `${currentDate()}; ${
+      guestTeam[0].id
+    } - ${opponentTeamName}`;
     if (!gameLog) return;
     const setStat = { [setNumber]: gameLog };
     const choosenGame = gamesStats.find((game) => game[matchInfo]);
@@ -160,16 +168,22 @@ export function HomePage() {
     }
     // Here IS PROBLEM!!!
     // Refresh StartingSix players
-    async function setPlayersToData(player: TPlayer) {
-      await set(playersRef(player.name), player);
+    if (!exhibitionGame) {
+      async function setPlayersToData(player: TPlayer) {
+        await set(playersRef(player.name), player);
+      }
+      const updatedPlayers = listOfPlayers.filter(
+        (player) => player.team === guestTeam[0].name
+      );
+      updatedPlayers.forEach((player) => {
+        setPlayersToData(player);
+      });
+      // //add solo game stats
+      const newTeam = calculateForTeamData(
+        calculateTotalofActions(statsForTeam.flat()) as TPlayer
+      );
+      await set(teamsRef(newTeam.name), newTeam);
     }
-    const updatedPlayers = listOfPlayers.filter((player) => player.team === guestTeam[0].name);
-    updatedPlayers.forEach((player) => {
-      setPlayersToData(player);
-    });
-    // //add solo game stats
-    const newTeam = calculateForTeamData(calculateTotalofActions(statsForTeam.flat()) as TPlayer);
-    await set(teamsRef(newTeam.name), newTeam);
     setstatsForTeam([]);
     resetTheBoardForGuestTeam();
     setShowSquads(true);
@@ -203,15 +217,21 @@ export function HomePage() {
   const currentScore = `${myScore} - ${rivalScore}`;
   const playerInfoWindow = playerInfo && showSquads;
   const saveDataIcon = !opponentTeamName || !setNumber;
-  const tieBreak = setNumber === "Set 3 (short)" || setNumber === "Set 5 (short)";
+  const tieBreak =
+    setNumber === "Set 3 (short)" || setNumber === "Set 5 (short)";
   const tieBreakScore = myScore >= 15 || rivalScore >= 15;
   const normalSetScore = myScore >= 25 || rivalScore >= 25;
   const endOfTheSet = tieBreak
     ? (tieBreakScore && myScore - rivalScore === (+2 || -2)) ||
       (tieBreakScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1))
     : (normalSetScore && myScore - rivalScore === (+2 || -2)) ||
-      (normalSetScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1));
-  const saveButton = isBoardFull(guestTeamOptions) && !showSquads && !saveDataIcon && endOfTheSet;
+      (normalSetScore &&
+        (myScore - rivalScore > 1 || rivalScore - myScore > 1));
+  const saveButton =
+    isBoardFull(guestTeamOptions) &&
+    !showSquads &&
+    !saveDataIcon &&
+    endOfTheSet;
   const zeroZero = myScore === 0 && rivalScore === 0;
 
   function getSetterPosition() {
@@ -224,10 +244,16 @@ export function HomePage() {
     const properArr = criteria === "name" ? currentGameStats : arr;
     !isBiggest
       ? properArr.sort((a, b) =>
-          compare(isFieldExist(b[criteria] as number), isFieldExist(a[criteria] as number))
+          compare(
+            isFieldExist(b[criteria] as number),
+            isFieldExist(a[criteria] as number)
+          )
         )
       : properArr.sort((a, b) =>
-          compare(isFieldExist(a[criteria] as number), isFieldExist(b[criteria] as number))
+          compare(
+            isFieldExist(a[criteria] as number),
+            isFieldExist(b[criteria] as number)
+          )
         );
     setIsBiggest(!isBiggest);
   }
@@ -304,7 +330,9 @@ export function HomePage() {
   // END HERE
   const filter = "";
   const listOfOpponents =
-    guestTeam[0]?.name === "Warriors-18U" ? listOfOpponents18U : listOfOpponents16U;
+    guestTeam[0]?.name === "Warriors-18U"
+      ? listOfOpponents18U
+      : listOfOpponents16U;
 
   function calculateForTeamDataV2<T extends TMix>(obj: T): TMix {
     if (filter.length === 0) return obj;
@@ -319,8 +347,10 @@ export function HomePage() {
   }
   const currentGameStats = gameLog.map((rall) => rall.stats).flat();
   const playersNames = currentGameStats.map((player) => jusName(player));
-  const fullGameStats = calculateForTeamDataV2(calculateTotalofActions(currentGameStats) as TMix);
-
+  const fullGameStats = calculateForTeamDataV2(
+    calculateTotalofActions(currentGameStats) as TMix
+  );
+  console.log(exhibitionGame);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -347,7 +377,9 @@ export function HomePage() {
       )}
       <SectionWrapper
         className="playground-section"
-        backGround={!playerInfoWindow && <img src="/photos/playarea.jpg" alt="" />}
+        backGround={
+          !playerInfoWindow && <img src="/photos/playarea.jpg" alt="" />
+        }
       >
         {!showGuestTeam && <ChooseGuestTeam />}
         {playerInfoWindow && <PersonalInformationOfPlayer link="page1" />}
@@ -383,7 +415,9 @@ export function HomePage() {
                           <>
                             <select
                               onChange={(e) =>
-                                setOpponentTeamName(firstLetterCapital(e.target.value))
+                                setOpponentTeamName(
+                                  firstLetterCapital(e.target.value)
+                                )
                               }
                               value={opponentTeamName}
                             >
@@ -403,9 +437,37 @@ export function HomePage() {
                               <option value="Set 2">Set 2</option>
                               <option value="Set 3">Set 3</option>
                               <option value="Set 4">Set 4</option>
-                              <option value="Set 5 (short)">Set 5 (short)</option>
-                              <option value="Set 3 (short)">Set 3 (short)</option>
+                              <option value="Set 5 (short)">
+                                Set 5 (short)
+                              </option>
+                              <option value="Set 3 (short)">
+                                Set 3 (short)
+                              </option>
                             </select>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                              }}
+                            >
+                              <h2
+                                style={{
+                                  whiteSpace: "nowrap",
+                                  width: "90%",
+                                }}
+                              >
+                                Exhibition game
+                              </h2>
+                              <input
+                                style={{ width: "10%", height: "2vw" }}
+                                type="checkbox"
+                                onChange={() =>
+                                  setExhibitionGame(!exhibitionGame)
+                                }
+                                checked={exhibitionGame}
+                              />
+                            </div>
                           </>
                         )}
                       </div>
@@ -449,7 +511,10 @@ export function HomePage() {
                             rankByValue={rankByValue}
                             categorys={categorys}
                           />
-                          <Rows filteredPlayers={[fullGameStats]} lastRow={true} />
+                          <Rows
+                            filteredPlayers={[fullGameStats]}
+                            lastRow={true}
+                          />
                         </tbody>
                       </table>
                       <div className="type-of-actions-wrapper">
@@ -507,7 +572,10 @@ export function HomePage() {
                         />
                       </div>
                     ) : (
-                      <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
+                      <div
+                        className="nameOfZone-field-wrapper"
+                        key={"x" + index}
+                      ></div>
                     )
                   )}
                   {guestTeamOptions.slice(3, 6).map((option, index) =>
@@ -541,7 +609,10 @@ export function HomePage() {
                         />
                       </div>
                     ) : (
-                      <div className="nameOfZone-field-wrapper" key={"x" + index}></div>
+                      <div
+                        className="nameOfZone-field-wrapper"
+                        key={"x" + index}
+                      ></div>
                     )
                   )}
                 </div>
@@ -564,7 +635,11 @@ export function HomePage() {
               {/* HERE */}
               <div className="button-save-wrapper">
                 {saveButton && (
-                  <RegularButton type="submit" $color="black" $background="#ffd700">
+                  <RegularButton
+                    type="submit"
+                    $color="black"
+                    $background="#ffd700"
+                  >
                     Save Data
                   </RegularButton>
                 )}
@@ -575,7 +650,10 @@ export function HomePage() {
                 !setNumber &&
                 isBoardFull(guestTeamOptions) && (
                   <div className="rotation-buttons-wrapper">
-                    <button onClick={() => rotateFront()} disabled={endOfTheSet}>
+                    <button
+                      onClick={() => rotateFront()}
+                      disabled={endOfTheSet}
+                    >
                       +
                     </button>
                     <h1>P{getSetterPosition()}</h1>
