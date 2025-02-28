@@ -3,7 +3,10 @@ import { useSelector } from "react-redux";
 import Diagramm from "./components/Diagramm";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../config/firebase";
-import { selectPlayerInfo, setInfoOfPlayer } from "../states/slices/playerInfoSlice";
+import {
+  selectPlayerInfo,
+  setInfoOfPlayer,
+} from "../states/slices/playerInfoSlice";
 import { useState } from "react";
 import { useAppDispatch } from "../states/store";
 import {
@@ -36,19 +39,19 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   const servicePM = getPlusMinusService(playerInfo);
   const attackPM = getPlusMinusAttack(playerInfo);
 
-  // ADD NEW PLAER
+  // ADD NEW PLAYER
   // async function setNewPlayersToData() {
-  //   const newPlaer = {
+  //   const newPlayer = {
   //     ...playerInfo,
-  //     name: "Sam Etemadi",
-  //     id: "Sam Etemadi",
-  //     number: "22",
-  //     age: "2007-05-31",
+  //     name: "Ivan Cheung 18U",
+  //     id: "Ivan Cheung 18U",
+  //     number: "11",
+  //     age: "2009-11-23",
   //     team: "Warriors-18U",
   //   };
-  //   await set(playersRef("Sam Etemadi"), newPlaer);
+  //   await set(playersRef("Ivan Cheung 18U"), newPlayer);
   // }
-  // ADD NEW PLAER
+  // ADD NEW PLAYER
 
   return (
     <div className="hidden-player-information-wrapper">
@@ -83,14 +86,16 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
             {service && (
               <div className="player-info-row-wrapper">
                 <div>
-                  Plus/Minus: <div style={setStyle(servicePM)}>&nbsp;{servicePM}</div>
+                  Plus/Minus:{" "}
+                  <div style={setStyle(servicePM)}>&nbsp;{servicePM}</div>
                 </div>
               </div>
             )}
             {attack && (
               <div className="player-info-row-wrapper">
                 <div>
-                  Plus/Minus: <div style={setStyle(attackPM)}>&nbsp;{attackPM}</div>
+                  Plus/Minus:{" "}
+                  <div style={setStyle(attackPM)}>&nbsp;{attackPM}</div>
                 </div>
               </div>
             )}
@@ -116,7 +121,9 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                       Service
                     </RegularButton>
                   </NavLink>
-                  {/* <RegularButton onClick={setNewPlayersToData}>add plaer</RegularButton> */}
+                  {/* <RegularButton onClick={setNewPlayersToData}>
+                  add player
+                  </RegularButton> */}
                 </>
               )}
               {page1 && (
@@ -142,7 +149,8 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                     <Diagramm link="Service" />
                   </div>
                   <div className="efficency-wrapper">
-                    Efficency :<div>&nbsp;{getServiceEfficency(playerInfo)}%</div>
+                    Efficency :
+                    <div>&nbsp;{getServiceEfficency(playerInfo)}%</div>
                   </div>
                 </>
               )}
@@ -152,7 +160,8 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                     <Diagramm link="Attack" />
                   </div>
                   <div className="efficency-wrapper">
-                    Efficency :<div>&nbsp;{getAttackEfficency(playerInfo)}%</div>
+                    Efficency :
+                    <div>&nbsp;{getAttackEfficency(playerInfo)}%</div>
                   </div>
                 </>
               )}
