@@ -43,13 +43,14 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   // async function setNewPlayersToData() {
   //   const newPlayer = {
   //     ...playerInfo,
-  //     name: "Ivan Cheung 18U",
-  //     id: "Ivan Cheung 18U",
-  //     number: "11",
-  //     age: "2009-11-23",
-  //     team: "Warriors-18U",
+  //     name: "Uchenna Enoch",
+  //     id: "Uchenna Enoch",
+  //     number: "7",
+  //     height: "193",
+  //     position: "MB",
+  //     team: "Yellow",
   //   };
-  //   await set(playersRef("Ivan Cheung 18U"), newPlayer);
+  //   await set(playersRef("Uchenna Enoch"), newPlayer);
   // }
   // ADD NEW PLAYER
 
@@ -122,7 +123,7 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                     </RegularButton>
                   </NavLink>
                   {/* <RegularButton onClick={setNewPlayersToData}>
-                  add player
+                    add player
                   </RegularButton> */}
                 </>
               )}

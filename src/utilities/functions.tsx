@@ -481,6 +481,8 @@ export const listOfOpponents18U = [
   "KW Preds B", //
   "LVC Detonate", //
   "West Align",
+  "Yellow",
+  "Purple",
 ];
 
 export const listOfOpponents16U = [
@@ -510,6 +512,8 @@ export const listOfOpponents16U = [
   "Durham Attack Raiders",
   "Kingston Rock Quartz",
   "Ottawa Fusion Purple - Kevin",
+  "Yellow",
+  "Purple",
 ];
 
 export const P1 = {

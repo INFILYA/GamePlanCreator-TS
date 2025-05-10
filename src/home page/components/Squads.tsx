@@ -8,7 +8,10 @@ import {
   selectGuestPlayers,
   setGuestBenchPlayers,
 } from "../../states/slices/guestPlayersSlice";
-import { filterHomePlayers, selectHomePlayers } from "../../states/slices/homePlayersSlice";
+import {
+  filterHomePlayers,
+  selectHomePlayers,
+} from "../../states/slices/homePlayersSlice";
 import { ChangeEvent } from "react";
 import { auth, teamsRef } from "../../config/firebase";
 import {
@@ -59,7 +62,9 @@ export function Squads(props: TSquadsProps) {
     setPlayerToHomeTeamBoard(event);
   }
   function setPlayerToHomeTeamBoard(event: ChangeEvent<HTMLSelectElement>) {
-    const player = players.find((player) => player.name === event.target.value.split(",")[0]);
+    const player = players.find(
+      (player) => player.name === event.target.value.split(",")[0]
+    );
     if (player === undefined) return;
     dispatch(filterHomePlayers(event.target.value.split(",")[0]));
     const zone = +event.target.value.split(",")[1];
@@ -69,7 +74,9 @@ export function Squads(props: TSquadsProps) {
     setPlayerToGuestTeamBoard(event);
   }
   function setPlayerToGuestTeamBoard(event: ChangeEvent<HTMLSelectElement>) {
-    const player = players.find((player) => player.name === event.target.value.split(",")[0]);
+    const player = players.find(
+      (player) => player.name === event.target.value.split(",")[0]
+    );
     if (player === undefined) return;
     dispatch(filterGuestPlayers(event.target.value.split(",")[0]));
     const zone = +event.target.value.split(",")[1];
@@ -133,7 +140,10 @@ export function Squads(props: TSquadsProps) {
 
   return (
     <SectionWrapper className="teamsquad-section">
-      <div className="team-title-wrapper" style={myTeam ? { direction: "rtl" } : {}}>
+      <div
+        className="team-title-wrapper"
+        style={myTeam ? { direction: "rtl" } : {}}
+      >
         <div className="team-label-wrapper">
           <input className="team-label" readOnly value={club.name} />
         </div>
@@ -151,7 +161,11 @@ export function Squads(props: TSquadsProps) {
               style={myTeam ? { direction: "rtl" } : {}}
             >
               <div className="playerNumber-wrapper">
-                <button type="button" disabled className={myTeam ? "playerNumber" : ""}>
+                <button
+                  type="button"
+                  disabled
+                  className={myTeam ? "playerNumber" : ""}
+                >
                   {player.number}
                 </button>
               </div>
@@ -176,12 +190,22 @@ export function Squads(props: TSquadsProps) {
                       <option defaultValue="▶">▶</option>
                     )}
                     {teamOptions
-                      .filter((option) => typeof option.boardPosition === "number")
-                      .sort((a, b) => compare(a.boardPosition as number, b.boardPosition as number))
+                      .filter(
+                        (option) => typeof option.boardPosition === "number"
+                      )
+                      .sort((a, b) =>
+                        compare(
+                          a.boardPosition as number,
+                          b.boardPosition as number
+                        )
+                      )
                       .map((option, index) => (
                         <option
                           key={index}
-                          value={[player.name, JSON.stringify(option.boardPosition)]}
+                          value={[
+                            player.name,
+                            JSON.stringify(option.boardPosition),
+                          ]}
                         >
                           P{(option.boardPosition as number) + 1}
                         </option>
