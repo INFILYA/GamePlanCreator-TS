@@ -122,21 +122,22 @@ export function Squads(props: TSquadsProps) {
   //     guestTeamNew["R-"] = 0;
   //     guestTeamNew["R+"] = 0;
   //     guestTeamNew.blocks = 0;
-  //     guestTeamNew.name = "Valour-16U";
+  //     guestTeamNew.name = "TOR";
   //     guestTeamNew.logo = Team.logo;
-  //     guestTeamNew.id = "Valour-16U";
+  //     guestTeamNew.id = "TOR";
   //     guestTeamNew.startingSquad = Team.startingSquad;
   //     return guestTeamNew;
   //   };
   //   async function setTeamToData(team: TTeam) {
   //     try {
-  //       await set(teamsRef("Valour-16U"), team);
+  //       await set(teamsRef("TOR"), team);
   //     } catch (error) {
   //       console.error(error);
   //     }
   //   }
   //   setTeamToData(creeNew(guestTeam[0]));
-  // }  add TEAM
+  // }
+  // add TEAM
 
   return (
     <SectionWrapper className="teamsquad-section">
@@ -235,7 +236,12 @@ export function Squads(props: TSquadsProps) {
             Save starting six
           </RegularButton>
         )}
-        {/* <RegularButton onClick={addteam} type="button" $color="black" $background="#ffd700">
+        {/* <RegularButton
+          onClick={addteam}
+          type="button"
+          $color="black"
+          $background="#ffd700"
+        >
           add team
         </RegularButton> */}
       </div>

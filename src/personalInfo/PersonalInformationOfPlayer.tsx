@@ -43,14 +43,14 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   // async function setNewPlayersToData() {
   //   const newPlayer = {
   //     ...playerInfo,
-  //     name: "Uchenna Enoch",
-  //     id: "Uchenna Enoch",
+  //     name: "Jamin Ekhaguere",
+  //     id: "Jamin Ekhaguere",
   //     number: "7",
   //     height: "193",
-  //     position: "MB",
-  //     team: "Yellow",
+  //     position: "OH",
+  //     team: "TOR",
   //   };
-  //   await set(playersRef("Uchenna Enoch"), newPlayer);
+  //   await set(playersRef("Jamin Ekhaguere"), newPlayer);
   // }
   // ADD NEW PLAYER
 

@@ -15,8 +15,8 @@ import {
   isBoardFull,
   isFieldExist,
   jusName,
-  listOfOpponents16U,
-  listOfOpponents18U,
+  // listOfOpponents16U,
+  // listOfOpponents18U,
 } from "../utilities/functions";
 import { TGameLogStats, TMix, TPlayer, TTeam } from "../types/types";
 import { ChangeEvent, FormEvent, useState } from "react";
@@ -330,10 +330,10 @@ export function HomePage() {
   // };
   // END HERE
   const filter = "";
-  const listOfOpponents =
-    guestTeam[0]?.name === "Warriors-18U"
-      ? listOfOpponents18U
-      : listOfOpponents16U;
+  // const listOfOpponents =
+  //   guestTeam[0]?.name === "Warriors-18U"
+  //     ? listOfOpponents18U
+  //     : listOfOpponents16U;
 
   function calculateForTeamDataV2<T extends TMix>(obj: T): TMix {
     if (filter.length === 0) return obj;
@@ -351,7 +351,6 @@ export function HomePage() {
   const fullGameStats = calculateForTeamDataV2(
     calculateTotalofActions(currentGameStats) as TMix
   );
-  console.log(exhibitionGame);
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -414,7 +413,7 @@ export function HomePage() {
                         </div>
                         {!showSquads && !showCurrentGameStats && (
                           <>
-                            <select
+                            <input
                               onChange={(e) =>
                                 setOpponentTeamName(
                                   firstLetterCapital(e.target.value)
@@ -422,13 +421,13 @@ export function HomePage() {
                               }
                               value={opponentTeamName}
                             >
-                              <option value="">Choose Opponent</option>
+                              {/* <option value="">Choose Opponent</option>
                               {listOfOpponents.map((opponent) => (
                                 <option value={opponent} key={opponent}>
                                   {opponent}
                                 </option>
-                              ))}
-                            </select>
+                              ))} */}
+                            </input>
                             <select
                               onChange={(e) => setSetNumber(e.target.value)}
                               value={setNumber}
