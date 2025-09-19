@@ -122,15 +122,15 @@ export function Squads(props: TSquadsProps) {
   //     guestTeamNew["R-"] = 0;
   //     guestTeamNew["R+"] = 0;
   //     guestTeamNew.blocks = 0;
-  //     guestTeamNew.name = "TOR";
+  //     guestTeamNew.name = "Warriors-17U";
   //     guestTeamNew.logo = Team.logo;
-  //     guestTeamNew.id = "TOR";
+  //     guestTeamNew.id = "Warriors-17U";
   //     guestTeamNew.startingSquad = Team.startingSquad;
   //     return guestTeamNew;
   //   };
   //   async function setTeamToData(team: TTeam) {
   //     try {
-  //       await set(teamsRef("TOR"), team);
+  //       await set(teamsRef("Warriors-17U"), team);
   //     } catch (error) {
   //       console.error(error);
   //     }
@@ -175,6 +175,11 @@ export function Squads(props: TSquadsProps) {
                   type="button"
                   className={myTeam ? "player-surname" : ""}
                   onClick={() => dispatch(setInfoOfPlayer(player))}
+                  style={
+                    player.position === "LIB"
+                      ? { backgroundColor: "turquoise" }
+                      : {}
+                  }
                 >
                   {player.name}
                 </button>

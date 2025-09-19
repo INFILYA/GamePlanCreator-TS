@@ -43,14 +43,16 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   // async function setNewPlayersToData() {
   //   const newPlayer = {
   //     ...playerInfo,
-  //     name: "Jamin Ekhaguere",
-  //     id: "Jamin Ekhaguere",
-  //     number: "7",
-  //     height: "193",
-  //     position: "OH",
-  //     team: "TOR",
+  //     name: "Kiernan Newman-Mixon",
+  //     id: "Kiernan Newman-Mixon",
+  //     number: "03",
+  //     height: "182",
+  //     reach: "314",
+  //     position: "SET",
+  //     team: "Warriors-17U",
+  //     age: "2009-04-17",
   //   };
-  //   await set(playersRef("Jamin Ekhaguere"), newPlayer);
+  //   await set(playersRef("Kiernan Newman-Mixon"), newPlayer);
   // }
   // ADD NEW PLAYER
 

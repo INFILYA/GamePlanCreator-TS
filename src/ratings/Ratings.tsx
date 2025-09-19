@@ -4,7 +4,12 @@ import { selectPlayerInfo } from "../states/slices/playerInfoSlice";
 import { PersonalInformationOfPlayer } from "../personalInfo/PersonalInformationOfPlayer";
 import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
 import { useState } from "react";
-import { categorys, compare, isFieldExist, jusName } from "../utilities/functions";
+import {
+  categorys,
+  compare,
+  isFieldExist,
+  jusName,
+} from "../utilities/functions";
 import { TMix } from "../types/types";
 import { Categorys } from "./components/Categorys";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
@@ -20,7 +25,14 @@ export function Ratings() {
   const [chosenPosition, setChosenPosition] = useState<string>("");
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [isChoosenFilter, setChoosenFilter] = useState<boolean>(false);
-  const positions = ["OHitter", "OPPosite", "MBlocker", "SETter", "LIBero", "Team"];
+  const positions = [
+    "OHitter",
+    "OPPosite",
+    "MBlocker",
+    "SETter",
+    "LIBero",
+    "Team",
+  ];
 
   function setPositionFilter(position: string) {
     setChosenPosition(position);
@@ -30,20 +42,33 @@ export function Ratings() {
       setFilteredPlayers([...listOfTeams]);
       return;
     }
-    const choosenAmplua = listOfPlayers.filter((player) => player.position === position);
+    const choosenAmplua = listOfPlayers.filter(
+      (player) => player.position === position
+    );
     if (guestTeam[0]?.name) {
-      setFilteredPlayers(choosenAmplua.filter((player) => player.team === guestTeam[0]?.name));
-    } else setFilteredPlayers(choosenAmplua);
+      setFilteredPlayers(
+        choosenAmplua.filter((player) => player.team === guestTeam[0]?.name)
+      );
+    } else
+      setFilteredPlayers(
+        choosenAmplua.length === 0 ? listOfPlayers : choosenAmplua
+      );
   }
 
   function rankByValue<T extends TMix>(criteria: keyof TMix, arr: T[]) {
     const properArr = criteria === "name" ? filteredPlayers : arr;
     !isBiggest
       ? properArr.sort((a, b) =>
-          compare(isFieldExist(b[criteria] as number), isFieldExist(a[criteria] as number))
+          compare(
+            isFieldExist(b[criteria] as number),
+            isFieldExist(a[criteria] as number)
+          )
         )
       : properArr.sort((a, b) =>
-          compare(isFieldExist(a[criteria] as number), isFieldExist(b[criteria] as number))
+          compare(
+            isFieldExist(a[criteria] as number),
+            isFieldExist(b[criteria] as number)
+          )
         );
     setIsBiggest(!isBiggest);
   }
@@ -62,13 +87,19 @@ export function Ratings() {
                 {positions.map((position, index) => (
                   <div key={index}>
                     <RegularButton
-                      onClick={() => setPositionFilter(position.replace(/[a-z]/g, ""))}
+                      onClick={() =>
+                        setPositionFilter(position.replace(/[a-z]/g, ""))
+                      }
                       type="button"
                       $color={
-                        chosenPosition === position.replace(/[a-z]/g, "") ? "#ffd700" : "#0057b8"
+                        chosenPosition === position.replace(/[a-z]/g, "")
+                          ? "#ffd700"
+                          : "#0057b8"
                       }
                       $background={
-                        chosenPosition === position.replace(/[a-z]/g, "") ? "#0057b8" : "#ffd700"
+                        chosenPosition === position.replace(/[a-z]/g, "")
+                          ? "#0057b8"
+                          : "#ffd700"
                       }
                     >{`${position}s`}</RegularButton>
                   </div>
