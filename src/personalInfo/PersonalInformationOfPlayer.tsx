@@ -43,16 +43,16 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   // async function setNewPlayersToData() {
   //   const newPlayer = {
   //     ...playerInfo,
-  //     name: "Kiernan Newman-Mixon",
-  //     id: "Kiernan Newman-Mixon",
-  //     number: "03",
-  //     height: "182",
-  //     reach: "314",
-  //     position: "SET",
-  //     team: "Warriors-17U",
-  //     age: "2009-04-17",
+  //     name: "Adam Lundy",
+  //     id: "Adam Lundy",
+  //     number: "24",
+  //     height: "188",
+  //     reach: "330",
+  //     position: "MB",
+  //     team: "Bushido-18U",
+  //     age: "2008-02-16",
   //   };
-  //   await set(playersRef("Kiernan Newman-Mixon"), newPlayer);
+  //   await set(playersRef("Adam Lundy"), newPlayer);
   // }
   // ADD NEW PLAYER
 
