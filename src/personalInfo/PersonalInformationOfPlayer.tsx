@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Diagramm from "./components/Diagramm";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../config/firebase";
+import { auth, playersRef } from "../config/firebase";
 import {
   selectPlayerInfo,
   setInfoOfPlayer,
@@ -18,6 +18,7 @@ import {
   upgradeAge,
 } from "../utilities/functions";
 import { RegularButton } from "../css/Button.styled";
+import { set } from "firebase/database";
 // import { set } from "firebase/database";
 
 type TPersonalInfoProps = {
@@ -40,20 +41,20 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   const attackPM = getPlusMinusAttack(playerInfo);
 
   // ADD NEW PLAYER
-  // async function setNewPlayersToData() {
-  //   const newPlayer = {
-  //     ...playerInfo,
-  //     name: "Adam Lundy",
-  //     id: "Adam Lundy",
-  //     number: "24",
-  //     height: "188",
-  //     reach: "330",
-  //     position: "MB",
-  //     team: "Bushido-18U",
-  //     age: "2008-02-16",
-  //   };
-  //   await set(playersRef("Adam Lundy"), newPlayer);
-  // }
+  async function setNewPlayersToData() {
+    const newPlayer = {
+      ...playerInfo,
+      name: "Ziyaan Madhani",
+      id: "Ziyaan Madhani",
+      number: "27",
+      height: "188",
+      reach: "330",
+      position: "MB",
+      team: "Nova-16U",
+      age: "2010-01-01",
+    };
+    await set(playersRef("Ziyaan Madhani"), newPlayer);
+  }
   // ADD NEW PLAYER
 
   return (
@@ -124,9 +125,9 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                       Service
                     </RegularButton>
                   </NavLink>
-                  {/* <RegularButton onClick={setNewPlayersToData}>
+                  <RegularButton onClick={setNewPlayersToData}>
                     add player
-                  </RegularButton> */}
+                  </RegularButton>
                 </>
               )}
               {page1 && (
