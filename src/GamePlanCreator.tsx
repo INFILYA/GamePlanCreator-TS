@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { selectChangeLanguage } from "./states/slices/changeLanguageSlice";
 import { useAppDispatch } from "./states/store";
 import { selectIsShowedTutorial } from "./states/slices/isShowedTutorialSlice";
@@ -25,10 +25,20 @@ import { later } from "./utilities/functions";
 
 export default function GamePlanCreator() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isRegistratedUser] = useAuthState(auth);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const changeLanguage = useSelector(selectChangeLanguage);
   const isShowedTutorial = useSelector(selectIsShowedTutorial);
+
+  // Перенаправляем на главную, если пользователь залогинен и находится на /Auth
+  useEffect(() => {
+    if (isRegistratedUser && location.pathname === "/Auth") {
+      console.log("User logged in on Auth page, redirecting to home");
+      navigate("/", { replace: true });
+    }
+  }, [isRegistratedUser, location.pathname, navigate]);
 
   useEffect(() => {
     async function appIsReady() {
@@ -89,6 +99,7 @@ export default function GamePlanCreator() {
     }
     appIsReady();
   }, [dispatch, isRegistratedUser]);
+
   const TUTORIAL = !changeLanguage ? UKRTUTORIAL : ENGTUTORIAL;
   return (
     <>

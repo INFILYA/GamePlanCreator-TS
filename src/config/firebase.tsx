@@ -19,8 +19,26 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+
+// Настраиваем auth для работы с редиректом
+// Убеждаемся, что auth знает о текущем домене
+if (typeof window !== 'undefined') {
+  const currentOrigin = window.location.origin;
+  console.log("Firebase auth initialized for origin:", currentOrigin);
+}
+
+// Настраиваем Google провайдер для редиректа
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.addScope('profile');
+googleProvider.addScope('email');
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+
+// Настраиваем Facebook провайдер
 export const facebookProvider = new FacebookAuthProvider();
+facebookProvider.addScope('email');
+facebookProvider.addScope('public_profile');
 export const dataBase = getFirestore(app);
 export const storage = getStorage(app);
 export const realDataBase = getDatabase(); // Real DataBase

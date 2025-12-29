@@ -15,7 +15,6 @@ export function Header() {
   const [isRegistratedUser] = useAuthState(auth);
   const homeTeam = useSelector(selectHomeTeam);
   const guestTeam = useSelector(selectGuestTeam);
-  if (isRegistratedUser?.photoURL === null) return;
 
   function openAuthWindow() {
     navigate("/Auth");
@@ -35,8 +34,10 @@ export function Header() {
         <NavLink to={"/"} onClick={() => dispatch(setInfoOfPlayer(null))}>
           <img src="/photos/home.jpg" alt="" style={{ borderRadius: 0 }} />
         </NavLink>
-        <img src={isRegistratedUser?.photoURL} alt="" />
-        <h2>{isRegistratedUser?.displayName || isRegistratedUser?.email}</h2>
+        {isRegistratedUser?.photoURL && (
+          <img src={isRegistratedUser.photoURL} alt="" />
+        )}
+        <h2>{isRegistratedUser?.displayName || isRegistratedUser?.email || "Guest"}</h2>
       </div>
       {(guestLength || homeLength) && (
         <div className="matchup">

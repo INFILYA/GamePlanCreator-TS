@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# System files
+AppData/
+.bash_history
+.git-for-windows-updater
+.gitconfig
+Contacts/
+Downloads/
+Favorites/
+Links/
+NTUSER.DAT*
+ntuser.dat*
+ntuser.ini
+Saved Games/
+Searches/
+OneDrive/
+.cursor/
