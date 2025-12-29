@@ -37,7 +37,11 @@ export function Header() {
         {isRegistratedUser?.photoURL && (
           <img src={isRegistratedUser.photoURL} alt="" />
         )}
-        <h2>{isRegistratedUser?.displayName || isRegistratedUser?.email || "Guest"}</h2>
+        <h2>
+          {isRegistratedUser?.displayName ||
+            isRegistratedUser?.email ||
+            "Guest"}
+        </h2>
       </div>
       {(guestLength || homeLength) && (
         <div className="matchup">
@@ -49,7 +53,12 @@ export function Header() {
       {isRegistratedUser ? (
         <div className="block" style={{ justifyContent: "end" }}>
           <SetDate />
-          <RegularButton type="button" onClick={logout} $color="orangered" $background="black">
+          <RegularButton
+            type="button"
+            onClick={logout}
+            $color="orangered"
+            $background="black"
+          >
             Log out
           </RegularButton>
         </div>

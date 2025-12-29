@@ -199,16 +199,25 @@ export function Auth() {
       console.log("🔵 Auth: signInWithFaceBook() called");
       console.log("🔵 Auth: Current URL:", window.location.href);
       console.log("🔵 Auth: Current pathname:", window.location.pathname);
-      
+
       // Всегда используем redirect (popup не работает в IDE)
       console.log("🔵 Auth: Using redirect for Facebook sign-in");
-      console.log("🔵 Auth: Setting pendingAuthRedirect = 'facebook' in localStorage");
+      console.log(
+        "🔵 Auth: Setting pendingAuthRedirect = 'facebook' in localStorage"
+      );
       localStorage.setItem("pendingAuthRedirect", "facebook");
-      console.log("🔵 Auth: localStorage.pendingAuthRedirect =", localStorage.getItem("pendingAuthRedirect"));
-      
-      console.log("🔵 Auth: Calling signInWithRedirect(auth, facebookProvider)...");
+      console.log(
+        "🔵 Auth: localStorage.pendingAuthRedirect =",
+        localStorage.getItem("pendingAuthRedirect")
+      );
+
+      console.log(
+        "🔵 Auth: Calling signInWithRedirect(auth, facebookProvider)..."
+      );
       await signInWithRedirect(auth, facebookProvider);
-      console.log("🔵 Auth: signInWithRedirect() completed - redirect should happen now");
+      console.log(
+        "🔵 Auth: signInWithRedirect() completed - redirect should happen now"
+      );
       // Редирект произойдет, страница перезагрузится
     } catch (err: any) {
       console.error("❌ Auth: Facebook sign-in error:", err);
@@ -225,7 +234,9 @@ export function Auth() {
         err.code !== "auth/popup-blocked" &&
         err.code !== "auth/popup-closed-by-user"
       ) {
-        alert("Sorry, account with this name already existed. Please, try again");
+        alert(
+          "Sorry, account with this name already existed. Please, try again"
+        );
       } else {
         alert(`Login error: ${errorMessage}`);
       }
