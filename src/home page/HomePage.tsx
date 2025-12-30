@@ -19,7 +19,7 @@ import {
   // listOfOpponents18U,
 } from "../utilities/functions";
 import { TGameLogStats, TMix, TPlayer, TTeam } from "../types/types";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState, useEffect, useRef } from "react";
 import { selectHomeTeam, setHomeTeam } from "../states/slices/homeTeamSlice";
 import { setHomePlayers } from "../states/slices/homePlayersSlice";
 import { selectGuestTeam, setGuestTeam } from "../states/slices/guestTeamSlice";
@@ -71,6 +71,7 @@ export function HomePage() {
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
   const [showSquads, setShowSquads] = useState(true);
+  const [hoverStatisticButton, setHoverStatisticButton] = useState(false);
   const [showCurrentGameStats, setShowCurrentGameStats] = useState(false);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [nextRotation, setNextRotation] = useState(true);
@@ -348,9 +349,63 @@ export function HomePage() {
   }
   const currentGameStats = gameLog.map((rall) => rall.stats).flat();
   const playersNames = currentGameStats.map((player) => jusName(player));
+
   const fullGameStats = calculateForTeamDataV2(
     calculateTotalofActions(currentGameStats) as TMix
   );
+
+  // Refs для синхронизации высоты строк
+  const namesTableRef = useRef<HTMLTableElement>(null);
+  const statsTableRef = useRef<HTMLTableElement>(null);
+
+  // Синхронизация высоты строк между таблицами
+  useEffect(() => {
+    if (
+      !namesTableRef.current ||
+      !statsTableRef.current ||
+      !showCurrentGameStats
+    )
+      return;
+
+    const syncRowHeights = () => {
+      const namesRows = namesTableRef.current?.querySelectorAll("tbody tr");
+      const statsRows = statsTableRef.current?.querySelectorAll("tbody tr");
+
+      if (!namesRows || !statsRows) return;
+
+      const maxLength = Math.max(namesRows.length, statsRows.length);
+
+      for (let i = 0; i < maxLength; i++) {
+        const namesRow = namesRows[i] as HTMLTableRowElement;
+        const statsRow = statsRows[i] as HTMLTableRowElement;
+
+        if (namesRow && statsRow) {
+          const maxHeight = Math.max(
+            namesRow.offsetHeight,
+            statsRow.offsetHeight
+          );
+          namesRow.style.height = `${maxHeight}px`;
+          statsRow.style.height = `${maxHeight}px`;
+        }
+      }
+    };
+
+    // Небольшая задержка для того, чтобы DOM обновился
+    const timeoutId = setTimeout(syncRowHeights, 0);
+
+    // Синхронизация при изменении размера окна
+    const resizeObserver = new ResizeObserver(() => {
+      setTimeout(syncRowHeights, 0);
+    });
+    if (namesTableRef.current) resizeObserver.observe(namesTableRef.current);
+    if (statsTableRef.current) resizeObserver.observe(statsTableRef.current);
+
+    return () => {
+      clearTimeout(timeoutId);
+      resizeObserver.disconnect();
+    };
+  }, [currentGameStats, playersNames, showCurrentGameStats]);
+
   return (
     <article className="main-content-wrapper">
       {showGuestTeam && showSquads && <Squads team="rival" />}
@@ -375,17 +430,17 @@ export function HomePage() {
           setRivalRotation={setRivalRotation}
         />
       )}
-      <SectionWrapper
-        className="playground-section"
-        backGround={
-          !playerInfoWindow && <img src="/photos/playarea.jpg" alt="" />
-        }
-      >
+      <SectionWrapper className="playground-section" backGround={null}>
         {!showGuestTeam && <ChooseGuestTeam />}
         {playerInfoWindow && <PersonalInformationOfPlayer link="page1" />}
         {!playerInfoWindow && showGuestTeam && (
           <>
-            <form className="rotation-field-wrapper" onSubmit={saveSpikeData}>
+            <form
+              className={`rotation-field-wrapper ${
+                !showSquads ? "statistic-mode" : ""
+              }`}
+              onSubmit={saveSpikeData}
+            >
               <div className="reset-button-wrapper">
                 {showGuestTeam ? (
                   <>
@@ -405,14 +460,26 @@ export function HomePage() {
                           <RegularButton
                             onClick={hideSquads}
                             type="button"
-                            $color="orangered"
-                            $background="white"
+                            $color={!showSquads ? "orangered" : "#0272be"}
+                            $background={!showSquads ? "orangered" : "#0272be"}
+                            $active={!showSquads}
+                            onMouseEnter={() => setHoverStatisticButton(true)}
+                            onMouseLeave={() => setHoverStatisticButton(false)}
                           >
-                            Statistic mode
+                            {hoverStatisticButton
+                              ? showSquads
+                                ? "Switch on"
+                                : "Switch off"
+                              : "Statistic mode"}
                           </RegularButton>
                         </div>
                         {!showSquads && !showCurrentGameStats && (
-                          <>
+                          <div
+                            style={{
+                              gap: "30px",
+                              padding: "10px 0 10px 0",
+                            }}
+                          >
                             <input
                               onChange={(e) =>
                                 setOpponentTeamName(
@@ -420,14 +487,21 @@ export function HomePage() {
                                 )
                               }
                               value={opponentTeamName}
+                            ></input>
+                            <h2
+                              className={
+                                exhibitionGame ? "exhibition-game-active" : ""
+                              }
+                              style={{
+                                whiteSpace: "nowrap",
+                                cursor: "pointer",
+                                userSelect: "none",
+                                transition: "color 0.3s ease",
+                              }}
+                              onClick={() => setExhibitionGame(!exhibitionGame)}
                             >
-                              {/* <option value="">Choose Opponent</option>
-                              {listOfOpponents.map((opponent) => (
-                                <option value={opponent} key={opponent}>
-                                  {opponent}
-                                </option>
-                              ))} */}
-                            </input>
+                              Exhibition game
+                            </h2>
                             <select
                               onChange={(e) => setSetNumber(e.target.value)}
                               value={setNumber}
@@ -444,31 +518,7 @@ export function HomePage() {
                                 Set 3 (short)
                               </option>
                             </select>
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                              }}
-                            >
-                              <h2
-                                style={{
-                                  whiteSpace: "nowrap",
-                                  width: "90%",
-                                }}
-                              >
-                                Exhibition game
-                              </h2>
-                              <input
-                                style={{ width: "10%", height: "2vw" }}
-                                type="checkbox"
-                                onChange={() =>
-                                  setExhibitionGame(!exhibitionGame)
-                                }
-                                checked={exhibitionGame}
-                              />
-                            </div>
-                          </>
+                          </div>
                         )}
                       </div>
                     )}
@@ -493,8 +543,47 @@ export function HomePage() {
               </div>
               {showCurrentGameStats ? (
                 <SectionWrapper className="ratings-section">
-                  <div style={{ display: "flex", marginTop: "2vmax" }}>
-                    <table>
+                  <div style={{ 
+                    display: "flex", 
+                    justifyContent: "center", 
+                    gap: "24px", 
+                    marginBottom: "12px",
+                    marginTop: "2vmax",
+                    flexWrap: "wrap"
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div style={{ 
+                        width: "20px", 
+                        height: "20px", 
+                        backgroundColor: "#8fbc8f",
+                        borderRadius: "4px"
+                      }}></div>
+                      <span>Reception</span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div style={{ 
+                        width: "20px", 
+                        height: "20px", 
+                        backgroundColor: "gainsboro",
+                        borderRadius: "4px"
+                      }}></div>
+                      <span>Attack</span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div style={{ 
+                        width: "20px", 
+                        height: "20px", 
+                        backgroundColor: "khaki",
+                        borderRadius: "4px"
+                      }}></div>
+                      <span>Service</span>
+                    </div>
+                  </div>
+                  <div
+                    className="ratings-table-container"
+                    style={{ display: "flex" }}
+                  >
+                    <table ref={namesTableRef}>
                       <tbody className="rating-table-wrapper">
                         <Categorys
                           filteredPlayers={playersNames}
@@ -504,7 +593,7 @@ export function HomePage() {
                       </tbody>
                     </table>
                     <div>
-                      <table style={{ width: "100%" }}>
+                      <table ref={statsTableRef} style={{ width: "100%" }}>
                         <tbody className="rating-table-wrapper">
                           <Categorys
                             filteredPlayers={currentGameStats}
@@ -653,6 +742,7 @@ export function HomePage() {
                     <button
                       onClick={() => rotateFront()}
                       disabled={endOfTheSet}
+                      style={{ borderRadius: "20px 0px 0px 20px" }}
                     >
                       +
                     </button>

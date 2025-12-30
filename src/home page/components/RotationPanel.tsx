@@ -123,6 +123,9 @@ export default function RotationPanel(arg: TRotationPanel) {
         <ConfirmField onClick={addScore} setOpenConfirmWindow={setOpenConfirmWindow} />
       )}
       <SectionWrapper className="rotation-panel-wrapper">
+        <div className="rivalTeam-name-wrapper">
+          <h2 className="rivalTeam-name">{nameOfTheTeam}</h2>
+        </div>
         <div className="service-ball-wrapper">
           {zeroZero ? (
             !weServe ? (
@@ -148,9 +151,6 @@ export default function RotationPanel(arg: TRotationPanel) {
           </button>
         </div>
         <div style={{ fontSize: "8vw" }}>{score}</div>
-        <div className="rivalTeam-name-wrapper">
-          <h2 className="rivalTeam-name">{nameOfTheTeam}</h2>
-        </div>
         <div className="rotation-panel-content">
           {myZones.map((zone) => (
             <button

@@ -55,7 +55,6 @@ export function Squads(props: TSquadsProps) {
   const showButtonStartingSix =
     !myTeam &&
     guestTeamOptions.every((zone) => typeof zone.boardPosition === "number") &&
-    isRegistratedUser &&
     guestPlayers.length > 1;
 
   function homeTeamActions(event: ChangeEvent<HTMLSelectElement>) {
@@ -140,7 +139,7 @@ export function Squads(props: TSquadsProps) {
   // add TEAM
 
   return (
-    <SectionWrapper className="teamsquad-section">
+    <SectionWrapper className={`teamsquad-section ${myTeam ? "my-team" : "rival-team"}`}>
       <div
         className="team-title-wrapper"
         style={myTeam ? { direction: "rtl" } : {}}

@@ -6,11 +6,12 @@ type TCategorys = {
   filteredPlayers: TMix[];
   rankByValue<const T extends TMix>(criteria: keyof T, arr: T[]): void;
   categorys: TMixKeys[];
+  sortState?: Record<string, "asc" | "desc" | null>;
 };
 
 export function Categorys(props: TCategorys) {
   const { filteredPlayers, categorys, rankByValue } = props;
-  if (!filteredPlayers) return;
+  if (!filteredPlayers || filteredPlayers.length === 0) return;
   const isFull = Object.values(filteredPlayers[0]).length === 1;
 
   const correctPlayersInfo = filteredPlayers
@@ -24,37 +25,50 @@ export function Categorys(props: TCategorys) {
       continue;
     } else properPlayersInfo.push(player);
   }
+
+  // Функция для определения цвета заголовка по категории
+  const getHeaderColor = (category: string): string | undefined => {
+    if (category.startsWith("R")) {
+      return "#8fbc8f"; // Reception
+    } else if (category.startsWith("A") || category === "Effic") {
+      return "gainsboro"; // Attack
+    } else if (category.startsWith("S")) {
+      return "khaki"; // Service
+    }
+    return undefined; // "+/-", "name" и "blocks" без цвета (используют дефолтный синий градиент)
+  };
+  
   return (
     <>
       <tr>
-        {categorys.map((category, index) => (
-          <th
-            key={index}
-            onClick={() => rankByValue(category, filteredPlayers)}
-            title={`Click to sort by ${category}`}
-            style={
-              !isFull
-                ? {}
-                : {
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }
-            }
-          >
-            <button
-              style={
-                isFull
-                  ? {}
-                  : {
-                      transform: "rotate(90deg)",
-                    }
-              }
+        {categorys.map((category, index) => {
+          const backgroundColor = getHeaderColor(category);
+          return (
+            <th
+              key={index}
+              onClick={() => rankByValue(category, filteredPlayers)}
+              data-colored-header={backgroundColor ? "true" : undefined}
+              style={backgroundColor ? { 
+                background: backgroundColor,
+                backgroundColor: backgroundColor,
+                color: "black"
+              } : {}}
             >
-              {category}
-            </button>
-          </th>
-        ))}
+              <button
+                style={
+                  isFull
+                    ? backgroundColor ? { color: "black" } : {}
+                    : {
+                        transform: "rotate(90deg)",
+                        ...(backgroundColor ? { color: "black" } : {})
+                      }
+                }
+              >
+                {category}
+              </button>
+            </th>
+          );
+        })}
       </tr>
       <Rows filteredPlayers={filteredPlayers} />
     </>

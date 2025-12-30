@@ -38,7 +38,133 @@
         display: flex;
         justify-content: center;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
+        width: 100%;
+        .filters-column {
+          flex: 0 0 auto;
+          min-width: 250px;
+        }
+        .dates-column {
+          flex: 1;
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+          margin-left: 24px;
+          @media screen and (max-width: 1000px) {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          @media screen and (max-width: 600px) {
+            grid-template-columns: 1fr;
+          }
+        }
+        .date-group-wrapper {
+          width: 100%;
+          min-width: 0;
+          .date-header {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #0272be 0%, #00a8ff 100%);
+            border: 2px solid #0057b8;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(2, 114, 190, 0.2);
+            color: white;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            &:hover {
+              background: linear-gradient(135deg, #00a8ff 0%, #0272be 100%);
+              box-shadow: 0 4px 12px rgba(2, 114, 190, 0.4);
+              transform: translateY(-2px);
+            }
+            &:active {
+              transform: translateY(0);
+            }
+            span:first-child {
+              font-size: 1.1em;
+              transition: transform 0.3s ease;
+            }
+            span:nth-child(2) {
+              flex: 1;
+            }
+            span:nth-child(3) {
+              background: rgba(255, 255, 255, 0.2);
+              padding: 4px 10px;
+              border-radius: 12px;
+              font-size: 0.9em;
+              font-weight: 500;
+            }
+          }
+          .games-for-date {
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            &::-webkit-scrollbar {
+              width: 6px;
+            }
+            &::-webkit-scrollbar-track {
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 3px;
+            }
+            &::-webkit-scrollbar-thumb {
+              background: rgba(255, 255, 255, 0.3);
+              border-radius: 3px;
+              &:hover {
+                background: rgba(255, 255, 255, 0.4);
+              }
+            }
+            > div {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              margin: 0;
+              padding: 4px 8px;
+              background: rgba(255, 255, 255, 0.9);
+              border-radius: 4px;
+              transition: all 0.2s ease;
+              min-height: 28px;
+              border: 1px solid rgba(0, 0, 0, 0.1);
+              &:hover {
+                background: rgba(255, 255, 255, 1);
+                transform: translateX(2px);
+                border-color: rgba(0, 0, 0, 0.2);
+              }
+              input[type="checkbox"] {
+                flex-shrink: 0;
+                width: 16px;
+                height: 16px;
+                cursor: pointer;
+                margin: 0;
+                accent-color: #0272be;
+              }
+              > div:last-child {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                background: transparent;
+                padding: 0;
+                margin: 0;
+                font-size: 0.85em;
+                line-height: 1.3;
+                color: #000000;
+                font-weight: 500;
+                &:hover {
+                  transform: none;
+                }
+              }
+            }
+          }
+        }
         div {
           font-size: 1.25vmax;
           margin: 0.1vmax 0 0.1vmax 0;
@@ -122,19 +248,60 @@
     table {
       table-layout: fixed;
       align-self: baseline;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background-color: white;
       tbody {
         tr {
           text-align: center;
+          transition: background-color 0.2s ease;
+          height: 2.5vmax;
+          display: table-row;
+          &:nth-child(even) {
+            background-color: rgba(240, 248, 255, 0.5);
+          }
+          &:hover {
+            background-color: rgba(100, 149, 237, 0.1);
+          }
           th {
-            background-color: rgb(100, 149, 237);
+            background: linear-gradient(135deg, #6495ed 0%, #4169e1 100%);
+            color: white;
             white-space: nowrap;
             overflow: hidden;
+            padding: 12px 8px;
+            font-weight: 600;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+            height: 2.5vmax;
+            vertical-align: middle;
+            &:last-child {
+              border-right: none;
+            }
             &:hover {
-              background-color: orangered;
-              transition: 0.7s;
+              background: linear-gradient(135deg, #ff6347 0%, #ff4500 100%) !important;
+              transform: translateY(-1px);
+              box-shadow: 0 4px 8px rgba(255, 99, 71, 0.3);
               button {
-                color: white;
+                color: white !important;
               }
+            }
+            &[data-colored-header="true"]:hover {
+              background: linear-gradient(135deg, #ff6347 0%, #ff4500 100%) !important;
+              color: white !important;
+              button {
+                color: white !important;
+              }
+            }
+            &:active {
+              transform: translateY(0);
             }
             button {
               height: 10vmin;
@@ -143,10 +310,17 @@
               border: none;
               font-size: calc((var(--normal-text-size-value) - 1) * 3.5vmin + 0.4rem);
               font-weight: 600;
-              color: #000;
+              color: white;
               justify-content: center;
               align-items: center;
               display: flex;
+              cursor: pointer;
+              transition: transform 0.2s ease;
+              width: 100%;
+              text-align: center;
+              &:hover {
+                transform: scale(1.1);
+              }
             }
           }
           td {
@@ -154,14 +328,138 @@
             box-sizing: border-box;
             white-space: nowrap;
             height: 2.5vmax;
-            border: 1px solid;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             background-color: white;
+            padding: 8px 4px;
+            transition: background-color 0.2s ease;
+            text-align: center;
+            vertical-align: middle;
+            &:last-child {
+              border-right: none;
+            }
           }
           .rating-player-name {
             padding: 0 0.5vw;
             text-align: center;
-            width: 10vw;
+            min-width: 120px;
+            width: auto;
             font-weight: 600;
+            background-color: rgba(240, 248, 255, 0.3);
+            vertical-align: middle;
+            white-space: nowrap;
+            height: 2.5vmax;
+          }
+          &:last-child {
+            td {
+              border-bottom: none;
+              font-weight: 700;
+              background-color: rgba(220, 220, 220, 0.5);
+            }
+          }
+        }
+      }
+    }
+    
+    // Обертка для таблицы с горизонтальной прокруткой на мобильных
+    .ratings-table-container {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
+      margin: 1vw 0;
+      display: flex;
+      align-items: flex-start;
+      &::-webkit-scrollbar {
+        height: 8px;
+      }
+      &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: rgba(100, 149, 237, 0.5);
+        border-radius: 4px;
+        &:hover {
+          background: rgba(100, 149, 237, 0.7);
+        }
+      }
+      > table {
+        flex-shrink: 0;
+        min-width: 150px;
+        width: auto;
+      }
+      > div {
+        flex: 1;
+        min-width: 0;
+        > table {
+          width: 100%;
+        }
+      }
+    }
+    
+    // Адаптивные стили для мобильных устройств
+    @media screen and (max-width: 768px) {
+      table {
+        min-width: 800px; // Минимальная ширина для горизонтальной прокрутки
+        tbody {
+          tr {
+            height: 2vmax;
+            th {
+              padding: 10px 6px;
+              font-size: 0.9em;
+              height: 2vmax;
+              button {
+                height: 8vmin;
+                width: 4vw;
+                font-size: calc((var(--normal-text-size-value) - 1) * 2.5vmin + 0.3rem);
+              }
+            }
+            td {
+              font-size: calc((var(--normal-text-size-value) - 1) * 2vw + 0.2rem);
+              padding: 6px 3px;
+              height: 2vmax;
+            }
+            .rating-player-name {
+              padding: 0 0.3vw;
+              min-width: 100px;
+              width: auto;
+              font-size: 0.9em;
+              height: 2vmax;
+            }
+          }
+        }
+      }
+    }
+    
+    @media screen and (max-width: 480px) {
+      table {
+        min-width: 700px;
+        tbody {
+          tr {
+            height: 1.8vmax;
+            th {
+              padding: 8px 4px;
+              font-size: 0.8em;
+              height: 1.8vmax;
+              button {
+                height: 7vmin;
+                width: 5vw;
+                font-size: calc((var(--normal-text-size-value) - 1) * 2vmin + 0.25rem);
+              }
+            }
+            td {
+              font-size: calc((var(--normal-text-size-value) - 1) * 1.8vw + 0.15rem);
+              padding: 5px 2px;
+              height: 1.8vmax;
+            }
+            .rating-player-name {
+              padding: 0 0.2vw;
+              min-width: 80px;
+              width: auto;
+              font-size: 0.85em;
+              height: 1.8vmax;
+            }
           }
         }
       }

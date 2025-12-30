@@ -41,7 +41,7 @@ facebookProvider.addScope('email');
 facebookProvider.addScope('public_profile');
 export const dataBase = getFirestore(app);
 export const storage = getStorage(app);
-export const realDataBase = getDatabase(); // Real DataBase
+export const realDataBase = getDatabase(app); // Real DataBase
 export const dataRef = ref(realDataBase); // Real DataBase
 export const teamsRef = (teamsRef: string) => ref(realDataBase, `teams/${teamsRef}`);
 export const playersRef = (playersRef: string) => ref(realDataBase, `players/${playersRef}`);

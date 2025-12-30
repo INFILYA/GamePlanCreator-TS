@@ -17,8 +17,63 @@
     height: 0;
   }
 }
-body {
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes slowSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes coinFlip {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+html, body {
   text-align: center;
+  background-color: white;
+  color: black;
+  margin: 0;
+  padding: 0;
+}
+
+/* Убеждаемся, что основные текстовые элементы видны на белом фоне */
+.header div,
+.header span,
+.header label {
+  color: black;
+}
+
+main div:not([class*="explain"]):not([class*="saveBox"]),
+main span:not([class*="explain"]):not([class*="saveBox"]),
+main label:not([class*="explain"]):not([class*="saveBox"]) {
+  color: black;
 }
 
 :root {
@@ -28,29 +83,37 @@ body {
 h1 {
   font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 1.5rem);
   margin: 5px 0;
+  color: black;
 }
 
 h2 {
   font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 0.3rem);
   margin: 5px 0;
+  color: black;
 }
 
 p {
   font-size: calc((var(--normal-text-size-value) - 1) * 1vw + 1rem);
   padding: 10px 0;
   margin: 0;
+  color: black;
 }
 
 option {
   font-size: calc((var(--normal-text-size-value) - 1) * 2vw + 0.5rem);
+  color: black;
+  background-color: white;
 }
 
 main {
   padding: 0 2vw;
+  padding-top: 20px;
   box-sizing: border-box;
 }
 main button {
   background-color: rgb(100, 149, 237);
+  color: white;
+  border: 2px solid #333;
 }
 main .hideBackground {
   background-color: rgba(0, 0, 0, 0.8);
@@ -114,6 +177,26 @@ main .loading-logo-wrapper .logo-wrapper .backGround {
 main .main-content-wrapper {
   display: flex;
   justify-content: center;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+/* В statistic mode гарантируем, что все в одном ряду */
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) {
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+/* Гарантируем, что все squad панели в одном ряду */
+main .main-content-wrapper .teamsquad-section {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+main .main-content-wrapper .rotation-panel-wrapper {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+main .main-content-wrapper .playground-section {
+  flex-shrink: 0;
+  align-self: flex-start;
 }
 main .main-content-wrapper section .diagram-content {
   width: 99%;
@@ -144,19 +227,100 @@ main .main-content-wrapper .attack-section {
 }
 main .main-content-wrapper .teamsquad-section,
 main .main-content-wrapper .rotation-panel-wrapper {
-  width: 20%;
+  width: 22%;
   background-color: gainsboro;
   text-align: center;
   border-radius: calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem);
   box-sizing: border-box;
-  padding: 1vw;
+  padding: 0.8vw;
   position: relative;
   z-index: 5;
+  transition: width 0.3s ease, padding 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+/* Компактные стили для squad панелей */
+main .main-content-wrapper .teamsquad-section .squad-wrapper .player-field-wrapper {
+  margin: 2.5px 0;
+}
+main .main-content-wrapper .teamsquad-section .team-title-wrapper {
+  margin-bottom: 4px;
+}
+/* Сужаем squad панели в statistic mode */
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section {
+  width: 22%;
+  min-width: 170px;
+  padding: 0.6vw;
+}
+/* Сужаем rotation-panel-wrapper в statistic mode, если он есть */
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .rotation-panel-wrapper {
+  min-width: 170px;
+  padding: 0.6vw;
+}
+/* Компактные стили для squad в statistic mode */
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section .squad-wrapper .player-field-wrapper {
+  margin: 2px 0;
+  min-height: 1.5vw;
+}
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section .team-title-wrapper {
+  margin-bottom: 2px;
+}
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section .team-logo-wrapper .team-logo {
+  width: clamp(25px, 3vw, 35px);
+}
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section .player-surname-wrapper button {
+  font-size: clamp(0.65rem, 0.8vw, 0.85rem);
+  padding: clamp(2px, 0.2vw, 4px) clamp(4px, 0.5vw, 6px);
+}
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section .playerNumber-wrapper button {
+  font-size: clamp(0.7rem, 0.85vw, 0.9rem);
+  padding: clamp(2px, 0.2vw, 4px) clamp(6px, 0.6vw, 8px);
+}
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section .moveToBoard-wrapper select {
+  padding: 2px 20px 2px 4px;
+  min-width: 30px;
+  max-width: 30px;
+}
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section .moveToBoard-wrapper::after {
+  font-size: calc((var(--normal-text-size-value) - 1) * 2.5vw);
+  right: 4px;
+}
+@media screen and (max-width: 767px) {
+  main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section {
+    width: 95%;
+  }
+  main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .playground-section {
+    width: 95%;
+  }
+}
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section {
+    width: 20%;
+    min-width: 180px;
+  }
+  main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .playground-section {
+    width: 60%;
+  }
 }
 main .main-content-wrapper .rotation-panel-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+/* Равномерное распределение элементов внутри rotation-panel-wrapper */
+main .main-content-wrapper .rotation-panel-wrapper .section-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100%;
+}
+main .main-content-wrapper .rotation-panel-wrapper .section-content-wrapper .section-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex: 1;
+  align-items: center;
 }
 main .main-content-wrapper .ratings-section,
 main .main-content-wrapper .playground-section {
@@ -167,7 +331,20 @@ main .main-content-wrapper .playground-section {
 }
 main .main-content-wrapper .playground-section {
   align-self: baseline;
-  width: 60%;
+  width: 56%;
+  transition: width 0.3s ease;
+}
+/* Расширяем playground в statistic mode */
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .playground-section {
+  width: 56%;
+  flex-shrink: 0;
+}
+/* Гарантируем, что rotation-panel-wrapper не влияет на layout в statistic mode */
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .rotation-panel-wrapper {
+  flex-shrink: 0;
+}
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section {
+  flex-shrink: 0;
 }
 main .main-content-wrapper .playground-section .section-border .section-background {
   display: flex;
@@ -200,6 +377,16 @@ main .main-content-wrapper .distribution-section {
     width: 95%;
   }
 }
+@media screen and (min-width: 1600px) {
+  /* Адаптивные стили для statistic-mode на больших экранах */
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .player-field-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .player-field-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .player-field-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .player-field-wrapper {
+    min-height: 32px;
+    height: 32px;
+  }
+}
 main .main-content-wrapper .section-border {
   position: absolute;
   top: 0;
@@ -209,6 +396,24 @@ main .main-content-wrapper .section-border {
   overflow: hidden;
   z-index: -1;
 }
+/* Фиксируем размер section-border в statistic mode, чтобы он не менялся */
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section .section-border {
+  width: calc(25% - 2.4vw);
+  left: 1.2vw;
+  right: 1.2vw;
+}
+/* Делаем section-content-wrapper растягивающимся для одинаковой высоты squad панелей */
+main .main-content-wrapper .teamsquad-section .section-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100%;
+}
+main .main-content-wrapper .teamsquad-section .squad-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
 main .main-content-wrapper .section-border .section-background {
   position: absolute;
   top: 0;
@@ -216,9 +421,114 @@ main .main-content-wrapper .section-border .section-background {
   bottom: 0;
   left: 0;
   overflow: hidden;
+  /* Фон волейбольного корта - появляется после выбора команды */
+  background: 
+    /* Текстура поверхности */
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.02) 0px,
+      rgba(0, 0, 0, 0.02) 1px,
+      transparent 1px,
+      transparent 30px
+    ),
+    /* Основной фон корта - бежевый/коричневый */
+    linear-gradient(135deg, #e8dcc6 0%, #d4c4a8 25%, #c4b498 50%, #d4c4a8 75%, #e8dcc6 100%);
+  background-image: 
+    /* Нижняя трехметровая линия */
+    linear-gradient(to right, 
+      transparent 0%, 
+      #ffffff 2%, 
+      #ffffff 98%, 
+      transparent 100%
+    ),
+    /* Вертикальные линии зон - левая */
+    linear-gradient(to bottom, 
+      transparent 0%, 
+      #ffffff 33.33%, 
+      transparent 33.33%, 
+      transparent 66.66%, 
+      #ffffff 66.66%, 
+      transparent 100%
+    ),
+    /* Вертикальные линии зон - средняя */
+    linear-gradient(to bottom, 
+      transparent 0%, 
+      #ffffff 33.33%, 
+      transparent 33.33%, 
+      transparent 66.66%, 
+      #ffffff 66.66%, 
+      transparent 100%
+    ),
+    /* Вертикальные линии зон - правая */
+    linear-gradient(to bottom, 
+      transparent 0%, 
+      #ffffff 33.33%, 
+      transparent 33.33%, 
+      transparent 66.66%, 
+      #ffffff 66.66%, 
+      transparent 100%
+    );
+  background-size: 
+    100% 4px,
+    3px 100%,
+    3px 100%,
+    3px 100%;
+  background-position: 
+    center 66.66%,
+    0% 0%,
+    33.33% 0%,
+    66.66% 0%;
+  background-repeat: no-repeat;
+  position: relative;
 }
 main .main-content-wrapper .section-border .section-background img {
   width: 100%;
+  display: none;
+}
+/* Центральная линия (сетка) */
+main .main-content-wrapper .section-border .section-background::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #ffffff 4%, 
+    #ffffff 96%, 
+    transparent 100%
+  );
+  z-index: 1;
+  box-shadow: 
+    0 2px 6px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6);
+  transform: translateY(-50%);
+}
+/* Верхняя трехметровая линия */
+main .main-content-wrapper .section-border .section-background::after {
+  content: '';
+  position: absolute;
+  top: 33.33%;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    #ffffff 2%, 
+    #ffffff 98%, 
+    transparent 100%
+  );
+  z-index: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transform: translateY(-50%);
 }
 main .main-content-wrapper .section-border .section-background .playground-area-background {
   width: 100%;
@@ -260,17 +570,36 @@ main .main-content-wrapper .section-content-wrapper .section-content {
 main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper {
   display: flex;
   align-items: center;
-  position: absolute;
-  top: 10%;
-  height: 7vmax;
+  height: 5vmax;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper div {
-  font-size: 5vmax;
+  font-size: 3.5vmax;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper div:hover {
+  transform: scale(1.1) rotate(15deg);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper input {
   font-size: 2vmax;
   font-weight: bold;
-  border: 2px solid black;
+  border: 2px solid #0272be;
+  background: linear-gradient(135deg, #0272be 0%, #00a8ff 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(2, 114, 190, 0.3);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper input:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(2, 114, 190, 0.4);
+  background: linear-gradient(135deg, #00a8ff 0%, #0272be 100%);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper input:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(2, 114, 190, 0.3);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .team-name-wrapper {
   width: 15vw;
@@ -295,11 +624,28 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-p
   aspect-ratio: 1/1;
   font-size: 2vw;
   font-weight: bold;
-  border: 2px solid black;
-  background-color: transparent;
+  border: 2px solid #0272be;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+  color: #0272be;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content button:hover {
-  background-color: #0272be;
+  background: linear-gradient(135deg, #0272be 0%, #00a8ff 100%);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(2, 114, 190, 0.3);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content button:active {
+  transform: translateY(0);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content button[style*="orangered"] {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%) !important;
+  color: white !important;
+  border-color: #ff6b35 !important;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4) !important;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper {
   display: flex;
@@ -308,33 +654,160 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-b
   align-items: center;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper button {
-  width: 3vmax;
+  width: clamp(35px, 3.5vmax, 50px);
   aspect-ratio: 1/1;
-  margin: 1vw;
-  border: 2px solid black;
-  border-radius: 20px 0px 0px 20px;
-  font-size: 1.5vw;
+  margin: 0.5vw;
+  border: 2px solid #ff6b35;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  color: white;
+  border-radius: 50%;
+  font-size: clamp(1.2rem, 1.8vw, 2rem);
   font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper button {
+    width: clamp(45px, 4.5vmax, 60px);
+    font-size: clamp(1.5rem, 2.2vw, 2.5rem);
+  }
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(255, 107, 53, 0.4);
+  background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper button:active {
+  transform: scale(0.95);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rivalTeam-name-wrapper {
   height: 5vmax;
   display: flex;
   align-items: center;
+  width: 100%;
+  justify-content: center;
+  padding: 0 1vw;
+  box-sizing: border-box;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rivalTeam-name-wrapper .rivalTeam-name {
+  color: #0272be;
+  font-weight: 700;
+  font-size: clamp(1.2vw, 2.5vw, 2.5vw);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-break: break-word;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper h2 {
+  color: rgba(2, 114, 190, 0.4);
+  font-weight: 600;
+  text-shadow: none;
+  letter-spacing: 0.5px;
+  margin: 0;
+  padding: 4px 8px;
+  background: linear-gradient(135deg, rgba(2, 114, 190, 0.05) 0%, rgba(0, 168, 255, 0.05) 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(2, 114, 190, 0.1);
+  transition: all 0.3s ease;
+  opacity: 0.6;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper h2.exhibition-game-active {
+  color: #ff4444;
+  font-weight: 700;
+  background: linear-gradient(135deg, rgba(255, 68, 68, 0.1) 0%, rgba(255, 100, 100, 0.1) 100%);
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  text-shadow: 0 2px 4px rgba(255, 68, 68, 0.2);
+  opacity: 1;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper h2:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper::after {
+  display: none;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper .playerNumber {
-  background-color: fuchsia;
-  border-radius: 0px 20px 20px 0px;
+  background: linear-gradient(135deg, #ff1493 0%, #c71585 100%);
+  border-radius: 0px 12px 12px 0px;
+  box-shadow: 0 2px 6px rgba(199, 21, 133, 0.3);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button {
   position: relative;
-  color: rgb(0, 0, 0);
-  font-weight: bold;
-  background-color: #ff8001;
+  color: white;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
   text-align: center;
-  border-radius: 20px 0px 0px 20px;
-  border: 2px solid rgb(0, 0, 0);
+  border-radius: 12px 0px 0px 12px;
+  border: 2px solid #ff6b35;
   height: 100%;
   font-size: 1vw;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 6px rgba(255, 107, 53, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  padding: 4px 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button:hover {
+  background: linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%);
+  transform: translateX(-2px) scale(1.05);
+  box-shadow: 0 5px 12px rgba(255, 107, 53, 0.4);
+  border-color: #ff8c42;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button:active {
+  transform: translateX(0) scale(0.98);
+  box-shadow: 0 2px 4px rgba(255, 107, 53, 0.3);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button:disabled {
+  opacity: 0.8;
+  cursor: default;
+  transform: none;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button[style*="background-color: #f0f"],
+main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button.playerNumber {
+  background: linear-gradient(135deg, #ff1493 0%, #c71585 100%) !important;
+  border-color: #c71585 !important;
+  box-shadow: 0 3px 6px rgba(199, 21, 133, 0.3) !important;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button[style*="background-color: #f0f"]:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button.playerNumber:hover {
+  background: linear-gradient(135deg, #c71585 0%, #ff1493 100%) !important;
+  box-shadow: 0 5px 12px rgba(199, 21, 133, 0.4) !important;
 }
 @media screen and (max-width: 620px) {
   main .main-content-wrapper .section-content-wrapper .section-content .playerNumber-wrapper button {
@@ -345,18 +818,86 @@ main .main-content-wrapper .section-content-wrapper .section-content .player-sur
   width: 100%;
   z-index: 4;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+/* Синяя полоска только для правой панели (my-team) с розовыми номерами */
+/* Синяя полоска только для правой панели (my-team) между именем и номером */
+main .main-content-wrapper .teamsquad-section.my-team .section-content-wrapper .section-content .playerNumber-wrapper {
+  position: relative;
+  overflow: visible;
+}
+main .main-content-wrapper .teamsquad-section.my-team .section-content-wrapper .section-content .playerNumber-wrapper::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #0272be 0%, #00a8ff 100%);
+  border-radius: 0 4px 4px 0;
+  z-index: 5;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button {
   width: 100%;
   height: 100%;
-  background-color: khaki;
-  border: 2px solid rgb(0, 0, 0);
-  border-radius: 0px 20px 20px 0px;
-  font-weight: 600;
-  font-size: 1vw;
+  min-height: clamp(22px, 2vw, 30px);
+  background: linear-gradient(135deg, #f0e68c 0%, #daa520 100%);
+  border: 2px solid #0272be;
+  border-radius: 0px 12px 12px 0px;
+  font-weight: 700;
+  font-size: clamp(0.75rem, 1vw, 1rem);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #0272be;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: clamp(4px, 0.4vw, 6px) clamp(6px, 0.8vw, 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-sizing: border-box;
+}
+/* Убираем пробел между номером и именем на правой панели (my-team) */
+main .main-content-wrapper .teamsquad-section.my-team .section-content-wrapper .section-content .playerNumber-wrapper button {
+  margin-right: 0;
+}
+main .main-content-wrapper .teamsquad-section.my-team .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper {
+  margin-right: 0;
+}
+/* Добавляем пробел 4px между стрелкой (moveToBoard) и именем (player-surname) на правой панели (my-team) */
+main .main-content-wrapper .teamsquad-section.my-team .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper {
+  margin-right: 4px;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper button {
+  height: 100%;
+  min-height: 100%;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button:hover {
+  background: linear-gradient(135deg, #daa520 0%, #f0e68c 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(2, 114, 190, 0.2);
+  border-color: #00a8ff;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button[style*="turquoise"],
+main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button[style*="background-color: turquoise"] {
+  background: linear-gradient(135deg, #20b2aa 0%, #008b8b 100%) !important;
+  color: white !important;
+  border-color: #008b8b !important;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button[style*="turquoise"]:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button[style*="background-color: turquoise"]:hover {
+  background: linear-gradient(135deg, #008b8b 0%, #20b2aa 100%) !important;
+  border-color: #00ced1 !important;
 }
 @media screen and (max-width: 620px) {
   main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button {
@@ -373,35 +914,76 @@ main .main-content-wrapper .section-content-wrapper .section-content .chooseHome
   border: none;
   font-weight: bold;
   font-size: calc((var(--normal-text-size-value) - 0.9) * 5vw);
+  color: black;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  gap: 4px;
+  margin-bottom: 4px;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-label-wrapper {
-  width: 70%;
+  display: none;
 }
 @media screen and (max-width: 620px) {
   main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-label-wrapper {
-    align-self: auto;
+    width: 100%;
   }
 }
 main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-label-wrapper .team-label {
-  font-size: calc((var(--normal-text-size-value) - 0.9) * 5vw);
-  background-color: transparent;
-  border: 1px solid transparent;
+  font-size: clamp(0.9rem, calc((var(--normal-text-size-value) - 0.9) * 3vw + 0.5rem), 1.5rem);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+  border: 2px solid #0272be;
+  border-radius: 12px;
   width: 100%;
+  max-width: 100%;
   text-align: center;
-  font-weight: bold;
+  font-weight: 800;
+  color: #0272be;
+  padding: clamp(6px, 0.8vw, 10px) clamp(8px, 1.2vw, 14px);
+  box-sizing: border-box;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(2, 114, 190, 0.15);
+  text-shadow: 0 1px 2px rgba(2, 114, 190, 0.1);
+  letter-spacing: 0.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-label-wrapper .team-label:hover {
+  border-color: #00a8ff;
+  box-shadow: 0 4px 12px rgba(2, 114, 190, 0.25);
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 249, 250, 1) 100%);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-logo-wrapper {
-  width: 30%;
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  order: -1;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-logo-wrapper .team-logo {
-  width: 3vw;
+  width: clamp(35px, 4vw, 50px);
   aspect-ratio: 1/1;
-  animation: spin 5s linear 0s infinite;
+  animation: coinFlip 3s ease-in-out 0s infinite;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 4px 8px rgba(2, 114, 190, 0.3));
+  border-radius: 50%;
+  padding: 4px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(248, 249, 250, 0.2) 100%);
+  box-shadow: 0 0 0 2px rgba(2, 114, 190, 0.1), inset 0 0 20px rgba(2, 114, 190, 0.1);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-logo-wrapper .team-logo:hover {
+  animation: coinFlip 1.5s ease-in-out 0s infinite, pulse 1.5s ease-in-out 0s infinite;
+  filter: drop-shadow(0 6px 12px rgba(2, 114, 190, 0.5));
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px rgba(2, 114, 190, 0.2), inset 0 0 30px rgba(2, 114, 190, 0.2);
 }
 @media screen and (max-width: 620px) {
   main .main-content-wrapper .section-content-wrapper .section-content .team-title-wrapper .team-logo-wrapper .team-logo {
@@ -410,19 +992,117 @@ main .main-content-wrapper .section-content-wrapper .section-content .team-title
 }
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper {
   width: 100%;
+  margin-top: 0;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper {
   display: flex;
   margin: 3px 0;
   width: 100%;
   min-height: 2vw;
+  align-items: stretch;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname {
-  background-color: darkgray;
-  border-radius: 20px 0px 0px 20px;
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .playerNumber-wrapper {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  height: auto;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .playerNumber-wrapper button {
+  height: 100%;
+  width: 100%;
+  min-height: 100%;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  height: auto;
+  width: 100%;
+  margin-right: 4px;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper button {
+  height: 100%;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper {
   display: flex;
+  align-items: stretch;
+  justify-content: center;
+  height: auto;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select {
+  height: 100%;
+  min-height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname {
+  background: linear-gradient(135deg, #a9a9a9 0%, #808080 100%);
+  border: 2px solid #0272be;
+  border-radius: 12px 0px 0px 12px;
+  color: #0272be;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname:hover {
+  background: linear-gradient(135deg, #808080 0%, #a9a9a9 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(2, 114, 190, 0.2);
+  border-color: #00a8ff;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  height: auto;
+  position: relative;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper::after {
+  content: '▶';
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #0272be;
+  font-size: calc((var(--normal-text-size-value) - 0.9) * 3vw);
+  font-weight: 700;
+  z-index: 2;
+  line-height: 1;
+}
+/* Стрелки влево для правой панели (my-team, section[1]) */
+main .main-content-wrapper .teamsquad-section.my-team .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper::after {
+  content: '◀';
+  position: absolute;
+  left: 6px;
+  right: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #0272be;
+  font-size: calc((var(--normal-text-size-value) - 0.9) * 3vw);
+  font-weight: 700;
+  z-index: 2;
+  line-height: 1;
 }
 @media screen and (max-width: 620px) {
   main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper {
@@ -433,10 +1113,64 @@ main .main-content-wrapper .section-content-wrapper .section-content .squad-wrap
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-color: transparent;
-  border: none;
-  font-weight: bold;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #0272be;
+  border-radius: 8px;
+  font-weight: 700;
   font-size: calc((var(--normal-text-size-value) - 0.9) * 3vw);
+  color: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 4px 6px;
+  min-width: 34px;
+  width: 34px;
+  max-width: 34px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  height: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+/* Padding для правой панели (my-team) со стрелкой слева - отступ справа такой же, как на левой панели */
+main .main-content-wrapper .teamsquad-section.my-team .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select {
+  padding: 4px 6px 4px 20px;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select::-ms-expand {
+  display: none;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select option {
+  padding: 24px 32px;
+  font-size: clamp(1.8rem, calc((var(--normal-text-size-value) - 0.9) * 6vw + 0.6rem), 2.4rem);
+  font-weight: 700;
+  color: #0272be;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid rgba(2, 114, 190, 0.2);
+  border-radius: 8px;
+  margin: 36px 48px;
+  min-height: 80px;
+  line-height: 1.5;
+  display: block;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select option:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select option:focus,
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select option:checked {
+  background: linear-gradient(135deg, #0272be 0%, #00a8ff 100%);
+  color: white;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select:hover {
+  border-color: #00a8ff;
+  box-shadow: 0 4px 8px rgba(2, 114, 190, 0.2);
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select:focus {
+  outline: none;
+  border-color: #00a8ff;
+  box-shadow: 0 0 0 3px rgba(2, 114, 190, 0.1);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .plusMinus {
   display: flex;
@@ -464,7 +1198,12 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   margin: 1vw 0;
   justify-content: center;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper div {
+/* В statistic mode уменьшаем отступы, чтобы был впритык к именам */
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .reset-button-wrapper {
+  margin: 0.3vw 0;
+  margin-top: 0.2vw;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper > div:not(.match-number-wrapper) {
   width: 25%;
   display: flex;
   align-items: center;
@@ -473,22 +1212,87 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
   width: 50%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   height: 100%;
+  box-sizing: border-box;
+  padding: 0 0.5vw;
+  align-items: center;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper div {
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:first-child {
   height: 50%;
-  width: 50%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  position: relative;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:first-child button {
+  margin: 0 auto;
+  display: block;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child {
+  height: 50%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child input,
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child select {
+  position: relative;
+  z-index: 2;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child h2 {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input[type="checkbox"] {
+  width: 2vw;
+  min-width: 20px;
+  height: 2vw;
+  min-height: 20px;
+  cursor: pointer;
+  accent-color: #0272be;
+  flex-shrink: 0;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select,
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input {
   width: 12vw;
-  border: 2px solid black;
+  max-width: 100%;
+  border: 2px solid #0272be;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  color: #0272be;
   text-align: center;
   font-weight: 600;
   height: 100%;
-  font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem);
+  font-size: clamp(0.8rem, calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem), 1.2rem);
+  border-radius: 8px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input:hover {
+  border-color: #00a8ff;
+  box-shadow: 0 4px 8px rgba(2, 114, 190, 0.2);
+  transform: translateY(-1px);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select:focus,
+main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input:focus {
+  outline: none;
+  border-color: #00a8ff;
+  box-shadow: 0 0 0 3px rgba(2, 114, 190, 0.1);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper .score-wrapper {
   width: 5vmax;
@@ -684,8 +1488,20 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper {
-  border: 1px solid black;
+  border: 1px solid rgba(2, 114, 190, 0.2);
+  border-radius: 12px;
   width: 90%;
+  padding: 6px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  font-weight: 700;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper *,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper *,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper *,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper * {
+  font-weight: 700;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper,
@@ -700,14 +1516,41 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select {
   width: 100%;
   text-align: center;
+  border: 2px solid #0272be;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  color: #0272be;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select:hover {
+  border-color: #00a8ff;
+  box-shadow: 0 4px 8px rgba(2, 114, 190, 0.2);
+  transform: translateY(-1px);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select:focus,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select:focus,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select:focus,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper .category-switcher-wrapper select:focus {
+  outline: none;
+  border-color: #00a8ff;
+  box-shadow: 0 0 0 3px rgba(2, 114, 190, 0.1);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper .border-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper .border-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper .border-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper .border-wrapper {
   height: 166px;
-  width: 4%;
-  background-color: black;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(2, 114, 190, 0.3) 0%, rgba(0, 168, 255, 0.3) 100%);
+  border-radius: 2px;
+  margin: 0 4px;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table,
@@ -722,7 +1565,15 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr {
-  border: 2px solid black;
+  border: none;
+  border-bottom: 1px solid rgba(2, 114, 190, 0.15);
+  transition: background-color 0.2s ease;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr:hover {
+  background-color: rgba(2, 114, 190, 0.03);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr td,
@@ -732,11 +1583,46 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr td,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr th,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr td {
-  border: 1px solid black;
-  height: 1vw;
+  border: none;
+  height: 0.9vw;
+  min-height: 20px;
   white-space: nowrap;
   overflow: hidden;
   width: 33%;
+  padding: 2px 4px;
+  font-size: 0.85em;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr th {
+  font-size: 1.1em;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr th {
+  border-right: 2px solid #0272be;
+  border-left: 2px solid #0272be;
+  border-top: 1px solid #0272be;
+  border-bottom: 1px solid #0272be;
+  font-size: 1.1em;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th:first-child,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr th:first-child,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr th:first-child,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr th:first-child {
+  border-left: 2px solid #0272be;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th:last-child,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr th:last-child,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr th:last-child,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr th:last-child {
+  border-right: 2px solid #0272be;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th input,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr td input,
@@ -751,18 +1637,62 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
   overflow: hidden;
   text-align: center;
   font-weight: 600;
+  border: none;
+  background: transparent;
+  padding: 2px;
+  font-size: 0.9em;
+  color: #0272be;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th,
-main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr th,
-main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr th,
-main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr th {
-  background-color: gainsboro;
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"],
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"],
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"],
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"] {
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 700;
+  font-size: 1em;
+  color: #000000;
+  text-shadow: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]::before,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]::before,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]::before,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  filter: brightness(1.1);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]:active,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]:active,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]:active,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .errors-field-wrapper table tbody tr td[style*="background-color"]:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  filter: brightness(0.95);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .player-image-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .player-image-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .player-image-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .player-image-wrapper {
-  height: 10vmax;
+  height: 13.5vmax;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .player-image-wrapper img,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .player-image-wrapper img,
@@ -770,8 +1700,258 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .player-image-wrapper img {
   border: none;
   height: 100%;
-  min-height: 60px;
+  min-height: 81px;
   padding-top: 7px;
+}
+
+/* Компактный режим статистики - скрываем фото */
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .player-image-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .player-image-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .player-image-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .player-image-wrapper {
+  display: none;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .errors-field-wrapper table tbody tr td,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .errors-field-wrapper table tbody tr td,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .errors-field-wrapper table tbody tr td,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .errors-field-wrapper table tbody tr th,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .errors-field-wrapper table tbody tr td {
+  height: 0.8vw;
+  font-size: 0.85em;
+  padding: 2px 1px;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .errors-field-wrapper .border-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .errors-field-wrapper .border-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .errors-field-wrapper .border-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .errors-field-wrapper .border-wrapper {
+  height: 100px;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .player-field-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .player-field-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .player-field-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .player-field-wrapper {
+  min-height: clamp(24px, 2vw, 32px);
+  height: clamp(24px, 2vw, 32px);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .playerNumber-wrapper button,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .playerNumber-wrapper button,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .playerNumber-wrapper button,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .playerNumber-wrapper button {
+  min-height: clamp(24px, 2vw, 32px);
+  height: 100%;
+  font-size: clamp(0.9rem, 1vw, 1.1rem);
+  padding: clamp(4px, 0.3vw, 6px) clamp(8px, 0.8vw, 12px);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .player-surname-wrapper button,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .player-surname-wrapper button,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .player-surname-wrapper button,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .player-surname-wrapper button {
+  min-height: clamp(24px, 2vw, 32px);
+  height: 100%;
+  font-size: clamp(0.85rem, 1vw, 1rem);
+  padding: clamp(4px, 0.3vw, 6px) clamp(6px, 0.6vw, 8px);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .zone-names-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .zone-names-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .zone-names-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .zone-names-wrapper {
+  height: 2vmax;
+  font-size: calc((var(--normal-text-size-value) - 1) * 4vw + 0.8rem);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .errors-field-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .errors-field-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .errors-field-wrapper,
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .errors-field-wrapper {
+  width: 85%;
+}
+
+/* iPad стили (768px - 1024px) */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .player-image-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .player-image-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .player-image-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .player-image-wrapper {
+    height: 16.2vmax;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .player-image-wrapper img,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .player-image-wrapper img,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .player-image-wrapper img,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .player-image-wrapper img {
+    min-height: 108px;
+  }
+  /* Адаптивные стили для statistic-mode на iPad */
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .player-field-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .player-field-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .player-field-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .player-field-wrapper {
+    min-height: 26px;
+    height: 26px;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content {
+    grid-column-gap: 1.5vw;
+    grid-row-gap: 1.5vw;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content button {
+    width: 5vw;
+    font-size: 2.5vw;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rivalTeam-name-wrapper h2.rivalTeam-name {
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper {
+    font-size: 3vmax;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper div {
+    font-size: 3vmax;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper button {
+    width: clamp(45px, 4.5vmax, 60px);
+    font-size: clamp(1.5rem, 2.2vw, 2.5rem);
+  }
+  h1 {
+    font-size: clamp(1.3rem, 3.5vw, 2rem);
+  }
+  h2 {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+  }
+}
+
+/* iPhone стили (до 767px) */
+@media screen and (max-width: 767px) {
+  main {
+    padding: 0 1vw;
+    padding-top: 20px;
+  }
+  main .main-content-wrapper {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  main .main-content-wrapper .teamsquad-section,
+  main .main-content-wrapper .rotation-panel-wrapper {
+    width: 95%;
+    margin-bottom: 10px;
+  }
+  main .main-content-wrapper .playground-section {
+    width: 95%;
+    align-self: center;
+  }
+  main .main-content-wrapper .ratings-section {
+    width: 95%;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .player-image-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .player-image-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .player-image-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .player-image-wrapper {
+    height: 10.8vmax;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .player-image-wrapper img,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .player-image-wrapper img,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .player-image-wrapper img,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .player-image-wrapper img {
+    min-height: 63px;
+  }
+  /* Адаптивные стили для statistic-mode на мобильных */
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .player-field-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .player-field-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .player-field-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .player-field-wrapper {
+    min-height: 28px;
+    height: 28px;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .playerNumber-wrapper button,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .playerNumber-wrapper button,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .playerNumber-wrapper button,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .playerNumber-wrapper button {
+    font-size: 0.9rem;
+    padding: 4px 10px;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .player-surname-wrapper button,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .player-surname-wrapper button,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .row-zones-wrapper .player-surname-wrapper button,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .player-surname-wrapper button {
+    font-size: 0.85rem;
+    padding: 4px 6px;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper {
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper > div:not(.match-number-wrapper) {
+    width: 100%;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 0;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper h2 {
+    margin: 0;
+    flex-shrink: 0;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input {
+    flex: 1 1 auto;
+    min-width: 135px;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select {
+    flex: 1 1 auto;
+    min-width: 135px;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content {
+    grid-column-gap: 1vw;
+    grid-row-gap: 1vw;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-panel-content button {
+    width: 5vw;
+    font-size: 2.5vw;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper {
+    font-size: 2.5vmax;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .service-ball-wrapper div {
+    font-size: 2.5vmax;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-buttons-wrapper button {
+    width: clamp(30px, 3vmax, 40px);
+    font-size: clamp(1rem, 1.5vw, 1.5rem);
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rivalTeam-name-wrapper h2.rivalTeam-name {
+    font-size: clamp(1rem, 2vw, 1.5rem);
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper {
+    flex-direction: column;
+    gap: 5px;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .playerNumber-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper {
+    width: 100%;
+  }
+  h1 {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+  }
+  h2 {
+    font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+  }
+  p {
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+  }
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper {
   top: 0.5%;

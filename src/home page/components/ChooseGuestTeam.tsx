@@ -7,11 +7,17 @@ import { setGuestPlayers } from "../../states/slices/guestPlayersSlice";
 import { selectListOfPlayers } from "../../states/slices/listOfPlayersSlice";
 import { setBackGuestTeamSelects } from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { emptyPlayers } from "../../utilities/functions";
+import { useEffect } from "react";
 
 export function ChooseGuestTeam() {
   const dispatch = useAppDispatch();
   const listOfTeams = useSelector(selectListOfTeams);
   const listOfPlayers = useSelector(selectListOfPlayers);
+
+  useEffect(() => {
+    console.log("ChooseGuestTeam - listOfTeams:", listOfTeams.length);
+    console.log("ChooseGuestTeam - listOfTeams data:", listOfTeams);
+  }, [listOfTeams]);
 
   function handleSetOpponentTeam(club: TTeam) {
     const guestTeamPlayers = listOfPlayers.filter((player) => player.team === club.name);
@@ -19,13 +25,15 @@ export function ChooseGuestTeam() {
     dispatch(setGuestTeam(club.name));
     dispatch(setBackGuestTeamSelects(emptyPlayers));
   }
+
+
   return (
     <nav className="opponentTeamList">
       {listOfTeams.length === 0 ? (
         <>
-          <div>Sign up </div>
-          <div>to get acces </div>
-          <div>to Data </div>
+          <div style={{ color: "black", fontSize: "1.5rem", fontWeight: "bold" }}>
+            Loading teams...
+          </div>
         </>
       ) : (
         listOfTeams.map((team) => (

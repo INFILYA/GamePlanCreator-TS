@@ -3,7 +3,7 @@ import SectionWrapper from "../wrappers/SectionWrapper";
 import { selectPlayerInfo } from "../states/slices/playerInfoSlice";
 import { PersonalInformationOfPlayer } from "../personalInfo/PersonalInformationOfPlayer";
 import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   categorys,
   compare,
@@ -59,21 +59,63 @@ export function Ratings() {
     const properArr = criteria === "name" ? filteredPlayers : arr;
     !isBiggest
       ? properArr.sort((a, b) =>
-          compare(
-            isFieldExist(b[criteria] as number),
-            isFieldExist(a[criteria] as number)
-          )
+          compare(isFieldExist(b[criteria] as number), isFieldExist(a[criteria] as number))
         )
       : properArr.sort((a, b) =>
-          compare(
-            isFieldExist(a[criteria] as number),
-            isFieldExist(b[criteria] as number)
-          )
+          compare(isFieldExist(a[criteria] as number), isFieldExist(b[criteria] as number))
         );
     setIsBiggest(!isBiggest);
   }
 
   const playersNames = filteredPlayers.map((player) => jusName(player));
+  
+  // Refs для синхронизации высоты строк
+  const namesTableRef = useRef<HTMLTableElement>(null);
+  const statsTableRef = useRef<HTMLTableElement>(null);
+  
+  // Синхронизация высоты строк между таблицами
+  useEffect(() => {
+    if (!namesTableRef.current || !statsTableRef.current || !isChoosenFilter) return;
+    
+    const syncRowHeights = () => {
+      const namesRows = namesTableRef.current?.querySelectorAll('tbody tr');
+      const statsRows = statsTableRef.current?.querySelectorAll('tbody tr');
+      
+      if (!namesRows || !statsRows) return;
+      
+      const maxLength = Math.max(namesRows.length, statsRows.length);
+      
+      for (let i = 0; i < maxLength; i++) {
+        const namesRow = namesRows[i] as HTMLTableRowElement;
+        const statsRow = statsRows[i] as HTMLTableRowElement;
+        
+        if (namesRow && statsRow) {
+          const maxHeight = Math.max(
+            namesRow.offsetHeight,
+            statsRow.offsetHeight
+          );
+          namesRow.style.height = `${maxHeight}px`;
+          statsRow.style.height = `${maxHeight}px`;
+        }
+      }
+    };
+    
+    // Небольшая задержка для того, чтобы DOM обновился
+    const timeoutId = setTimeout(syncRowHeights, 0);
+    
+    // Синхронизация при изменении размера окна
+    const resizeObserver = new ResizeObserver(() => {
+      setTimeout(syncRowHeights, 0);
+    });
+    if (namesTableRef.current) resizeObserver.observe(namesTableRef.current);
+    if (statsTableRef.current) resizeObserver.observe(statsTableRef.current);
+    
+    return () => {
+      clearTimeout(timeoutId);
+      resizeObserver.disconnect();
+    };
+  }, [filteredPlayers, playersNames, isChoosenFilter]);
+  
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">
@@ -107,33 +149,65 @@ export function Ratings() {
               </div>
             </nav>
             {isChoosenFilter && (
-              <div style={{ display: "flex" }}>
-                <table>
-                  <tbody className="rating-table-wrapper">
-                    <Categorys
-                      filteredPlayers={playersNames}
-                      rankByValue={rankByValue}
-                      categorys={["name"]}
-                    />
-                  </tbody>
-                </table>
-                <div>
-                  <table style={{ width: "100%" }}>
+              <>
+                <div style={{ 
+                  display: "flex", 
+                  justifyContent: "center", 
+                  gap: "24px", 
+                  marginBottom: "12px",
+                  flexWrap: "wrap"
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ 
+                      width: "20px", 
+                      height: "20px", 
+                      backgroundColor: "#8fbc8f",
+                      borderRadius: "4px"
+                    }}></div>
+                    <span>Reception</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ 
+                      width: "20px", 
+                      height: "20px", 
+                      backgroundColor: "gainsboro",
+                      borderRadius: "4px"
+                    }}></div>
+                    <span>Attack</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ 
+                      width: "20px", 
+                      height: "20px", 
+                      backgroundColor: "khaki",
+                      borderRadius: "4px"
+                    }}></div>
+                    <span>Service</span>
+                  </div>
+                </div>
+                <div className="ratings-table-container" style={{ display: "flex" }}>
+                  <table ref={namesTableRef}>
                     <tbody className="rating-table-wrapper">
                       <Categorys
-                        filteredPlayers={filteredPlayers}
+                        filteredPlayers={playersNames}
                         rankByValue={rankByValue}
-                        categorys={categorys}
+                        categorys={["name"]}
                       />
                     </tbody>
                   </table>
-                  <div className="type-of-actions-wrapper">
-                    <div className="reception-content">Reception</div>
-                    <div className="attack-content">Attack</div>
-                    <div className="service-content">Service</div>
+                  <div>
+                    <table ref={statsTableRef} style={{ width: "100%" }}>
+                      <tbody className="rating-table-wrapper">
+                        <Categorys
+                          filteredPlayers={filteredPlayers}
+                          rankByValue={rankByValue}
+                          categorys={categorys}
+                        />
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-              </div>
+              </>
             )}
           </>
         )}

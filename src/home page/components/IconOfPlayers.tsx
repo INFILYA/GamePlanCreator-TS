@@ -35,7 +35,14 @@ type TIconOfPlayer = {
 };
 
 export function IconOfPlayer(props: TIconOfPlayer) {
-  const { player, nextRotation, setNextRotation, startingSix, type, showSquads } = props;
+  const {
+    player,
+    nextRotation,
+    setNextRotation,
+    startingSix,
+    type,
+    showSquads,
+  } = props;
   const dispatch = useAppDispatch();
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const [category, setCategory] = useState<string>("SR");
@@ -43,7 +50,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   const my = type === "my";
 
   useEffect(() => {
-    const choosenPlayer = startingSix.filter((athlete) => athlete.name === player.name);
+    const choosenPlayer = startingSix.filter(
+      (athlete) => athlete.name === player.name
+    );
     const soloGamePlayerStats = preparePlayerToSoloGame(choosenPlayer[0]);
     if (nextRotation) {
       setDiagrammValue(soloGamePlayerStats);
@@ -79,7 +88,8 @@ export function IconOfPlayer(props: TIconOfPlayer) {
           key === "R+" ||
           key === "R-"
         ) {
-          (obj[key as keyof T] as number) += diagram[key as keyof TAttackDiagramm];
+          (obj[key as keyof T] as number) +=
+            diagram[key as keyof TAttackDiagramm];
         } else continue;
       }
       if (soloGame) {
@@ -158,7 +168,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     if (!seTTer) return 0;
     const indexOfSetter = guestTeamOptions.indexOf(seTTer);
     const playerBoardPosition = zones[index];
-    const playerProperZonesOfSpike = spikersPositions(correctZones(indexOfSetter));
+    const playerProperZonesOfSpike = spikersPositions(
+      correctZones(indexOfSetter)
+    );
     return playerProperZonesOfSpike[playerBoardPosition];
   }
 
@@ -180,10 +192,16 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     return arr;
   }
   // player.name === "Cameron Gibson" && console.log(player);
+  const playerIndex = startingSix.findIndex((p) => p.name === player.name);
+  const zoneNumber = playerIndex !== -1 ? correctZones(playerIndex) : 0;
+
   return (
     <>
       {condition && (
         <div className="card-content">
+          {!showSquads && (
+            <div className="zone-names-wrapper">P{zoneNumber}</div>
+          )}
           {!my && (
             <div className="player-image-wrapper" onClick={showPlayerInfo}>
               <img src={`/photos/${player?.photo}`} alt=""></img>
@@ -193,9 +211,13 @@ export function IconOfPlayer(props: TIconOfPlayer) {
             <div className="playerNumber-wrapper">
               <button
                 type="button"
-                style={my ? { backgroundColor: "#f0f" } : {}}
+                style={
+                  my ? { backgroundColor: "#f0f" } : { backgroundColor: "#f0f" }
+                }
                 onClick={
-                  !my ? () => cancelGuestTeamChoice(player) : () => cancelHomeTeamChoice(player)
+                  !my
+                    ? () => cancelGuestTeamChoice(player)
+                    : () => cancelHomeTeamChoice(player)
                 }
               >
                 {player.number}
@@ -204,8 +226,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
             <div className="player-surname-wrapper">
               <button
                 type="button"
-                className="player-surname"
-                style={my ? { backgroundColor: "#a9a9a9" } : {}}
+                className={player.position === "LIB" ? "" : "player-surname"}
+                style={
+                  my
+                    ? player.position === "LIB"
+                      ? { backgroundColor: "turquoise" }
+                      : { backgroundColor: "#a9a9a9" }
+                    : {}
+                }
                 onClick={showPlayerInfo}
               >
                 {player.name}
@@ -217,7 +245,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
               <div className="category-switcher-wrapper">
                 <select onChange={(e) => setCategory(e.target.value)}>
                   <option value={"SR"}>Service/Reception</option>
-                  {player.position !== "LIB" && <option value={"BA"}>Block/Attack</option>}
+                  {player.position !== "LIB" && (
+                    <option value={"BA"}>Block/Attack</option>
+                  )}
                 </select>
               </div>
               <div style={{ display: "flex" }}>
@@ -248,7 +278,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                           </td>
                           <td
                             style={{ backgroundColor: grade[1] }}
-                            onClick={() => addAmount(grade[0] as keyof TMix, -1)}
+                            onClick={() =>
+                              addAmount(grade[0] as keyof TMix, -1)
+                            }
                           >
                             -
                           </td>
@@ -301,7 +333,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                           <input
                             type="text"
                             min={0}
-                            value={diagrammValue[grade[0] as keyof TAttackDiagramm]}
+                            value={
+                              diagrammValue[grade[0] as keyof TAttackDiagramm]
+                            }
                             name={grade[0]}
                             readOnly
                           />

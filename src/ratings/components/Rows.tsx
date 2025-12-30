@@ -31,6 +31,7 @@ export function Rows(props: TRows) {
     if ("startingSquad" in player) return;
     dispatch(setDetailedStatsOfPlayer(player.name));
   }
+  if (!filteredPlayers || filteredPlayers.length === 0) return null;
   const isFull = Object.values(filteredPlayers[0]).length === 1;
 
   function plusMinus(obj: TMix) {
