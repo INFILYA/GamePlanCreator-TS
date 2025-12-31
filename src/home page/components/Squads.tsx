@@ -299,7 +299,7 @@ export function Squads(props: TSquadsProps) {
             Starting six
           </RegularButton>
         )}
-        {admin && isBoardFull(guestTeamOptions) && !myTeam && (
+        {isBoardFull(guestTeamOptions) && !myTeam && (
           <RegularButton
             onClick={saveStartingSix}
             type="button"
