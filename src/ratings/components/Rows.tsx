@@ -7,6 +7,7 @@ import {
   gerPercentOfPerfectReception,
   gerPercentOfPositiveReception,
   getAttackEfficency,
+  getEarnedPoints,
   getPlusMinusAttack,
   getPlusMinusService,
   isFieldExist,
@@ -107,7 +108,10 @@ export function Rows(props: TRows) {
                   {player[`S${row[0]}`]}
                 </td>
               ))}
-              <td>{player.blocks}</td>
+              <td style={lastRow ? { backgroundColor: "gainsboro" } : {}}>{player.blocks}</td>
+              <td style={lastRow ? { backgroundColor: "gainsboro" } : {}}>
+                {getEarnedPoints(player)}
+              </td>
             </tr>
           ))
         : getPlayersNames(filteredPlayers).map((player, index) => (

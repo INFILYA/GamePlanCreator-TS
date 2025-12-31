@@ -55,40 +55,54 @@ export function Ratings() {
       );
   }
 
-  function rankByValue<T extends TMix>(criteria: keyof TMix, arr: T[]) {
+  function rankByValue<T extends TMix>(
+    criteria: keyof TMix | "earnedPoints",
+    arr: T[]
+  ) {
     const properArr = criteria === "name" ? filteredPlayers : arr;
+    const getValue = (obj: TMix, crit: keyof TMix | "earnedPoints"): number => {
+      if (crit === "earnedPoints") {
+        return (
+          isFieldExist(obj["A++"]) +
+          isFieldExist(obj.blocks) +
+          isFieldExist(obj["S++"])
+        );
+      }
+      return isFieldExist(obj[crit as keyof TMix] as number);
+    };
     !isBiggest
       ? properArr.sort((a, b) =>
-          compare(isFieldExist(b[criteria] as number), isFieldExist(a[criteria] as number))
+          compare(getValue(b, criteria), getValue(a, criteria))
         )
       : properArr.sort((a, b) =>
-          compare(isFieldExist(a[criteria] as number), isFieldExist(b[criteria] as number))
+          compare(getValue(a, criteria), getValue(b, criteria))
         );
     setIsBiggest(!isBiggest);
   }
 
   const playersNames = filteredPlayers.map((player) => jusName(player));
-  
+
   // Refs для синхронизации высоты строк
   const namesTableRef = useRef<HTMLTableElement>(null);
   const statsTableRef = useRef<HTMLTableElement>(null);
-  
+
   // Синхронизация высоты строк между таблицами
   useEffect(() => {
-    if (!namesTableRef.current || !statsTableRef.current || !isChoosenFilter) return;
-    
+    if (!namesTableRef.current || !statsTableRef.current || !isChoosenFilter)
+      return;
+
     const syncRowHeights = () => {
-      const namesRows = namesTableRef.current?.querySelectorAll('tbody tr');
-      const statsRows = statsTableRef.current?.querySelectorAll('tbody tr');
-      
+      const namesRows = namesTableRef.current?.querySelectorAll("tbody tr");
+      const statsRows = statsTableRef.current?.querySelectorAll("tbody tr");
+
       if (!namesRows || !statsRows) return;
-      
+
       const maxLength = Math.max(namesRows.length, statsRows.length);
-      
+
       for (let i = 0; i < maxLength; i++) {
         const namesRow = namesRows[i] as HTMLTableRowElement;
         const statsRow = statsRows[i] as HTMLTableRowElement;
-        
+
         if (namesRow && statsRow) {
           const maxHeight = Math.max(
             namesRow.offsetHeight,
@@ -99,23 +113,23 @@ export function Ratings() {
         }
       }
     };
-    
+
     // Небольшая задержка для того, чтобы DOM обновился
     const timeoutId = setTimeout(syncRowHeights, 0);
-    
+
     // Синхронизация при изменении размера окна
     const resizeObserver = new ResizeObserver(() => {
       setTimeout(syncRowHeights, 0);
     });
     if (namesTableRef.current) resizeObserver.observe(namesTableRef.current);
     if (statsTableRef.current) resizeObserver.observe(statsTableRef.current);
-    
+
     return () => {
       clearTimeout(timeoutId);
       resizeObserver.disconnect();
     };
   }, [filteredPlayers, playersNames, isChoosenFilter]);
-  
+
   return (
     <article className="main-content-wrapper">
       <SectionWrapper className="ratings-section">
@@ -150,42 +164,71 @@ export function Ratings() {
             </nav>
             {isChoosenFilter && (
               <>
-                <div style={{ 
-                  display: "flex", 
-                  justifyContent: "center", 
-                  gap: "24px", 
-                  marginBottom: "12px",
-                  flexWrap: "wrap"
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <div style={{ 
-                      width: "20px", 
-                      height: "20px", 
-                      backgroundColor: "#8fbc8f",
-                      borderRadius: "4px"
-                    }}></div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: "24px",
+                    marginBottom: "12px",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        backgroundColor: "#8fbc8f",
+                        borderRadius: "4px",
+                      }}
+                    ></div>
                     <span>Reception</span>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <div style={{ 
-                      width: "20px", 
-                      height: "20px", 
-                      backgroundColor: "gainsboro",
-                      borderRadius: "4px"
-                    }}></div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        backgroundColor: "gainsboro",
+                        borderRadius: "4px",
+                      }}
+                    ></div>
                     <span>Attack</span>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <div style={{ 
-                      width: "20px", 
-                      height: "20px", 
-                      backgroundColor: "khaki",
-                      borderRadius: "4px"
-                    }}></div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                        backgroundColor: "khaki",
+                        borderRadius: "4px",
+                      }}
+                    ></div>
                     <span>Service</span>
                   </div>
                 </div>
-                <div className="ratings-table-container" style={{ display: "flex" }}>
+                <div
+                  className="ratings-table-container"
+                  style={{ display: "flex" }}
+                >
                   <table ref={namesTableRef}>
                     <tbody className="rating-table-wrapper">
                       <Categorys

@@ -96,8 +96,8 @@ export default function Diagramm(props: TDiagrammProps) {
     },
   };
 
-  function rightPercentageForDiagramm(index: number) {
-    if (playerInfo === null) return;
+  function rightPercentageForDiagramm(index: number): number {
+    if (playerInfo === null || playerInfo === undefined) return 0;
     if (link === "Attack") {
       const totalAtt = [
         isFieldExist(playerInfo["A++"]),
@@ -106,10 +106,12 @@ export default function Diagramm(props: TDiagrammProps) {
         isFieldExist(playerInfo["A-"]),
         isFieldExist(playerInfo["A="]),
       ];
+      const sumOfAttacks = getSumofAttacks(playerInfo);
+      if (sumOfAttacks === 0) return 0;
       const percentOfActions = totalAtt.map(
-        (att) => +((att / getSumofAttacks(playerInfo)) * 100).toFixed(1)
+        (att) => +((att / sumOfAttacks) * 100).toFixed(1)
       );
-      return percentOfActions[index];
+      return percentOfActions[index] || 0;
     } else if (link === "Service") {
       const totalService = [
         isFieldExist(playerInfo["S++"]),
@@ -119,10 +121,11 @@ export default function Diagramm(props: TDiagrammProps) {
         isFieldExist(playerInfo["S="]),
       ];
       const sumOfTotalService = totalService.reduce((a, b) => a + b, 0);
+      if (sumOfTotalService === 0) return 0;
       const percentOfActions = totalService.map(
         (service) => +((service / sumOfTotalService) * 100).toFixed(1)
       );
-      return percentOfActions[index];
+      return percentOfActions[index] || 0;
     } else if (link === "Reception") {
       const totalReception = [
         isFieldExist(playerInfo["R++"]),
@@ -132,11 +135,13 @@ export default function Diagramm(props: TDiagrammProps) {
         isFieldExist(playerInfo["R="]),
       ];
       const sumOfTotalReception = totalReception.reduce((a, b) => a + b, 0);
+      if (sumOfTotalReception === 0) return 0;
       const percentOfActions = totalReception.map(
         (reception) => +((reception / sumOfTotalReception) * 100).toFixed(1)
       );
-      return percentOfActions[index];
+      return percentOfActions[index] || 0;
     }
+    return 0;
   }
   return (
     <div className="diagram-content">

@@ -17,7 +17,6 @@ import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
 import {
   correctZones,
   emptyPlayer,
-  forSoloGameStat,
   preparePlayerToSoloGame,
   spikersPositions,
   zones,
@@ -143,19 +142,54 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
     if (!seTTer) return;
     const indexOfSetter = guestTeamOptions.indexOf(seTTer);
+    
+    // ============================================
+    // ОТПРАВКА ДЕЙСТВИЙ ИГРОКА В REDUX
+    // ============================================
+    // Когда игрок делает действие (атака, прием, подача):
+    //   1. soloGameUpdatedPlayer содержит накопленные статы из diagrammValue для текущего ралли
+    //   2. Создаем playerStats с полными данными игрока (включая позиции на поле)
+    //   3. Отправляем в Redux через setSoloRallyStats
+    //   4. Redux либо заменяет существующую запись игрока, либо добавляет новую
+    // 
+    // При записи очка (в RotationPanel.tsx) весь массив SoloRallyStats копируется в gameLog
+    // ============================================
     startingSix.forEach(
-      (player, index) =>
-        player.name === soloGameUpdatedPlayer.name &&
-        dispatch(
-          setSoloRallyStats(
-            forSoloGameStat({
-              ...soloGameUpdatedPlayer,
-              boardPosition: zones[index],
-              setterBoardPosition: correctZones(indexOfSetter),
-              zoneOfAttack: getZoneOfAttack(index),
-            })
-          )
-        )
+      (player, index) => {
+        if (player.name === soloGameUpdatedPlayer.name) {
+          const usedBoardPosition = typeof player.boardPosition === "number" ? player.boardPosition : zones[index];
+          
+          // Создаем объект со всеми полями статистики (включая нулевые) для правильного суммирования
+          // soloGameUpdatedPlayer уже содержит накопленные статы из diagrammValue для текущего ралли
+          const playerStats = {
+            ...soloGameUpdatedPlayer,
+            boardPosition: usedBoardPosition,
+            setterBoardPosition: correctZones(indexOfSetter),
+            zoneOfAttack: getZoneOfAttack(index, player),
+            // Убеждаемся, что все поля статистики присутствуют (даже если 0)
+            // Это важно для правильного суммирования в calculateTotalofActionsV2
+            "R++": soloGameUpdatedPlayer["R++"] || 0,
+            "R+": soloGameUpdatedPlayer["R+"] || 0,
+            "R!": soloGameUpdatedPlayer["R!"] || 0,
+            "R-": soloGameUpdatedPlayer["R-"] || 0,
+            "R=": soloGameUpdatedPlayer["R="] || 0,
+            "A++": soloGameUpdatedPlayer["A++"] || 0,
+            "A+": soloGameUpdatedPlayer["A+"] || 0,
+            "A=": soloGameUpdatedPlayer["A="] || 0,
+            "A!": soloGameUpdatedPlayer["A!"] || 0,
+            "A-": soloGameUpdatedPlayer["A-"] || 0,
+            "S++": soloGameUpdatedPlayer["S++"] || 0,
+            "S+": soloGameUpdatedPlayer["S+"] || 0,
+            "S!": soloGameUpdatedPlayer["S!"] || 0,
+            "S-": soloGameUpdatedPlayer["S-"] || 0,
+            "S=": soloGameUpdatedPlayer["S="] || 0,
+            blocks: soloGameUpdatedPlayer.blocks || 0,
+          };
+          
+          // Отправляем в Redux для накопления в SoloRallyStats (статы текущего ралли)
+          dispatch(setSoloRallyStats(playerStats));
+        }
+      }
     );
     dispatch(setUpdatedPlayers(updatedPlayer));
     dispatch(setInfoOfPlayer(updatedPlayer));
@@ -163,11 +197,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     dispatch(updateInfoOfSubPlayers(updatedPlayer));
   }
 
-  function getZoneOfAttack(index: number): number {
+  function getZoneOfAttack(index: number, playerInSix: TPlayer): number {
     const seTTer = guestTeamOptions.find((player) => player.position === "SET");
     if (!seTTer) return 0;
     const indexOfSetter = guestTeamOptions.indexOf(seTTer);
-    const playerBoardPosition = zones[index];
+    // Используем boardPosition из player, если он есть, иначе вычисляем из индекса
+    const playerBoardPosition = typeof playerInSix.boardPosition === "number" 
+      ? playerInSix.boardPosition 
+      : zones[index];
     const playerProperZonesOfSpike = spikersPositions(
       correctZones(indexOfSetter)
     );
@@ -219,6 +256,20 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                     ? () => cancelGuestTeamChoice(player)
                     : () => cancelHomeTeamChoice(player)
                 }
+                draggable={showSquads}
+                onDragStart={(e) => {
+                  if (showSquads) {
+                    e.dataTransfer.setData("player", JSON.stringify(player));
+                    e.dataTransfer.setData("team", my ? "my" : "rival");
+                    // Сохраняем текущую позицию для возврата
+                    const playerIndex = startingSix.findIndex((p) => p.name === player.name);
+                    if (playerIndex !== -1) {
+                      const currentZone = correctZones(playerIndex);
+                      e.dataTransfer.setData("currentZone", currentZone.toString());
+                    }
+                    e.dataTransfer.effectAllowed = "move";
+                  }
+                }}
               >
                 {player.number}
               </button>

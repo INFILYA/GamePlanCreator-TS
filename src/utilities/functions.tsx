@@ -251,6 +251,14 @@ export function getAttackEfficency(obj: TDiagramm) {
   return Math.round(efficencyAttack);
 }
 
+export function getEarnedPoints(obj: TDiagramm): number {
+  return (
+    isFieldExist(obj["A++"]) +
+    isFieldExist(obj.blocks) +
+    isFieldExist(obj["S++"])
+  );
+}
+
 export function getPlusMinusService(obj: TDiagramm) {
   return isFieldExist(obj["S++"]) - isFieldExist(obj["S="]);
 }
@@ -445,76 +453,8 @@ export const categorys = [
   "S+",
   "S++",
   "blocks",
+  "earnedPoints",
 ] as TMixKeys[];
-
-export const listOfOpponents18U = [
-  "MAC Titanium", //
-  "Maverick Mustangs", //
-  "Toronto Thunderbolts Smash Shihua", //
-  "Ottawa Fusion Purple Matt", //
-  "Kingston Rock Obsidian", //
-  "FCVC Baobab", //
-  "Scorpions Legion", //
-  "Pakmen Gold Jessy", //
-  "Pakmen Gold Omar", //
-  "Durham Attack Power", //
-  "KW Preds Invictus", //
-  "KW Preds Vision", //
-  "Niagara Rapids Alliance", //
-  "Storm Voltage", //
-  "Phoenix Skybirds", //
-  "Durham Attack Blast", //
-  "REACH Rampage", //
-  "Pakmen Black Lam", //
-  "Thundercats Bushido 17U", //
-  "Maverick Rangers",
-  "Thundercats Ronin",
-  "Ancaster Lions",
-  "Barrie Elites - Phoenix", //
-  "Barrie Elites - Frost",
-  "Bluewater Ballistix", //
-  "Leaside Knights",
-  "Hyperion",
-  "LVC Heat",
-  "KW Preds Wolverine", //
-  "ST Thomas Express", //
-  "KW Preds B", //
-  "LVC Detonate", //
-  "West Align",
-  "Yellow",
-  "Purple",
-];
-
-export const listOfOpponents16U = [
-  "Pakmen Black", //
-  "Reach Flow", //
-  "Storm Bolts", //
-  "Venom Mambas", //
-  "Scorpions Apex", //
-  "Reach Impact", //
-  "Reach Elevate", //
-  "Mac Platinum", //
-  "Forest City", //
-  "Venom Vipers", //
-  "KW Preds Reign", //
-  "Pakmen Gold Saad", //
-  "Niagara Rapids Shockwave", //
-  "FCVC Icarus", //
-  "Halton Hurricane Category 6", //
-  "Hurricanes Category 7 Stef",
-  "KW Preds Summit",
-  "Durham Attack Impact",
-  "Leaside Knights",
-  "Flames Inferno",
-  "Maverick Toros",
-  "REACH Ignite",
-  "Maverick Bulls",
-  "Durham Attack Raiders",
-  "Kingston Rock Quartz",
-  "Ottawa Fusion Purple - Kevin",
-  "Yellow",
-  "Purple",
-];
 
 export const P1 = {
   1: 1,

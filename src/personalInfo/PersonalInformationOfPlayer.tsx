@@ -104,7 +104,7 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
               </div>
             )}
             <nav>
-              {!libero && isRegistratedUser && (
+              {!libero && (
                 <>
                   <NavLink to={`/Directions?${playerInfo.name}=Attack`}>
                     <RegularButton
@@ -125,9 +125,11 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                       Service
                     </RegularButton>
                   </NavLink>
-                  <RegularButton onClick={setNewPlayersToData}>
-                    add player
-                  </RegularButton>
+                  {isRegistratedUser && (
+                    <RegularButton onClick={setNewPlayersToData}>
+                      add player
+                    </RegularButton>
+                  )}
                 </>
               )}
               {page1 && (

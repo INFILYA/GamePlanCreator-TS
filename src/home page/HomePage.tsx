@@ -6,7 +6,7 @@ import { useAppDispatch } from "../states/store";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import {
   calculateTotalofActions,
-  categorys,
+  calculateTotalofActionsV2,
   checkNumbers,
   compare,
   correctZones,
@@ -14,12 +14,10 @@ import {
   firstLetterCapital,
   isBoardFull,
   isFieldExist,
-  jusName,
-  // listOfOpponents16U,
-  // listOfOpponents18U,
+  positions,
 } from "../utilities/functions";
 import { TGameLogStats, TMix, TPlayer, TTeam } from "../types/types";
-import { ChangeEvent, FormEvent, useState, useEffect, useRef } from "react";
+import { FormEvent, useState } from "react";
 import { selectHomeTeam, setHomeTeam } from "../states/slices/homeTeamSlice";
 import { setHomePlayers } from "../states/slices/homePlayersSlice";
 import { selectGuestTeam, setGuestTeam } from "../states/slices/guestTeamSlice";
@@ -37,13 +35,17 @@ import {
   rotateForwardHomeTeam,
   selectIndexOfHomeTeamZones,
   setBackHomeTeamSelects,
+  setHomeTeamIndexOfZones,
 } from "../states/slices/indexOfHomeTeamZonesSlice";
 import {
   rotateBackGuestTeam,
   rotateForwardGuestTeam,
   selectIndexOfGuestTeamZones,
   setBackGuestTeamSelects,
+  setGuestTeamIndexOfZones,
 } from "../states/slices/indexOfGuestTeamZonesSlice";
+import { filterHomePlayers } from "../states/slices/homePlayersSlice";
+import { filterGuestPlayers } from "../states/slices/guestPlayersSlice";
 import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
 import {
@@ -55,14 +57,13 @@ import { currentDate } from "../utilities/currentDate";
 import { selectGamesStats } from "../states/slices/gamesStatsSlice";
 import { set, update } from "firebase/database";
 import RotationPanel from "./components/RotationPanel";
-import Diagramm from "../personalInfo/components/Diagramm";
-import { Rows } from "../ratings/components/Rows";
-import { Categorys } from "../ratings/components/Categorys";
+import { StatisticsTable } from "../ratings/components/StatisticsTable";
 import { useSetWidth } from "../utilities/useSetWidth";
+import Diagramm from "../personalInfo/components/Diagramm";
 
 export function HomePage() {
   const dispatch = useAppDispatch();
-  const isBurger = useSetWidth() > 767;
+  const isMobile = useSetWidth() <= 767;
   const listOfTeams = useSelector(selectListOfTeams);
   const listOfPlayers = useSelector(selectListOfPlayers);
   const homeTeam = useSelector(selectHomeTeam);
@@ -90,8 +91,6 @@ export function HomePage() {
 
   const showGuestTeam = guestTeam.length !== 0;
   const showHomeTeam = homeTeam.length !== 0;
-  // прибрати після / !!!!!
-  // прибрати після / !!!!!
 
   function resetTheBoardForGuestTeam() {
     dispatch(setGuestPlayers([]));
@@ -115,15 +114,6 @@ export function HomePage() {
     dispatch(setHomeTeam(""));
     dispatch(setBackHomeTeamSelects(emptyPlayers));
     dispatch(setInfoOfPlayer(null));
-  }
-
-  function handleSetMyTeam(event: ChangeEvent<HTMLSelectElement>) {
-    const name = event.target.value;
-    const homeTeamPlayers = listOfPlayers.filter(
-      (player) => player.team === name
-    );
-    dispatch(setHomePlayers(homeTeamPlayers));
-    dispatch(setHomeTeam(name));
   }
 
   function calculateForTeamData<T extends TTeam | TPlayer>(obj: T) {
@@ -219,6 +209,102 @@ export function HomePage() {
   const currentScore = `${myScore} - ${rivalScore}`;
   const playerInfoWindow = playerInfo && showSquads;
   const saveDataIcon = !opponentTeamName || !setNumber;
+
+  const [draggedOverZone, setDraggedOverZone] = useState<{
+    zoneIndex: number;
+    teamType: "my" | "rival";
+  } | null>(null);
+
+  // Drag and Drop handlers для playground
+  function createDropHandler(zoneIndex: number, teamType: "my" | "rival") {
+    return (e: React.DragEvent) => {
+      e.preventDefault();
+      setDraggedOverZone(null);
+      const playerData = e.dataTransfer.getData("player");
+      const team = e.dataTransfer.getData("team");
+
+      if (!playerData) return;
+
+      // Проверяем, что это перенос из squads (нет currentZone)
+      const currentZone = e.dataTransfer.getData("currentZone");
+      if (currentZone) return; // Это возврат игрока, не обрабатываем здесь
+
+      const player = JSON.parse(playerData) as TPlayer;
+      // Используем positions[zoneIndex] для получения boardPosition, так как в slice ищется по boardPosition
+      const boardPosition = positions[zoneIndex];
+
+      // Проверяем, что команда совпадает
+      if (team === teamType) {
+        if (teamType === "my") {
+          dispatch(filterHomePlayers(player.name));
+          dispatch(setHomeTeamIndexOfZones({ player, zone: boardPosition }));
+        } else {
+          dispatch(filterGuestPlayers(player.name));
+          dispatch(setGuestTeamIndexOfZones({ player, zone: boardPosition }));
+        }
+      }
+    };
+  }
+
+  function createDragOverHandler(zoneIndex: number, teamType: "my" | "rival") {
+    return (e: React.DragEvent) => {
+      e.preventDefault();
+      const team = e.dataTransfer.getData("team");
+      const currentZone = e.dataTransfer.getData("currentZone");
+
+      // Показываем визуальную индикацию только если это перенос из squads (нет currentZone) и команда совпадает
+      if (!currentZone && team === teamType) {
+        // Проверяем, занята ли зона другим игроком
+        const boardPosition = positions[zoneIndex];
+        const teamOptions =
+          teamType === "my" ? homeTeamOptions : guestTeamOptions;
+        const existingPlayer = teamOptions.find(
+          (p) => p.boardPosition === boardPosition
+        );
+
+        // Получаем данные о перетаскиваемом игроке
+        const playerData = e.dataTransfer.getData("player");
+
+        // Если зона занята другим игроком (не пустая и не тот же игрок)
+        if (existingPlayer) {
+          const isOccupied =
+            existingPlayer.name && existingPlayer.name.trim() !== "";
+          if (isOccupied && playerData) {
+            const player = JSON.parse(playerData) as TPlayer;
+            // Если это другой игрок, запрещаем дроп
+            if (existingPlayer.name !== player.name) {
+              e.dataTransfer.dropEffect = "none";
+              setDraggedOverZone(null);
+              return;
+            }
+          } else if (isOccupied && !playerData) {
+            e.dataTransfer.dropEffect = "none";
+            setDraggedOverZone(null);
+            return;
+          }
+        }
+
+        e.dataTransfer.dropEffect = "move";
+        setDraggedOverZone({ zoneIndex, teamType });
+      }
+    };
+  }
+
+  function handleDragLeaveZone() {
+    setDraggedOverZone(null);
+  }
+
+  // Пустые обработчики для блокировки дропа в занятые зоны
+  function blockDrop(e: React.DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  function blockDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "none";
+  }
+
   const tieBreak =
     setNumber === "Set 3 (short)" || setNumber === "Set 5 (short)";
   const tieBreakScore = myScore >= 15 || rivalScore >= 15;
@@ -242,99 +328,28 @@ export function HomePage() {
     return correctZones(guestTeamOptions.indexOf(seTTer));
   }
 
-  function rankByValue<T extends TMix>(criteria: keyof TMix, arr: T[]) {
+  function rankByValue<T extends TMix>(criteria: keyof TMix | "earnedPoints", arr: T[]) {
     const properArr = criteria === "name" ? currentGameStats : arr;
+    const getValue = (obj: TMix, crit: keyof TMix | "earnedPoints"): number => {
+      if (crit === "earnedPoints") {
+        return (
+          isFieldExist(obj["A++"]) +
+          isFieldExist(obj.blocks) +
+          isFieldExist(obj["S++"])
+        );
+      }
+      return isFieldExist(obj[crit as keyof TMix] as number);
+    };
     !isBiggest
       ? properArr.sort((a, b) =>
-          compare(
-            isFieldExist(b[criteria] as number),
-            isFieldExist(a[criteria] as number)
-          )
+          compare(getValue(b, criteria), getValue(a, criteria))
         )
       : properArr.sort((a, b) =>
-          compare(
-            isFieldExist(a[criteria] as number),
-            isFieldExist(b[criteria] as number)
-          )
+          compare(getValue(a, criteria), getValue(b, criteria))
         );
     setIsBiggest(!isBiggest);
   }
-  /* Reset Stats  */
-
-  // const resetplaers = () => {
-  //   async function setPlayersToData(player: TPlayer) {
-  //     await set(playersRef(player.name), player);
-  //   }
-  //   const updatedPlayers = listOfPlayers.filter((player) => player.team === guestTeam[0].name);
-  //   function creeNew(player: TPlayer) {
-  //     const newObj = {} as TPlayer;
-  //     const soloGamePlayerStats = { ...player };
-  //     for (const key in soloGamePlayerStats) {
-  //       if (
-  //         key === "blocks" ||
-  //         key === "A-" ||
-  //         key === "A=" ||
-  //         key === "A+" ||
-  //         key === "A++" ||
-  //         key === "A!" ||
-  //         key === "S++" ||
-  //         key === "S=" ||
-  //         key === "S!" ||
-  //         key === "S+" ||
-  //         key === "S-" ||
-  //         key === "R++" ||
-  //         key === "R=" ||
-  //         key === "R!" ||
-  //         key === "R+" ||
-  //         key === "R-"
-  //       ) {
-  //         newObj[key] = 0;
-  //       } else newObj[key] = soloGamePlayerStats[key as keyof TPlayer];
-  //     }
-  //     return newObj;
-  //   }
-
-  //   updatedPlayers.forEach((player) => {
-  //     setPlayersToData(creeNew(player));
-  //   });
-  // };
-
-  // const resetteam = () => {
-  //   async function setTeamToData(Team: TTeam) {
-  //     await set(teamsRef(Team.name), Team);
-  //   }
-  //   function creeNew(Team: TTeam) {
-  //     const guestTeamNew = {} as TTeam;
-  //     guestTeamNew["A++"] = 0;
-  //     guestTeamNew["A+"] = 0;
-  //     guestTeamNew["A="] = 0;
-  //     guestTeamNew["A!"] = 0;
-  //     guestTeamNew["A-"] = 0;
-  //     guestTeamNew["S++"] = 0;
-  //     guestTeamNew["S!"] = 0;
-  //     guestTeamNew["S="] = 0;
-  //     guestTeamNew["S-"] = 0;
-  //     guestTeamNew["S+"] = 0;
-  //     guestTeamNew["R++"] = 0;
-  //     guestTeamNew["R!"] = 0;
-  //     guestTeamNew["R="] = 0;
-  //     guestTeamNew["R-"] = 0;
-  //     guestTeamNew["R+"] = 0;
-  //     guestTeamNew.blocks = 0;
-  //     guestTeamNew.name = Team.name;
-  //     guestTeamNew.logo = Team.logo;
-  //     guestTeamNew.id = Team.id;
-  //     guestTeamNew.startingSquad = Team.startingSquad;
-  //     return guestTeamNew;
-  //   }
-  //   setTeamToData(creeNew(guestTeam[0]));
-  // };
-  // END HERE
   const filter = "";
-  // const listOfOpponents =
-  //   guestTeam[0]?.name === "Warriors-18U"
-  //     ? listOfOpponents18U
-  //     : listOfOpponents16U;
 
   function calculateForTeamDataV2<T extends TMix>(obj: T): TMix {
     if (filter.length === 0) return obj;
@@ -347,69 +362,107 @@ export function HomePage() {
     }
     return team;
   }
-  const currentGameStats = gameLog.map((rall) => rall.stats).flat();
-  const playersNames = currentGameStats.map((player) => jusName(player));
+  // ============================================
+  // ЛОГИКА НАКОПЛЕНИЯ СТАТИСТИКИ:
+  // ============================================
+  // МЕТОД: Каждое очко = объект в gameLog
+  // Структура: gameLog = [
+  //   { score: "1-0", weServe: true, stats: [player1, player2, ...] },
+  //   { score: "2-0", weServe: false, stats: [player1, player3, ...] },
+  //   ...
+  // ]
+  //
+  // ПРОЦЕСС СУММИРОВАНИЯ:
+  // 1. Извлекаем все статы из всех ралли (очков)
+  // 2. Группируем по именам игроков
+  // 3. Для каждого игрока суммируем все его действия из всех очков
+  // 4. Результат - массив игроков с суммированными статами за весь сет
+  // ============================================
+
+  // ============================================
+  // ПОДСЧЕТ ТЕКУЩЕЙ СТАТИСТИКИ ИЗ GAMELOG
+  // ============================================
+  // Источник данных: gameLog (массив всех сыгранных ралли)
+  // Каждое ралли содержит: { score, weServe, stats: [player1, player2, ...] }
+  //
+  // ПРОЦЕСС:
+  // 1. Извлекаем все статы игроков из всех ралли в gameLog
+  // 2. Группируем по именам игроков
+  // 3. Для каждого игрока суммируем все его действия из всех ралли
+  // 4. Результат - массив игроков с суммированными статами за весь сет
+  // ============================================
+
+  // Шаг 1: Извлекаем все статы игроков из всех очков (ралли)
+  // gameLog.map((rally) => rally.stats) - получаем массив массивов: [[player1, player2], [player3], ...]
+  // .flat() - "разворачиваем" в один плоский массив: [player1, player2, player3, ...]
+  // Если ралли имеет stats: [] (быстрое очко без действий), оно просто не добавит элементов
+  const allRallyStats = gameLog.map((rally) => rally.stats).flat();
+
+  // Шаг 2: Получаем уникальные имена игроков из всех ралли
+  // Это нужно, чтобы суммировать действия каждого игрока отдельно
+  // filter(Boolean) убирает пустые/undefined имена
+  const uniquePlayerNames = [
+    ...new Set(allRallyStats.map((player) => player.name).filter(Boolean)),
+  ];
+
+  // Шаг 3: Для каждого игрока суммируем все его действия из всех ралли
+  // calculateTotalofActionsV2:
+  //   - Фильтрует все записи с именем игрока из allRallyStats
+  //   - Для каждого типа действия (R++, R+, A++, A+, A=, A!, A-, S++, S+, S=, S!, S-, R++, R+, R=, R!, R-, blocks)
+  //     суммирует значения через reduce
+  //   - Использует isFieldExist для обработки undefined/null (возвращает 0, если поле отсутствует)
+  //   - Возвращает объект с суммированными статами и именем игрока
+  //
+  // ВАЖНО: Если в объекте игрока отсутствует поле (потому что было 0 и удалено через forSoloGameStat),
+  //         isFieldExist вернет 0, что правильно для суммирования
+  const currentGameStats = uniquePlayerNames.map((playerName) => {
+    const summed = calculateTotalofActionsV2(allRallyStats, playerName);
+    return summed;
+  });
+
+  // Логирование для отладки
+  if (gameLog.length > 0) {
+    console.log("=== CALCULATING STATS FROM GAMELOG ===");
+    console.log("Total rallies in gameLog:", gameLog.length);
+    console.log(
+      "Rallies with stats:",
+      gameLog.filter((r) => r.stats.length > 0).length
+    );
+    console.log(
+      "Rallies without stats (quick points):",
+      gameLog.filter((r) => r.stats.length === 0).length
+    );
+    console.log("Total player entries from all rallies:", allRallyStats.length);
+    console.log("Unique players:", uniquePlayerNames.length);
+    console.log("Players with stats:", uniquePlayerNames);
+  }
+
+  const playersStats = [currentGameStats]; // Обертываем в массив для StatisticsTable
 
   const fullGameStats = calculateForTeamDataV2(
-    calculateTotalofActions(currentGameStats) as TMix
+    calculateTotalofActions(allRallyStats) as TMix
   );
-
-  // Refs для синхронизации высоты строк
-  const namesTableRef = useRef<HTMLTableElement>(null);
-  const statsTableRef = useRef<HTMLTableElement>(null);
-
-  // Синхронизация высоты строк между таблицами
-  useEffect(() => {
-    if (
-      !namesTableRef.current ||
-      !statsTableRef.current ||
-      !showCurrentGameStats
-    )
-      return;
-
-    const syncRowHeights = () => {
-      const namesRows = namesTableRef.current?.querySelectorAll("tbody tr");
-      const statsRows = statsTableRef.current?.querySelectorAll("tbody tr");
-
-      if (!namesRows || !statsRows) return;
-
-      const maxLength = Math.max(namesRows.length, statsRows.length);
-
-      for (let i = 0; i < maxLength; i++) {
-        const namesRow = namesRows[i] as HTMLTableRowElement;
-        const statsRow = statsRows[i] as HTMLTableRowElement;
-
-        if (namesRow && statsRow) {
-          const maxHeight = Math.max(
-            namesRow.offsetHeight,
-            statsRow.offsetHeight
-          );
-          namesRow.style.height = `${maxHeight}px`;
-          statsRow.style.height = `${maxHeight}px`;
-        }
-      }
-    };
-
-    // Небольшая задержка для того, чтобы DOM обновился
-    const timeoutId = setTimeout(syncRowHeights, 0);
-
-    // Синхронизация при изменении размера окна
-    const resizeObserver = new ResizeObserver(() => {
-      setTimeout(syncRowHeights, 0);
-    });
-    if (namesTableRef.current) resizeObserver.observe(namesTableRef.current);
-    if (statsTableRef.current) resizeObserver.observe(statsTableRef.current);
-
-    return () => {
-      clearTimeout(timeoutId);
-      resizeObserver.disconnect();
-    };
-  }, [currentGameStats, playersNames, showCurrentGameStats]);
 
   return (
     <article className="main-content-wrapper">
-      {showGuestTeam && showSquads && <Squads team="rival" />}
-      {!showSquads && (
+      {/* На мобильных (меньше 768px) обе панели squad идут вместе первыми */}
+      {/* На мобильных (меньше 768px) обе панели squad идут вместе первыми */}
+      {isMobile && showGuestTeam && showSquads && (
+        <>
+          <Squads team="rival" />
+          {/* Squad для my-team скрыт в обычном режиме, показывается только в statistic mode */}
+        </>
+      )}
+      {/* Squad для my-team показывается только в statistic mode (!showSquads) */}
+      {isMobile && showGuestTeam && !showSquads && showHomeTeam && (
+        <Squads team="my" />
+      )}
+      {/* На десктопе порядок как раньше */}
+      {/* Скрываем squad для rival в statistic mode (!showSquads) - показываем только когда showSquads === true */}
+      {!showCurrentGameStats && !isMobile && showGuestTeam && showSquads && (
+        <Squads team="rival" />
+      )}
+      {!showCurrentGameStats && !showSquads && (
         <RotationPanel
           rivalTeam={false}
           weServe={weServe}
@@ -433,7 +486,7 @@ export function HomePage() {
       <SectionWrapper className="playground-section" backGround={null}>
         {!showGuestTeam && <ChooseGuestTeam />}
         {playerInfoWindow && <PersonalInformationOfPlayer link="page1" />}
-        {!playerInfoWindow && showGuestTeam && (
+        {!playerInfoWindow && showGuestTeam && !showCurrentGameStats && (
           <>
             <form
               className={`rotation-field-wrapper ${
@@ -541,98 +594,30 @@ export function HomePage() {
                   <div></div>
                 )}
               </div>
-              {showCurrentGameStats ? (
-                <SectionWrapper className="ratings-section">
-                  <div style={{ 
-                    display: "flex", 
-                    justifyContent: "center", 
-                    gap: "24px", 
-                    marginBottom: "12px",
-                    marginTop: "2vmax",
-                    flexWrap: "wrap"
-                  }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <div style={{ 
-                        width: "20px", 
-                        height: "20px", 
-                        backgroundColor: "#8fbc8f",
-                        borderRadius: "4px"
-                      }}></div>
-                      <span>Reception</span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <div style={{ 
-                        width: "20px", 
-                        height: "20px", 
-                        backgroundColor: "gainsboro",
-                        borderRadius: "4px"
-                      }}></div>
-                      <span>Attack</span>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <div style={{ 
-                        width: "20px", 
-                        height: "20px", 
-                        backgroundColor: "khaki",
-                        borderRadius: "4px"
-                      }}></div>
-                      <span>Service</span>
-                    </div>
-                  </div>
-                  <div
-                    className="ratings-table-container"
-                    style={{ display: "flex" }}
-                  >
-                    <table ref={namesTableRef}>
-                      <tbody className="rating-table-wrapper">
-                        <Categorys
-                          filteredPlayers={playersNames}
-                          rankByValue={rankByValue}
-                          categorys={["name"]}
-                        />
-                      </tbody>
-                    </table>
-                    <div>
-                      <table ref={statsTableRef} style={{ width: "100%" }}>
-                        <tbody className="rating-table-wrapper">
-                          <Categorys
-                            filteredPlayers={currentGameStats}
-                            rankByValue={rankByValue}
-                            categorys={categorys}
-                          />
-                          <Rows
-                            filteredPlayers={[fullGameStats]}
-                            lastRow={true}
-                          />
-                        </tbody>
-                      </table>
-                      <div className="type-of-actions-wrapper">
-                        <div className="reception-content">Reception</div>
-                        <div className="attack-content">Attack</div>
-                        <div className="service-content">Service</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="diagram-wrapper"
-                    style={!isBurger ? { flexDirection: "column" } : {}}
-                  >
-                    <pre>
-                      <Diagramm link="Reception" data={fullGameStats} />
-                    </pre>
-                    <pre>
-                      <Diagramm link="Attack" data={fullGameStats} />
-                    </pre>
-                    <pre>
-                      <Diagramm link="Service" data={fullGameStats} />
-                    </pre>
-                  </div>
-                </SectionWrapper>
-              ) : (
+              {!showCurrentGameStats && (
                 <div className="row-zones-wrapper">
                   {guestTeamOptions.slice(0, 3).map((option, index) =>
                     checkNumbers(option.boardPosition) ? (
-                      <div key={index}>
+                      <div
+                        key={index}
+                        onDrop={blockDrop}
+                        onDragOver={blockDragOver}
+                        onDragLeave={handleDragLeaveZone}
+                        style={{
+                          backgroundColor:
+                            draggedOverZone?.zoneIndex === index &&
+                            draggedOverZone?.teamType === "rival"
+                              ? "rgba(2, 114, 190, 0.3)"
+                              : "transparent",
+                          border:
+                            draggedOverZone?.zoneIndex === index &&
+                            draggedOverZone?.teamType === "rival"
+                              ? "2px dashed #0272be"
+                              : "none",
+                          borderRadius: "8px",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
                         <IconOfPlayer
                           showSquads={showSquads}
                           player={option}
@@ -643,14 +628,55 @@ export function HomePage() {
                         />
                       </div>
                     ) : (
-                      <div className="zone-names-wrapper" key={"_" + index}>
+                      <div
+                        className="zone-names-wrapper"
+                        key={"_" + index}
+                        onDrop={createDropHandler(index, "rival")}
+                        onDragOver={createDragOverHandler(index, "rival")}
+                        onDragLeave={handleDragLeaveZone}
+                        style={{
+                          backgroundColor:
+                            draggedOverZone?.zoneIndex === index &&
+                            draggedOverZone?.teamType === "rival"
+                              ? "rgba(2, 114, 190, 0.5)"
+                              : "rgba(2, 114, 190, 0.1)",
+                          border:
+                            draggedOverZone?.zoneIndex === index &&
+                            draggedOverZone?.teamType === "rival"
+                              ? "3px solid #0272be"
+                              : "3px solid rgba(2, 114, 190, 0.8)",
+                          borderRadius: "8px",
+                          transition: "all 0.2s ease",
+                          minHeight: "120px",
+                        }}
+                      >
                         P{correctZones(index)}
                       </div>
                     )
                   )}
                   {homeTeamOptions.slice(0, 3).map((option, index) =>
                     checkNumbers(option.boardPosition) ? (
-                      <div key={index}>
+                      <div
+                        key={index}
+                        onDrop={blockDrop}
+                        onDragOver={blockDragOver}
+                        onDragLeave={handleDragLeaveZone}
+                        style={{
+                          backgroundColor:
+                            draggedOverZone?.zoneIndex === index &&
+                            draggedOverZone?.teamType === "my"
+                              ? "rgba(2, 114, 190, 0.5)"
+                              : "transparent",
+                          border:
+                            draggedOverZone?.zoneIndex === index &&
+                            draggedOverZone?.teamType === "my"
+                              ? "3px solid #0272be"
+                              : "3px solid rgba(2, 114, 190, 0.8)",
+                          borderRadius: "8px",
+                          transition: "all 0.2s ease",
+                          minHeight: "60px",
+                        }}
+                      >
                         <IconOfPlayer
                           showSquads={showSquads}
                           player={option}
@@ -660,16 +686,30 @@ export function HomePage() {
                           type="my"
                         />
                       </div>
-                    ) : (
-                      <div
-                        className="nameOfZone-field-wrapper"
-                        key={"x" + index}
-                      ></div>
-                    )
+                    ) : null
                   )}
                   {guestTeamOptions.slice(3, 6).map((option, index) =>
                     checkNumbers(option.boardPosition) ? (
-                      <div key={index}>
+                      <div
+                        key={index}
+                        onDrop={blockDrop}
+                        onDragOver={blockDragOver}
+                        onDragLeave={handleDragLeaveZone}
+                        style={{
+                          backgroundColor:
+                            draggedOverZone?.zoneIndex === index + 3 &&
+                            draggedOverZone?.teamType === "rival"
+                              ? "rgba(2, 114, 190, 0.3)"
+                              : "transparent",
+                          border:
+                            draggedOverZone?.zoneIndex === index + 3 &&
+                            draggedOverZone?.teamType === "rival"
+                              ? "2px dashed #0272be"
+                              : "none",
+                          borderRadius: "8px",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
                         <IconOfPlayer
                           showSquads={showSquads}
                           player={option}
@@ -680,14 +720,54 @@ export function HomePage() {
                         />
                       </div>
                     ) : (
-                      <div className="zone-names-wrapper" key={"_" + index}>
+                      <div
+                        className="zone-names-wrapper"
+                        key={"_" + index}
+                        onDrop={createDropHandler(index + 3, "rival")}
+                        onDragOver={createDragOverHandler(index + 3, "rival")}
+                        onDragLeave={handleDragLeaveZone}
+                        style={{
+                          backgroundColor:
+                            draggedOverZone?.zoneIndex === index + 3 &&
+                            draggedOverZone?.teamType === "rival"
+                              ? "rgba(2, 114, 190, 0.5)"
+                              : "rgba(2, 114, 190, 0.1)",
+                          border:
+                            draggedOverZone?.zoneIndex === index + 3 &&
+                            draggedOverZone?.teamType === "rival"
+                              ? "3px solid #0272be"
+                              : "3px solid rgba(2, 114, 190, 0.8)",
+                          borderRadius: "8px",
+                          transition: "all 0.2s ease",
+                          minHeight: "120px",
+                        }}
+                      >
                         P{correctZones(index + 3)}
                       </div>
                     )
                   )}
                   {homeTeamOptions.slice(3, 6).map((option, index) =>
                     checkNumbers(option.boardPosition) ? (
-                      <div key={index}>
+                      <div
+                        key={index}
+                        onDrop={blockDrop}
+                        onDragOver={blockDragOver}
+                        onDragLeave={handleDragLeaveZone}
+                        style={{
+                          backgroundColor:
+                            draggedOverZone?.zoneIndex === index + 3 &&
+                            draggedOverZone?.teamType === "my"
+                              ? "rgba(2, 114, 190, 0.3)"
+                              : "transparent",
+                          border:
+                            draggedOverZone?.zoneIndex === index + 3 &&
+                            draggedOverZone?.teamType === "my"
+                              ? "2px dashed #0272be"
+                              : "none",
+                          borderRadius: "8px",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
                         <IconOfPlayer
                           showSquads={showSquads}
                           player={option}
@@ -697,31 +777,22 @@ export function HomePage() {
                           type="my"
                         />
                       </div>
-                    ) : (
-                      <div
-                        className="nameOfZone-field-wrapper"
-                        key={"x" + index}
-                      ></div>
-                    )
+                    ) : null
                   )}
                 </div>
               )}
-              {currentGameStats.length > 0 && !showSquads && (
-                <RegularButton
-                  onClick={() => setShowCurrentGameStats(!showCurrentGameStats)}
-                  type="button"
-                  $color="#0057b8"
-                  $background="#ffd700"
-                >
-                  Live Stats
-                </RegularButton>
-              )}
-              {/* Reset Stats  */}
-              {/* <div>
-                <button onClick={() => resetteam()}>team</button>
-                <button onClick={() => resetplaers()}>plaers</button>
-              </div> */}
-              {/* HERE */}
+              {currentGameStats.length > 0 &&
+                !showSquads &&
+                !showCurrentGameStats && (
+                  <RegularButton
+                    onClick={() => setShowCurrentGameStats(true)}
+                    type="button"
+                    $color="#0057b8"
+                    $background="#ffd700"
+                  >
+                    Live Stats
+                  </RegularButton>
+                )}
               <div className="button-save-wrapper">
                 {saveButton && (
                   <RegularButton
@@ -783,25 +854,50 @@ export function HomePage() {
           </>
         )}
       </SectionWrapper>
-      {showGuestTeam &&
-        showSquads &&
-        (showHomeTeam ? (
-          <Squads team="my" />
-        ) : (
-          <SectionWrapper className="teamsquad-section">
-            {guestTeam.length !== 0 && (
-              <select className="chooseHomeTeam" onChange={handleSetMyTeam}>
-                <option value="Choose home team">Choose team</option>
-                {listOfTeams.map((team) => (
-                  <option key={team.id} value={team.name}>
-                    {team.name}
-                  </option>
-                ))}
-              </select>
-            )}
-          </SectionWrapper>
-        ))}
-      {!showSquads && (
+      {showCurrentGameStats && (
+        <SectionWrapper className="ratings-section full-width">
+          <div
+            style={{
+              marginBottom: "12px",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <RegularButton
+              onClick={() => setShowCurrentGameStats(false)}
+              type="button"
+              $color="#0057b8"
+              $background="#ffd700"
+            >
+              Back to Recording
+            </RegularButton>
+          </div>
+          <StatisticsTable
+            playersStats={playersStats}
+            fullGameStats={fullGameStats}
+            rankByValue={rankByValue}
+            showLegend={true}
+          />
+          <div className="diagram-wrapper">
+            <pre>
+              <Diagramm link="Reception" data={fullGameStats} />
+            </pre>
+            <pre>
+              <Diagramm link="Attack" data={fullGameStats} />
+            </pre>
+            <pre>
+              <Diagramm link="Service" data={fullGameStats} />
+            </pre>
+          </div>
+        </SectionWrapper>
+      )}
+      {/* На десктопе вторая панель squad идет после playground */}
+      {/* Squad для my-team скрыт в обычном режиме, показывается только в statistic mode */}
+      {/* Squad для my-team показывается только в statistic mode (!showSquads) */}
+      {!isMobile && showGuestTeam && !showSquads && showHomeTeam && (
+        <Squads team="my" />
+      )}
+      {!showCurrentGameStats && !showSquads && (
         <RotationPanel
           opponentTeamName={opponentTeamName}
           rivalTeam={true}

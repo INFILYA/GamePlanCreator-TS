@@ -6,7 +6,10 @@ import {
   rotateForwardGuestTeam,
   selectIndexOfGuestTeamZones,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
-import { correctZones } from "../../utilities/functions";
+import {
+  selectIndexOfHomeTeamZones,
+} from "../../states/slices/indexOfHomeTeamZonesSlice";
+import { correctZones, forSoloGameStat } from "../../utilities/functions";
 import {
   resetRallyStats,
   // rotateForwardPositions,
@@ -65,24 +68,36 @@ export default function RotationPanel(arg: TRotationPanel) {
   const [myZone, setMyZone] = useState(1);
   const [openConfirmWindow, setOpenConfirmWindow] = useState(false);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
+  const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
 
   useEffect(() => {
+    // ВАЖНО: Всегда получаем расстановку нашей команды (myZone)
+    // Это нужно для расчета plusMinusPositions, чтобы понять где мы стартуем
+    // Используем guestTeamOptions (наша команда на поле)
     function myTeamRigthRotation() {
       const seTTer = guestTeamOptions.find((player) => player.position === "SET");
       if (!seTTer) return;
       const indexOfSetter = guestTeamOptions.indexOf(seTTer);
       setMyZone(correctZones(indexOfSetter));
     }
-    if (!rivalTeam) {
-      myTeamRigthRotation();
-    }
-  }, [guestTeamOptions, rivalTeam]);
+    // Всегда обновляем myZone, независимо от rivalTeam
+    // Это расстановка нашей команды, которая нужна для расчета
+    myTeamRigthRotation();
+  }, [guestTeamOptions]);
 
   function confirmPoint() {
     setOpenConfirmWindow(!openConfirmWindow);
   }
 
   function addScore() {
+    // ВАЖНО: Сохраняем значение weServe на начало розыгрыша (до изменения счета)
+    // Если это панель соперника (rivalTeam = true), то weServe инвертирован
+    // Поэтому нужно инвертировать обратно, чтобы получить правильное значение
+    const whoServedInThisRally = rivalTeam ? !weServe : weServe;
+    
+    const newScore = score + 1;
+    const newCurrentScore = `${newScore} - ${rivalScore}`;
+    
     if ((zeroZero && !weServe && !rivalTeam) || (previousScore !== rivalScore && !rivalTeam)) {
       dispatch(rotateForwardGuestTeam());
       dispatch(rotateForwardHomeTeam());
@@ -94,20 +109,64 @@ export default function RotationPanel(arg: TRotationPanel) {
         rivalRotation === 1 ? 6 : rivalRotation <= 6 ? rivalRotation - 1 : rivalRotation;
       setRivalRotation(properRivalZone);
     }
-    setScore(score + 1);
+    setScore(newScore);
+    
+    // ============================================
+    // ЗАПИСЬ ОЧКА В ИСТОРИЮ ИГРЫ
+    // ============================================
+    // ВАЖНО: Записываем ралли ВСЕГДА в gameLog, даже если нет действий игроков
+    // Используем forSoloGameStat для очистки нулевых значений из объектов статистики игроков
+    const cleanedStats = SoloRallyStats.length > 0 
+      ? SoloRallyStats.map(player => forSoloGameStat(player))
+      : [];
+    
+    // Определяем расстановки на момент ралли
+    const seTTer = guestTeamOptions.find((player) => player.position === "SET");
+    const ourSetterPosition = seTTer 
+      ? correctZones(guestTeamOptions.indexOf(seTTer))
+      : myZone;
+    const rivalSetterPosition = rivalRotation;
+    
+    const rallyData = {
+      score: currentScore,
+      weServe: whoServedInThisRally, // Кто подавал в этом ралли (значение на начало розыгрыша)
+      weWon: !rivalTeam, // Кто выиграл очко: true - мы выиграли, false - соперник выиграл
+      stats: cleanedStats,
+      setterBoardPosition: ourSetterPosition,
+      rivalSetterBoardPosition: rivalSetterPosition,
+    };
+    
+    // Используем функциональное обновление для правильного накопления
+    setGameLog((prevGameLog) => {
+      const newGameLog = [...prevGameLog, rallyData];
+      
+      // Логируем только нужную информацию
+      console.log("Who served:", whoServedInThisRally ? "We" : "Rival");
+      console.log("Actions in this rally:", SoloRallyStats.length > 0 ? SoloRallyStats.map(p => ({
+        name: p.name,
+        "R++": p["R++"] || 0,
+        "R+": p["R+"] || 0,
+        "A++": p["A++"] || 0,
+        "A+": p["A+"] || 0,
+        "S++": p["S++"] || 0,
+        "S+": p["S+"] || 0,
+        blocks: p.blocks || 0,
+      })) : "No actions");
+      console.log("Full gameLog:", newGameLog);
+      
+      return newGameLog;
+    });
+    
+    // Записываем в statsForTeam только если есть действия
     if (SoloRallyStats.length > 0) {
-      setGameLog([
-        ...gameLog,
-        {
-          score: currentScore,
-          weServe: zeroZero ? weServe : previousScore !== rivalScore ? rivalTeam : !rivalTeam,
-          stats: SoloRallyStats,
-        },
-      ]);
-      setstatsForTeam([...statsForTeam, SoloRallyStats]);
+      setstatsForTeam((prevStats) => [...prevStats, SoloRallyStats]);
     }
+    
     dispatch(resetRallyStats());
     setNextRotation(true);
+    // Обновляем weServe для следующего ралли
+    // Если мы выиграли (!rivalTeam), то мы будем подавать в следующем ралли (weServe = true)
+    // Если соперник выиграл (rivalTeam), то соперник будет подавать в следующем ралли (weServe = false)
     setWeServe(!rivalTeam);
     setOpenConfirmWindow(!openConfirmWindow);
   }

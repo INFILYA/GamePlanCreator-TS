@@ -14,19 +14,25 @@ export const indexOfGuestTeamZonesSlice = createSlice({
   name: "indexOfGuestTeamZones",
   initialState,
   reducers: {
-    setGuestTeamIndexOfZones: (state, action: PayloadAction<{ player: TPlayer; zone: number }>) => {
+    setGuestTeamIndexOfZones: (
+      state,
+      action: PayloadAction<{ player: TPlayer; zone: number }>
+    ) => {
       state.indexOfGuestTeamZones = state.indexOfGuestTeamZones.map((player) =>
-        player.boardPosition === action.payload.zone ? action.payload.player : player
+        player.boardPosition === action.payload.zone
+          ? action.payload.player
+          : player
       );
     },
     resetGuestTeamIndexOfZones: (
       state,
       action: PayloadAction<{ startingSix: TPlayer[]; player: TPlayer }>
     ) => {
-      state.indexOfGuestTeamZones = state.indexOfGuestTeamZones.map((player, index) =>
-        index === action.payload.startingSix.indexOf(action.payload.player)
-          ? { ...emptyPlayers[0], boardPosition: positions[index] }
-          : player
+      state.indexOfGuestTeamZones = state.indexOfGuestTeamZones.map(
+        (player, index) =>
+          index === action.payload.startingSix.indexOf(action.payload.player)
+            ? { ...emptyPlayers[0], boardPosition: positions[index] }
+            : player
       );
     },
     setBackGuestTeamSelects: (state, action: PayloadAction<TPlayer[]>) => {
@@ -39,7 +45,10 @@ export const indexOfGuestTeamZonesSlice = createSlice({
     },
     showGuestTeamStartingSix: (
       state,
-      action: PayloadAction<{ guestPlayers: TPlayer[]; guestTeamStartingSix: string[] }>
+      action: PayloadAction<{
+        guestPlayers: TPlayer[];
+        guestTeamStartingSix: string[];
+      }>
     ) => {
       const startingSix = action.payload.guestTeamStartingSix;
       const allPlayers = action.payload.guestPlayers;

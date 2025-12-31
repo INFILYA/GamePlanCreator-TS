@@ -4,9 +4,10 @@ import { Rows } from "./Rows";
 
 type TCategorys = {
   filteredPlayers: TMix[];
-  rankByValue<const T extends TMix>(criteria: keyof T, arr: T[]): void;
-  categorys: TMixKeys[];
+  rankByValue<const T extends TMix>(criteria: keyof T | "earnedPoints", arr: T[]): void;
+  categorys: (TMixKeys | "earnedPoints")[];
   sortState?: Record<string, "asc" | "desc" | null>;
+  lastRow?: boolean;
 };
 
 export function Categorys(props: TCategorys) {
@@ -35,9 +36,9 @@ export function Categorys(props: TCategorys) {
     } else if (category.startsWith("S")) {
       return "khaki"; // Service
     }
-    return undefined; // "+/-", "name" и "blocks" без цвета (используют дефолтный синий градиент)
+    return undefined; // "+/-", "name", "blocks" и "earnedPoints" без цвета (используют дефолтный синий градиент)
   };
-  
+
   return (
     <>
       <tr>
@@ -48,23 +49,29 @@ export function Categorys(props: TCategorys) {
               key={index}
               onClick={() => rankByValue(category, filteredPlayers)}
               data-colored-header={backgroundColor ? "true" : undefined}
-              style={backgroundColor ? { 
-                background: backgroundColor,
-                backgroundColor: backgroundColor,
-                color: "black"
-              } : {}}
+              style={
+                backgroundColor
+                  ? {
+                      background: backgroundColor,
+                      backgroundColor: backgroundColor,
+                      color: "black",
+                    }
+                  : {}
+              }
             >
               <button
                 style={
                   isFull
-                    ? backgroundColor ? { color: "black" } : {}
+                    ? backgroundColor
+                      ? { color: "black" }
+                      : {}
                     : {
                         transform: "rotate(90deg)",
-                        ...(backgroundColor ? { color: "black" } : {})
+                        ...(backgroundColor ? { color: "black" } : {}),
                       }
                 }
               >
-                {category}
+                {category === "earnedPoints" ? "Points" : category}
               </button>
             </th>
           );

@@ -14,10 +14,6 @@ export function ChooseGuestTeam() {
   const listOfTeams = useSelector(selectListOfTeams);
   const listOfPlayers = useSelector(selectListOfPlayers);
 
-  useEffect(() => {
-    console.log("ChooseGuestTeam - listOfTeams:", listOfTeams.length);
-    console.log("ChooseGuestTeam - listOfTeams data:", listOfTeams);
-  }, [listOfTeams]);
 
   function handleSetOpponentTeam(club: TTeam) {
     const guestTeamPlayers = listOfPlayers.filter((player) => player.team === club.name);

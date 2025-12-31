@@ -23,7 +23,9 @@ export type TReceptionDiagramm = {
 
 export type TDiagramm = TDiagrammWithoutBlock & { blocks: number };
 
-export type TDiagrammWithoutBlock = TAttackDiagramm & TServiceDiagramm & TReceptionDiagramm;
+export type TDiagrammWithoutBlock = TAttackDiagramm &
+  TServiceDiagramm &
+  TReceptionDiagramm;
 
 export type TTeam = TPartTeam & TDiagramm;
 export type TMixKeys = keyof TMix;
@@ -112,7 +114,14 @@ export type TObjectStats = {
   [key: string]: TGameLogStats;
 };
 export type TGameLogStats = TSoloRallyStats[];
-export type TSoloRallyStats = { score: string; weServe: boolean; stats: TPlayer[] };
+export type TSoloRallyStats = {
+  score: string;
+  weServe: boolean;
+  weWon: boolean; // Кто выиграл очко: true - мы выиграли, false - соперник выиграл
+  stats: TPlayer[];
+  setterBoardPosition?: number; // Позиция связующего нашей команды (для расчета plusMinusPositions)
+  rivalSetterBoardPosition?: number; // Позиция связующего соперника (для отображения в таблице)
+};
 
 export type TSettersPosition = { [key: number]: number };
 export type TSettersPositions = { [key: number]: TSettersPosition };

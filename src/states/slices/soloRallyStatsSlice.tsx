@@ -11,15 +11,40 @@ export const soloRallyStatsSlice = createSlice({
   name: "soloRallyStats",
   initialState,
   reducers: {
+    // ============================================
+    // НАКОПЛЕНИЕ СТАТОВ ИГРОКОВ В ТЕКУЩЕМ РАЛЛИ (ОЧКЕ)
+    // ============================================
+    // SoloRallyStats - это массив игроков с их действиями в текущем ралли (очке)
+    // Когда игрок делает действие (например, атаку, прием, подачу):
+    //   1. В IconOfPlayers.tsx создается объект playerStats с накопленными статами из diagrammValue
+    //   2. Этот объект отправляется в Redux через setSoloRallyStats
+    //   3. Если игрок уже есть в SoloRallyStats - он полностью заменяется новым объектом
+    //      (так как action.payload уже содержит все накопленные статы для текущего ралли)
+    //   4. Если игрока нет - он добавляется в массив
+    //
+    // При записи очка (в RotationPanel.tsx) весь массив SoloRallyStats копируется в gameLog
+    // ============================================
     setSoloRallyStats: (state, action: PayloadAction<TPlayer>) => {
-      if (state.soloRallyStats.find((player) => player.name === action.payload.name)) {
+      const existingPlayer = state.soloRallyStats.find(
+        (player) => player.name === action.payload.name
+      );
+      if (existingPlayer) {
+        // Игрок уже есть в ралли - заменяем его полностью новым объектом
+        // action.payload уже содержит все накопленные статы из diagrammValue для текущего ралли
         state.soloRallyStats = state.soloRallyStats.map((player) =>
           player.name === action.payload.name ? action.payload : player
         );
-      } else state.soloRallyStats = [...state.soloRallyStats, action.payload];
+      } else {
+        // Игрок новый в этом ралли - добавляем его в массив
+        state.soloRallyStats = [...state.soloRallyStats, action.payload];
+      }
     },
     setSoloRallySubPlaeyrsStats: (state, action: PayloadAction<TPlayer>) => {
-      if (state.soloRallyStats.find((player) => player.name === action.payload.name)) {
+      if (
+        state.soloRallyStats.find(
+          (player) => player.name === action.payload.name
+        )
+      ) {
         state.soloRallyStats = state.soloRallyStats.map((player) =>
           player.name === action.payload.name ? player : player
         );
@@ -78,4 +103,5 @@ export const {
   rotateBackPositions,
 } = soloRallyStatsSlice.actions;
 export default soloRallyStatsSlice.reducer;
-export const selectSoloRallyStats = (state: RootState) => state.soloRallyStats.soloRallyStats;
+export const selectSoloRallyStats = (state: RootState) =>
+  state.soloRallyStats.soloRallyStats;

@@ -180,6 +180,22 @@ main .main-content-wrapper {
   flex-wrap: nowrap;
   align-items: flex-start;
 }
+main .main-content-wrapper:has(.ratings-section.full-width) {
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  justify-content: stretch !important;
+}
+/* Адаптация для iPad - предотвращаем горизонтальный скролл */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  main .main-content-wrapper {
+    flex-wrap: nowrap;
+    gap: 0.5vw;
+    padding: 0 1vw;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+}
 /* В statistic mode гарантируем, что все в одном ряду */
 main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) {
   flex-wrap: nowrap;
@@ -240,6 +256,15 @@ main .main-content-wrapper .rotation-panel-wrapper {
   flex-direction: column;
   align-self: stretch;
 }
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  main .main-content-wrapper .teamsquad-section,
+  main .main-content-wrapper .rotation-panel-wrapper {
+    width: 20%;
+    min-width: 150px;
+    max-width: 200px;
+    padding: 0.5vw;
+  }
+}
 /* Компактные стили для squad панелей */
 main .main-content-wrapper .teamsquad-section .squad-wrapper .player-field-wrapper {
   margin: 2.5px 0;
@@ -253,9 +278,10 @@ main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsqua
   min-width: 170px;
   padding: 0.6vw;
 }
-/* Сужаем rotation-panel-wrapper в statistic mode, если он есть */
+/* В statistic mode rotation-panel-wrapper имеет такую же ширину как в обычном режиме */
 main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .rotation-panel-wrapper {
-  min-width: 170px;
+  width: 22%; /* В statistic mode: 22% (squad my-team) / 56% (playground) / 22% (правая панель) */
+  max-width: 300px; /* Возвращаем исходное значение как в обычном режиме */
   padding: 0.6vw;
 }
 /* Компактные стили для squad в statistic mode */
@@ -296,11 +322,21 @@ main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsqua
 }
 @media screen and (min-width: 768px) and (max-width: 1024px) {
   main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section {
-    width: 20%;
-    min-width: 180px;
+    width: 18%;
+    min-width: 150px;
+    max-width: 180px;
+    padding: 0.5vw;
   }
   main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .playground-section {
-    width: 60%;
+    width: 64%; /* 18% + 64% + 18% = 100% */
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 auto;
+  }
+  main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .rotation-panel-wrapper {
+    width: 18%;
+    max-width: 200px;
+    padding: 0.5vw;
   }
 }
 main .main-content-wrapper .rotation-panel-wrapper {
@@ -329,22 +365,119 @@ main .main-content-wrapper .playground-section {
   position: relative;
   z-index: 6;
 }
+main .main-content-wrapper .ratings-section.full-width {
+  width: 100% !important;
+  max-width: 100% !important;
+  align-self: stretch !important;
+  flex: 1 1 100% !important;
+}
+main .main-content-wrapper .ratings-section.full-width .section-content-wrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+main .main-content-wrapper .ratings-section.full-width .section-content-wrapper .section-content {
+  width: 100% !important;
+  max-width: 100% !important;
+  align-items: stretch !important;
+  padding: 0 !important;
+}
+main .main-content-wrapper .ratings-section.full-width .section-content-wrapper .section-content .ratings-table-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  margin: 0 !important;
+}
+main .main-content-wrapper .ratings-section.full-width .section-content-wrapper .section-content .ratings-table-container > table {
+  flex-shrink: 0 !important;
+  min-width: 150px !important;
+  width: auto !important;
+}
+main .main-content-wrapper .ratings-section.full-width .section-content-wrapper .section-content .ratings-table-container > div {
+  flex: 1 !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+main .main-content-wrapper .ratings-section.full-width .section-content-wrapper .section-content .ratings-table-container > div > table {
+  width: 100% !important;
+}
+main .main-content-wrapper .ratings-section.full-width .section-content-wrapper .section-content .diagram-wrapper {
+  width: 99% !important;
+  display: flex !important;
+  justify-content: center !important;
+  margin-top: 2vw !important;
+  align-items: center !important;
+  flex-direction: row !important;
+  gap: 1vw !important;
+  flex-wrap: wrap !important;
+}
+main .main-content-wrapper .ratings-section.full-width .section-content-wrapper .section-content .diagram-wrapper pre {
+  flex: 0 1 auto !important;
+  min-width: 280px !important;
+  max-width: 35% !important;
+}
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  main .main-content-wrapper .ratings-section.full-width .section-content-wrapper .section-content .diagram-wrapper pre {
+    min-width: 240px !important;
+    max-width: 33% !important;
+  }
+}
+@media screen and (max-width: 767px) {
+  main .main-content-wrapper .ratings-section.full-width .section-content-wrapper .section-content .diagram-wrapper {
+    flex-direction: column !important;
+  }
+  main .main-content-wrapper .ratings-section.full-width .section-content-wrapper .section-content .diagram-wrapper pre {
+    min-width: 100% !important;
+    max-width: 100% !important;
+  }
+}
 main .main-content-wrapper .playground-section {
   align-self: baseline;
-  width: 56%;
+  width: 75%; /* Изменено с 56% на 75% (теперь 22% squad + 75% playground) */
   transition: width 0.3s ease;
 }
-/* Расширяем playground в statistic mode */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  main .main-content-wrapper .playground-section {
+    width: 60%;
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 auto;
+  }
+}
+/* В обычном режиме (без statistic mode) playground занимает 75%, squad my-team 22% */
+main .main-content-wrapper:not(:has(.rotation-field-wrapper.statistic-mode)) .playground-section {
+  width: 75%; /* 22% (squad) + 75% (playground) = 97% (остается 3% на gap) */
+  flex: 0 0 auto; /* Не растягиваем, используем фиксированную ширину */
+}
+/* В statistic mode: 22% (squad my-team) / 56% (playground) / 22% (правая панель) */
+/* В statistic mode: squad rival (скрыт), playground (56%), rotation-panel my, rotation-panel rival, squad my-team (22%) */
 main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .playground-section {
-  width: 56%;
-  flex-shrink: 0;
+  width: 56%; /* Фиксированная ширина 56% в statistic mode */
+  flex: 0 0 auto; /* Не растягиваем, используем фиксированную ширину */
+}
+/* Растягиваем внутренние элементы playground-section на всю ширину */
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .playground-section .section-content-wrapper {
+  width: 100% !important;
+}
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .playground-section .section-content-wrapper .section-content {
+  width: 100% !important;
+}
+main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .playground-section .section-content-wrapper .section-content .rotation-field-wrapper {
+  width: 100% !important;
 }
 /* Гарантируем, что rotation-panel-wrapper не влияет на layout в statistic mode */
 main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .rotation-panel-wrapper {
   flex-shrink: 0;
+  width: 22%; /* В statistic mode: 22% (squad my-team) / 56% (playground) / 22% (правая панель) */
+  max-width: 300px; /* Возвращаем исходное значение как в обычном режиме */
 }
 main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section {
   flex-shrink: 0;
+  width: 22%; /* В statistic mode: 22% (squad my-team) / 56% (playground) / 22% (правая панель) */
+  max-width: 250px;
+  min-width: 170px;
 }
 main .main-content-wrapper .playground-section .section-border .section-background {
   display: flex;
@@ -713,6 +846,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rivalTeam-
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper h2 {
   color: rgba(2, 114, 190, 0.4);
   font-weight: 600;
+  font-size: clamp(0.8rem, calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem), 1.2rem); /* Такой же размер шрифта как у input и select */
   text-shadow: none;
   letter-spacing: 0.5px;
   margin: 0;
@@ -1197,6 +1331,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   width: 100%;
   margin: 1vw 0;
   justify-content: center;
+  padding-top: 10px; /* Добавляем отступ сверху, чтобы не заезжало под header */
 }
 /* В statistic mode уменьшаем отступы, чтобы был впритык к именам */
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .reset-button-wrapper {
@@ -1209,6 +1344,17 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   align-items: center;
   justify-content: center;
   height: 40px;
+}
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper {
+    margin: 8px 0; /* Уменьшаем margin для iPad */
+    padding-top: 8px;
+    gap: 0.5vw; /* Добавляем gap между кнопками для iPad */
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper > div:not(.match-number-wrapper) {
+    width: auto; /* Автоматическая ширина для iPad */
+    min-width: 80px; /* Минимальная ширина */
+  }
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
   width: 50%;
@@ -1251,6 +1397,10 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   position: relative;
   z-index: 1;
   align-self: center;
+  height: 100%; /* Выравниваем по высоте input/select */
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input[type="checkbox"] {
   width: 2vw;
@@ -1457,7 +1607,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .zone-names-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .zone-names-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .zone-names-wrapper {
-  height: 12vmax;
+  height: 15vmax;
   width: 100%;
   font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
   align-items: center;

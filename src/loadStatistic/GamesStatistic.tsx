@@ -3,7 +3,7 @@ import {
   selectFilteredGameStats,
   setgameFilterByTeam,
 } from "../states/slices/gamesStatsSlice";
-import { ChangeEvent, useEffect, useState, useRef } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { TGameStats, TMix, TObjectStats, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import {
@@ -13,8 +13,7 @@ import {
   isFieldExist,
   jusName,
 } from "../utilities/functions";
-import { Categorys } from "../ratings/components/Categorys";
-import { Rows } from "../ratings/components/Rows";
+import { StatisticsTable } from "../ratings/components/StatisticsTable";
 import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import { selectPlayerInfo } from "../states/slices/playerInfoSlice";
 import { PersonalInformationOfPlayer } from "../personalInfo/PersonalInformationOfPlayer";
@@ -67,20 +66,24 @@ export default function GamesStatistic() {
     }
     return team;
   }
-  function rankByValue<T extends TMix>(criteria: keyof TMix, arr: T[]) {
+  function rankByValue<T extends TMix>(criteria: keyof TMix | "earnedPoints", arr: T[]) {
     const properArr = criteria === "name" ? choosenGameStats.flat() : arr;
+    const getValue = (obj: TMix, crit: keyof TMix | "earnedPoints"): number => {
+      if (crit === "earnedPoints") {
+        return (
+          isFieldExist(obj["A++"]) +
+          isFieldExist(obj.blocks) +
+          isFieldExist(obj["S++"])
+        );
+      }
+      return isFieldExist(obj[crit as keyof TMix] as number);
+    };
     !isBiggest
       ? properArr.sort((a, b) =>
-          compare(
-            isFieldExist(b[criteria] as number),
-            isFieldExist(a[criteria] as number)
-          )
+          compare(getValue(b, criteria), getValue(a, criteria))
         )
       : properArr.sort((a, b) =>
-          compare(
-            isFieldExist(a[criteria] as number),
-            isFieldExist(b[criteria] as number)
-          )
+          compare(getValue(a, criteria), getValue(b, criteria))
         );
     setIsBiggest(!isBiggest);
   }
@@ -191,7 +194,11 @@ export default function GamesStatistic() {
     const flatFullSizeGameStat = choosenDetailedStats
       .map((rally) => Object.values(rally).flat())
       .flat();
-    const finalResult = flatFullSizeGameStat.map((rally) => rally.stats);
+    // Фильтруем пустые stats массивы (быстрые очки без действий)
+    // Это нужно для поддержки новых ралли с пустым stats: []
+    const finalResult = flatFullSizeGameStat
+      .map((rally) => rally.stats)
+      .filter((stats) => stats && stats.length > 0); // Убираем пустые массивы
     setChoosenGameStats(finalResult);
     setDetailedStats(finalResult);
     if (filteredGames.length === 1) {
@@ -209,7 +216,11 @@ export default function GamesStatistic() {
       setGameLogs([soloGame]);
       return;
     }
-    const choosenSet = soloGame[value].map((rally) => rally.stats);
+    // Фильтруем пустые stats массивы (быстрые очки без действий)
+    // Это нужно для поддержки новых ралли с пустым stats: []
+    const choosenSet = soloGame[value]
+      .map((rally) => rally.stats)
+      .filter((stats) => stats && stats.length > 0); // Убираем пустые массивы
     setChoosenGameStats(choosenSet);
     setDetailedStats(choosenSet);
     setChoosenSet(value);
@@ -294,65 +305,12 @@ export default function GamesStatistic() {
     });
   }
 
-  const playersNames = choosenGameStats.flat().map((player) => jusName(player));
   const fullGameStats = calculateForTeamData(
     calculateTotalofActions(choosenGameStats.flat()) as TMix
   );
 
   const soloGame = filteredGames.map((game) => Object.values(game)).flat()[0];
   const oneGame = filteredGames.length === 1 && choosenGameStats.length > 0;
-
-  // Refs для синхронизации высоты строк
-  const namesTableRef = useRef<HTMLTableElement>(null);
-  const statsTableRef = useRef<HTMLTableElement>(null);
-
-  // Синхронизация высоты строк между таблицами
-  useEffect(() => {
-    if (
-      !namesTableRef.current ||
-      !statsTableRef.current ||
-      choosenGameStats.length === 0
-    )
-      return;
-
-    const syncRowHeights = () => {
-      const namesRows = namesTableRef.current?.querySelectorAll("tbody tr");
-      const statsRows = statsTableRef.current?.querySelectorAll("tbody tr");
-
-      if (!namesRows || !statsRows) return;
-
-      const maxLength = Math.max(namesRows.length, statsRows.length);
-
-      for (let i = 0; i < maxLength; i++) {
-        const namesRow = namesRows[i] as HTMLTableRowElement;
-        const statsRow = statsRows[i] as HTMLTableRowElement;
-
-        if (namesRow && statsRow) {
-          const maxHeight = Math.max(
-            namesRow.offsetHeight,
-            statsRow.offsetHeight
-          );
-          namesRow.style.height = `${maxHeight}px`;
-          statsRow.style.height = `${maxHeight}px`;
-        }
-      }
-    };
-
-    // Небольшая задержка для того, чтобы DOM обновился
-    const timeoutId = setTimeout(syncRowHeights, 0);
-
-    // Синхронизация при изменении размера окна
-    const resizeObserver = new ResizeObserver(() => {
-      setTimeout(syncRowHeights, 0);
-    });
-    if (namesTableRef.current) resizeObserver.observe(namesTableRef.current);
-    if (statsTableRef.current) resizeObserver.observe(statsTableRef.current);
-
-    return () => {
-      clearTimeout(timeoutId);
-      resizeObserver.disconnect();
-    };
-  }, [choosenGameStats, playersNames]);
 
   return (
     <article className="main-content-wrapper">
@@ -363,22 +321,11 @@ export default function GamesStatistic() {
           <>
             <nav>
               <div className="choosen-game-filter-wrapper">
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "24px",
-                    width: "100%",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <div className="filters-column">
-                    <div
-                      style={{
-                        display: "flex",
-                        marginBottom: "12px",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
+                <div className="filters-column">
+                  <div className="filters-row">
+                    <label
+                      htmlFor="exhibition-filter"
+                      className={`filter-button ${showOnlyExhibition ? "active" : ""}`}
                     >
                       <input
                         type="checkbox"
@@ -389,20 +336,11 @@ export default function GamesStatistic() {
                           if (e.target.checked) setShowOnlyOfficial(false);
                         }}
                       />
-                      <label
-                        htmlFor="exhibition-filter"
-                        style={{ cursor: "pointer", userSelect: "none" }}
-                      >
-                        Show only Exhibition games
-                      </label>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        marginBottom: "12px",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
+                      <span>Show only Exhibition games</span>
+                    </label>
+                    <label
+                      htmlFor="official-filter"
+                      className={`filter-button ${showOnlyOfficial ? "active" : ""}`}
                     >
                       <input
                         type="checkbox"
@@ -413,21 +351,11 @@ export default function GamesStatistic() {
                           if (e.target.checked) setShowOnlyExhibition(false);
                         }}
                       />
-                      <label
-                        htmlFor="official-filter"
-                        style={{ cursor: "pointer", userSelect: "none" }}
-                      >
-                        Show official games
-                      </label>
-                    </div>
+                      <span>Show official games</span>
+                    </label>
                     {showOnlyExhibition && (
-                      <div
-                        style={{
-                          display: "flex",
-                          marginBottom: "12px",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
+                      <label
+                        className={`filter-button ${filteredGames.length === filteredByExhibition.length && filteredByExhibition.length > 0 ? "active" : ""}`}
                       >
                         <input
                           type="checkbox"
@@ -439,23 +367,18 @@ export default function GamesStatistic() {
                             filteredByExhibition.length > 0
                           }
                         />
-                        <div>
+                        <span>
                           {filteredGames.length ===
                             filteredByExhibition.length &&
                           filteredByExhibition.length > 0
                             ? "Remove all exhibition games"
                             : "Check all exhibition games"}
-                        </div>
-                      </div>
+                        </span>
+                      </label>
                     )}
                     {showOnlyOfficial && (
-                      <div
-                        style={{
-                          display: "flex",
-                          marginBottom: "12px",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
+                      <label
+                        className={`filter-button ${filteredGames.length === filteredByOfficial.length && filteredByOfficial.length > 0 ? "active" : ""}`}
                       >
                         <input
                           type="checkbox"
@@ -467,22 +390,17 @@ export default function GamesStatistic() {
                             filteredByOfficial.length > 0
                           }
                         />
-                        <div>
+                        <span>
                           {filteredGames.length === filteredByOfficial.length &&
                           filteredByOfficial.length > 0
                             ? "Remove all official games"
                             : "Check all official games"}
-                        </div>
-                      </div>
+                        </span>
+                      </label>
                     )}
                     {!showOnlyExhibition && !showOnlyOfficial && (
-                      <div
-                        style={{
-                          display: "flex",
-                          marginBottom: "12px",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
+                      <label
+                        className={`filter-button ${filteredGames.length === sortedGames.length && sortedGames.length > 0 ? "active" : ""}`}
                       >
                         <input
                           type="checkbox"
@@ -512,16 +430,17 @@ export default function GamesStatistic() {
                             sortedGames.length > 0
                           }
                         />
-                        <div>
+                        <span>
                           {filteredGames.length === sortedGames.length &&
                           sortedGames.length > 0
                             ? "Remove All"
                             : "Check All"}
-                        </div>
-                      </div>
+                        </span>
+                      </label>
                     )}
                   </div>
-                  <div className="dates-column">
+                </div>
+                <div className="dates-column">
                     {dates.map((date) => {
                       const isCollapsed = collapsedDates.has(date);
                       const gamesForDate = gamesByDate[date];
@@ -613,7 +532,6 @@ export default function GamesStatistic() {
                         </div>
                       );
                     })}
-                  </div>
                 </div>
               </div>
               <RegularButton onClick={setChoosenGames} type="button">
@@ -646,72 +564,14 @@ export default function GamesStatistic() {
             </nav>
             {choosenGameStats.length > 0 && (
               <>
-                <div style={{ 
-                  display: "flex", 
-                  justifyContent: "center", 
-                  gap: "24px", 
-                  marginBottom: "12px",
-                  flexWrap: "wrap"
-                }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <div style={{ 
-                      width: "20px", 
-                      height: "20px", 
-                      backgroundColor: "#8fbc8f",
-                      borderRadius: "4px"
-                    }}></div>
-                    <span>Reception</span>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <div style={{ 
-                      width: "20px", 
-                      height: "20px", 
-                      backgroundColor: "gainsboro",
-                      borderRadius: "4px"
-                    }}></div>
-                    <span>Attack</span>
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <div style={{ 
-                      width: "20px", 
-                      height: "20px", 
-                      backgroundColor: "khaki",
-                      borderRadius: "4px"
-                    }}></div>
-                    <span>Service</span>
-                  </div>
-                </div>
-                <div
-                  className="ratings-table-container"
-                  style={{ display: "flex" }}
-                >
-                  <table ref={namesTableRef}>
-                    <tbody className="rating-table-wrapper">
-                      <Categorys
-                        filteredPlayers={playersNames}
-                        rankByValue={rankByValue}
-                        categorys={["name"]}
-                      />
-                    </tbody>
-                  </table>
-                  <div>
-                    <table ref={statsTableRef} style={{ width: "100%" }}>
-                      <tbody className="rating-table-wrapper">
-                        <Categorys
-                          filteredPlayers={choosenGameStats.flat()}
-                          rankByValue={rankByValue}
-                          categorys={categorys}
-                        />
-                        <Rows
-                          filteredPlayers={[fullGameStats]}
-                          lastRow={true}
-                        />
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                <StatisticsTable
+                  playersStats={choosenGameStats}
+                  fullGameStats={fullGameStats}
+                  rankByValue={rankByValue}
+                  showLegend={true}
+                />
                 <nav>
-                  <GameLogs games={gameLogs} listOfGames={sortedGames} />
+                  <GameLogs games={gameLogs} listOfGames={filteredGames} />
                   {!detailedStatsOfPlayer && (
                     <RegularButton
                       onClick={() => setIsShowDistribution(!isShowDistribution)}

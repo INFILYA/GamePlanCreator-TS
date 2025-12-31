@@ -62,7 +62,8 @@ $ButtonBlue: rgb(100, 149, 237);
   }
 }
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -70,7 +71,8 @@ $ButtonBlue: rgb(100, 149, 237);
   }
 }
 
-html, body {
+html,
+body {
   text-align: center;
   background-color: white;
   color: black;
@@ -106,6 +108,10 @@ main {
   padding: 0 2vw;
   padding-top: 20px;
   box-sizing: border-box;
+  &:has(.main-content-wrapper > .ratings-section) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
   button {
     background-color: $ButtonBlue;
   }
@@ -176,6 +182,9 @@ main {
     .teamsquad-section {
       flex-shrink: 0;
       align-self: flex-start;
+      @media screen and (max-width: 767px) {
+        order: 1 !important; // Обе панели squad будут первыми только на iPhone
+      }
     }
     .rotation-panel-wrapper {
       flex-shrink: 0;
@@ -184,15 +193,37 @@ main {
     .playground-section {
       flex-shrink: 0;
       align-self: flex-start;
+      @media screen and (max-width: 767px) {
+        order: 2 !important; // Playground будет после панелей squad
+        flex: 0 0 100% !important; // Занимает всю ширину на новой строке
+        width: 100% !important;
+      }
     }
     @media screen and (max-width: 767px) {
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      align-items: flex-start !important;
+      justify-content: flex-start !important;
+      gap: 0 !important;
+      padding: 0 !important;
+      /* Гарантируем, что панели squad идут в одном ряду */
+      .teamsquad-section {
+        flex-shrink: 0 !important;
+        display: flex !important;
+        align-self: flex-start !important;
+        width: 50% !important;
+        max-width: 50% !important;
+        min-width: 50% !important;
+        flex-basis: 50% !important;
+        flex-grow: 0 !important;
+      }
     }
     @media screen and (min-width: 768px) and (max-width: 1024px) {
-      flex-wrap: wrap;
-      gap: 10px;
+      flex-wrap: nowrap; // Не переносим на новую строку на iPad
+      gap: 0.5vw; // Уменьшаем gap для экономии места
+      padding: 0 1vw; // Добавляем небольшой padding по бокам
+      box-sizing: border-box;
+      overflow-x: hidden; // Предотвращаем горизонтальный скролл
     }
     /* В statistic mode гарантируем, что все в одном ряду */
     &:has(.rotation-field-wrapper.statistic-mode) {
@@ -235,6 +266,7 @@ main {
     .teamsquad-section,
     .rotation-panel-wrapper {
       width: 22%;
+      max-width: 300px;
       background-color: gainsboro;
       text-align: center;
       border-radius: calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem);
@@ -253,18 +285,30 @@ main {
         margin-bottom: 4px;
       }
       @media screen and (max-width: 767px) {
-        width: 95%;
-        margin-bottom: 10px;
+        width: 50% !important;
+        max-width: 50% !important;
+        min-width: 50% !important;
+        margin: 0 !important;
+        padding: 8px !important;
+        order: 1 !important; // Squads будут показываться первыми в одном ряду
+        flex: 0 0 50% !important;
+        flex-shrink: 0 !important;
+        flex-grow: 0 !important;
+        align-self: flex-start !important; // Переопределяем align-self: stretch
+        box-sizing: border-box;
       }
       @media screen and (min-width: 768px) and (max-width: 1024px) {
-        width: 30%;
-        min-width: 200px;
+        width: 20%; // Уменьшаем ширину для iPad
+        min-width: 150px; // Уменьшаем минимальную ширину
+        max-width: 200px; // Ограничиваем максимальную ширину
+        padding: 0.5vw; // Уменьшаем padding
       }
     }
     /* Сужаем squad панели в statistic mode */
     &:has(.rotation-field-wrapper.statistic-mode) {
       .teamsquad-section {
         width: 17.5%;
+        max-width: 250px;
         min-width: 170px;
         padding: 0.6vw;
         .squad-wrapper .player-field-wrapper {
@@ -297,19 +341,37 @@ main {
           }
         }
         @media screen and (max-width: 767px) {
-          width: 95%;
+          width: 50% !important;
+          max-width: 50% !important;
+          min-width: 50% !important;
+          padding: 8px !important;
+          order: 1 !important; // Squads будут показываться первыми в одном ряду в statistic mode
+          margin: 0 !important;
+          flex: 0 0 50% !important;
+          flex-shrink: 0 !important;
+          flex-grow: 0 !important;
+          align-self: flex-start !important; // Переопределяем align-self: stretch
         }
         @media screen and (min-width: 768px) and (max-width: 1024px) {
-          width: 20%;
-          min-width: 180px;
+          width: 18%; // Уменьшаем для iPad
+          min-width: 150px; // Уменьшаем минимальную ширину
+          max-width: 180px; // Ограничиваем максимальную ширину
+          padding: 0.5vw; // Уменьшаем padding
         }
       }
       .playground-section {
         @media screen and (max-width: 767px) {
-          width: 95%;
+          width: 100%;
+          max-width: 100%;
+          order: 2; // Playground будет показываться после панелей squad в statistic mode
+          margin: 8px 0 0 0;
+          flex: 0 0 100%;
         }
         @media screen and (min-width: 768px) and (max-width: 1024px) {
-          width: 60%;
+          width: 64%; // Увеличиваем для iPad (18% + 64% + 18% = 100%)
+          min-width: 0;
+          max-width: none;
+          flex: 1 1 auto;
         }
       }
     }
@@ -317,6 +379,13 @@ main {
       display: flex;
       flex-direction: column;
       justify-content: center;
+      @media screen and (max-width: 767px) {
+        width: 85%;
+        max-width: 350px;
+        padding: 8px;
+        order: 3; // Rotation panel будет показываться последним
+        margin: 0 auto 15px;
+      }
       .section-content-wrapper {
         display: flex;
         flex-direction: column;
@@ -338,32 +407,168 @@ main {
       position: relative;
       z-index: 6;
     }
-    .playground-section {
-      align-self: baseline;
-      width: 56%;
-      transition: width 0.3s ease;
-      @media screen and (max-width: 767px) {
-        width: 95%;
-        align-self: center;
-      }
-      @media screen and (min-width: 768px) and (max-width: 1024px) {
-        width: 65%;
-        min-width: 400px;
+    // В обычном режиме (без statistic mode) playground занимает 75%, squad my-team 22%
+    // Используем :not(:has()) для обычного режима
+    &:not(:has(.rotation-field-wrapper.statistic-mode)) {
+      .playground-section {
+        width: 75%; // 22% (squad) + 75% (playground) = 97% (остается 3% на gap)
+        flex: 0 0 auto; // Не растягиваем, используем фиксированную ширину
       }
     }
-    /* Расширяем playground в statistic mode */
+    // Растягиваем ratings-section на всю ширину когда он на верхнем уровне (как в GamesStatistic)
+    .main-content-wrapper > .ratings-section {
+      width: 100% !important;
+      max-width: 100% !important;
+      align-self: stretch !important;
+      flex: 1 1 100% !important;
+      .section-content-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        .section-content {
+          width: 100% !important;
+          max-width: 100% !important;
+          align-items: stretch !important;
+          .ratings-table-container {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: visible !important;
+            display: flex !important;
+            align-items: flex-start !important;
+            > table {
+              flex-shrink: 0 !important;
+              min-width: 150px !important;
+              width: auto !important;
+            }
+            > div {
+              flex: 1 !important;
+              min-width: 0 !important;
+              width: 100% !important;
+              > table {
+                width: 100% !important;
+              }
+            }
+          }
+        }
+      }
+    }
+    // Растягиваем ratings-section.full-width независимо от того, где он находится
+    .main-content-wrapper .ratings-section.full-width {
+      width: 100% !important;
+      max-width: 100% !important;
+      align-self: stretch !important;
+      flex: 1 1 100% !important;
+      .section-content-wrapper {
+        width: 100% !important;
+        max-width: 100% !important;
+        .section-content {
+          width: 100% !important;
+          max-width: 100% !important;
+          align-items: stretch !important;
+          padding: 0 !important;
+          .ratings-table-container {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: visible !important;
+            display: flex !important;
+            align-items: flex-start !important;
+            margin: 0 !important;
+            > table {
+              flex-shrink: 0 !important;
+              min-width: 150px !important;
+              width: auto !important;
+            }
+            > div {
+              flex: 1 !important;
+              min-width: 0 !important;
+              width: 100% !important;
+              > table {
+                width: 100% !important;
+              }
+            }
+          }
+          .diagram-wrapper {
+            width: 99% !important;
+            display: flex !important;
+            justify-content: center !important;
+            margin-top: 2vw !important;
+            align-items: center !important;
+            flex-direction: row !important;
+            gap: 1vw !important;
+            flex-wrap: wrap !important;
+            pre {
+              flex: 0 1 auto !important;
+              min-width: 280px !important;
+              max-width: 35% !important;
+              @media screen and (min-width: 768px) and (max-width: 1024px) {
+                min-width: 240px !important;
+                max-width: 33% !important;
+              }
+              @media screen and (max-width: 767px) {
+                min-width: 100% !important;
+                max-width: 100% !important;
+              }
+            }
+            @media screen and (max-width: 767px) {
+              flex-direction: column !important;
+            }
+          }
+        }
+      }
+    }
+    .playground-section {
+      align-self: baseline;
+      width: 75%; // Изменено с 56% на 75% (теперь 22% squad + 75% playground)
+      transition: width 0.3s ease;
+      @media screen and (max-width: 767px) {
+        width: 100%;
+        max-width: 100%;
+        align-self: center;
+        order: 2; // Playground будет показываться после панелей squad
+        margin: 8px 0 0 0;
+        flex: 0 0 100%;
+      }
+      @media screen and (min-width: 768px) and (max-width: 1024px) {
+        width: 60%; // Уменьшаем для iPad
+        min-width: 0; // Убираем минимальную ширину
+        max-width: none; // Убираем ограничение
+        flex: 1 1 auto; // Позволяем растягиваться
+      }
+    }
+    /* В statistic mode: 22% (squad my-team) / 56% (playground) / 22% (правая панель) */
     &:has(.rotation-field-wrapper.statistic-mode) {
+      // В statistic mode: squad rival (скрыт), playground (56%), rotation-panel my, rotation-panel rival, squad my-team (22%)
       .playground-section {
-        width: 56%;
-        flex-shrink: 0;
+        width: 56%; // Фиксированная ширина 56% в statistic mode
+        flex: 0 0 auto; // Не растягиваем, используем фиксированную ширину
+        .section-content-wrapper {
+          width: 100%; // Растягиваем на всю ширину playground-section
+          .section-content {
+            width: 100%; // Растягиваем на всю ширину section-content-wrapper
+            .rotation-field-wrapper {
+              width: 100%; // Уже есть, но убеждаемся
+            }
+          }
+        }
       }
       .rotation-panel-wrapper {
         flex-shrink: 0;
-        min-width: 170px;
+        width: 22%; // В statistic mode: 22% (squad my-team) / 56% (playground) / 22% (правая панель)
+        max-width: 300px; // Возвращаем исходное значение как в обычном режиме
         padding: 0.6vw;
+        @media screen and (min-width: 768px) and (max-width: 1024px) {
+          width: 18%; // Уменьшаем для iPad
+          max-width: 200px; // Ограничиваем максимальную ширину
+          padding: 0.5vw; // Уменьшаем padding
+        }
       }
       .teamsquad-section {
         flex-shrink: 0;
+        width: 22%; // В statistic mode: 22% (squad my-team) / 56% (playground) / 22% (правая панель)
+        max-width: 250px;
+        min-width: 170px;
+        padding: 0.6vw;
         .section-border {
           width: calc(25% - 2.4vw);
           left: 1.2vw;
@@ -395,6 +600,57 @@ main {
       max-width: 340px;
     }
     .ratings-section {
+      &.full-width {
+        width: 100% !important;
+        max-width: 100% !important;
+        align-self: stretch !important;
+        flex: 1 1 100% !important;
+        .section-content-wrapper {
+          width: 100% !important;
+          max-width: 100% !important;
+          .section-content {
+            width: 100% !important;
+            max-width: 100% !important;
+            align-items: stretch !important;
+            padding: 0 !important;
+            .ratings-table-container {
+              width: 100% !important;
+              max-width: 100% !important;
+              margin: 0 !important;
+              > table {
+                width: 100% !important;
+              }
+              > div {
+                width: 100% !important;
+                > table {
+                  width: 100% !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    // Растягиваем родительские элементы когда есть full-width ratings-section
+    .playground-section:has(.ratings-section.full-width) {
+      width: 100% !important;
+      max-width: 100% !important;
+      flex: 1 1 100% !important;
+      align-self: stretch !important;
+      min-width: 100% !important;
+    }
+    .main-content-wrapper:has(.ratings-section.full-width) {
+      flex-wrap: wrap !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      justify-content: stretch !important;
+      .playground-section:has(.ratings-section.full-width) {
+        flex: 1 1 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 100% !important;
+      }
+    }
       @media screen and (max-width: 1600px) {
         width: 95%;
       }
@@ -418,8 +674,7 @@ main {
         bottom: 0;
         left: 0;
         overflow: hidden;
-        background: 
-          repeating-linear-gradient(
+        background: repeating-linear-gradient(
             90deg,
             rgba(255, 255, 255, 0.03) 0px,
             rgba(255, 255, 255, 0.03) 1px,
@@ -433,44 +688,85 @@ main {
             transparent 1px,
             transparent 30px
           ),
-          linear-gradient(135deg, #e8dcc6 0%, #d4c4a8 25%, #c4b498 50%, #d4c4a8 75%, #e8dcc6 100%);
-        background-image: 
-          linear-gradient(to right, transparent 0%, #ffffff 2%, #ffffff 98%, transparent 100%),
-          linear-gradient(to bottom, transparent 0%, #ffffff 33.33%, transparent 33.33%, transparent 66.66%, #ffffff 66.66%, transparent 100%),
-          linear-gradient(to bottom, transparent 0%, #ffffff 33.33%, transparent 33.33%, transparent 66.66%, #ffffff 66.66%, transparent 100%),
-          linear-gradient(to bottom, transparent 0%, #ffffff 33.33%, transparent 33.33%, transparent 66.66%, #ffffff 66.66%, transparent 100%);
-        background-size: 
-          100% 4px,
-          3px 100%,
-          3px 100%,
-          3px 100%;
-        background-position: 
-          center 66.66%,
-          0% 0%,
-          33.33% 0%,
-          66.66% 0%;
+          linear-gradient(
+            135deg,
+            #e8dcc6 0%,
+            #d4c4a8 25%,
+            #c4b498 50%,
+            #d4c4a8 75%,
+            #e8dcc6 100%
+          );
+        background-image: linear-gradient(
+            to right,
+            transparent 0%,
+            #ffffff 2%,
+            #ffffff 98%,
+            transparent 100%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 0%,
+            #ffffff 33.33%,
+            transparent 33.33%,
+            transparent 66.66%,
+            #ffffff 66.66%,
+            transparent 100%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 0%,
+            #ffffff 33.33%,
+            transparent 33.33%,
+            transparent 66.66%,
+            #ffffff 66.66%,
+            transparent 100%
+          ),
+          linear-gradient(
+            to bottom,
+            transparent 0%,
+            #ffffff 33.33%,
+            transparent 33.33%,
+            transparent 66.66%,
+            #ffffff 66.66%,
+            transparent 100%
+          );
+        background-size: 100% 4px, 3px 100%, 3px 100%, 3px 100%;
+        background-position: center 66.66%, 0% 0%, 33.33% 0%, 66.66% 0%;
         background-repeat: no-repeat;
         position: relative;
         &::before {
-          content: '';
+          content: "";
           position: absolute;
           top: 50%;
           left: 0;
           right: 0;
           height: 6px;
-          background: linear-gradient(90deg, transparent 0%, #ffffff 4%, #ffffff 96%, transparent 100%);
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            #ffffff 4%,
+            #ffffff 96%,
+            transparent 100%
+          );
           z-index: 1;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2),
+            inset 0 1px 2px rgba(255, 255, 255, 0.6);
           transform: translateY(-50%);
         }
         &::after {
-          content: '';
+          content: "";
           position: absolute;
           top: 33.33%;
           left: 0;
           right: 0;
           height: 4px;
-          background: linear-gradient(90deg, transparent 0%, #ffffff 2%, #ffffff 98%, transparent 100%);
+          background: linear-gradient(
+            90deg,
+            transparent 0%,
+            #ffffff 2%,
+            #ffffff 98%,
+            transparent 100%
+          );
           z-index: 1;
           box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
           transform: translateY(-50%);
@@ -518,6 +814,15 @@ main {
         display: flex;
         flex-direction: column;
       }
+      // Ограничиваем section-border на iPhone
+      @media screen and (max-width: 767px) {
+        .section-border {
+          left: 0;
+          right: 0;
+          width: 100%;
+          max-width: 100%;
+        }
+      }
       // Синяя полоска только для правой панели (my-team) между именем и номером
       &.my-team {
         .section-content-wrapper {
@@ -528,13 +833,17 @@ main {
                   position: relative;
                   overflow: visible;
                   &::after {
-                    content: '';
+                    content: "";
                     position: absolute;
                     right: 0;
                     top: 0;
                     bottom: 0;
                     width: 4px;
-                    background: linear-gradient(180deg, #0272be 0%, #00a8ff 100%);
+                    background: linear-gradient(
+                      180deg,
+                      #0272be 0%,
+                      #00a8ff 100%
+                    );
                     border-radius: 0 4px 4px 0;
                     z-index: 5;
                   }
@@ -633,7 +942,11 @@ main {
               transform: translateY(0);
             }
             &[style*="orangered"] {
-              background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%) !important;
+              background: linear-gradient(
+                135deg,
+                #ff6b35 0%,
+                #ff8c42 100%
+              ) !important;
               color: white !important;
               border-color: #ff6b35 !important;
               box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4) !important;
@@ -739,13 +1052,17 @@ main {
             justify-content: center;
             line-height: 1;
             &::before {
-              content: '';
+              content: "";
               position: absolute;
               top: 0;
               left: 0;
               right: 0;
               bottom: 0;
-              background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+              background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.2) 0%,
+                rgba(255, 255, 255, 0) 100%
+              );
               pointer-events: none;
             }
             &:hover {
@@ -765,11 +1082,19 @@ main {
             }
             &[style*="background-color: #f0f"],
             &.playerNumber {
-              background: linear-gradient(135deg, #ff1493 0%, #c71585 100%) !important;
+              background: linear-gradient(
+                135deg,
+                #ff1493 0%,
+                #c71585 100%
+              ) !important;
               border-color: #c71585 !important;
               box-shadow: 0 3px 6px rgba(199, 21, 133, 0.3) !important;
               &:hover {
-                background: linear-gradient(135deg, #c71585 0%, #ff1493 100%) !important;
+                background: linear-gradient(
+                  135deg,
+                  #c71585 0%,
+                  #ff1493 100%
+                ) !important;
                 box-shadow: 0 5px 12px rgba(199, 21, 133, 0.4) !important;
               }
             }
@@ -821,16 +1146,69 @@ main {
             }
             &[style*="turquoise"],
             &[style*="background-color: turquoise"] {
-              background: linear-gradient(135deg, #20b2aa 0%, #008b8b 100%) !important;
+              background: linear-gradient(
+                135deg,
+                #20b2aa 0%,
+                #008b8b 100%
+              ) !important;
               color: white !important;
               border-color: #008b8b !important;
               &:hover {
-                background: linear-gradient(135deg, #008b8b 0%, #20b2aa 100%) !important;
+                background: linear-gradient(
+                  135deg,
+                  #008b8b 0%,
+                  #20b2aa 100%
+                ) !important;
                 border-color: #00ced1 !important;
               }
             }
             @media screen and (max-width: 620px) {
               font-size: 1.1vw;
+            }
+          }
+        }
+        // iPhone стили (до 767px) - ограничиваем растяжение кнопок
+        @media screen and (max-width: 767px) {
+          .squad-wrapper {
+            .player-field-wrapper {
+              min-height: 26px;
+              height: 26px;
+              max-width: 100%;
+              .playerNumber-wrapper {
+                flex: 0 0 auto;
+                min-width: 35px;
+                max-width: 45px;
+                button {
+                  min-height: 26px;
+                  height: 26px;
+                  font-size: 0.8rem;
+                  padding: 3px 6px;
+                  width: auto;
+                }
+              }
+              .player-surname-wrapper {
+                flex: 1 1 auto;
+                min-width: 0;
+                max-width: calc(100% - 90px);
+                button {
+                  min-height: 26px;
+                  height: 26px;
+                  font-size: 0.7rem;
+                  padding: 3px 5px;
+                  max-width: 100%;
+                }
+              }
+              .moveToBoard-wrapper {
+                flex: 0 0 auto;
+                min-width: 30px;
+                max-width: 35px;
+                select {
+                  min-height: 26px;
+                  height: 26px;
+                  padding: 3px 18px 3px 5px;
+                  font-size: 0.65rem;
+                }
+              }
             }
           }
         }
@@ -858,8 +1236,16 @@ main {
           .team-label-wrapper {
             display: none;
             .team-label {
-              font-size: clamp(0.9rem, calc((var(--normal-text-size-value) - 0.9) * 3vw + 0.5rem), 1.5rem);
-              background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+              font-size: clamp(
+                0.9rem,
+                calc((var(--normal-text-size-value) - 0.9) * 3vw + 0.5rem),
+                1.5rem
+              );
+              background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.95) 0%,
+                rgba(248, 249, 250, 0.95) 100%
+              );
               border: 2px solid #0272be;
               border-radius: 12px;
               width: 100%;
@@ -880,7 +1266,11 @@ main {
                 border-color: #00a8ff;
                 box-shadow: 0 4px 12px rgba(2, 114, 190, 0.25);
                 transform: translateY(-2px);
-                background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 249, 250, 1) 100%);
+                background: linear-gradient(
+                  135deg,
+                  rgba(255, 255, 255, 1) 0%,
+                  rgba(248, 249, 250, 1) 100%
+                );
               }
             }
           }
@@ -898,18 +1288,29 @@ main {
               filter: drop-shadow(0 4px 8px rgba(2, 114, 190, 0.3));
               border-radius: 50%;
               padding: 4px;
-              background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(248, 249, 250, 0.2) 100%);
-              box-shadow: 0 0 0 2px rgba(2, 114, 190, 0.1), inset 0 0 20px rgba(2, 114, 190, 0.1);
+              background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.2) 0%,
+                rgba(248, 249, 250, 0.2) 100%
+              );
+              box-shadow: 0 0 0 2px rgba(2, 114, 190, 0.1),
+                inset 0 0 20px rgba(2, 114, 190, 0.1);
               transform-style: preserve-3d;
               perspective: 1000px;
               @media screen and (max-width: 620px) {
-                width: clamp(30px, calc((var(--normal-text-size-value) - 1) * 1.2vw + 1rem), 40px);
+                width: clamp(
+                  30px,
+                  calc((var(--normal-text-size-value) - 1) * 1.2vw + 1rem),
+                  40px
+                );
               }
               &:hover {
-                animation: coinFlip 1.5s ease-in-out 0s infinite, pulse 1.5s ease-in-out 0s infinite;
+                animation: coinFlip 1.5s ease-in-out 0s infinite,
+                  pulse 1.5s ease-in-out 0s infinite;
                 filter: drop-shadow(0 6px 12px rgba(2, 114, 190, 0.5));
                 transform: scale(1.15);
-                box-shadow: 0 0 0 3px rgba(2, 114, 190, 0.2), inset 0 0 30px rgba(2, 114, 190, 0.2);
+                box-shadow: 0 0 0 3px rgba(2, 114, 190, 0.2),
+                  inset 0 0 30px rgba(2, 114, 190, 0.2);
               }
             }
           }
@@ -917,12 +1318,23 @@ main {
         .squad-wrapper {
           width: 100%;
           margin-top: 0;
+          @media screen and (max-width: 767px) {
+            width: auto;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
           .player-field-wrapper {
             display: flex;
             margin: 3px 0;
             width: 100%;
             min-height: 2vw;
             align-items: stretch;
+            @media screen and (max-width: 767px) {
+              width: auto;
+              max-width: 320px;
+            }
             .playerNumber-wrapper {
               display: flex;
               align-items: stretch;
@@ -941,6 +1353,10 @@ main {
               height: auto;
               width: 100%;
               margin-right: 4px;
+              @media screen and (max-width: 767px) {
+                width: auto;
+                max-width: 200px;
+              }
               button {
                 height: 100%;
                 width: 100%;
@@ -948,6 +1364,56 @@ main {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                @media screen and (max-width: 767px) {
+                  width: auto;
+                  max-width: 200px;
+                }
+              }
+            }
+          }
+          // iPhone стили (до 767px) - ограничиваем растяжение кнопок
+          @media screen and (max-width: 767px) {
+            .player-field-wrapper {
+              min-height: 26px;
+              height: 26px;
+              width: auto !important;
+              max-width: 320px;
+              .playerNumber-wrapper {
+                flex: 0 0 auto;
+                min-width: 35px;
+                max-width: 45px;
+                button {
+                  min-height: 26px;
+                  height: 26px;
+                  font-size: 0.8rem;
+                  padding: 3px 6px;
+                  width: auto !important;
+                }
+              }
+              .player-surname-wrapper {
+                flex: 0 1 auto;
+                min-width: 0;
+                max-width: 180px;
+                margin-right: 4px;
+                button {
+                  min-height: 26px;
+                  height: 26px;
+                  font-size: 0.7rem;
+                  padding: 3px 5px;
+                  width: auto !important;
+                  max-width: 180px;
+                }
+              }
+              .moveToBoard-wrapper {
+                flex: 0 0 auto;
+                min-width: 30px;
+                max-width: 35px;
+                select {
+                  min-height: 26px;
+                  height: 26px;
+                  padding: 3px 18px 3px 5px;
+                  font-size: 0.65rem;
+                }
               }
             }
           }
@@ -1003,7 +1469,7 @@ main {
               height: auto;
               position: relative;
               &::after {
-                content: '▶';
+                content: "▶";
                 position: absolute;
                 right: 6px;
                 top: 50%;
@@ -1056,7 +1522,11 @@ main {
                 }
                 option {
                   padding: 24px 32px;
-                  font-size: clamp(1.8rem, calc((var(--normal-text-size-value) - 0.9) * 6vw + 0.6rem), 2.4rem);
+                  font-size: clamp(
+                    1.8rem,
+                    calc((var(--normal-text-size-value) - 0.9) * 6vw + 0.6rem),
+                    2.4rem
+                  );
                   font-weight: 700;
                   color: #0272be;
                   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -1069,7 +1539,11 @@ main {
                   &:hover,
                   &:focus,
                   &:checked {
-                    background: linear-gradient(135deg, #0272be 0%, #00a8ff 100%);
+                    background: linear-gradient(
+                      135deg,
+                      #0272be 0%,
+                      #00a8ff 100%
+                    );
                     color: white;
                     border-color: #0272be;
                   }
@@ -1142,7 +1616,8 @@ main {
               justify-content: center;
               gap: 10px;
               position: relative;
-              input, select {
+              input,
+              select {
                 position: relative;
                 z-index: 2;
               }
@@ -1150,6 +1625,10 @@ main {
                 position: relative;
                 z-index: 1;
                 align-self: center;
+                height: 100%; // Выравниваем по высоте input/select
+                display: flex;
+                align-items: center;
+                box-sizing: border-box;
               }
             }
             input[type="checkbox"] {
@@ -1171,7 +1650,11 @@ main {
               text-align: center;
               font-weight: 600;
               height: 100%;
-              font-size: clamp(0.8rem, calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem), 1.2rem);
+              font-size: clamp(
+                0.8rem,
+                calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem),
+                1.2rem
+              );
               border-radius: 8px;
               padding: 4px 8px;
               cursor: pointer;
@@ -1195,11 +1678,20 @@ main {
             h2 {
               color: rgba(2, 114, 190, 0.4);
               font-weight: 600;
+              font-size: clamp(
+                0.8rem,
+                calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem),
+                1.2rem
+              ); // Такой же размер шрифта как у input и select
               text-shadow: none;
               letter-spacing: 0.5px;
               margin: 0;
               padding: 4px 8px;
-              background: linear-gradient(135deg, rgba(2, 114, 190, 0.05) 0%, rgba(0, 168, 255, 0.05) 100%);
+              background: linear-gradient(
+                135deg,
+                rgba(2, 114, 190, 0.05) 0%,
+                rgba(0, 168, 255, 0.05) 100%
+              );
               border-radius: 8px;
               border: 1px solid rgba(2, 114, 190, 0.1);
               transition: all 0.3s ease;
@@ -1207,7 +1699,11 @@ main {
               &.exhibition-game-active {
                 color: #ff4444;
                 font-weight: 700;
-                background: linear-gradient(135deg, rgba(255, 68, 68, 0.1) 0%, rgba(255, 100, 100, 0.1) 100%);
+                background: linear-gradient(
+                  135deg,
+                  rgba(255, 68, 68, 0.1) 0%,
+                  rgba(255, 100, 100, 0.1) 100%
+                );
                 border: 1px solid rgba(255, 68, 68, 0.3);
                 text-shadow: 0 2px 4px rgba(255, 68, 68, 0.2);
                 opacity: 1;
@@ -1235,7 +1731,9 @@ main {
             color: $White;
             cursor: pointer;
             h2 {
-              font-size: calc((var(--normal-text-size-value) - 1) * 3vw + 0.7rem);
+              font-size: calc(
+                (var(--normal-text-size-value) - 1) * 3vw + 0.7rem
+              );
             }
           }
           .show-details {
@@ -1267,7 +1765,9 @@ main {
                 display: flex;
                 font-weight: bold;
                 padding: 0.3vw 0;
-                font-size: calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem);
+                font-size: calc(
+                  (var(--normal-text-size-value) - 1) * 5vmax + 0.2rem
+                );
                 div {
                   white-space: nowrap;
                   display: flex;
@@ -1298,7 +1798,9 @@ main {
                 width: 100%;
               }
               .efficency-wrapper {
-                font-size: calc((var(--normal-text-size-value) - 1) * 5vmax + 0.2rem);
+                font-size: calc(
+                  (var(--normal-text-size-value) - 1) * 5vmax + 0.2rem
+                );
                 display: flex;
                 justify-content: center;
                 font-weight: 600;
@@ -1349,10 +1851,11 @@ main {
           display: flex;
           flex-direction: column;
           .reset-button-wrapper {
-            margin: -10px 0;
+            margin: 10px 0; // Изменено с -10px на 10px, чтобы не заезжало под header
             justify-content: space-between;
             position: relative;
             z-index: 11;
+            padding-top: 10px; // Добавляем отступ сверху
           }
           &.statistic-mode {
             .reset-button-wrapper {
@@ -1388,10 +1891,15 @@ main {
               min-height: 18.5px;
             }
             .zone-names-wrapper {
-              height: 12vmax;
+              height: 15vmax;
               width: 100%;
               font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
               align-items: center;
+              border: 3px solid rgba(2, 114, 190, 0.8) !important;
+              border-radius: 8px;
+              min-height: 120px;
+              box-sizing: border-box;
+              background-color: rgba(2, 114, 190, 0.1) !important;
             }
             .card-content {
               width: 100%;
@@ -1399,6 +1907,11 @@ main {
               flex-direction: column;
               align-items: center;
               min-height: 18.5px;
+              border: 3px solid rgba(2, 114, 190, 0.8) !important;
+              border-radius: 8px;
+              box-sizing: border-box;
+              padding: 4px;
+              background-color: rgba(2, 114, 190, 0.1) !important;
             }
             .player-field-wrapper,
             .zone-names-wrapper {
@@ -1411,7 +1924,11 @@ main {
               border-radius: 12px;
               width: 90%;
               padding: 6px;
-              background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
+              background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(248, 249, 250, 0.9) 100%
+              );
               box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
               box-sizing: border-box;
               font-weight: 700;
@@ -1449,7 +1966,11 @@ main {
               .border-wrapper {
                 height: 166px;
                 width: 2px;
-                background: linear-gradient(180deg, rgba(2, 114, 190, 0.3) 0%, rgba(0, 168, 255, 0.3) 100%);
+                background: linear-gradient(
+                  180deg,
+                  rgba(2, 114, 190, 0.3) 0%,
+                  rgba(0, 168, 255, 0.3) 100%
+                );
                 border-radius: 2px;
                 margin: 0 4px;
               }
@@ -1491,7 +2012,11 @@ main {
                       }
                     }
                     th {
-                      background: linear-gradient(135deg, rgba(2, 114, 190, 0.1) 0%, rgba(0, 168, 255, 0.1) 100%);
+                      background: linear-gradient(
+                        135deg,
+                        rgba(2, 114, 190, 0.1) 0%,
+                        rgba(0, 168, 255, 0.1) 100%
+                      );
                       font-weight: 800;
                       font-size: 1.1em;
                       color: #0272be;
@@ -1516,29 +2041,36 @@ main {
                       font-size: 1em;
                       color: #000000;
                       text-shadow: none;
-                      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
                       border: 1px solid rgba(0, 0, 0, 0.1);
                       position: relative;
                       overflow: hidden;
                       &[style*="background-color"] {
                         &::before {
-                          content: '';
+                          content: "";
                           position: absolute;
                           top: 0;
                           left: 0;
                           right: 0;
                           bottom: 0;
-                          background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+                          background: linear-gradient(
+                            135deg,
+                            rgba(255, 255, 255, 0.2) 0%,
+                            rgba(255, 255, 255, 0) 100%
+                          );
                           pointer-events: none;
                         }
                         &:hover {
                           transform: translateY(-2px) scale(1.05);
-                          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+                          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25),
+                            inset 0 1px 0 rgba(255, 255, 255, 0.3);
                           filter: brightness(1.1);
                         }
                         &:active {
                           transform: translateY(0) scale(0.98);
-                          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.1);
+                          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2),
+                            inset 0 2px 4px rgba(0, 0, 0, 0.1);
                           filter: brightness(0.95);
                         }
                       }
@@ -1628,7 +2160,14 @@ main {
             }
             .zone-names-wrapper {
               height: 2vmax;
-              font-size: calc((var(--normal-text-size-value) - 1) * 4vw + 0.8rem);
+              font-size: calc(
+                (var(--normal-text-size-value) - 1) * 4vw + 0.8rem
+              );
+              border: 3px solid rgba(2, 114, 190, 0.8) !important;
+              border-radius: 8px;
+              min-height: 40px;
+              box-sizing: border-box;
+              background-color: rgba(2, 114, 190, 0.1) !important;
             }
             .errors-field-wrapper {
               width: 85%;
@@ -1636,7 +2175,8 @@ main {
                 height: 100px;
               }
               table tbody tr {
-                th, td {
+                th,
+                td {
                   height: 0.8vw;
                   font-size: 0.85em;
                   padding: 2px 1px;
@@ -1667,6 +2207,11 @@ main {
             .nameOfZone-field-wrapper {
               height: 2vmax;
               width: 33.33%;
+              border: 3px solid rgba(2, 114, 190, 0.8) !important;
+              border-radius: 8px;
+              min-height: 40px;
+              box-sizing: border-box;
+              background-color: rgba(2, 114, 190, 0.1) !important;
             }
           }
         }

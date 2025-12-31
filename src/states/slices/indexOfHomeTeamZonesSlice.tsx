@@ -14,19 +14,25 @@ export const indexOfHomeTeamZonesSlice = createSlice({
   name: "indexOfHomeTeamZones",
   initialState,
   reducers: {
-    setHomeTeamIndexOfZones: (state, action: PayloadAction<{ player: TPlayer; zone: number }>) => {
+    setHomeTeamIndexOfZones: (
+      state,
+      action: PayloadAction<{ player: TPlayer; zone: number }>
+    ) => {
       state.indexOfHomeTeamZones = state.indexOfHomeTeamZones.map((player) =>
-        player.boardPosition === action.payload.zone ? action.payload.player : player
+        player.boardPosition === action.payload.zone
+          ? action.payload.player
+          : player
       );
     },
     resetHomeTeamIndexOfZones: (
       state,
       action: PayloadAction<{ startingSix: TPlayer[]; player: TPlayer }>
     ) => {
-      state.indexOfHomeTeamZones = state.indexOfHomeTeamZones.map((player, index) =>
-        index === action.payload.startingSix.indexOf(action.payload.player)
-          ? { ...emptyPlayers[0], boardPosition: positions[index] }
-          : player
+      state.indexOfHomeTeamZones = state.indexOfHomeTeamZones.map(
+        (player, index) =>
+          index === action.payload.startingSix.indexOf(action.payload.player)
+            ? { ...emptyPlayers[0], boardPosition: positions[index] }
+            : player
       );
     },
     updateInfoOfSubPlayers: (state, action: PayloadAction<TPlayer>) => {

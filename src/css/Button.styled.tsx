@@ -184,4 +184,11 @@ export const RegularButton = styled.button<TButton>`
     margin: 0.3vmax;
     min-width: 2.5vmax;
   }
+  
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    font-size: clamp(0.9rem, 1.8vw, 1.1rem); /* Адаптация для iPad */
+    padding: clamp(5px, 0.45vw, 7px) clamp(10px, 0.9vw, 14px);
+    margin: 0.4vmax;
+    min-width: 2.8vmax;
+  }
 `;
