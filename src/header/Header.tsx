@@ -1,20 +1,16 @@
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../config/firebase";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { signOut } from "firebase/auth";
 import { NavLink, useNavigate } from "react-router-dom";
 import { setInfoOfPlayer } from "../states/slices/playerInfoSlice";
 import { SetDate } from "../utilities/SetDate";
-import { selectHomeTeam } from "../states/slices/homeTeamSlice";
-import { selectGuestTeam } from "../states/slices/guestTeamSlice";
 import { RegularButton } from "../css/Button.styled";
 
 export function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isRegistratedUser] = useAuthState(auth);
-  const homeTeam = useSelector(selectHomeTeam);
-  const guestTeam = useSelector(selectGuestTeam);
 
   function openAuthWindow() {
     navigate("/Auth");
