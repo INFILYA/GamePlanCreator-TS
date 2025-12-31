@@ -222,6 +222,7 @@ export function HomePage() {
     };
   }
 
+
   function createDragOverHandler(zoneIndex: number, teamType: "rival") {
     return (e: React.DragEvent) => {
       e.preventDefault();
@@ -556,66 +557,88 @@ export function HomePage() {
                 )}
               </div>
               {!showCurrentGameStats && (
-                <div className="row-zones-wrapper">
-                  {guestTeamOptions.length > 0 &&
-                    guestTeamOptions.map((option, index) =>
-                      checkNumbers(option.boardPosition) ? (
-                        <div
-                          key={index}
-                          onDrop={blockDrop}
-                          onDragOver={blockDragOver}
-                          onDragLeave={handleDragLeaveZone}
-                          style={{
-                            backgroundColor:
-                              draggedOverZone?.zoneIndex === index &&
-                              draggedOverZone?.teamType === "rival"
-                                ? "rgba(2, 114, 190, 0.3)"
-                                : "transparent",
-                            border:
-                              draggedOverZone?.zoneIndex === index &&
-                              draggedOverZone?.teamType === "rival"
-                                ? "2px dashed #0272be"
-                                : "none",
-                            borderRadius: "8px",
-                            transition: "all 0.2s ease",
-                          }}
-                        >
-                          <IconOfPlayer
-                            showSquads={showSquads}
-                            player={option}
-                            startingSix={guestTeamOptions}
-                            nextRotation={nextRotation}
-                            setNextRotation={setNextRotation}
-                          />
-                        </div>
-                      ) : (
-                        <div
-                          className="zone-names-wrapper"
-                          key={"_" + index}
-                          onDrop={createDropHandler(index, "rival")}
-                          onDragOver={createDragOverHandler(index, "rival")}
-                          onDragLeave={handleDragLeaveZone}
-                          style={{
-                            backgroundColor:
-                              draggedOverZone?.zoneIndex === index &&
-                              draggedOverZone?.teamType === "rival"
-                                ? "rgba(2, 114, 190, 0.5)"
-                                : "rgba(2, 114, 190, 0.1)",
-                            border:
-                              draggedOverZone?.zoneIndex === index &&
-                              draggedOverZone?.teamType === "rival"
-                                ? "3px solid #0272be"
-                                : "3px solid rgba(2, 114, 190, 0.8)",
-                            borderRadius: "8px",
-                            transition: "all 0.2s ease",
-                            minHeight: "120px",
-                          }}
-                        >
-                          P{correctZones(index)}
-                        </div>
-                      )
-                    )}
-                </div>
+                <>
+                  <div className="row-zones-wrapper">
+                    {guestTeamOptions.length > 0 &&
+                      guestTeamOptions.map((option, index) =>
+                        checkNumbers(option.boardPosition) ? (
+                          <div
+                            key={index}
+                            onDrop={blockDrop}
+                            onDragOver={blockDragOver}
+                            onDragLeave={handleDragLeaveZone}
+                            style={{
+                              backgroundColor:
+                                draggedOverZone?.zoneIndex === index &&
+                                draggedOverZone?.teamType === "rival"
+                                  ? "rgba(2, 114, 190, 0.3)"
+                                  : "transparent",
+                              border:
+                                draggedOverZone?.zoneIndex === index &&
+                                draggedOverZone?.teamType === "rival"
+                                  ? "2px dashed #0272be"
+                                  : "none",
+                              borderRadius: "8px",
+                              transition: "all 0.2s ease",
+                            }}
+                          >
+                            <IconOfPlayer
+                              showSquads={showSquads}
+                              player={option}
+                              startingSix={guestTeamOptions}
+                              nextRotation={nextRotation}
+                              setNextRotation={setNextRotation}
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className="zone-names-wrapper"
+                            key={"_" + index}
+                            onDrop={createDropHandler(index, "rival")}
+                            onDragOver={createDragOverHandler(index, "rival")}
+                            onDragLeave={handleDragLeaveZone}
+                            style={{
+                              backgroundColor:
+                                draggedOverZone?.zoneIndex === index &&
+                                draggedOverZone?.teamType === "rival"
+                                  ? "rgba(2, 114, 190, 0.5)"
+                                  : "rgba(2, 114, 190, 0.1)",
+                              border:
+                                draggedOverZone?.zoneIndex === index &&
+                                draggedOverZone?.teamType === "rival"
+                                  ? "3px solid #0272be"
+                                  : "3px solid rgba(2, 114, 190, 0.8)",
+                              borderRadius: "8px",
+                              transition: "all 0.2s ease",
+                              minHeight: "96px",
+                            }}
+                          >
+                            P{correctZones(index)}
+                          </div>
+                        )
+                      )}
+                    {/* Ячейка для либеро - размещена под зоной P6 */}
+                    <div
+                      className="zone-names-wrapper"
+                      key="libero-cell"
+                      style={{
+                        backgroundColor: "rgba(64, 224, 208, 0.1)",
+                        border: "3px solid rgba(64, 224, 208, 0.8)",
+                        borderRadius: "8px",
+                        transition: "all 0.2s ease",
+                        minHeight: "96px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gridColumn: "2",
+                      }}
+                    >
+                      <div style={{ color: "turquoise", fontWeight: "bold" }}>
+                        LIBERO
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
               {currentGameStats.length > 0 &&
                 !showSquads &&

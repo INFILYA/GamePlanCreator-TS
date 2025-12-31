@@ -1334,7 +1334,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   align-items: flex-start;
   padding-top: clamp(15px, 1.5vw, 20px); /* Добавляем отступ сверху, чтобы не заезжало под header */
   position: relative;
-  min-height: clamp(100px, 10vw, 120px);
+  min-height: clamp(80px, 10vw, 96px);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper:not(.statistic-mode) .reset-button-wrapper {
   min-height: auto;
@@ -1344,7 +1344,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .reset-button-wrapper {
   margin-top: 0.2vw;
   justify-content: center;
-  min-height: clamp(100px, 10vw, 120px);
+  min-height: clamp(80px, 10vw, 96px);
   align-items: center;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper > div:not(.match-number-wrapper) {
@@ -1630,7 +1630,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .zone-names-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .zone-names-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .zone-names-wrapper {
-  height: 15vmax;
+  height: 12vmax;
   width: 100%;
   font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
   align-items: center;

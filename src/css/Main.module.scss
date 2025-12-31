@@ -1582,7 +1582,7 @@ main {
           align-items: flex-start;
           position: relative;
           padding-top: clamp(15px, 1.5vw, 20px);
-          min-height: clamp(100px, 10vw, 120px);
+          min-height: clamp(80px, 10vw, 96px);
           &:not(:has(.rotation-field-wrapper.statistic-mode)) {
             min-height: auto;
             padding-bottom: clamp(5px, 0.8vw, 10px);
@@ -1884,7 +1884,7 @@ main {
           &.statistic-mode {
             .reset-button-wrapper {
               margin-top: 0.2vw;
-              min-height: clamp(100px, 10vw, 120px);
+              min-height: clamp(80px, 10vw, 96px);
               align-items: center;
             }
           }
@@ -1952,13 +1952,13 @@ main {
               min-height: 18.5px;
             }
             .zone-names-wrapper {
-              height: 15vmax;
+              height: 12vmax;
               width: 100%;
               font-size: calc((var(--normal-text-size-value) - 1) * 5vw + 1rem);
               align-items: center;
               border: 3px solid rgba(2, 114, 190, 0.8) !important;
               border-radius: 8px;
-              min-height: 120px;
+              min-height: 96px;
               box-sizing: border-box;
               background-color: rgba(2, 114, 190, 0.1) !important;
             }
