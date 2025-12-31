@@ -75,7 +75,7 @@ export function HomePage() {
   const [rivalRotation, setRivalRotation] = useState(1);
   const gamesStats = useSelector(selectGamesStats);
 
-  const showGuestTeam = guestTeam && guestTeam.length !== 0;
+  const showGuestTeam = guestTeam.length !== 0;
 
   function resetTheBoardForGuestTeam() {
     dispatch(setGuestPlayers([]));
@@ -95,7 +95,7 @@ export function HomePage() {
   }
 
   function calculateForTeamData<T extends TTeam | TPlayer>(obj: T) {
-    if (!guestTeam || guestTeam.length === 0) {
+    if (guestTeam.length === 0) {
       return obj as TTeam;
     }
     const team = { ...guestTeam[0] };
@@ -120,7 +120,7 @@ export function HomePage() {
   async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // download solo game statisic
-    if (!guestTeam || guestTeam.length === 0 || !guestTeam[0]) return;
+    if (guestTeam.length === 0) return;
     const matchInfo = `${currentDate()}; ${
       guestTeam[0].id
     } - ${opponentTeamName} ${exhibitionGame ? "|| Exhibition game" : ""}`;
@@ -146,7 +146,7 @@ export function HomePage() {
       async function setPlayersToData(player: TPlayer) {
         await set(playersRef(player.name), player);
       }
-      if (!guestTeam || guestTeam.length === 0 || !guestTeam[0]) return;
+      if (guestTeam.length === 0) return;
       const updatedPlayers = listOfPlayers.filter(
         (player) => player.team === guestTeam[0].name
       );
@@ -229,7 +229,12 @@ export function HomePage() {
       const currentZone = e.dataTransfer.getData("currentZone");
 
       // Показываем визуальную индикацию только если это перенос из squads (нет currentZone) и команда совпадает
-      if (!currentZone && team === "rival" && teamType === "rival" && guestTeamOptions && guestTeamOptions.length > 0) {
+      if (
+        !currentZone &&
+        team === "rival" &&
+        teamType === "rival" &&
+        guestTeamOptions.length > 0
+      ) {
         // Проверяем, занята ли зона другим игроком
         const boardPosition = positions[zoneIndex];
         const existingPlayer = guestTeamOptions.find(
@@ -552,120 +557,122 @@ export function HomePage() {
               </div>
               {!showCurrentGameStats && (
                 <div className="row-zones-wrapper">
-                  {guestTeamOptions && guestTeamOptions.length > 0 && guestTeamOptions.slice(0, 3).map((option, index) =>
-                    checkNumbers(option.boardPosition) ? (
-                      <div
-                        key={index}
-                        onDrop={blockDrop}
-                        onDragOver={blockDragOver}
-                        onDragLeave={handleDragLeaveZone}
-                        style={{
-                          backgroundColor:
-                            draggedOverZone?.zoneIndex === index &&
-                            draggedOverZone?.teamType === "rival"
-                              ? "rgba(2, 114, 190, 0.3)"
-                              : "transparent",
-                          border:
-                            draggedOverZone?.zoneIndex === index &&
-                            draggedOverZone?.teamType === "rival"
-                              ? "2px dashed #0272be"
-                              : "none",
-                          borderRadius: "8px",
-                          transition: "all 0.2s ease",
-                        }}
-                      >
-                        <IconOfPlayer
-                          showSquads={showSquads}
-                          player={option}
-                          startingSix={guestTeamOptions}
-                          nextRotation={nextRotation}
-                          setNextRotation={setNextRotation}
-                        />
-                      </div>
-                    ) : (
-                      <div
-                        className="zone-names-wrapper"
-                        key={"_" + index}
-                        onDrop={createDropHandler(index, "rival")}
-                        onDragOver={createDragOverHandler(index, "rival")}
-                        onDragLeave={handleDragLeaveZone}
-                        style={{
-                          backgroundColor:
-                            draggedOverZone?.zoneIndex === index &&
-                            draggedOverZone?.teamType === "rival"
-                              ? "rgba(2, 114, 190, 0.5)"
-                              : "rgba(2, 114, 190, 0.1)",
-                          border:
-                            draggedOverZone?.zoneIndex === index &&
-                            draggedOverZone?.teamType === "rival"
-                              ? "3px solid #0272be"
-                              : "3px solid rgba(2, 114, 190, 0.8)",
-                          borderRadius: "8px",
-                          transition: "all 0.2s ease",
-                          minHeight: "120px",
-                        }}
-                      >
-                        P{correctZones(index)}
-                      </div>
-                    )
-                  )}
-                  {guestTeamOptions && guestTeamOptions.length > 0 && guestTeamOptions.slice(3, 6).map((option, index) =>
-                    checkNumbers(option.boardPosition) ? (
-                      <div
-                        key={index}
-                        onDrop={blockDrop}
-                        onDragOver={blockDragOver}
-                        onDragLeave={handleDragLeaveZone}
-                        style={{
-                          backgroundColor:
-                            draggedOverZone?.zoneIndex === index + 3 &&
-                            draggedOverZone?.teamType === "rival"
-                              ? "rgba(2, 114, 190, 0.3)"
-                              : "transparent",
-                          border:
-                            draggedOverZone?.zoneIndex === index + 3 &&
-                            draggedOverZone?.teamType === "rival"
-                              ? "2px dashed #0272be"
-                              : "none",
-                          borderRadius: "8px",
-                          transition: "all 0.2s ease",
-                        }}
-                      >
-                        <IconOfPlayer
-                          showSquads={showSquads}
-                          player={option}
-                          startingSix={guestTeamOptions}
-                          nextRotation={nextRotation}
-                          setNextRotation={setNextRotation}
-                        />
-                      </div>
-                    ) : (
-                      <div
-                        className="zone-names-wrapper"
-                        key={"_" + index}
-                        onDrop={createDropHandler(index + 3, "rival")}
-                        onDragOver={createDragOverHandler(index + 3, "rival")}
-                        onDragLeave={handleDragLeaveZone}
-                        style={{
-                          backgroundColor:
-                            draggedOverZone?.zoneIndex === index + 3 &&
-                            draggedOverZone?.teamType === "rival"
-                              ? "rgba(2, 114, 190, 0.5)"
-                              : "rgba(2, 114, 190, 0.1)",
-                          border:
-                            draggedOverZone?.zoneIndex === index + 3 &&
-                            draggedOverZone?.teamType === "rival"
-                              ? "3px solid #0272be"
-                              : "3px solid rgba(2, 114, 190, 0.8)",
-                          borderRadius: "8px",
-                          transition: "all 0.2s ease",
-                          minHeight: "120px",
-                        }}
-                      >
-                        P{correctZones(index + 3)}
-                      </div>
-                    )
-                  )}
+                  {guestTeamOptions.length > 0 &&
+                    guestTeamOptions.slice(0, 3).map((option, index) =>
+                      checkNumbers(option.boardPosition) ? (
+                        <div
+                          key={index}
+                          onDrop={blockDrop}
+                          onDragOver={blockDragOver}
+                          onDragLeave={handleDragLeaveZone}
+                          style={{
+                            backgroundColor:
+                              draggedOverZone?.zoneIndex === index &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "rgba(2, 114, 190, 0.3)"
+                                : "transparent",
+                            border:
+                              draggedOverZone?.zoneIndex === index &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "2px dashed #0272be"
+                                : "none",
+                            borderRadius: "8px",
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          <IconOfPlayer
+                            showSquads={showSquads}
+                            player={option}
+                            startingSix={guestTeamOptions}
+                            nextRotation={nextRotation}
+                            setNextRotation={setNextRotation}
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className="zone-names-wrapper"
+                          key={"_" + index}
+                          onDrop={createDropHandler(index, "rival")}
+                          onDragOver={createDragOverHandler(index, "rival")}
+                          onDragLeave={handleDragLeaveZone}
+                          style={{
+                            backgroundColor:
+                              draggedOverZone?.zoneIndex === index &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "rgba(2, 114, 190, 0.5)"
+                                : "rgba(2, 114, 190, 0.1)",
+                            border:
+                              draggedOverZone?.zoneIndex === index &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "3px solid #0272be"
+                                : "3px solid rgba(2, 114, 190, 0.8)",
+                            borderRadius: "8px",
+                            transition: "all 0.2s ease",
+                            minHeight: "120px",
+                          }}
+                        >
+                          P{correctZones(index)}
+                        </div>
+                      )
+                    )}
+                  {guestTeamOptions.length > 0 &&
+                    guestTeamOptions.slice(3, 6).map((option, index) =>
+                      checkNumbers(option.boardPosition) ? (
+                        <div
+                          key={index}
+                          onDrop={blockDrop}
+                          onDragOver={blockDragOver}
+                          onDragLeave={handleDragLeaveZone}
+                          style={{
+                            backgroundColor:
+                              draggedOverZone?.zoneIndex === index + 3 &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "rgba(2, 114, 190, 0.3)"
+                                : "transparent",
+                            border:
+                              draggedOverZone?.zoneIndex === index + 3 &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "2px dashed #0272be"
+                                : "none",
+                            borderRadius: "8px",
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          <IconOfPlayer
+                            showSquads={showSquads}
+                            player={option}
+                            startingSix={guestTeamOptions}
+                            nextRotation={nextRotation}
+                            setNextRotation={setNextRotation}
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className="zone-names-wrapper"
+                          key={"_" + index}
+                          onDrop={createDropHandler(index + 3, "rival")}
+                          onDragOver={createDragOverHandler(index + 3, "rival")}
+                          onDragLeave={handleDragLeaveZone}
+                          style={{
+                            backgroundColor:
+                              draggedOverZone?.zoneIndex === index + 3 &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "rgba(2, 114, 190, 0.5)"
+                                : "rgba(2, 114, 190, 0.1)",
+                            border:
+                              draggedOverZone?.zoneIndex === index + 3 &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "3px solid #0272be"
+                                : "3px solid rgba(2, 114, 190, 0.8)",
+                            borderRadius: "8px",
+                            transition: "all 0.2s ease",
+                            minHeight: "120px",
+                          }}
+                        >
+                          P{correctZones(index + 3)}
+                        </div>
+                      )
+                    )}
                 </div>
               )}
               {currentGameStats.length > 0 &&

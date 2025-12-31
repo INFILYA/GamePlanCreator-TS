@@ -189,7 +189,7 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
           )
         );
       }
-      if (guestTeamOptions && guestTeamOptions.length > 0 && guestTeamOptions.find((athlete) => athlete.name === player.name)) {
+      if (guestTeamOptions.length > 0 && guestTeamOptions.find((athlete) => athlete.name === player.name)) {
         dispatch(
           setBackGuestTeamSelects(
             guestTeamOptions.map((athlete) => (athlete.name === player.name ? player : athlete))

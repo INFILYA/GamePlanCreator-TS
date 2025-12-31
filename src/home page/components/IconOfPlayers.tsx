@@ -125,7 +125,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       },
       true
     );
-    if (!guestTeamOptions || guestTeamOptions.length === 0) return;
+    if (guestTeamOptions.length === 0) return;
     const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
     if (!seTTer) return;
     const indexOfSetter = guestTeamOptions.indexOf(seTTer);
@@ -184,7 +184,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   }
 
   function getZoneOfAttack(index: number, playerInSix: TPlayer): number {
-    if (!guestTeamOptions || guestTeamOptions.length === 0) return 0;
+    if (guestTeamOptions.length === 0) return 0;
     const seTTer = guestTeamOptions.find((player) => player.position === "SET");
     if (!seTTer) return 0;
     const indexOfSetter = guestTeamOptions.indexOf(seTTer);

@@ -122,7 +122,7 @@ export function Squads() {
   //   isRegistratedUser?.uid === "wFlNnrG4piWkebseNPzDW1qejC22" ||
   //   isRegistratedUser?.uid === "ehKOX9XhJpgfCRR2iRquHlGWO2n2";
   // homeTeam больше не используется, всегда используем guestTeam
-  if (!guestTeam || guestTeam.length === 0 || !guestTeam[0]) {
+  if (guestTeam.length === 0) {
     return null;
   }
   const club = guestTeam[0];
@@ -151,7 +151,7 @@ export function Squads() {
     // Проверяем, что это возврат игрока (есть currentZone)
     if (currentZone) {
       // homeTeam больше не используется, обрабатываем только guestTeam
-      if (team === "rival" && guestTeamOptions && guestTeamOptions.length > 0) {
+      if (team === "rival" && guestTeamOptions.length > 0) {
         dispatch(pushFromGuestTeamBoard(player));
         const startingSix = guestTeamOptions.filter(
           (p) => typeof p.boardPosition === "number"
@@ -173,8 +173,7 @@ export function Squads() {
   }
 
   async function saveStartingSix() {
-    if (!guestTeam || guestTeam.length === 0 || !guestTeam[0]) return;
-    if (!guestTeamOptions || guestTeamOptions.length === 0) return;
+    if (guestTeam.length === 0 || guestTeamOptions.length === 0) return;
     await saveTeam({
       ...guestTeam[0],
       startingSquad: guestTeamOptions.map((player) => player.name),

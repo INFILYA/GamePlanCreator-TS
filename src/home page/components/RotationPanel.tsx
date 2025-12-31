@@ -71,7 +71,7 @@ export default function RotationPanel(arg: TRotationPanel) {
     // Это нужно для расчета plusMinusPositions, чтобы понять где мы стартуем
     // Используем guestTeamOptions (наша команда на поле)
     function myTeamRigthRotation() {
-      if (!guestTeamOptions || guestTeamOptions.length === 0) return;
+      if (guestTeamOptions.length === 0) return;
       const seTTer = guestTeamOptions.find(
         (player) => player.position === "SET"
       );
@@ -129,7 +129,7 @@ export default function RotationPanel(arg: TRotationPanel) {
         : [];
 
     // Определяем расстановки на момент ралли
-    const seTTer = guestTeamOptions && guestTeamOptions.length > 0 
+    const seTTer = guestTeamOptions.length > 0 
       ? guestTeamOptions.find((player) => player.position === "SET")
       : null;
     const ourSetterPosition = seTTer && guestTeamOptions
@@ -191,7 +191,7 @@ export default function RotationPanel(arg: TRotationPanel) {
 
   const myZones = [4, 3, 2, 5, 6, 1];
   const zones = rivalTeam ? setRivalRotation : setMyZone;
-  const nameOfTheTeam = rivalTeam ? opponentTeamName : (guestTeam && guestTeam.length > 0 ? guestTeam[0]?.name : "");
+  const nameOfTheTeam = rivalTeam ? opponentTeamName : (guestTeam.length > 0 ? guestTeam[0]?.name : "");
   const zeroZero = score === 0 && rivalScore === 0;
 
   return (
