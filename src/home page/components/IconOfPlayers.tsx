@@ -1,12 +1,7 @@
 import { TAttackDiagramm, TDiagramm, TMix, TPlayer } from "../../types/types";
 import { useAppDispatch } from "../../states/store";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
-import { pushFromHomeTeamBoard } from "../../states/slices/homePlayersSlice";
 import { pushFromGuestTeamBoard } from "../../states/slices/guestPlayersSlice";
-import {
-  resetHomeTeamIndexOfZones,
-  updateInfoOfSubPlayers,
-} from "../../states/slices/indexOfHomeTeamZonesSlice";
 import {
   resetGuestTeamIndexOfZones,
   selectIndexOfGuestTeamZones,
@@ -25,7 +20,6 @@ import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
 import { useSelector } from "react-redux";
 
 type TIconOfPlayer = {
-  type: string;
   startingSix: TPlayer[];
   player: TPlayer;
   showSquads: boolean;
@@ -39,19 +33,18 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     nextRotation,
     setNextRotation,
     startingSix,
-    type,
     showSquads,
   } = props;
   const dispatch = useAppDispatch();
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const [category, setCategory] = useState<string>("SR");
   const [diagrammValue, setDiagrammValue] = useState<TMix>(emptyPlayer);
-  const my = type === "my";
 
   useEffect(() => {
     const choosenPlayer = startingSix.filter(
       (athlete) => athlete.name === player.name
     );
+    if (choosenPlayer.length === 0) return;
     const soloGamePlayerStats = preparePlayerToSoloGame(choosenPlayer[0]);
     if (nextRotation) {
       setDiagrammValue(soloGamePlayerStats);
@@ -104,13 +97,6 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       dispatch(resetGuestTeamIndexOfZones({ startingSix, player }));
     }
   }
-  function cancelHomeTeamChoice(player: TPlayer) {
-    if (showSquads) {
-      dispatch(pushFromHomeTeamBoard(player));
-      dispatch(resetHomeTeamIndexOfZones({ startingSix, player }));
-    }
-  }
-
   function showPlayerInfo() {
     if (showSquads) {
       dispatch(setInfoOfPlayer(player));
@@ -139,6 +125,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       },
       true
     );
+    if (!guestTeamOptions || guestTeamOptions.length === 0) return;
     const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
     if (!seTTer) return;
     const indexOfSetter = guestTeamOptions.indexOf(seTTer);
@@ -194,10 +181,10 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     dispatch(setUpdatedPlayers(updatedPlayer));
     dispatch(setInfoOfPlayer(updatedPlayer));
     dispatch(updateInfoOfStartingSix(updatedPlayer));
-    dispatch(updateInfoOfSubPlayers(updatedPlayer));
   }
 
   function getZoneOfAttack(index: number, playerInSix: TPlayer): number {
+    if (!guestTeamOptions || guestTeamOptions.length === 0) return 0;
     const seTTer = guestTeamOptions.find((player) => player.position === "SET");
     if (!seTTer) return 0;
     const indexOfSetter = guestTeamOptions.indexOf(seTTer);
@@ -239,28 +226,20 @@ export function IconOfPlayer(props: TIconOfPlayer) {
           {!showSquads && (
             <div className="zone-names-wrapper">P{zoneNumber}</div>
           )}
-          {!my && (
-            <div className="player-image-wrapper" onClick={showPlayerInfo}>
-              <img src={`/photos/${player?.photo}`} alt=""></img>
-            </div>
-          )}
+          <div className="player-image-wrapper" onClick={showPlayerInfo}>
+            <img src={`/photos/${player?.photo}`} alt=""></img>
+          </div>
           <div className="player-field-wrapper">
             <div className="playerNumber-wrapper">
               <button
                 type="button"
-                style={
-                  my ? { backgroundColor: "#f0f" } : { backgroundColor: "#f0f" }
-                }
-                onClick={
-                  !my
-                    ? () => cancelGuestTeamChoice(player)
-                    : () => cancelHomeTeamChoice(player)
-                }
+                style={{ backgroundColor: "#f0f" }}
+                onClick={() => cancelGuestTeamChoice(player)}
                 draggable={showSquads}
                 onDragStart={(e) => {
                   if (showSquads) {
                     e.dataTransfer.setData("player", JSON.stringify(player));
-                    e.dataTransfer.setData("team", my ? "my" : "rival");
+                    e.dataTransfer.setData("team", "rival");
                     // Сохраняем текущую позицию для возврата
                     const playerIndex = startingSix.findIndex((p) => p.name === player.name);
                     if (playerIndex !== -1) {
@@ -278,13 +257,6 @@ export function IconOfPlayer(props: TIconOfPlayer) {
               <button
                 type="button"
                 className={player.position === "LIB" ? "" : "player-surname"}
-                style={
-                  my
-                    ? player.position === "LIB"
-                      ? { backgroundColor: "turquoise" }
-                      : { backgroundColor: "#a9a9a9" }
-                    : {}
-                }
                 onClick={showPlayerInfo}
               >
                 {player.name}

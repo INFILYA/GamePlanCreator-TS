@@ -1910,6 +1910,42 @@ main {
             font-weight: 600;
             width: 100%;
             z-index: 9;
+          }
+          .libero-cell-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            gap: 20px;
+            margin-top: 10px;
+            .libero-cell-container {
+              width: 200px;
+              max-width: 200px;
+              .libero-cell {
+                width: 100%;
+                .libero-label {
+                  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+                  font-weight: bold;
+                  color: turquoise;
+                  text-align: center;
+                  padding: 5px 0;
+                }
+                .libero-reception-only {
+                  width: 100%;
+                  table {
+                    width: 100%;
+                    tbody {
+                      tr {
+                        th, td {
+                          font-size: clamp(0.7rem, 0.9vw, 0.85rem);
+                          padding: 2px 4px;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
             .player-field-wrapper {
               height: 2vw;
               width: 90%;

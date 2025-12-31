@@ -2,22 +2,13 @@ import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../states/store";
 import SectionWrapper from "../../wrappers/SectionWrapper";
 import { selectGuestTeam } from "../../states/slices/guestTeamSlice";
-import { selectHomeTeam } from "../../states/slices/homeTeamSlice";
 import {
   pushFromGuestTeamBoard,
   selectGuestPlayers,
   setGuestBenchPlayers,
 } from "../../states/slices/guestPlayersSlice";
-import {
-  pushFromHomeTeamBoard,
-  selectHomePlayers,
-} from "../../states/slices/homePlayersSlice";
 import { useState, useRef, useEffect } from "react";
 import { teamsRef } from "../../config/firebase";
-import {
-  resetHomeTeamIndexOfZones,
-  selectIndexOfHomeTeamZones,
-} from "../../states/slices/indexOfHomeTeamZonesSlice";
 import {
   resetGuestTeamIndexOfZones,
   selectIndexOfGuestTeamZones,
@@ -30,19 +21,13 @@ import { compare, isBoardFull } from "../../utilities/functions";
 import { set } from "firebase/database";
 import { TTeam, TPlayer } from "../../types/types";
 
-type TSquadsProps = {
-  team: string;
-};
-
 type PlayerNameButtonProps = {
   player: TPlayer;
-  myTeam: boolean;
   onPlayerClick: () => void;
 };
 
 function PlayerNameButton({
   player,
-  myTeam,
   onPlayerClick,
 }: PlayerNameButtonProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -114,7 +99,6 @@ function PlayerNameButton({
       <button
         ref={buttonRef}
         type="button"
-        className={myTeam ? "player-surname" : ""}
         onClick={onPlayerClick}
         style={
           player.position === "LIB" ? { backgroundColor: "turquoise" } : {}
@@ -127,32 +111,30 @@ function PlayerNameButton({
   );
 }
 
-export function Squads(props: TSquadsProps) {
-  const { team } = props;
+export function Squads() {
   const dispatch = useAppDispatch();
   const guestTeam = useSelector(selectGuestTeam);
-  const homeTeam = useSelector(selectHomeTeam);
   const guestPlayers = useSelector(selectGuestPlayers);
-  const homePlayers = useSelector(selectHomePlayers);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
-  const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
   // const [isRegistratedUser] = useAuthState(auth);
   // const admin =
   //   isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2" ||
   //   isRegistratedUser?.uid === "wFlNnrG4piWkebseNPzDW1qejC22" ||
   //   isRegistratedUser?.uid === "ehKOX9XhJpgfCRR2iRquHlGWO2n2";
-  const myTeam = team === "my";
-  const club = myTeam ? homeTeam[0] : guestTeam[0];
-  const players = myTeam ? [...homePlayers] : [...guestPlayers];
+  // homeTeam больше не используется, всегда используем guestTeam
+  if (!guestTeam || guestTeam.length === 0 || !guestTeam[0]) {
+    return null;
+  }
+  const club = guestTeam[0];
+  const players = [...guestPlayers];
   const showButtonStartingSix =
-    !myTeam &&
     guestTeamOptions.every((zone) => typeof zone.boardPosition === "number") &&
     guestPlayers.length > 1;
 
   // Drag and Drop handlers для переноса игрока на playground
   function handleDragStart(e: React.DragEvent, player: TPlayer) {
     e.dataTransfer.setData("player", JSON.stringify(player));
-    e.dataTransfer.setData("team", myTeam ? "my" : "rival");
+    e.dataTransfer.setData("team", "rival");
     e.dataTransfer.effectAllowed = "move";
   }
 
@@ -168,14 +150,8 @@ export function Squads(props: TSquadsProps) {
 
     // Проверяем, что это возврат игрока (есть currentZone)
     if (currentZone) {
-      if (team === "my") {
-        dispatch(pushFromHomeTeamBoard(player));
-        // Находим startingSix для resetHomeTeamIndexOfZones
-        const startingSix = homeTeamOptions.filter(
-          (p) => typeof p.boardPosition === "number"
-        );
-        dispatch(resetHomeTeamIndexOfZones({ startingSix, player }));
-      } else {
+      // homeTeam больше не используется, обрабатываем только guestTeam
+      if (team === "rival" && guestTeamOptions && guestTeamOptions.length > 0) {
         dispatch(pushFromGuestTeamBoard(player));
         const startingSix = guestTeamOptions.filter(
           (p) => typeof p.boardPosition === "number"
@@ -190,12 +166,15 @@ export function Squads(props: TSquadsProps) {
     e.dataTransfer.dropEffect = "move";
   }
   function showStartingSix() {
+    if (!guestTeam || guestTeam.length === 0 || !guestTeam[0]) return;
     const guestTeamStartingSix = guestTeam[0].startingSquad;
     dispatch(showGuestTeamStartingSix({ guestPlayers, guestTeamStartingSix }));
     dispatch(setGuestBenchPlayers({ guestPlayers, guestTeamStartingSix }));
   }
 
   async function saveStartingSix() {
+    if (!guestTeam || guestTeam.length === 0 || !guestTeam[0]) return;
+    if (!guestTeamOptions || guestTeamOptions.length === 0) return;
     await saveTeam({
       ...guestTeam[0],
       startingSquad: guestTeamOptions.map((player) => player.name),
@@ -248,11 +227,10 @@ export function Squads(props: TSquadsProps) {
 
   return (
     <SectionWrapper
-      className={`teamsquad-section ${myTeam ? "my-team" : "rival-team"}`}
+      className="teamsquad-section rival-team"
     >
       <div
         className="team-title-wrapper"
-        style={myTeam ? { direction: "rtl" } : {}}
       >
         <div className="team-label-wrapper">
           <input className="team-label" readOnly value={club.name} />
@@ -277,7 +255,6 @@ export function Squads(props: TSquadsProps) {
               draggable={true}
               onDragStart={(e) => handleDragStart(e, player)}
               style={{
-                ...(myTeam ? { direction: "rtl" } : {}),
                 cursor: "grab",
               }}
             >
@@ -285,14 +262,12 @@ export function Squads(props: TSquadsProps) {
                 <button
                   type="button"
                   disabled
-                  className={myTeam ? "playerNumber" : ""}
                 >
                   {player.number}
                 </button>
               </div>
               <PlayerNameButton
                 player={player}
-                myTeam={myTeam}
                 onPlayerClick={() => dispatch(setInfoOfPlayer(player))}
               />
             </div>
@@ -307,7 +282,7 @@ export function Squads(props: TSquadsProps) {
             Starting six
           </RegularButton>
         )}
-        {isBoardFull(guestTeamOptions) && !myTeam && (
+        {isBoardFull(guestTeamOptions) && (
           <RegularButton
             onClick={saveStartingSix}
             type="button"

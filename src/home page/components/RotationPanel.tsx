@@ -13,7 +13,6 @@ import {
 } from "../../states/slices/soloRallyStatsSlice";
 import { useAppDispatch } from "../../states/store";
 import { TGameLogStats, TPlayer } from "../../types/types";
-import { rotateForwardHomeTeam } from "../../states/slices/indexOfHomeTeamZonesSlice";
 import ConfirmField from "../../utilities/ConfimField.";
 
 type TRotationPanel = {
@@ -72,6 +71,7 @@ export default function RotationPanel(arg: TRotationPanel) {
     // Это нужно для расчета plusMinusPositions, чтобы понять где мы стартуем
     // Используем guestTeamOptions (наша команда на поле)
     function myTeamRigthRotation() {
+      if (!guestTeamOptions || guestTeamOptions.length === 0) return;
       const seTTer = guestTeamOptions.find(
         (player) => player.position === "SET"
       );
@@ -101,7 +101,6 @@ export default function RotationPanel(arg: TRotationPanel) {
       (previousScore !== rivalScore && !rivalTeam)
     ) {
       dispatch(rotateForwardGuestTeam());
-      dispatch(rotateForwardHomeTeam());
       setPreviousScore(rivalScore);
     }
     if (
@@ -130,8 +129,10 @@ export default function RotationPanel(arg: TRotationPanel) {
         : [];
 
     // Определяем расстановки на момент ралли
-    const seTTer = guestTeamOptions.find((player) => player.position === "SET");
-    const ourSetterPosition = seTTer
+    const seTTer = guestTeamOptions && guestTeamOptions.length > 0 
+      ? guestTeamOptions.find((player) => player.position === "SET")
+      : null;
+    const ourSetterPosition = seTTer && guestTeamOptions
       ? correctZones(guestTeamOptions.indexOf(seTTer))
       : myZone;
     const rivalSetterPosition = rivalRotation;
@@ -190,7 +191,7 @@ export default function RotationPanel(arg: TRotationPanel) {
 
   const myZones = [4, 3, 2, 5, 6, 1];
   const zones = rivalTeam ? setRivalRotation : setMyZone;
-  const nameOfTheTeam = rivalTeam ? opponentTeamName : guestTeam[0]?.name;
+  const nameOfTheTeam = rivalTeam ? opponentTeamName : (guestTeam && guestTeam.length > 0 ? guestTeam[0]?.name : "");
   const zeroZero = score === 0 && rivalScore === 0;
 
   return (

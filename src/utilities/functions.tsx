@@ -48,6 +48,7 @@ export function firstLetterCapital(string: string): string {
 }
 
 export const isBoardFull = (arr: TPlayer[]) => {
+  if (!arr || arr.length === 0) return false;
   return arr.every((option) => checkNumbers(option.boardPosition));
 };
 

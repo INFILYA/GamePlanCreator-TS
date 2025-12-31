@@ -17,8 +17,6 @@ import {
 } from "../utilities/functions";
 import { TGameLogStats, TMix, TPlayer, TTeam } from "../types/types";
 import { FormEvent, useState } from "react";
-import { selectHomeTeam, setHomeTeam } from "../states/slices/homeTeamSlice";
-import { setHomePlayers } from "../states/slices/homePlayersSlice";
 import { selectGuestTeam, setGuestTeam } from "../states/slices/guestTeamSlice";
 import { IconOfPlayer } from "./components/IconOfPlayers";
 import { Squads } from "./components/Squads";
@@ -30,20 +28,12 @@ import {
 } from "../states/slices/playerInfoSlice";
 import { PersonalInformationOfPlayer } from "../personalInfo/PersonalInformationOfPlayer";
 import {
-  rotateBackHomeTeam,
-  rotateForwardHomeTeam,
-  selectIndexOfHomeTeamZones,
-  setBackHomeTeamSelects,
-  setHomeTeamIndexOfZones,
-} from "../states/slices/indexOfHomeTeamZonesSlice";
-import {
   rotateBackGuestTeam,
   rotateForwardGuestTeam,
   selectIndexOfGuestTeamZones,
   setBackGuestTeamSelects,
   setGuestTeamIndexOfZones,
 } from "../states/slices/indexOfGuestTeamZonesSlice";
-import { filterHomePlayers } from "../states/slices/homePlayersSlice";
 import { filterGuestPlayers } from "../states/slices/guestPlayersSlice";
 import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
@@ -64,11 +54,9 @@ export function HomePage() {
   const dispatch = useAppDispatch();
   const isMobile = useSetWidth() <= 767;
   const listOfPlayers = useSelector(selectListOfPlayers);
-  const homeTeam = useSelector(selectHomeTeam);
   const guestTeam = useSelector(selectGuestTeam);
   const playerInfo = useSelector(selectPlayerInfo);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
-  const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
   const [showSquads, setShowSquads] = useState(true);
   const [hoverStatisticButton, setHoverStatisticButton] = useState(false);
   const [showCurrentGameStats, setShowCurrentGameStats] = useState(false);
@@ -87,8 +75,7 @@ export function HomePage() {
   const [rivalRotation, setRivalRotation] = useState(1);
   const gamesStats = useSelector(selectGamesStats);
 
-  const showGuestTeam = guestTeam.length !== 0;
-  const showHomeTeam = homeTeam.length !== 0;
+  const showGuestTeam = guestTeam && guestTeam.length !== 0;
 
   function resetTheBoardForGuestTeam() {
     dispatch(setGuestPlayers([]));
@@ -100,21 +87,17 @@ export function HomePage() {
     setSetNumber("");
     setShowSquads(true);
     setShowCurrentGameStats(false);
-    resetTheBoardForHomeTeam();
     setGameLog([]);
     setstatsForTeam([]);
     setMyScore(0);
     setRivalScore(0);
     setWeServe(false);
   }
-  function resetTheBoardForHomeTeam() {
-    dispatch(setHomePlayers([]));
-    dispatch(setHomeTeam(""));
-    dispatch(setBackHomeTeamSelects(emptyPlayers));
-    dispatch(setInfoOfPlayer(null));
-  }
 
   function calculateForTeamData<T extends TTeam | TPlayer>(obj: T) {
+    if (!guestTeam || guestTeam.length === 0) {
+      return obj as TTeam;
+    }
     const team = { ...guestTeam[0] };
     for (const key in team) {
       if (
@@ -137,6 +120,7 @@ export function HomePage() {
   async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // download solo game statisic
+    if (!guestTeam || guestTeam.length === 0 || !guestTeam[0]) return;
     const matchInfo = `${currentDate()}; ${
       guestTeam[0].id
     } - ${opponentTeamName} ${exhibitionGame ? "|| Exhibition game" : ""}`;
@@ -162,6 +146,7 @@ export function HomePage() {
       async function setPlayersToData(player: TPlayer) {
         await set(playersRef(player.name), player);
       }
+      if (!guestTeam || guestTeam.length === 0 || !guestTeam[0]) return;
       const updatedPlayers = listOfPlayers.filter(
         (player) => player.team === guestTeam[0].name
       );
@@ -192,14 +177,12 @@ export function HomePage() {
 
   function rotateFront() {
     dispatch(rotateForwardGuestTeam());
-    dispatch(rotateForwardHomeTeam());
     dispatch(rotateForwardPositions());
     setNextRotation(true);
     dispatch(resetRallyStats());
   }
   function rotateBack() {
     dispatch(rotateBackGuestTeam());
-    dispatch(rotateBackHomeTeam());
     dispatch(rotateBackPositions());
     dispatch(resetRallyStats());
     setNextRotation(true);
@@ -210,11 +193,11 @@ export function HomePage() {
 
   const [draggedOverZone, setDraggedOverZone] = useState<{
     zoneIndex: number;
-    teamType: "my" | "rival";
+    teamType: "rival";
   } | null>(null);
 
   // Drag and Drop handlers для playground
-  function createDropHandler(zoneIndex: number, teamType: "my" | "rival") {
+  function createDropHandler(zoneIndex: number, teamType: "rival") {
     return (e: React.DragEvent) => {
       e.preventDefault();
       setDraggedOverZone(null);
@@ -231,32 +214,25 @@ export function HomePage() {
       // Используем positions[zoneIndex] для получения boardPosition, так как в slice ищется по boardPosition
       const boardPosition = positions[zoneIndex];
 
-      // Проверяем, что команда совпадает
-      if (team === teamType) {
-        if (teamType === "my") {
-          dispatch(filterHomePlayers(player.name));
-          dispatch(setHomeTeamIndexOfZones({ player, zone: boardPosition }));
-        } else {
-          dispatch(filterGuestPlayers(player.name));
-          dispatch(setGuestTeamIndexOfZones({ player, zone: boardPosition }));
-        }
+      // Проверяем, что команда совпадает (только для rival, так как homeTeam больше не используется)
+      if (team === "rival" && teamType === "rival") {
+        dispatch(filterGuestPlayers(player.name));
+        dispatch(setGuestTeamIndexOfZones({ player, zone: boardPosition }));
       }
     };
   }
 
-  function createDragOverHandler(zoneIndex: number, teamType: "my" | "rival") {
+  function createDragOverHandler(zoneIndex: number, teamType: "rival") {
     return (e: React.DragEvent) => {
       e.preventDefault();
       const team = e.dataTransfer.getData("team");
       const currentZone = e.dataTransfer.getData("currentZone");
 
       // Показываем визуальную индикацию только если это перенос из squads (нет currentZone) и команда совпадает
-      if (!currentZone && team === teamType) {
+      if (!currentZone && team === "rival" && teamType === "rival" && guestTeamOptions && guestTeamOptions.length > 0) {
         // Проверяем, занята ли зона другим игроком
         const boardPosition = positions[zoneIndex];
-        const teamOptions =
-          teamType === "my" ? homeTeamOptions : guestTeamOptions;
-        const existingPlayer = teamOptions.find(
+        const existingPlayer = guestTeamOptions.find(
           (p) => p.boardPosition === boardPosition
         );
 
@@ -283,7 +259,7 @@ export function HomePage() {
         }
 
         e.dataTransfer.dropEffect = "move";
-        setDraggedOverZone({ zoneIndex, teamType });
+        setDraggedOverZone({ zoneIndex, teamType: "rival" });
       }
     };
   }
@@ -326,7 +302,10 @@ export function HomePage() {
     return correctZones(guestTeamOptions.indexOf(seTTer));
   }
 
-  function rankByValue<T extends TMix>(criteria: keyof TMix | "earnedPoints", arr: T[]) {
+  function rankByValue<T extends TMix>(
+    criteria: keyof TMix | "earnedPoints",
+    arr: T[]
+  ) {
     const properArr = criteria === "name" ? currentGameStats : arr;
     const getValue = (obj: TMix, crit: keyof TMix | "earnedPoints"): number => {
       if (crit === "earnedPoints") {
@@ -437,18 +416,15 @@ export function HomePage() {
       {/* На мобильных (меньше 768px) обе панели squad идут вместе первыми */}
       {isMobile && showGuestTeam && showSquads && (
         <>
-          <Squads team="rival" />
+          <Squads />
           {/* Squad для my-team скрыт в обычном режиме, показывается только в statistic mode */}
         </>
       )}
       {/* Squad для my-team показывается только в statistic mode (!showSquads) */}
-      {isMobile && showGuestTeam && !showSquads && showHomeTeam && (
-        <Squads team="my" />
-      )}
       {/* На десктопе порядок как раньше */}
       {/* Скрываем squad для rival в statistic mode (!showSquads) - показываем только когда showSquads === true */}
       {!showCurrentGameStats && !isMobile && showGuestTeam && showSquads && (
-        <Squads team="rival" />
+        <Squads />
       )}
       {!showCurrentGameStats && !showSquads && (
         <RotationPanel
@@ -573,22 +549,10 @@ export function HomePage() {
                 ) : (
                   <div></div>
                 )}
-                {showHomeTeam && showSquads && (
-                  <div style={{ marginLeft: "auto" }}>
-                    <RegularButton
-                      onClick={resetTheBoardForHomeTeam}
-                      type="button"
-                      $color="orangered"
-                      $background="white"
-                    >
-                      Reset
-                    </RegularButton>
-                  </div>
-                )}
               </div>
               {!showCurrentGameStats && (
                 <div className="row-zones-wrapper">
-                  {guestTeamOptions.slice(0, 3).map((option, index) =>
+                  {guestTeamOptions && guestTeamOptions.length > 0 && guestTeamOptions.slice(0, 3).map((option, index) =>
                     checkNumbers(option.boardPosition) ? (
                       <div
                         key={index}
@@ -616,7 +580,6 @@ export function HomePage() {
                           startingSix={guestTeamOptions}
                           nextRotation={nextRotation}
                           setNextRotation={setNextRotation}
-                          type="rival"
                         />
                       </div>
                     ) : (
@@ -646,41 +609,7 @@ export function HomePage() {
                       </div>
                     )
                   )}
-                  {homeTeamOptions.slice(0, 3).map((option, index) =>
-                    checkNumbers(option.boardPosition) ? (
-                      <div
-                        key={index}
-                        onDrop={blockDrop}
-                        onDragOver={blockDragOver}
-                        onDragLeave={handleDragLeaveZone}
-                        style={{
-                          backgroundColor:
-                            draggedOverZone?.zoneIndex === index &&
-                            draggedOverZone?.teamType === "my"
-                              ? "rgba(2, 114, 190, 0.5)"
-                              : "transparent",
-                          border:
-                            draggedOverZone?.zoneIndex === index &&
-                            draggedOverZone?.teamType === "my"
-                              ? "3px solid #0272be"
-                              : "3px solid rgba(2, 114, 190, 0.8)",
-                          borderRadius: "8px",
-                          transition: "all 0.2s ease",
-                          minHeight: "60px",
-                        }}
-                      >
-                        <IconOfPlayer
-                          showSquads={showSquads}
-                          player={option}
-                          startingSix={homeTeamOptions}
-                          nextRotation={nextRotation}
-                          setNextRotation={setNextRotation}
-                          type="my"
-                        />
-                      </div>
-                    ) : null
-                  )}
-                  {guestTeamOptions.slice(3, 6).map((option, index) =>
+                  {guestTeamOptions && guestTeamOptions.length > 0 && guestTeamOptions.slice(3, 6).map((option, index) =>
                     checkNumbers(option.boardPosition) ? (
                       <div
                         key={index}
@@ -708,7 +637,6 @@ export function HomePage() {
                           startingSix={guestTeamOptions}
                           nextRotation={nextRotation}
                           setNextRotation={setNextRotation}
-                          type="rival"
                         />
                       </div>
                     ) : (
@@ -737,39 +665,6 @@ export function HomePage() {
                         P{correctZones(index + 3)}
                       </div>
                     )
-                  )}
-                  {homeTeamOptions.slice(3, 6).map((option, index) =>
-                    checkNumbers(option.boardPosition) ? (
-                      <div
-                        key={index}
-                        onDrop={blockDrop}
-                        onDragOver={blockDragOver}
-                        onDragLeave={handleDragLeaveZone}
-                        style={{
-                          backgroundColor:
-                            draggedOverZone?.zoneIndex === index + 3 &&
-                            draggedOverZone?.teamType === "my"
-                              ? "rgba(2, 114, 190, 0.3)"
-                              : "transparent",
-                          border:
-                            draggedOverZone?.zoneIndex === index + 3 &&
-                            draggedOverZone?.teamType === "my"
-                              ? "2px dashed #0272be"
-                              : "none",
-                          borderRadius: "8px",
-                          transition: "all 0.2s ease",
-                        }}
-                      >
-                        <IconOfPlayer
-                          showSquads={showSquads}
-                          player={option}
-                          startingSix={homeTeamOptions}
-                          nextRotation={nextRotation}
-                          setNextRotation={setNextRotation}
-                          type="my"
-                        />
-                      </div>
-                    ) : null
                   )}
                 </div>
               )}
@@ -886,9 +781,6 @@ export function HomePage() {
       {/* На десктопе вторая панель squad идет после playground */}
       {/* Squad для my-team скрыт в обычном режиме, показывается только в statistic mode */}
       {/* Squad для my-team показывается только в statistic mode (!showSquads) */}
-      {!isMobile && showGuestTeam && !showSquads && showHomeTeam && (
-        <Squads team="my" />
-      )}
       {!showCurrentGameStats && !showSquads && (
         <RotationPanel
           opponentTeamName={opponentTeamName}

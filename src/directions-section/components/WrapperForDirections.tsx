@@ -11,17 +11,12 @@ import SectionWrapper from "../../wrappers/SectionWrapper";
 import { reduce } from "../../utilities/functions";
 import { Explain } from "./innerComponents/Explain";
 import { selectGuestPlayers, setGuestPlayers } from "../../states/slices/guestPlayersSlice";
-import { selectHomePlayers, setHomePlayers } from "../../states/slices/homePlayersSlice";
 import { TDiagramm, TPlayer, TTeam, TZoneStates, TZoneValue } from "../../types/types";
 import { set } from "firebase/database";
 import {
   selectIndexOfGuestTeamZones,
   setBackGuestTeamSelects,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
-import {
-  selectIndexOfHomeTeamZones,
-  setBackHomeTeamSelects,
-} from "../../states/slices/indexOfHomeTeamZonesSlice";
 
 type TWrapperForDirections = {
   diagrammValue: TDiagramm;
@@ -46,9 +41,7 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
   const dispatch = useDispatch();
   const allTeams = useSelector(selectListOfTeams);
   const guestPlayers = useSelector(selectGuestPlayers);
-  const homePlayers = useSelector(selectHomePlayers);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
-  const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
 
   const [isShowDataOfActions, setIsShowDataOfActions] = useState<boolean>(false);
   const [isSaveDataOfActions, setIsSaveDataOfActions] = useState<boolean>(false);
@@ -196,27 +189,10 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
           )
         );
       }
-      if (guestTeamOptions.find((athlete) => athlete.name === player.name)) {
+      if (guestTeamOptions && guestTeamOptions.length > 0 && guestTeamOptions.find((athlete) => athlete.name === player.name)) {
         dispatch(
           setBackGuestTeamSelects(
             guestTeamOptions.map((athlete) => (athlete.name === player.name ? player : athlete))
-          )
-        );
-      }
-      if (
-        homePlayers.find((athlete) => athlete.name === player.name) &&
-        homePlayers?.[0].team === player.team
-      ) {
-        dispatch(
-          setHomePlayers(
-            homePlayers.map((athlete) => (athlete.name === player.name ? player : athlete))
-          )
-        );
-      }
-      if (homeTeamOptions.find((athlete) => athlete.name === player.name)) {
-        dispatch(
-          setBackHomeTeamSelects(
-            homeTeamOptions.map((athlete) => (athlete.name === player.name ? player : athlete))
           )
         );
       }
