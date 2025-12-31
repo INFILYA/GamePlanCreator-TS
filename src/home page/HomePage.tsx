@@ -3,7 +3,6 @@ import { gamesRef, playersRef, teamsRef } from "../config/firebase";
 import { NavLink } from "react-router-dom";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import { useAppDispatch } from "../states/store";
-import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import {
   calculateTotalofActions,
   calculateTotalofActionsV2,
@@ -64,7 +63,6 @@ import Diagramm from "../personalInfo/components/Diagramm";
 export function HomePage() {
   const dispatch = useAppDispatch();
   const isMobile = useSetWidth() <= 767;
-  const listOfTeams = useSelector(selectListOfTeams);
   const listOfPlayers = useSelector(selectListOfPlayers);
   const homeTeam = useSelector(selectHomeTeam);
   const guestTeam = useSelector(selectGuestTeam);
@@ -349,18 +347,8 @@ export function HomePage() {
         );
     setIsBiggest(!isBiggest);
   }
-  const filter = "";
-
   function calculateForTeamDataV2<T extends TMix>(obj: T): TMix {
-    if (filter.length === 0) return obj;
-    const teamName = filter.split(" ")[0];
-    const filtered = listOfTeams.filter((team) => team.name === teamName);
-    const team = { ...filtered[0] };
-    const newObj = { ...obj };
-    for (const key in team) {
-      (team[key as keyof TMix] as number) = newObj[key as keyof T] as number;
-    }
-    return team;
+    return obj;
   }
   // ============================================
   // ЛОГИКА НАКОПЛЕНИЯ СТАТИСТИКИ:

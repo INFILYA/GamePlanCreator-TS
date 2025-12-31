@@ -10,7 +10,12 @@ type TGameLogs = {
 export default function GameLogs(arg: TGameLogs) {
   const { games, listOfGames } = arg;
   const [showLogs, setShowLogs] = useState(false);
-  const [selectedRally, setSelectedRally] = useState<{ rally: any; gameIndex: number; setIndex: number; rallyIndex: number } | null>(null);
+  const [selectedRally, setSelectedRally] = useState<{
+    rally: any;
+    gameIndex: number;
+    setIndex: number;
+    rallyIndex: number;
+  } | null>(null);
   const [plusMinusPositions, setPlusMinusPositions] = useState([
     { count: 0, position: "1" },
     { count: 0, position: "2" },
@@ -34,48 +39,56 @@ export default function GameLogs(arg: TGameLogs) {
       .map((game) => Object.values(game))
       .flat()
       .flat();
-    
+
     // Находим первое ралли "0 - 0" для получения начальной позиции связующего
     const initialRally = allRallies.find((ball) => ball.score === "0 - 0");
     let initialSetterPosition: number | undefined = undefined;
-    
+
     if (initialRally) {
       if (initialRally.setterBoardPosition !== undefined) {
         initialSetterPosition = initialRally.setterBoardPosition;
-      } else if (initialRally.stats && initialRally.stats.length > 0 && initialRally.stats[0]?.setterBoardPosition) {
+      } else if (
+        initialRally.stats &&
+        initialRally.stats.length > 0 &&
+        initialRally.stats[0]?.setterBoardPosition
+      ) {
         initialSetterPosition = initialRally.stats[0].setterBoardPosition;
       }
     }
-    
+
     // Фильтруем ралли без "0 - 0" для расчета плюс/минус
     const game = allRallies.filter((ball) => ball.score !== "0 - 0");
-    
+
     // Для определения кто выиграл очко, нужно сравнивать счет
     let previousScore = "0 - 0";
-    
+
     // Если есть начальное ралли "0 - 0" с позицией, учитываем её для первого ралли
     // Это нужно, чтобы позиция из "0 - 0" была учтена в подсчете, даже если первый ралли имеет свою позицию
     if (initialSetterPosition !== undefined && game.length > 0) {
       const firstRally = game[0];
       // Определяем позицию первого ралли
-      const firstRallyPosition = firstRally.setterBoardPosition !== undefined
-        ? firstRally.setterBoardPosition
-        : (firstRally.stats && firstRally.stats.length > 0 && firstRally.stats[0]?.setterBoardPosition
-            ? firstRally.stats[0].setterBoardPosition
-            : undefined);
-      
+      const firstRallyPosition =
+        firstRally.setterBoardPosition !== undefined
+          ? firstRally.setterBoardPosition
+          : firstRally.stats &&
+            firstRally.stats.length > 0 &&
+            firstRally.stats[0]?.setterBoardPosition
+          ? firstRally.stats[0].setterBoardPosition
+          : undefined;
+
       // Если позиция первого ралли отличается от позиции "0 - 0", учитываем позицию из "0 - 0"
       // Это означает, что в первом ралли произошла смена позиции, и нужно учесть начальную позицию
       if (firstRallyPosition !== initialSetterPosition) {
         // Используем weWon из первого ралли для определения, как учитывать начальную позицию
-        const firstRallyWeWon = firstRally.weWon !== undefined
-          ? firstRally.weWon
-          : (() => {
-              const [myScore, rivalScore] = firstRally.score.split(" - ").map(Number);
-              const [prevMyScore, prevRivalScore] = "0 - 0".split(" - ").map(Number);
-              return myScore > prevMyScore;
-            })();
-        
+        const firstRallyWeWon =
+          firstRally.weWon !== undefined
+            ? firstRally.weWon
+            : (() => {
+                const [myScore] = firstRally.score.split(" - ").map(Number);
+                const [prevMyScore] = "0 - 0".split(" - ").map(Number);
+                return myScore > prevMyScore;
+              })();
+
         // Учитываем позицию из "0 - 0" для первого ралли
         if (firstRallyWeWon) {
           newGame[initialSetterPosition - 1].count += 1;
@@ -84,18 +97,22 @@ export default function GameLogs(arg: TGameLogs) {
         }
       }
     }
-    
+
     game.forEach((rall, index) => {
       // Определяем расстановку связующего нашей команды
       // Сначала проверяем setterBoardPosition на уровне ралли (для ралли без действий)
       // Если нет, проверяем в stats[0] (для ралли с действиями, старые данные)
       // Если и там нет, для первого ралли используем позицию из "0 - 0"
       let setterPosition: number | undefined = undefined;
-      
+
       if (rall.setterBoardPosition !== undefined) {
         // Расстановка сохранена на уровне ралли (для ралли без действий или с действиями)
         setterPosition = rall.setterBoardPosition;
-      } else if (rall.stats && rall.stats.length > 0 && rall.stats[0]?.setterBoardPosition) {
+      } else if (
+        rall.stats &&
+        rall.stats.length > 0 &&
+        rall.stats[0]?.setterBoardPosition
+      ) {
         // Расстановка в stats (для ралли с действиями, старые данные)
         setterPosition = rall.stats[0].setterBoardPosition;
       } else if (index === 0 && initialSetterPosition !== undefined) {
@@ -103,7 +120,7 @@ export default function GameLogs(arg: TGameLogs) {
         // Это нужно, так как первый розыгрыш может не иметь сохраненной позиции
         setterPosition = initialSetterPosition;
       }
-      
+
       // Используем weWon из данных ралли (если есть), иначе вычисляем по изменению счета
       let weWon: boolean;
       if (rall.weWon !== undefined) {
@@ -111,18 +128,18 @@ export default function GameLogs(arg: TGameLogs) {
         weWon = rall.weWon;
       } else {
         // Fallback: вычисляем по изменению счета (для старых данных)
-        const [myScore, rivalScore] = rall.score.split(" - ").map(Number);
-        const [prevMyScore, prevRivalScore] = previousScore.split(" - ").map(Number);
+        const [myScore] = rall.score.split(" - ").map(Number);
+        const [prevMyScore] = previousScore.split(" - ").map(Number);
         weWon = myScore > prevMyScore; // Наш счет увеличился
       }
-      
+
       // Логика как в Data Volley:
       // 1. Берем каждое ралли
       // 2. Смотрим в какой зоне наш связующий (setterPosition)
       // 3. Проверяем выиграли очко или проиграли (используем weWon из данных)
       // 4. Записываем +1 или -1 в эту расстановку
       // Не имеет значения: кто подает, из какой зоны атака, какой элемент принес очко
-      
+
       if (setterPosition !== undefined) {
         if (weWon) {
           // Мы выиграли очко - увеличиваем счет для позиции связующего
@@ -132,7 +149,7 @@ export default function GameLogs(arg: TGameLogs) {
           newGame[setterPosition - 1].count -= 1;
         }
       }
-      
+
       // Обновляем предыдущий счет для следующей итерации
       previousScore = rall.score;
     });
@@ -155,7 +172,13 @@ export default function GameLogs(arg: TGameLogs) {
             {plusMinusPositions.map((zone) => (
               <div key={zone.position}>
                 <div>P{zone.position}</div>
-                <div style={zone.count >= 0 ? { color: "green" } : { color: "orangered" }}>
+                <div
+                  style={
+                    zone.count >= 0
+                      ? { color: "green" }
+                      : { color: "orangered" }
+                  }
+                >
                   {zone.count}
                 </div>
               </div>
@@ -169,7 +192,7 @@ export default function GameLogs(arg: TGameLogs) {
                   {Object.values(game).map((sets, setIndex) => {
                     // Для определения кто выиграл очко, нужно сравнивать счет
                     let previousScore = "0 - 0";
-                    
+
                     return (
                       <tbody key={setIndex} className="rating-table-wrapper">
                         <tr className="gameLog-set-wrapper">
@@ -190,56 +213,95 @@ export default function GameLogs(arg: TGameLogs) {
                             weWon = set.weWon;
                           } else {
                             // Fallback: вычисляем по изменению счета (для старых данных)
-                            const [myScore, rivalScore] = set.score.split(" - ").map(Number);
-                            const [prevMyScore, prevRivalScore] = previousScore.split(" - ").map(Number);
+                            const [myScore] = set.score
+                              .split(" - ")
+                              .map(Number);
+                            const [prevMyScore] = previousScore
+                              .split(" - ")
+                              .map(Number);
                             weWon = myScore > prevMyScore; // Наш счет увеличился
                           }
-                          
+
                           // Обновляем предыдущий счет для следующей итерации
                           previousScore = set.score;
-                          
+
                           // Определяем расстановку связующего нашей команды
                           // Сначала проверяем setterBoardPosition на уровне ралли (для ралли без действий)
                           // Если нет, проверяем в stats[0] (для ралли с действиями, старые данные)
-                          const ourSetterPosition = set.setterBoardPosition !== undefined 
-                            ? set.setterBoardPosition 
-                            : (set.stats && set.stats.length > 0 && set.stats[0]?.setterBoardPosition 
-                                ? set.stats[0].setterBoardPosition 
-                                : undefined);
-                          
+                          const ourSetterPosition =
+                            set.setterBoardPosition !== undefined
+                              ? set.setterBoardPosition
+                              : set.stats &&
+                                set.stats.length > 0 &&
+                                set.stats[0]?.setterBoardPosition
+                              ? set.stats[0].setterBoardPosition
+                              : undefined;
+
                           // Отображаем расстановку связующего:
                           // - Слева (зеленый) - если мы выиграли очко в этой расстановке
                           // - Справа (красный) - если мы проиграли очко в этой расстановке
                           // ВАЖНО: Всегда отображаем позицию, если она есть, даже если нет действий игроков
                           const isInitialScore = set.score === "0 - 0";
-                          
+
                           // Определяем, где показывать позицию:
                           // - Слева (зеленый) - если мы выиграли очко
                           // - Справа (красный) - если мы проиграли очко
                           // - Слева (серый) - для начального счета (0-0)
-                          const showLeft = ourSetterPosition !== undefined && (weWon || isInitialScore);
-                          const showRight = ourSetterPosition !== undefined && !weWon && !isInitialScore;
-                          
+                          const showLeft =
+                            ourSetterPosition !== undefined &&
+                            (weWon || isInitialScore);
+                          const showRight =
+                            ourSetterPosition !== undefined &&
+                            !weWon &&
+                            !isInitialScore;
+
                           return (
-                            <tr className="gameLog-column-wrapper" key={rallyIndex}>
-                              <td style={{ 
-                                color: showLeft ? (weWon && !isInitialScore ? "green" : "gray") : "",
-                                fontWeight: ourSetterPosition !== undefined ? "bold" : "normal"
-                              }}>
+                            <tr
+                              className="gameLog-column-wrapper"
+                              key={rallyIndex}
+                            >
+                              <td
+                                style={{
+                                  color: showLeft
+                                    ? weWon && !isInitialScore
+                                      ? "green"
+                                      : "gray"
+                                    : "",
+                                  fontWeight:
+                                    ourSetterPosition !== undefined
+                                      ? "bold"
+                                      : "normal",
+                                }}
+                              >
                                 {showLeft ? `P${ourSetterPosition}` : ""}
                               </td>
                               <td>{set.weServe ? "🏐" : ""}</td>
-                              <td 
-                                style={{ cursor: "pointer", textDecoration: "underline" }}
-                                onClick={() => setSelectedRally({ rally: set, gameIndex: index, setIndex: setIndex, rallyIndex })}
+                              <td
+                                style={{
+                                  cursor: "pointer",
+                                  textDecoration: "underline",
+                                }}
+                                onClick={() =>
+                                  setSelectedRally({
+                                    rally: set,
+                                    gameIndex: index,
+                                    setIndex: setIndex,
+                                    rallyIndex,
+                                  })
+                                }
                               >
                                 {set.score}
                               </td>
                               <td>{!set.weServe ? "🏐" : ""}</td>
-                              <td style={{ 
-                                color: showRight ? "orangered" : "",
-                                fontWeight: ourSetterPosition !== undefined ? "bold" : "normal"
-                              }}>
+                              <td
+                                style={{
+                                  color: showRight ? "orangered" : "",
+                                  fontWeight:
+                                    ourSetterPosition !== undefined
+                                      ? "bold"
+                                      : "normal",
+                                }}
+                              >
                                 {showRight ? `P${ourSetterPosition}` : ""}
                               </td>
                             </tr>
@@ -255,7 +317,7 @@ export default function GameLogs(arg: TGameLogs) {
         </>
       )}
       {selectedRally && (
-        <div 
+        <div
           style={{
             position: "fixed",
             top: 0,
@@ -270,7 +332,7 @@ export default function GameLogs(arg: TGameLogs) {
           }}
           onClick={() => setSelectedRally(null)}
         >
-          <div 
+          <div
             style={{
               backgroundColor: "white",
               padding: "20px",
@@ -299,8 +361,11 @@ export default function GameLogs(arg: TGameLogs) {
             >
               ✕
             </button>
-            <h3 style={{ marginTop: 0 }}>Rally Details - Score: {selectedRally.rally.score}</h3>
-            {selectedRally.rally.stats && selectedRally.rally.stats.length > 0 ? (
+            <h3 style={{ marginTop: 0 }}>
+              Rally Details - Score: {selectedRally.rally.score}
+            </h3>
+            {selectedRally.rally.stats &&
+            selectedRally.rally.stats.length > 0 ? (
               <div>
                 <h4>Players Actions:</h4>
                 {(() => {
@@ -323,43 +388,81 @@ export default function GameLogs(arg: TGameLogs) {
                     { key: "S-", label: "S-" },
                     { key: "blocks", label: "Blocks" },
                   ];
-                  
+
                   // Фильтруем колонки, оставляя только те, где есть хотя бы одно ненулевое значение
                   const visibleColumns = columns.filter((col) => {
                     return selectedRally.rally.stats.some((player: any) => {
                       const value = player[col.key];
-                      return value !== undefined && value !== null && value !== 0;
+                      return (
+                        value !== undefined && value !== null && value !== 0
+                      );
                     });
                   });
-                  
+
                   return (
-                    <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
+                    <table
+                      style={{
+                        width: "100%",
+                        borderCollapse: "collapse",
+                        marginTop: "10px",
+                      }}
+                    >
                       <thead>
                         <tr style={{ backgroundColor: "#f0f0f0" }}>
-                          <th style={{ padding: "8px", border: "1px solid #ddd", textAlign: "left" }}>Player</th>
+                          <th
+                            style={{
+                              padding: "8px",
+                              border: "1px solid #ddd",
+                              textAlign: "left",
+                            }}
+                          >
+                            Player
+                          </th>
                           {visibleColumns.map((col) => (
-                            <th key={col.key} style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
+                            <th
+                              key={col.key}
+                              style={{
+                                padding: "8px",
+                                border: "1px solid #ddd",
+                                textAlign: "center",
+                              }}
+                            >
                               {col.label}
                             </th>
                           ))}
                         </tr>
                       </thead>
                       <tbody>
-                        {selectedRally.rally.stats.map((player: any, playerIndex: number) => (
-                          <tr key={playerIndex}>
-                            <td style={{ padding: "8px", border: "1px solid #ddd", fontWeight: "bold" }}>
-                              {player.name || "Unknown"}
-                            </td>
-                            {visibleColumns.map((col) => {
-                              const value = player[col.key] || 0;
-                              return (
-                                <td key={col.key} style={{ padding: "8px", border: "1px solid #ddd", textAlign: "center" }}>
-                                  {value !== 0 ? value : ""}
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        ))}
+                        {selectedRally.rally.stats.map(
+                          (player: any, playerIndex: number) => (
+                            <tr key={playerIndex}>
+                              <td
+                                style={{
+                                  padding: "8px",
+                                  border: "1px solid #ddd",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {player.name || "Unknown"}
+                              </td>
+                              {visibleColumns.map((col) => {
+                                const value = player[col.key] || 0;
+                                return (
+                                  <td
+                                    key={col.key}
+                                    style={{
+                                      padding: "8px",
+                                      border: "1px solid #ddd",
+                                      textAlign: "center",
+                                    }}
+                                  >
+                                    {value !== 0 ? value : ""}
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          )
+                        )}
                       </tbody>
                     </table>
                   );
@@ -367,7 +470,8 @@ export default function GameLogs(arg: TGameLogs) {
               </div>
             ) : (
               <p style={{ fontStyle: "italic", color: "#666" }}>
-                No player actions in this rally (quick point, e.g., service error)
+                No player actions in this rally (quick point, e.g., service
+                error)
               </p>
             )}
           </div>

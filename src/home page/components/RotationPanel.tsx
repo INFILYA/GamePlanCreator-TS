@@ -6,13 +6,9 @@ import {
   rotateForwardGuestTeam,
   selectIndexOfGuestTeamZones,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
-import {
-  selectIndexOfHomeTeamZones,
-} from "../../states/slices/indexOfHomeTeamZonesSlice";
 import { correctZones, forSoloGameStat } from "../../utilities/functions";
 import {
   resetRallyStats,
-  // rotateForwardPositions,
   selectSoloRallyStats,
 } from "../../states/slices/soloRallyStatsSlice";
 import { useAppDispatch } from "../../states/store";
@@ -31,9 +27,13 @@ type TRotationPanel = {
   setNextRotation(arg: boolean): void;
   opponentTeamName?: string;
   gameLog: TGameLogStats;
-  setGameLog(arg: TGameLogStats): void;
-  setstatsForTeam(arg: TPlayer[][]): void;
+  setGameLog(
+    arg: TGameLogStats | ((prev: TGameLogStats) => TGameLogStats)
+  ): void;
   statsForTeam: TPlayer[][];
+  setstatsForTeam(
+    arg: TPlayer[][] | ((prev: TPlayer[][]) => TPlayer[][])
+  ): void;
   endOfTheSet: boolean;
   setPreviousScore(arg: number): void;
   previousScore: number;
@@ -52,10 +52,8 @@ export default function RotationPanel(arg: TRotationPanel) {
     currentScore,
     setScore,
     setNextRotation,
-    gameLog,
     setGameLog,
     setstatsForTeam,
-    statsForTeam,
     endOfTheSet,
     setPreviousScore,
     previousScore,
@@ -68,14 +66,15 @@ export default function RotationPanel(arg: TRotationPanel) {
   const [myZone, setMyZone] = useState(1);
   const [openConfirmWindow, setOpenConfirmWindow] = useState(false);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
-  const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
 
   useEffect(() => {
     // ВАЖНО: Всегда получаем расстановку нашей команды (myZone)
     // Это нужно для расчета plusMinusPositions, чтобы понять где мы стартуем
     // Используем guestTeamOptions (наша команда на поле)
     function myTeamRigthRotation() {
-      const seTTer = guestTeamOptions.find((player) => player.position === "SET");
+      const seTTer = guestTeamOptions.find(
+        (player) => player.position === "SET"
+      );
       if (!seTTer) return;
       const indexOfSetter = guestTeamOptions.indexOf(seTTer);
       setMyZone(correctZones(indexOfSetter));
@@ -94,39 +93,49 @@ export default function RotationPanel(arg: TRotationPanel) {
     // Если это панель соперника (rivalTeam = true), то weServe инвертирован
     // Поэтому нужно инвертировать обратно, чтобы получить правильное значение
     const whoServedInThisRally = rivalTeam ? !weServe : weServe;
-    
+
     const newScore = score + 1;
-    const newCurrentScore = `${newScore} - ${rivalScore}`;
-    
-    if ((zeroZero && !weServe && !rivalTeam) || (previousScore !== rivalScore && !rivalTeam)) {
+
+    if (
+      (zeroZero && !weServe && !rivalTeam) ||
+      (previousScore !== rivalScore && !rivalTeam)
+    ) {
       dispatch(rotateForwardGuestTeam());
       dispatch(rotateForwardHomeTeam());
       setPreviousScore(rivalScore);
     }
-    if ((zeroZero && !weServe && rivalTeam) || (previousScore !== rivalScore && rivalTeam)) {
+    if (
+      (zeroZero && !weServe && rivalTeam) ||
+      (previousScore !== rivalScore && rivalTeam)
+    ) {
       setPreviousScore(rivalScore);
       const properRivalZone =
-        rivalRotation === 1 ? 6 : rivalRotation <= 6 ? rivalRotation - 1 : rivalRotation;
+        rivalRotation === 1
+          ? 6
+          : rivalRotation <= 6
+          ? rivalRotation - 1
+          : rivalRotation;
       setRivalRotation(properRivalZone);
     }
     setScore(newScore);
-    
+
     // ============================================
     // ЗАПИСЬ ОЧКА В ИСТОРИЮ ИГРЫ
     // ============================================
     // ВАЖНО: Записываем ралли ВСЕГДА в gameLog, даже если нет действий игроков
     // Используем forSoloGameStat для очистки нулевых значений из объектов статистики игроков
-    const cleanedStats = SoloRallyStats.length > 0 
-      ? SoloRallyStats.map(player => forSoloGameStat(player))
-      : [];
-    
+    const cleanedStats =
+      SoloRallyStats.length > 0
+        ? SoloRallyStats.map((player) => forSoloGameStat(player))
+        : [];
+
     // Определяем расстановки на момент ралли
     const seTTer = guestTeamOptions.find((player) => player.position === "SET");
-    const ourSetterPosition = seTTer 
+    const ourSetterPosition = seTTer
       ? correctZones(guestTeamOptions.indexOf(seTTer))
       : myZone;
     const rivalSetterPosition = rivalRotation;
-    
+
     const rallyData = {
       score: currentScore,
       weServe: whoServedInThisRally, // Кто подавал в этом ралли (значение на начало розыгрыша)
@@ -135,33 +144,41 @@ export default function RotationPanel(arg: TRotationPanel) {
       setterBoardPosition: ourSetterPosition,
       rivalSetterBoardPosition: rivalSetterPosition,
     };
-    
+
     // Используем функциональное обновление для правильного накопления
     setGameLog((prevGameLog) => {
       const newGameLog = [...prevGameLog, rallyData];
-      
+
       // Логируем только нужную информацию
       console.log("Who served:", whoServedInThisRally ? "We" : "Rival");
-      console.log("Actions in this rally:", SoloRallyStats.length > 0 ? SoloRallyStats.map(p => ({
-        name: p.name,
-        "R++": p["R++"] || 0,
-        "R+": p["R+"] || 0,
-        "A++": p["A++"] || 0,
-        "A+": p["A+"] || 0,
-        "S++": p["S++"] || 0,
-        "S+": p["S+"] || 0,
-        blocks: p.blocks || 0,
-      })) : "No actions");
+      console.log(
+        "Actions in this rally:",
+        SoloRallyStats.length > 0
+          ? SoloRallyStats.map((p) => ({
+              name: p.name,
+              "R++": p["R++"] || 0,
+              "R+": p["R+"] || 0,
+              "A++": p["A++"] || 0,
+              "A+": p["A+"] || 0,
+              "S++": p["S++"] || 0,
+              "S+": p["S+"] || 0,
+              blocks: p.blocks || 0,
+            }))
+          : "No actions"
+      );
       console.log("Full gameLog:", newGameLog);
-      
+
       return newGameLog;
     });
-    
+
     // Записываем в statsForTeam только если есть действия
     if (SoloRallyStats.length > 0) {
-      setstatsForTeam((prevStats) => [...prevStats, SoloRallyStats]);
+      setstatsForTeam((prevStats: TPlayer[][]) => [
+        ...prevStats,
+        SoloRallyStats,
+      ]);
     }
-    
+
     dispatch(resetRallyStats());
     setNextRotation(true);
     // Обновляем weServe для следующего ралли
@@ -179,7 +196,10 @@ export default function RotationPanel(arg: TRotationPanel) {
   return (
     <>
       {openConfirmWindow && (
-        <ConfirmField onClick={addScore} setOpenConfirmWindow={setOpenConfirmWindow} />
+        <ConfirmField
+          onClick={addScore}
+          setOpenConfirmWindow={setOpenConfirmWindow}
+        />
       )}
       <SectionWrapper className="rotation-panel-wrapper">
         <div className="rivalTeam-name-wrapper">
@@ -190,7 +210,9 @@ export default function RotationPanel(arg: TRotationPanel) {
             !weServe ? (
               <input
                 type="button"
-                onClick={!rivalTeam ? () => setWeServe(true) : () => setWeServe(false)}
+                onClick={
+                  !rivalTeam ? () => setWeServe(true) : () => setWeServe(false)
+                }
                 value={rivalTeam ? ">" : "<"}
               />
             ) : (
@@ -216,7 +238,10 @@ export default function RotationPanel(arg: TRotationPanel) {
               key={zone}
               value={zone}
               style={{
-                backgroundColor: (rivalTeam ? rivalRotation : myZone) === zone ? "orangered" : "",
+                backgroundColor:
+                  (rivalTeam ? rivalRotation : myZone) === zone
+                    ? "orangered"
+                    : "",
               }}
               onClick={zeroZero ? () => zones(zone) : () => null}
             >

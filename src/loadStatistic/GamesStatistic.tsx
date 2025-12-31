@@ -8,13 +8,10 @@ import { TGameStats, TMix, TObjectStats, TPlayer } from "../types/types";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import {
   calculateTotalofActions,
-  categorys,
   compare,
   isFieldExist,
-  jusName,
 } from "../utilities/functions";
 import { StatisticsTable } from "../ratings/components/StatisticsTable";
-import { selectListOfTeams } from "../states/slices/listOfTeamsSlice";
 import { selectPlayerInfo } from "../states/slices/playerInfoSlice";
 import { PersonalInformationOfPlayer } from "../personalInfo/PersonalInformationOfPlayer";
 import { useAppDispatch } from "../states/store";
@@ -32,12 +29,10 @@ import { selectGuestTeam } from "../states/slices/guestTeamSlice";
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
   const isBurger = useSetWidth() > 767;
-  const listOfTeams = useSelector(selectListOfTeams);
   const playerInfo = useSelector(selectPlayerInfo);
   const filteredGamesStats = useSelector(selectFilteredGameStats);
   const detailedStatsOfPlayer = useSelector(selectDetailedStatsOfPlayer);
   const guestTeam = useSelector(selectGuestTeam);
-  const [filter] = useState("");
   const [filteredGames, setFilteredGames] = useState<TGameStats[]>([]);
   const [gameLogs, setGameLogs] = useState<TObjectStats[]>([]);
   const [detailedStats, setDetailedStats] = useState<TPlayer[][]>([]);
@@ -56,17 +51,12 @@ export default function GamesStatistic() {
   }, [dispatch, guestTeam]);
 
   function calculateForTeamData<T extends TMix>(obj: T): TMix {
-    if (filter.length === 0) return obj;
-    const teamName = filter.split(" ")[0];
-    const filtered = listOfTeams.filter((team) => team.name === teamName);
-    const team = { ...filtered[0] };
-    const newObj = { ...obj };
-    for (const key in team) {
-      (team[key as keyof TMix] as number) = newObj[key as keyof T] as number;
-    }
-    return team;
+    return obj;
   }
-  function rankByValue<T extends TMix>(criteria: keyof TMix | "earnedPoints", arr: T[]) {
+  function rankByValue<T extends TMix>(
+    criteria: keyof TMix | "earnedPoints",
+    arr: T[]
+  ) {
     const properArr = criteria === "name" ? choosenGameStats.flat() : arr;
     const getValue = (obj: TMix, crit: keyof TMix | "earnedPoints"): number => {
       if (crit === "earnedPoints") {
@@ -325,7 +315,9 @@ export default function GamesStatistic() {
                   <div className="filters-row">
                     <label
                       htmlFor="exhibition-filter"
-                      className={`filter-button ${showOnlyExhibition ? "active" : ""}`}
+                      className={`filter-button ${
+                        showOnlyExhibition ? "active" : ""
+                      }`}
                     >
                       <input
                         type="checkbox"
@@ -340,7 +332,9 @@ export default function GamesStatistic() {
                     </label>
                     <label
                       htmlFor="official-filter"
-                      className={`filter-button ${showOnlyOfficial ? "active" : ""}`}
+                      className={`filter-button ${
+                        showOnlyOfficial ? "active" : ""
+                      }`}
                     >
                       <input
                         type="checkbox"
@@ -355,7 +349,13 @@ export default function GamesStatistic() {
                     </label>
                     {showOnlyExhibition && (
                       <label
-                        className={`filter-button ${filteredGames.length === filteredByExhibition.length && filteredByExhibition.length > 0 ? "active" : ""}`}
+                        className={`filter-button ${
+                          filteredGames.length ===
+                            filteredByExhibition.length &&
+                          filteredByExhibition.length > 0
+                            ? "active"
+                            : ""
+                        }`}
                       >
                         <input
                           type="checkbox"
@@ -378,7 +378,12 @@ export default function GamesStatistic() {
                     )}
                     {showOnlyOfficial && (
                       <label
-                        className={`filter-button ${filteredGames.length === filteredByOfficial.length && filteredByOfficial.length > 0 ? "active" : ""}`}
+                        className={`filter-button ${
+                          filteredGames.length === filteredByOfficial.length &&
+                          filteredByOfficial.length > 0
+                            ? "active"
+                            : ""
+                        }`}
                       >
                         <input
                           type="checkbox"
@@ -400,7 +405,12 @@ export default function GamesStatistic() {
                     )}
                     {!showOnlyExhibition && !showOnlyOfficial && (
                       <label
-                        className={`filter-button ${filteredGames.length === sortedGames.length && sortedGames.length > 0 ? "active" : ""}`}
+                        className={`filter-button ${
+                          filteredGames.length === sortedGames.length &&
+                          sortedGames.length > 0
+                            ? "active"
+                            : ""
+                        }`}
                       >
                         <input
                           type="checkbox"
@@ -441,97 +451,97 @@ export default function GamesStatistic() {
                   </div>
                 </div>
                 <div className="dates-column">
-                    {dates.map((date) => {
-                      const isCollapsed = collapsedDates.has(date);
-                      const gamesForDate = gamesByDate[date];
-                      const allGamesForDateSelected =
-                        gamesForDate.length > 0 &&
-                        gamesForDate.every((game) =>
-                          filteredGames.some(
-                            (selectedGame) =>
-                              Object.keys(selectedGame)[0] ===
-                              Object.keys(game)[0]
-                          )
-                        );
-                      return (
-                        <div key={date} className="date-group-wrapper">
-                          <div className="date-header">
-                            <span
-                              onClick={() => toggleDateCollapse(date)}
-                              style={{
-                                cursor: "pointer",
-                                fontSize: "1.2em",
-                                display: "flex",
-                                alignItems: "center",
-                                padding: "0 4px",
-                              }}
-                            >
-                              {isCollapsed ? "▶" : "▼"}
-                            </span>
-                            <input
-                              type="checkbox"
-                              checked={allGamesForDateSelected}
-                              onChange={(e) => {
-                                e.stopPropagation();
-                                setAllGamesForDate(date);
-                              }}
-                              onClick={(e) => e.stopPropagation()}
-                              style={{
-                                cursor: "pointer",
-                                width: "18px",
-                                height: "18px",
-                                margin: "0 8px",
-                              }}
-                            />
-                            <span
-                              onClick={() => toggleDateCollapse(date)}
-                              style={{
-                                cursor: "pointer",
-                                flex: 1,
-                              }}
-                            >
-                              {date}
-                            </span>
-                            <span
-                              style={{
-                                background: "rgba(255, 255, 255, 0.2)",
-                                padding: "4px 10px",
-                                borderRadius: "12px",
-                                fontSize: "0.9em",
-                                fontWeight: "500",
-                              }}
-                            >
-                              ({gamesForDate.length})
-                            </span>
-                          </div>
-                          {!isCollapsed && (
-                            <div className="games-for-date">
-                              {gamesForDate.map((game, index) => {
-                                const gameKey = Object.keys(game)[0];
-                                // Извлекаем только название команды соперника для более компактного отображения
-                                const gameParts = gameKey.split(";");
-                                const gameInfo = gameParts[1]?.trim() || "";
-                                // Убираем дату из отображения, так как она уже в заголовке
-                                const displayText = gameInfo || gameKey;
-                                return (
-                                  <div key={index}>
-                                    <input
-                                      onChange={() => setFilterForGames(game)}
-                                      value={gameKey}
-                                      type="checkbox"
-                                      checked={filteredGames.some(
-                                        (match) => match === game
-                                      )}
-                                    />
-                                    <div title={gameKey}>{displayText}</div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
+                  {dates.map((date) => {
+                    const isCollapsed = collapsedDates.has(date);
+                    const gamesForDate = gamesByDate[date];
+                    const allGamesForDateSelected =
+                      gamesForDate.length > 0 &&
+                      gamesForDate.every((game) =>
+                        filteredGames.some(
+                          (selectedGame) =>
+                            Object.keys(selectedGame)[0] ===
+                            Object.keys(game)[0]
+                        )
                       );
-                    })}
+                    return (
+                      <div key={date} className="date-group-wrapper">
+                        <div className="date-header">
+                          <span
+                            onClick={() => toggleDateCollapse(date)}
+                            style={{
+                              cursor: "pointer",
+                              fontSize: "1.2em",
+                              display: "flex",
+                              alignItems: "center",
+                              padding: "0 4px",
+                            }}
+                          >
+                            {isCollapsed ? "▶" : "▼"}
+                          </span>
+                          <input
+                            type="checkbox"
+                            checked={allGamesForDateSelected}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              setAllGamesForDate(date);
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                              cursor: "pointer",
+                              width: "18px",
+                              height: "18px",
+                              margin: "0 8px",
+                            }}
+                          />
+                          <span
+                            onClick={() => toggleDateCollapse(date)}
+                            style={{
+                              cursor: "pointer",
+                              flex: 1,
+                            }}
+                          >
+                            {date}
+                          </span>
+                          <span
+                            style={{
+                              background: "rgba(255, 255, 255, 0.2)",
+                              padding: "4px 10px",
+                              borderRadius: "12px",
+                              fontSize: "0.9em",
+                              fontWeight: "500",
+                            }}
+                          >
+                            ({gamesForDate.length})
+                          </span>
+                        </div>
+                        {!isCollapsed && (
+                          <div className="games-for-date">
+                            {gamesForDate.map((game, index) => {
+                              const gameKey = Object.keys(game)[0];
+                              // Извлекаем только название команды соперника для более компактного отображения
+                              const gameParts = gameKey.split(";");
+                              const gameInfo = gameParts[1]?.trim() || "";
+                              // Убираем дату из отображения, так как она уже в заголовке
+                              const displayText = gameInfo || gameKey;
+                              return (
+                                <div key={index}>
+                                  <input
+                                    onChange={() => setFilterForGames(game)}
+                                    value={gameKey}
+                                    type="checkbox"
+                                    checked={filteredGames.some(
+                                      (match) => match === game
+                                    )}
+                                  />
+                                  <div title={gameKey}>{displayText}</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <RegularButton onClick={setChoosenGames} type="button">

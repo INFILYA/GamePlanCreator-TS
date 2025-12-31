@@ -13,7 +13,7 @@ import {
   selectHomePlayers,
 } from "../../states/slices/homePlayersSlice";
 import { useState, useRef, useEffect } from "react";
-import { auth, teamsRef } from "../../config/firebase";
+import { teamsRef } from "../../config/firebase";
 import {
   resetHomeTeamIndexOfZones,
   selectIndexOfHomeTeamZones,
@@ -24,7 +24,7 @@ import {
   showGuestTeamStartingSix,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
-import { useAuthState } from "react-firebase-hooks/auth";
+// import { useAuthState } from "react-firebase-hooks/auth";
 import { RegularButton } from "../../css/Button.styled";
 import { compare, isBoardFull } from "../../utilities/functions";
 import { set } from "firebase/database";
@@ -40,23 +40,27 @@ type PlayerNameButtonProps = {
   onPlayerClick: () => void;
 };
 
-function PlayerNameButton({ player, myTeam, onPlayerClick }: PlayerNameButtonProps) {
+function PlayerNameButton({
+  player,
+  myTeam,
+  onPlayerClick,
+}: PlayerNameButtonProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [displayName, setDisplayName] = useState(player.name);
 
   useEffect(() => {
     if (!buttonRef.current) return;
-    
+
     const checkOverflow = () => {
       const button = buttonRef.current;
       if (!button) return;
-      
+
       // Получаем стили кнопки для точного измерения
       const buttonStyles = window.getComputedStyle(button);
       const paddingLeft = parseFloat(buttonStyles.paddingLeft) || 0;
       const paddingRight = parseFloat(buttonStyles.paddingRight) || 0;
       const availableWidth = button.clientWidth - paddingLeft - paddingRight;
-      
+
       // Создаем временный элемент для измерения ширины полного имени
       const tempSpan = document.createElement("span");
       tempSpan.style.visibility = "hidden";
@@ -69,10 +73,10 @@ function PlayerNameButton({ player, myTeam, onPlayerClick }: PlayerNameButtonPro
       tempSpan.style.letterSpacing = buttonStyles.letterSpacing;
       tempSpan.textContent = player.name;
       document.body.appendChild(tempSpan);
-      
+
       const fullNameWidth = tempSpan.offsetWidth;
       document.body.removeChild(tempSpan);
-      
+
       // Проверяем, помещается ли полное имя
       if (fullNameWidth > availableWidth) {
         // Если не помещается, показываем только имя (первое слово)
@@ -83,10 +87,10 @@ function PlayerNameButton({ player, myTeam, onPlayerClick }: PlayerNameButtonPro
         setDisplayName(player.name);
       }
     };
-    
+
     // Проверяем после небольшой задержки, чтобы DOM обновился
     const timeoutId = setTimeout(checkOverflow, 50);
-    
+
     // Проверяем при изменении размера окна
     const resizeObserver = new ResizeObserver(() => {
       setTimeout(checkOverflow, 50);
@@ -94,14 +98,14 @@ function PlayerNameButton({ player, myTeam, onPlayerClick }: PlayerNameButtonPro
     if (buttonRef.current) {
       resizeObserver.observe(buttonRef.current);
     }
-    
+
     // Также проверяем при изменении размера окна браузера
-    window.addEventListener('resize', checkOverflow);
-    
+    window.addEventListener("resize", checkOverflow);
+
     return () => {
       clearTimeout(timeoutId);
       resizeObserver.disconnect();
-      window.removeEventListener('resize', checkOverflow);
+      window.removeEventListener("resize", checkOverflow);
     };
   }, [player.name]);
 
@@ -113,9 +117,7 @@ function PlayerNameButton({ player, myTeam, onPlayerClick }: PlayerNameButtonPro
         className={myTeam ? "player-surname" : ""}
         onClick={onPlayerClick}
         style={
-          player.position === "LIB"
-            ? { backgroundColor: "turquoise" }
-            : {}
+          player.position === "LIB" ? { backgroundColor: "turquoise" } : {}
         }
         title={player.name}
       >
@@ -134,11 +136,11 @@ export function Squads(props: TSquadsProps) {
   const homePlayers = useSelector(selectHomePlayers);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const homeTeamOptions = useSelector(selectIndexOfHomeTeamZones);
-  const [isRegistratedUser] = useAuthState(auth);
-  const admin =
-    isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2" ||
-    isRegistratedUser?.uid === "wFlNnrG4piWkebseNPzDW1qejC22" ||
-    isRegistratedUser?.uid === "ehKOX9XhJpgfCRR2iRquHlGWO2n2";
+  // const [isRegistratedUser] = useAuthState(auth);
+  // const admin =
+  //   isRegistratedUser?.uid === "wilxducX3TUUNOuv56GfqWpjMJD2" ||
+  //   isRegistratedUser?.uid === "wFlNnrG4piWkebseNPzDW1qejC22" ||
+  //   isRegistratedUser?.uid === "ehKOX9XhJpgfCRR2iRquHlGWO2n2";
   const myTeam = team === "my";
   const club = myTeam ? homeTeam[0] : guestTeam[0];
   const players = myTeam ? [...homePlayers] : [...guestPlayers];
@@ -159,21 +161,25 @@ export function Squads(props: TSquadsProps) {
     e.preventDefault();
     const playerData = e.dataTransfer.getData("player");
     if (!playerData) return;
-    
+
     const player = JSON.parse(playerData) as TPlayer;
     const team = e.dataTransfer.getData("team");
     const currentZone = e.dataTransfer.getData("currentZone");
-    
+
     // Проверяем, что это возврат игрока (есть currentZone)
     if (currentZone) {
       if (team === "my") {
         dispatch(pushFromHomeTeamBoard(player));
         // Находим startingSix для resetHomeTeamIndexOfZones
-        const startingSix = homeTeamOptions.filter(p => typeof p.boardPosition === "number");
+        const startingSix = homeTeamOptions.filter(
+          (p) => typeof p.boardPosition === "number"
+        );
         dispatch(resetHomeTeamIndexOfZones({ startingSix, player }));
       } else {
         dispatch(pushFromGuestTeamBoard(player));
-        const startingSix = guestTeamOptions.filter(p => typeof p.boardPosition === "number");
+        const startingSix = guestTeamOptions.filter(
+          (p) => typeof p.boardPosition === "number"
+        );
         dispatch(resetGuestTeamIndexOfZones({ startingSix, player }));
       }
     }
@@ -241,7 +247,9 @@ export function Squads(props: TSquadsProps) {
   // add TEAM
 
   return (
-    <SectionWrapper className={`teamsquad-section ${myTeam ? "my-team" : "rival-team"}`}>
+    <SectionWrapper
+      className={`teamsquad-section ${myTeam ? "my-team" : "rival-team"}`}
+    >
       <div
         className="team-title-wrapper"
         style={myTeam ? { direction: "rtl" } : {}}
@@ -253,7 +261,7 @@ export function Squads(props: TSquadsProps) {
           <img className="team-logo" src={club.logo} alt="" />
         </div>
       </div>
-      <div 
+      <div
         className="squad-wrapper"
         onDrop={handleDropOnSquad}
         onDragOver={(e) => {
@@ -268,9 +276,9 @@ export function Squads(props: TSquadsProps) {
               className="player-field-wrapper"
               draggable={true}
               onDragStart={(e) => handleDragStart(e, player)}
-              style={{ 
+              style={{
                 ...(myTeam ? { direction: "rtl" } : {}),
-                cursor: "grab"
+                cursor: "grab",
               }}
             >
               <div className="playerNumber-wrapper">
