@@ -1578,44 +1578,60 @@ main {
           display: flex;
           width: 100%;
           margin: 1vw 0;
-          justify-content: center;
+          justify-content: space-between;
+          align-items: flex-start;
+          position: relative;
+          padding-top: clamp(15px, 1.5vw, 20px);
+          min-height: clamp(100px, 10vw, 120px);
+          &:not(:has(.rotation-field-wrapper.statistic-mode)) {
+            min-height: auto;
+            padding-bottom: clamp(5px, 0.8vw, 10px);
+          }
           > div:not(.match-number-wrapper) {
             width: 25%;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
-            height: 40px;
+            height: auto;
+            flex-shrink: 0;
+            padding-top: 0;
           }
           .match-number-wrapper {
-            width: 50%;
-            max-width: 100%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             height: 100%;
             box-sizing: border-box;
-            padding: 0 0.5vw;
+            padding: 0 0.5vw clamp(2px, 0.4vw, 5px) 0.5vw;
             align-items: center;
+            gap: clamp(5px, 0.8vw, 10px);
             > div:first-child {
-              height: 50%;
               width: 100%;
               display: flex;
               align-items: center;
               justify-content: center;
               margin: 0 auto;
               position: relative;
+              flex-shrink: 0;
+              padding-top: 0 !important;
+              margin-top: 0 !important;
               button {
                 margin: 0 auto;
                 display: block;
               }
             }
             > div:last-child {
-              height: 50%;
               display: flex;
               flex-direction: row;
               align-items: center;
               justify-content: center;
               gap: 10px;
               position: relative;
+              flex-shrink: 0;
+              padding-top: clamp(5px, 0.8vw, 10px) !important;
+              padding-bottom: clamp(3px, 0.5vw, 6px) !important;
               input,
               select {
                 position: relative;
@@ -1625,7 +1641,6 @@ main {
                 position: relative;
                 z-index: 1;
                 align-self: center;
-                height: 100%; // Выравниваем по высоте input/select
                 display: flex;
                 align-items: center;
                 box-sizing: border-box;
@@ -1649,7 +1664,8 @@ main {
               color: #0272be;
               text-align: center;
               font-weight: 600;
-              height: 100%;
+              height: auto;
+              min-height: 32px;
               font-size: clamp(
                 0.8rem,
                 calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem),
@@ -1855,12 +1871,21 @@ main {
             justify-content: space-between;
             position: relative;
             z-index: 11;
-            padding-top: 10px; // Добавляем отступ сверху
+            padding-top: 20px; // Добавляем отступ сверху, чтобы не заезжало под header
+            align-items: flex-start;
+            @media screen and (min-width: 768px) {
+              .match-number-wrapper {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+              }
+            }
           }
           &.statistic-mode {
             .reset-button-wrapper {
-              margin: 0.3vw 0;
               margin-top: 0.2vw;
+              min-height: clamp(100px, 10vw, 120px);
+              align-items: center;
             }
           }
           .button-save-wrapper {

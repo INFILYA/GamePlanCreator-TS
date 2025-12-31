@@ -1330,20 +1330,31 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   display: flex;
   width: 100%;
   margin: 1vw 0;
-  justify-content: center;
-  padding-top: 10px; /* Добавляем отступ сверху, чтобы не заезжало под header */
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-top: clamp(15px, 1.5vw, 20px); /* Добавляем отступ сверху, чтобы не заезжало под header */
+  position: relative;
+  min-height: clamp(100px, 10vw, 120px);
+}
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper:not(.statistic-mode) .reset-button-wrapper {
+  min-height: auto;
+  padding-bottom: clamp(5px, 0.8vw, 10px);
 }
 /* В statistic mode уменьшаем отступы, чтобы был впритык к именам */
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .reset-button-wrapper {
-  margin: 0.3vw 0;
   margin-top: 0.2vw;
+  justify-content: center;
+  min-height: clamp(100px, 10vw, 120px);
+  align-items: center;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper > div:not(.match-number-wrapper) {
   width: 25%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  height: 40px;
+  height: auto;
+  flex-shrink: 0;
+  padding-top: 0;
 }
 @media screen and (min-width: 768px) and (max-width: 1024px) {
   main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper {
@@ -1355,38 +1366,49 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
     width: auto; /* Автоматическая ширина для iPad */
     min-width: 80px; /* Минимальная ширина */
   }
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
-  width: 50%;
-  max-width: 100%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   height: 100%;
   box-sizing: border-box;
-  padding: 0 0.5vw;
+  padding: 0 0.5vw clamp(2px, 0.4vw, 5px) 0.5vw;
   align-items: center;
+  gap: clamp(5px, 0.8vw, 10px);
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:first-child {
-  height: 50%;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto;
   position: relative;
+  flex-shrink: 0;
+  padding-top: 0 !important;
+  margin-top: 0 !important;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:first-child button {
   margin: 0 auto;
   display: block;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child {
-  height: 50%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 10px;
   position: relative;
+  flex-shrink: 0;
+  padding-top: clamp(5px, 0.8vw, 10px) !important;
+  padding-bottom: clamp(3px, 0.5vw, 6px) !important;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child input,
 main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child select {
@@ -1420,7 +1442,8 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   color: #0272be;
   text-align: center;
   font-weight: 600;
-  height: 100%;
+  height: auto;
+  min-height: 32px;
   font-size: clamp(0.8rem, calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem), 1.2rem);
   border-radius: 8px;
   padding: 4px 8px;
@@ -1910,6 +1933,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .my-row-zones-wrapper .zone-names-wrapper {
   height: 2vmax;
   font-size: calc((var(--normal-text-size-value) - 1) * 4vw + 0.8rem);
+  min-height: 40px;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-front-row-zones-wrapper .errors-field-wrapper,
 main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .empty-guest-back-row-zones-wrapper .errors-field-wrapper,
@@ -2035,13 +2059,16 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
     width: 100%;
   }
   main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
+    position: static;
+    transform: none;
+    left: auto;
     width: 100%;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 8px;
   }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div {
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:first-child {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -2050,6 +2077,10 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
     width: 100%;
     box-sizing: border-box;
     padding: 10px 0;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child {
+    padding-top: 15px !important;
+    padding-bottom: 15px !important;
   }
   main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper h2 {
     margin: 0;

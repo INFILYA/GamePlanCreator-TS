@@ -7,7 +7,7 @@ type TButton = {
 };
 
 export const RegularButton = styled.button<TButton>`
-  font-size: clamp(1rem, calc((var(--normal-text-size-value) - 1) * 2.5vw + 0.5rem), 1.4rem);
+  font-size: clamp(0.72rem, calc((var(--normal-text-size-value) - 1) * 1.7vw + 0.34rem), 1.02rem);
   margin: 0.5vmax;
   border: none;
   padding: clamp(6px, 0.5vw, 8px) clamp(12px, 1vw, 16px);
@@ -179,16 +179,24 @@ export const RegularButton = styled.button<TButton>`
   }
   
   @media screen and (max-width: 767px) {
-    font-size: clamp(0.85rem, 2vw, 1rem);
+    font-size: clamp(0.64rem, 1.53vw, 0.77rem);
     padding: clamp(4px, 0.4vw, 6px) clamp(8px, 0.8vw, 12px);
     margin: 0.3vmax;
     min-width: 2.5vmax;
   }
   
   @media screen and (min-width: 768px) and (max-width: 1024px) {
-    font-size: clamp(0.9rem, 1.8vw, 1.1rem); /* Адаптация для iPad */
+    font-size: clamp(0.68rem, 1.36vw, 0.85rem); /* Адаптация для iPad */
     padding: clamp(5px, 0.45vw, 7px) clamp(10px, 0.9vw, 14px);
     margin: 0.4vmax;
     min-width: 2.8vmax;
+  }
+  
+  @media screen and (min-width: 1025px) and (max-width: 1440px) {
+    font-size: clamp(0.72rem, 1.53vw, 0.94rem);
+  }
+  
+  @media screen and (min-width: 1441px) {
+    font-size: clamp(0.77rem, 1.7vw, 1.02rem);
   }
 `;

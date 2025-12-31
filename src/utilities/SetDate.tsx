@@ -17,8 +17,8 @@ export function SetDate() {
   };
   const Data = date.toLocaleDateString("en-US", options);
   return (
-    <div style={{ marginRight: "1vw" }}>
-      <h2>{Data}</h2>
+    <div className="set-date-wrapper">
+      <h2 className="set-date-text">{Data}</h2>
     </div>
   );
 }

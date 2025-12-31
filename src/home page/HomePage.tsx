@@ -485,16 +485,6 @@ export function HomePage() {
               <div className="reset-button-wrapper">
                 {showGuestTeam ? (
                   <>
-                    <div>
-                      <RegularButton
-                        onClick={resetTheBoardForGuestTeam}
-                        type="button"
-                        $color="orangered"
-                        $background="white"
-                      >
-                        Reset
-                      </RegularButton>
-                    </div>
                     {isBoardFull(guestTeamOptions) && (
                       <div className="match-number-wrapper">
                         <div>
@@ -517,6 +507,10 @@ export function HomePage() {
                         {!showSquads && !showCurrentGameStats && (
                           <div
                             style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              justifyContent: "center",
                               gap: "30px",
                               padding: "10px 0 10px 0",
                             }}
@@ -563,12 +557,24 @@ export function HomePage() {
                         )}
                       </div>
                     )}
+                    {showSquads && (
+                      <div style={{ marginLeft: "auto" }}>
+                        <RegularButton
+                          onClick={resetTheBoardForGuestTeam}
+                          type="button"
+                          $color="orangered"
+                          $background="white"
+                        >
+                          Reset
+                        </RegularButton>
+                      </div>
+                    )}
                   </>
                 ) : (
                   <div></div>
                 )}
-                {showHomeTeam ? (
-                  <div>
+                {showHomeTeam && showSquads && (
+                  <div style={{ marginLeft: "auto" }}>
                     <RegularButton
                       onClick={resetTheBoardForHomeTeam}
                       type="button"
@@ -578,8 +584,6 @@ export function HomePage() {
                       Reset
                     </RegularButton>
                   </div>
-                ) : (
-                  <div></div>
                 )}
               </div>
               {!showCurrentGameStats && (

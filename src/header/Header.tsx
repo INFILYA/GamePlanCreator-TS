@@ -26,8 +26,6 @@ export function Header() {
       console.error(err);
     }
   }
-  const guestLength = guestTeam.length !== 0;
-  const homeLength = homeTeam.length !== 0;
   return (
     <header className="header">
       <div className="block">
@@ -43,16 +41,11 @@ export function Header() {
             "Guest"}
         </h2>
       </div>
-      {(guestLength || homeLength) && (
-        <div className="matchup">
-          {guestLength && <img src={guestTeam[0].logo} alt=""></img>}
-          vs
-          {homeLength && <img src={homeTeam[0].logo} alt=""></img>}
-        </div>
-      )}
+      <div className="block block-center">
+        <SetDate />
+      </div>
       {isRegistratedUser ? (
         <div className="block" style={{ justifyContent: "end" }}>
-          <SetDate />
           <RegularButton
             type="button"
             onClick={logout}
@@ -64,7 +57,6 @@ export function Header() {
         </div>
       ) : (
         <div className="block" style={{ justifyContent: "end" }}>
-          <SetDate />
           <RegularButton
             type="button"
             onClick={openAuthWindow}
