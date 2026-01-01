@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { TPlayer } from "../../types/types";
 import { RootState } from "../store";
-import { emptyPlayers, zones, correctZones } from "../../utilities/functions";
+import { emptyPlayers, zones } from "../../utilities/functions";
 
 type TIndexOfGuestTeamZones = {
   indexOfGuestTeamZones: TPlayer[];
