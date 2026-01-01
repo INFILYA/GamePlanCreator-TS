@@ -75,6 +75,59 @@ export function HomePage() {
 
   const showGuestTeam = guestTeam.length !== 0;
 
+  function undoLastRally() {
+    if (gameLog.length === 0) {
+      alert("No rallies to undo");
+      return;
+    }
+
+    const lastRally = gameLog[gameLog.length - 1];
+
+    // Откатываем gameLog
+    setGameLog((prevGameLog) => prevGameLog.slice(0, -1));
+
+    // Откатываем statsForTeam
+    if (statsForTeam.length > 0) {
+      setstatsForTeam((prevStats) => prevStats.slice(0, -1));
+    }
+
+    // Откатываем счет
+    if (lastRally.weWon) {
+      // Мы выиграли последний розыгрыш, откатываем наш счет
+      setMyScore((prev) => Math.max(0, prev - 1));
+      // Восстанавливаем weServe - если мы выиграли, значит мы подавали
+      setWeServe(lastRally.weServe);
+    } else {
+      // Соперник выиграл последний розыгрыш, откатываем счет соперника
+      setRivalScore((prev) => Math.max(0, prev - 1));
+      // Если соперник выиграл, значит он подавал (weServe = false)
+      setWeServe(!lastRally.weServe);
+    }
+
+    // Откатываем SoloRallyStats из Redux
+    dispatch(resetRallyStats());
+
+    // Откатываем ротацию если нужно
+    if (lastRally.weWon) {
+      // Мы выиграли последний розыгрыш - откатываем ротацию нашей команды
+      if (lastRally.teamRotationBefore) {
+        // Восстанавливаем расстановку из сохраненного состояния
+        dispatch(setBackGuestTeamSelects(lastRally.teamRotationBefore));
+      } else {
+        // Если нет сохраненного состояния, откатываем ротацию назад
+        dispatch(rotateBackGuestTeam());
+      }
+    }
+
+    // Восстанавливаем previousScore и rivalRotation
+    if (lastRally.previousRivalScore !== undefined) {
+      setPreviousRivalScore(lastRally.previousRivalScore);
+    }
+    if (lastRally.rivalRotation !== undefined) {
+      setRivalRotation(lastRally.rivalRotation);
+    }
+  }
+
   function resetTheBoardForGuestTeam() {
     dispatch(setGuestPlayers([]));
     dispatch(setGuestTeam(""));
@@ -480,6 +533,7 @@ export function HomePage() {
   const fullGameStats = calculateForTeamDataV2(
     calculateTotalofActions(allRallyStats) as TMix
   );
+  console.log(gameLog);
   return (
     <article className="main-content-wrapper">
       {/* На мобильных (меньше 768px) обе панели squad идут вместе первыми */}
@@ -542,8 +596,24 @@ export function HomePage() {
                       );
                     }) &&
                       guestTeamOptions.some((p) => p.position === "LIB") && (
-                        <div className="match-number-wrapper">
+                        <div
+                          className="match-number-wrapper"
+                          style={{ width: "100%" }}
+                        >
                           <div>
+                            {!showSquads && gameLog.length > 0 && (
+                              <div style={{ position: "absolute", left: "0" }}>
+                                <RegularButton
+                                  onClick={undoLastRally}
+                                  type="button"
+                                  $color="white"
+                                  $background="#dc2626"
+                                  title="Undo last rally"
+                                >
+                                  Undo
+                                </RegularButton>
+                              </div>
+                            )}
                             <RegularButton
                               onClick={hideSquads}
                               type="button"

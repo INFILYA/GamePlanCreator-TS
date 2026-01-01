@@ -121,6 +121,9 @@ export type TSoloRallyStats = {
   stats: TPlayer[];
   setterBoardPosition?: number; // Позиция связующего нашей команды (для расчета plusMinusPositions)
   rivalSetterBoardPosition?: number; // Позиция связующего соперника (для отображения в таблице)
+  previousRivalScore?: number; // Счет соперника до этого ралли (для отката ротации)
+  rivalRotation?: number; // Ротация соперника до этого ралли (для отката)
+  teamRotationBefore?: TPlayer[]; // Состояние расстановки до ротации (для отката)
 };
 
 export type TSettersPosition = { [key: number]: number };

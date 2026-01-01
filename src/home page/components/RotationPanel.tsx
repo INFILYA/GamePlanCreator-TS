@@ -96,6 +96,11 @@ export default function RotationPanel(arg: TRotationPanel) {
 
     const newScore = score + 1;
 
+    // Сохраняем состояние расстановки ДО ротации для возможности отката
+    const teamRotationBefore = [...guestTeamOptions];
+    const previousRivalScoreBefore = previousScore;
+    const rivalRotationBefore = rivalRotation;
+
     if (
       (zeroZero && !weServe && !rivalTeam) ||
       (previousScore !== rivalScore && !rivalTeam)
@@ -142,6 +147,9 @@ export default function RotationPanel(arg: TRotationPanel) {
       weWon: !rivalTeam, // Кто выиграл очко: true - мы выиграли, false - соперник выиграл
       stats: cleanedStats,
       setterBoardPosition: ourSetterPosition,
+      previousRivalScore: previousRivalScoreBefore, // Счет соперника до этого ралли (для отката)
+      rivalRotation: rivalRotationBefore, // Ротация соперника до этого ралли (для отката)
+      teamRotationBefore: teamRotationBefore, // Состояние расстановки до ротации (для отката)
     };
 
     // Используем функциональное обновление для правильного накопления
