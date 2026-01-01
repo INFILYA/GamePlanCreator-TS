@@ -480,11 +480,8 @@ export function HomePage() {
   const fullGameStats = calculateForTeamDataV2(
     calculateTotalofActions(allRallyStats) as TMix
   );
-  console.log(guestTeamOptions);
-  console.log(gameLog);
   return (
     <article className="main-content-wrapper">
-      {/* На мобильных (меньше 768px) обе панели squad идут вместе первыми */}
       {/* На мобильных (меньше 768px) обе панели squad идут вместе первыми */}
       {isMobile && showGuestTeam && showSquads && (
         <>

@@ -13,7 +13,6 @@ import {
   correctZones,
   emptyPlayer,
   preparePlayerToSoloGame,
-  spikersPositions,
   zones,
 } from "../../utilities/functions";
 import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
@@ -215,21 +214,6 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     dispatch(updateInfoOfStartingSix(updatedPlayer));
   }
 
-  function getZoneOfAttack(index: number, playerInSix: TPlayer): number {
-    if (guestTeamOptions.length === 0) return 0;
-    const seTTer = guestTeamOptions.find((player) => player.position === "SET");
-    if (!seTTer) return 0;
-    const indexOfSetter = guestTeamOptions.indexOf(seTTer);
-    // Используем boardPosition из player, если он есть, иначе вычисляем из индекса
-    const playerBoardPosition = typeof playerInSix.boardPosition === "number" 
-      ? playerInSix.boardPosition 
-      : zones[index];
-    const playerProperZonesOfSpike = spikersPositions(
-      correctZones(indexOfSetter)
-    );
-    return playerProperZonesOfSpike[playerBoardPosition];
-  }
-
   if (typeof player === "number" || player === null) return;
   const condition = player.number !== 0;
   const serviceGradations = properArr("S");
@@ -247,7 +231,6 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     ];
     return arr;
   }
-  // player.name === "Cameron Gibson" && console.log(player);
   const playerIndex = startingSix.findIndex((p) => p.name === player.name);
   const zoneNumber = playerIndex !== -1 ? correctZones(playerIndex) : 0;
 

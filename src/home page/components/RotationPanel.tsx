@@ -123,8 +123,6 @@ export default function RotationPanel(arg: TRotationPanel) {
     // ============================================
     // ВАЖНО: Записываем ралли ВСЕГДА в gameLog, даже если нет действий игроков
     // Используем forSoloGameStat для очистки нулевых значений из объектов статистики игроков
-    console.log("SoloRallyStats:", SoloRallyStats);
-    
     const cleanedStats =
       SoloRallyStats.length > 0
         ? SoloRallyStats.map((player) => forSoloGameStat(player))
