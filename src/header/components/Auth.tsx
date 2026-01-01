@@ -80,7 +80,7 @@ export function Auth() {
           );
           localStorage.removeItem("userEmail");
           navigate("/", { replace: true });
-        } catch (emailError) {
+        } catch (_emailError) {
           // Обработка ошибок
         }
       }
@@ -141,7 +141,7 @@ export function Auth() {
 
       // Сначала пробуем popup (работает в Chrome и если не заблокирован)
       try {
-        const result = await signInWithPopup(auth, googleProvider);
+        await signInWithPopup(auth, googleProvider);
         navigate("/", { replace: true });
         return;
       } catch (popupError: any) {

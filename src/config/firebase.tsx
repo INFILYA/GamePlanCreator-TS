@@ -23,7 +23,7 @@ export const auth = getAuth(app);
 // Настраиваем auth для работы с редиректом
 // Убеждаемся, что auth знает о текущем домене
 if (typeof window !== 'undefined') {
-  const currentOrigin = window.location.origin;
+  // currentOrigin доступен через window.location.origin при необходимости
 }
 
 // Настраиваем Google провайдер для редиректа

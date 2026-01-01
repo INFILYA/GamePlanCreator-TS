@@ -41,27 +41,32 @@ export const indexOfGuestTeamZonesSlice = createSlice({
       // Обычная обработка для основных зон (1-6)
       // action.payload.zone уже содержит правильный boardPosition из zones[zoneIndex]
       const targetBoardPosition = action.payload.zone;
-      
+
       // Сначала удаляем игрока из старой позиции (если он уже на доске)
-      state.indexOfGuestTeamZones = state.indexOfGuestTeamZones.map((player) => {
-        // Если это тот же игрок, но в другой зоне - очищаем старую позицию
-        if (player.name === action.payload.player.name && player.boardPosition !== targetBoardPosition) {
-          // Находим индекс зоны для создания правильного emptyPlayer
-          const oldZoneIndex = zones.indexOf(player.boardPosition);
-          if (oldZoneIndex !== -1) {
-            return { ...emptyPlayers[oldZoneIndex] };
+      state.indexOfGuestTeamZones = state.indexOfGuestTeamZones.map(
+        (player) => {
+          // Если это тот же игрок, но в другой зоне - очищаем старую позицию
+          if (
+            player.name === action.payload.player.name &&
+            player.boardPosition !== targetBoardPosition
+          ) {
+            // Находим индекс зоны для создания правильного emptyPlayer
+            const oldZoneIndex = zones.indexOf(player.boardPosition);
+            if (oldZoneIndex !== -1) {
+              return { ...emptyPlayers[oldZoneIndex] };
+            }
+            // Если не нашли в zones, создаем пустого игрока с тем же boardPosition
+            return { ...emptyPlayers[0], boardPosition: player.boardPosition };
           }
-          // Если не нашли в zones, создаем пустого игрока с тем же boardPosition
-          return { ...emptyPlayers[0], boardPosition: player.boardPosition };
+          return player;
         }
-        return player;
-      });
-      
+      );
+
       // Теперь ищем слот для новой зоны
       const targetSlotIndex = state.indexOfGuestTeamZones.findIndex(
         (p) => p.boardPosition === targetBoardPosition
       );
-      
+
       if (targetSlotIndex !== -1) {
         // Зона найдена - заменяем игрока (устанавливаем boardPosition явно)
         state.indexOfGuestTeamZones[targetSlotIndex] = {
@@ -87,7 +92,7 @@ export const indexOfGuestTeamZonesSlice = createSlice({
         );
         return;
       }
-      
+
       // Для обычных игроков - стандартная логика
       state.indexOfGuestTeamZones = state.indexOfGuestTeamZones.map(
         (player, index) =>
@@ -132,7 +137,9 @@ export const indexOfGuestTeamZonesSlice = createSlice({
       const playersWithoutLibero = state.indexOfGuestTeamZones.filter(
         (p) => p.boardPosition !== -1
       );
-      const libero = state.indexOfGuestTeamZones.find((p) => p.boardPosition === -1);
+      const libero = state.indexOfGuestTeamZones.find(
+        (p) => p.boardPosition === -1
+      );
       const Zone = [...playersWithoutLibero];
       const newRot = [Zone[3], Zone[0], Zone[1], Zone[4], Zone[5], Zone[2]];
       // Обновляем boardPosition для каждого игрока согласно его новой позиции в массиве
@@ -141,14 +148,18 @@ export const indexOfGuestTeamZonesSlice = createSlice({
         boardPosition: zones[index],
       }));
       // Добавляем либеро обратно, если он был
-      state.indexOfGuestTeamZones = libero ? [...rotatedWithUpdatedPositions, libero] : rotatedWithUpdatedPositions;
+      state.indexOfGuestTeamZones = libero
+        ? [...rotatedWithUpdatedPositions, libero]
+        : rotatedWithUpdatedPositions;
     },
     rotateBackGuestTeam: (state) => {
       // Фильтруем либеро из расстановки перед ротацией
       const playersWithoutLibero = state.indexOfGuestTeamZones.filter(
         (p) => p.boardPosition !== -1
       );
-      const libero = state.indexOfGuestTeamZones.find((p) => p.boardPosition === -1);
+      const libero = state.indexOfGuestTeamZones.find(
+        (p) => p.boardPosition === -1
+      );
       const zone = [...playersWithoutLibero];
       const newRot2 = [zone[1], zone[2], zone[5], zone[0], zone[3], zone[4]];
       // Обновляем boardPosition для каждого игрока согласно его новой позиции в массиве
@@ -157,7 +168,9 @@ export const indexOfGuestTeamZonesSlice = createSlice({
         boardPosition: zones[index],
       }));
       // Добавляем либеро обратно, если он был
-      state.indexOfGuestTeamZones = libero ? [...rotatedWithUpdatedPositions, libero] : rotatedWithUpdatedPositions;
+      state.indexOfGuestTeamZones = libero
+        ? [...rotatedWithUpdatedPositions, libero]
+        : rotatedWithUpdatedPositions;
     },
   },
 });

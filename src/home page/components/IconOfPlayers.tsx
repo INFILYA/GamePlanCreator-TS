@@ -117,7 +117,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     const updatedPlayer = calculateForPlayerData({ ...player }, obj);
     
     if (guestTeamOptions.length === 0) return;
-    const setter = guestTeamOptions.find((player) => player.position === "SET");
+    const setter = guestTeamOptions.find((p) => p.position === "SET");
     if (!setter) return;
     const indexOfSetter = guestTeamOptions.indexOf(setter);
     
@@ -264,9 +264,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                     e.dataTransfer.setData("player", JSON.stringify(player));
                     e.dataTransfer.setData("team", "rival");
                     // Сохраняем текущую позицию для возврата
-                    const playerIndex = startingSix.findIndex((p) => p.name === player.name);
-                    if (playerIndex !== -1) {
-                      const currentZone = correctZones(playerIndex);
+                    const draggedPlayerIndex = startingSix.findIndex((p) => p.name === player.name);
+                    if (draggedPlayerIndex !== -1) {
+                      const currentZone = correctZones(draggedPlayerIndex);
                       e.dataTransfer.setData("currentZone", currentZone.toString());
                     }
                     e.dataTransfer.effectAllowed = "move";
@@ -358,9 +358,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                   <div className="category-switcher-wrapper">
                     <select onChange={(e) => setCategory(e.target.value)}>
                       <option value={"SR"}>Service/Reception</option>
-                      {player.position !== "LIB" && (
-                        <option value={"BA"}>Block/Attack</option>
-                      )}
+                      <option value={"BA"}>Block/Attack</option>
                     </select>
                   </div>
                   <div style={{ display: "flex" }}>
