@@ -17,7 +17,7 @@ import {
 import { setInfoOfPlayer } from "../../states/slices/playerInfoSlice";
 // import { useAuthState } from "react-firebase-hooks/auth";
 import { RegularButton } from "../../css/Button.styled";
-import { compare, isBoardFull } from "../../utilities/functions";
+import { compare, zones } from "../../utilities/functions";
 import { set } from "firebase/database";
 import { TTeam, TPlayer } from "../../types/types";
 
@@ -26,10 +26,7 @@ type PlayerNameButtonProps = {
   onPlayerClick: () => void;
 };
 
-function PlayerNameButton({
-  player,
-  onPlayerClick,
-}: PlayerNameButtonProps) {
+function PlayerNameButton({ player, onPlayerClick }: PlayerNameButtonProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [displayName, setDisplayName] = useState(player.name);
 
@@ -127,9 +124,11 @@ export function Squads() {
   }
   const club = guestTeam[0];
   const players = [...guestPlayers];
-  const showButtonStartingSix =
-    guestTeamOptions.every((zone) => typeof zone.boardPosition === "number") &&
-    guestPlayers.length > 1;
+  // Кнопка "Starting six" видна только если доска полностью пустая (нет игроков на доске)
+  const hasPlayersOnBoard = guestTeamOptions.some(
+    (p) => p.name && p.name.trim() !== ""
+  );
+  const showButtonStartingSix = !hasPlayersOnBoard && guestPlayers.length > 1;
 
   // Drag and Drop handlers для переноса игрока на playground
   function handleDragStart(e: React.DragEvent, player: TPlayer) {
@@ -184,7 +183,7 @@ export function Squads() {
     try {
       await set(teamsRef(team.id), team);
     } catch (error) {
-      console.error(error);
+      // Обработка ошибок
     }
   };
 
@@ -225,12 +224,8 @@ export function Squads() {
   // add TEAM
 
   return (
-    <SectionWrapper
-      className="teamsquad-section rival-team"
-    >
-      <div
-        className="team-title-wrapper"
-      >
+    <SectionWrapper className="teamsquad-section rival-team">
+      <div className="team-title-wrapper">
         <div className="team-label-wrapper">
           <input className="team-label" readOnly value={club.name} />
         </div>
@@ -258,10 +253,7 @@ export function Squads() {
               }}
             >
               <div className="playerNumber-wrapper">
-                <button
-                  type="button"
-                  disabled
-                >
+                <button type="button" disabled>
                   {player.number}
                 </button>
               </div>
@@ -281,16 +273,27 @@ export function Squads() {
             Starting six
           </RegularButton>
         )}
-        {isBoardFull(guestTeamOptions) && (
-          <RegularButton
-            onClick={saveStartingSix}
-            type="button"
-            $color="black"
-            $background="#ffd700"
-          >
-            Save starting six
-          </RegularButton>
-        )}
+        {[0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+          const boardPosition = zones[zoneIndex];
+          return guestTeamOptions.some(
+            (p) =>
+              p &&
+              typeof p.boardPosition === "number" &&
+              p.boardPosition === boardPosition &&
+              p.number !== 0 &&
+              p.position !== "LIB"
+          );
+        }) &&
+          guestTeamOptions.some((p) => p.position === "LIB") && (
+            <RegularButton
+              onClick={saveStartingSix}
+              type="button"
+              $color="black"
+              $background="#ffd700"
+            >
+              Save starting six
+            </RegularButton>
+          )}
         {/* <RegularButton
           onClick={addteam}
           type="button"

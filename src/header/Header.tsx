@@ -19,7 +19,7 @@ export function Header() {
     try {
       await signOut(auth);
     } catch (err) {
-      console.error(err);
+      // Обработка ошибок
     }
   }
   return (

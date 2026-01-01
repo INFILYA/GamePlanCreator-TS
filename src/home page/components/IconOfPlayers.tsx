@@ -117,14 +117,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     });
     const obj = { [type]: number } as TDiagramm;
     const updatedPlayer = calculateForPlayerData({ ...player }, obj);
-    const soloGameUpdatedPlayer = calculateForPlayerData(
-      { ...player },
-      {
-        ...diagrammValue,
-        [type]: diagrammValue[type as keyof TDiagramm] + number,
-      },
-      true
-    );
+    
     if (guestTeamOptions.length === 0) return;
     const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
     if (!seTTer) return;
@@ -141,43 +134,82 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     // 
     // При записи очка (в RotationPanel.tsx) весь массив SoloRallyStats копируется в gameLog
     // ============================================
-    startingSix.forEach(
-      (player, index) => {
-        if (player.name === soloGameUpdatedPlayer.name) {
-          const usedBoardPosition = typeof player.boardPosition === "number" ? player.boardPosition : zones[index];
-          
-          // Создаем объект со всеми полями статистики (включая нулевые) для правильного суммирования
-          // soloGameUpdatedPlayer уже содержит накопленные статы из diagrammValue для текущего ралли
-          const playerStats = {
-            ...soloGameUpdatedPlayer,
-            boardPosition: usedBoardPosition,
-            setterBoardPosition: correctZones(indexOfSetter),
-            zoneOfAttack: getZoneOfAttack(index, player),
-            // Убеждаемся, что все поля статистики присутствуют (даже если 0)
-            // Это важно для правильного суммирования в calculateTotalofActionsV2
-            "R++": soloGameUpdatedPlayer["R++"] || 0,
-            "R+": soloGameUpdatedPlayer["R+"] || 0,
-            "R!": soloGameUpdatedPlayer["R!"] || 0,
-            "R-": soloGameUpdatedPlayer["R-"] || 0,
-            "R=": soloGameUpdatedPlayer["R="] || 0,
-            "A++": soloGameUpdatedPlayer["A++"] || 0,
-            "A+": soloGameUpdatedPlayer["A+"] || 0,
-            "A=": soloGameUpdatedPlayer["A="] || 0,
-            "A!": soloGameUpdatedPlayer["A!"] || 0,
-            "A-": soloGameUpdatedPlayer["A-"] || 0,
-            "S++": soloGameUpdatedPlayer["S++"] || 0,
-            "S+": soloGameUpdatedPlayer["S+"] || 0,
-            "S!": soloGameUpdatedPlayer["S!"] || 0,
-            "S-": soloGameUpdatedPlayer["S-"] || 0,
-            "S=": soloGameUpdatedPlayer["S="] || 0,
-            blocks: soloGameUpdatedPlayer.blocks || 0,
-          };
-          
-          // Отправляем в Redux для накопления в SoloRallyStats (статы текущего ралли)
-          dispatch(setSoloRallyStats(playerStats));
+    // Функция для поиска middle blocker на задней линии (позиции P1, P6, P5)
+    // Ищем в guestTeamOptions - актуальное состояние доски, даже если MB не делал действий
+    function getMiddleBlockerBackRowPosition(): number | null {
+      // Задняя линия: P1 (boardPosition=1), P6 (boardPosition=6), P5 (boardPosition=5)
+      const backRowPositions = [1, 6, 5];
+      for (const pos of backRowPositions) {
+        const mbPlayer = guestTeamOptions.find(
+          (p) => p.position === "MB" && p.boardPosition === pos
+        );
+        if (mbPlayer) {
+          return pos;
         }
       }
+      return null;
+    }
+
+    // Находим игрока в guestTeamOptions для получения правильного boardPosition с доски
+    const playerOnBoard = guestTeamOptions.find((p) => p.name === player.name);
+    if (!playerOnBoard) {
+      return;
+    }
+    
+    // Получаем boardPosition из guestTeamOptions (актуальное состояние доски)
+    let usedBoardPosition = typeof playerOnBoard.boardPosition === "number" 
+      ? playerOnBoard.boardPosition 
+      : -1;
+    
+    // Для либеро boardPosition уже должен быть установлен при добавлении на доску
+    // Но на всякий случай проверяем и исправляем, если нужно
+    if (playerOnBoard.position === "LIB" && usedBoardPosition === -1) {
+      const mbBackRowPos = getMiddleBlockerBackRowPosition();
+      if (mbBackRowPos !== null) {
+        usedBoardPosition = mbBackRowPos;
+      }
+    }
+    
+    // Создаем playerWithBoardPosition с правильным boardPosition из доски
+    const playerWithBoardPosition = { ...player, boardPosition: usedBoardPosition };
+    
+    const soloGameUpdatedPlayer = calculateForPlayerData(
+      { ...playerWithBoardPosition },
+      {
+        ...diagrammValue,
+        [type]: diagrammValue[type as keyof TDiagramm] + number,
+      },
+      true
     );
+    
+    // Создаем объект со всеми полями статистики (включая нулевые) для правильного суммирования
+    // soloGameUpdatedPlayer уже содержит накопленные статы из diagrammValue для текущего ралли
+    const playerStats = {
+      ...soloGameUpdatedPlayer,
+      boardPosition: usedBoardPosition,
+      setterBoardPosition: correctZones(indexOfSetter),
+      // Убеждаемся, что все поля статистики присутствуют (даже если 0)
+      // Это важно для правильного суммирования в calculateTotalofActionsV2
+      "R++": soloGameUpdatedPlayer["R++"] || 0,
+      "R+": soloGameUpdatedPlayer["R+"] || 0,
+      "R!": soloGameUpdatedPlayer["R!"] || 0,
+      "R-": soloGameUpdatedPlayer["R-"] || 0,
+      "R=": soloGameUpdatedPlayer["R="] || 0,
+      "A++": soloGameUpdatedPlayer["A++"] || 0,
+      "A+": soloGameUpdatedPlayer["A+"] || 0,
+      "A=": soloGameUpdatedPlayer["A="] || 0,
+      "A!": soloGameUpdatedPlayer["A!"] || 0,
+      "A-": soloGameUpdatedPlayer["A-"] || 0,
+      "S++": soloGameUpdatedPlayer["S++"] || 0,
+      "S+": soloGameUpdatedPlayer["S+"] || 0,
+      "S!": soloGameUpdatedPlayer["S!"] || 0,
+      "S-": soloGameUpdatedPlayer["S-"] || 0,
+      "S=": soloGameUpdatedPlayer["S="] || 0,
+      blocks: soloGameUpdatedPlayer.blocks || 0,
+    };
+    
+    // Отправляем в Redux для накопления в SoloRallyStats (статы текущего ралли)
+    dispatch(setSoloRallyStats(playerStats));
     dispatch(setUpdatedPlayers(updatedPlayer));
     dispatch(setInfoOfPlayer(updatedPlayer));
     dispatch(updateInfoOfStartingSix(updatedPlayer));
@@ -222,13 +254,22 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   return (
     <>
       {condition && (
-        <div className="card-content">
-          {!showSquads && (
+        <div 
+          className="card-content"
+          style={player.position === "LIB" ? {
+            border: "none",
+            backgroundColor: "transparent",
+            ...(!showSquads ? { minWidth: "220px", width: "auto" } : {}),
+          } : undefined}
+        >
+          {!showSquads && player.position !== "LIB" && (
             <div className="zone-names-wrapper">P{zoneNumber}</div>
           )}
-          <div className="player-image-wrapper" onClick={showPlayerInfo}>
-            <img src={`/photos/${player?.photo}`} alt=""></img>
-          </div>
+          {player.position !== "LIB" && (
+            <div className="player-image-wrapper" onClick={showPlayerInfo}>
+              <img src={`/photos/${player?.photo}`} alt=""></img>
+            </div>
+          )}
           <div className="player-field-wrapper">
             <div className="playerNumber-wrapper">
               <button
@@ -257,6 +298,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
               <button
                 type="button"
                 className={player.position === "LIB" ? "" : "player-surname"}
+                style={player.boardPosition === -1 ? {
+                  backgroundColor: "turquoise",
+                } : undefined}
                 onClick={showPlayerInfo}
               >
                 {player.name}
@@ -264,116 +308,191 @@ export function IconOfPlayer(props: TIconOfPlayer) {
             </div>
           </div>
           {!showSquads && (
-            <div className="errors-field-wrapper">
-              <div className="category-switcher-wrapper">
-                <select onChange={(e) => setCategory(e.target.value)}>
-                  <option value={"SR"}>Service/Reception</option>
-                  {player.position !== "LIB" && (
-                    <option value={"BA"}>Block/Attack</option>
-                  )}
-                </select>
-              </div>
-              <div style={{ display: "flex" }}>
-                <table>
-                  <tbody>
-                    <tr>
-                      <th>+</th>
-                      <th>{ServiceReception ? "S" : "BL"}</th>
-                      <th>-</th>
-                    </tr>
-                    {ServiceReception ? (
-                      serviceGradations.map((grade) => (
-                        <tr key={grade[0]}>
-                          <td
-                            style={{ backgroundColor: grade[1] }}
-                            onClick={() => addAmount(grade[0] as keyof TMix, 1)}
-                          >
-                            {grade[2]}
-                          </td>
-                          <td>
-                            <input
-                              type="text"
-                              min={0}
-                              value={diagrammValue[grade[0] as keyof TMix]}
-                              name={grade[0]}
-                              readOnly
-                            />
-                          </td>
-                          <td
-                            style={{ backgroundColor: grade[1] }}
-                            onClick={() =>
-                              addAmount(grade[0] as keyof TMix, -1)
-                            }
-                          >
-                            -
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td
-                          style={{ backgroundColor: "llightgreen" }}
-                          onClick={() => addAmount("blocks", 1)}
-                        >
-                          B
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            min={0}
-                            value={diagrammValue.blocks}
-                            name="blocks"
-                            readOnly
-                          />
-                        </td>
-                        <td
-                          style={{ backgroundColor: "llightgreen" }}
-                          onClick={() => addAmount("blocks", -1)}
-                        >
-                          -
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-                <div className="border-wrapper"></div>
-                <table>
-                  <tbody>
-                    <tr>
-                      <th>+</th>
-                      <th>{ServiceReception ? "R" : "A"}</th>
-                      <th>-</th>
-                    </tr>
+            <div className="errors-field-wrapper" style={player.position === "LIB" ? { maxHeight: "200px", overflowY: "auto" } : undefined}>
+              {player.position === "LIB" ? (
+                // Горизонтальная версия для либеро - только прием (3 строки x 5 столбцов)
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: "100%" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "12px" }}>
                     {attackGradations.map((grade) => (
-                      <tr key={grade[0]}>
-                        <td
-                          style={{ backgroundColor: grade[1] }}
+                      <div
+                        key={grade[0]}
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            backgroundColor: grade[1],
+                            width: "100%",
+                            textAlign: "center",
+                            padding: "4px",
+                            cursor: "pointer",
+                            borderRadius: "4px",
+                            fontWeight: "bold",
+                          }}
                           onClick={() => addAmount(grade[0] as keyof TMix, 1)}
                         >
                           {grade[2]}
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            min={0}
-                            value={
-                              diagrammValue[grade[0] as keyof TAttackDiagramm]
-                            }
-                            name={grade[0]}
-                            readOnly
-                          />
-                        </td>
-                        <td
-                          style={{ backgroundColor: grade[1] }}
+                        </div>
+                        <input
+                          type="text"
+                          value={diagrammValue[grade[0] as keyof TAttackDiagramm] || 0}
+                          name={grade[0]}
+                          readOnly
+                          style={{
+                            width: "100%",
+                            textAlign: "center",
+                            border: "1px solid #ccc",
+                            borderRadius: "0",
+                            padding: "4px",
+                            boxSizing: "border-box",
+                            background: "transparent",
+                          }}
+                        />
+                        <div
+                          style={{
+                            backgroundColor: grade[1],
+                            width: "100%",
+                            textAlign: "center",
+                            padding: "4px",
+                            cursor: "pointer",
+                            borderRadius: "0 0 4px 4px",
+                            fontWeight: "bold",
+                          }}
                           onClick={() => addAmount(grade[0] as keyof TMix, -1)}
                         >
                           -
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
-              </div>
+                  </div>
+                </div>
+              ) : (
+                // Вертикальная версия для обычных игроков
+                <>
+                  <div className="category-switcher-wrapper">
+                    <select onChange={(e) => setCategory(e.target.value)}>
+                      <option value={"SR"}>Service/Reception</option>
+                      {player.position !== "LIB" && (
+                        <option value={"BA"}>Block/Attack</option>
+                      )}
+                    </select>
+                  </div>
+                  <div style={{ display: "flex" }}>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <th>+</th>
+                          <th>{ServiceReception ? "S" : "BL"}</th>
+                          <th>-</th>
+                        </tr>
+                        {ServiceReception ? (
+                          serviceGradations.map((grade) => (
+                            <tr key={grade[0]}>
+                              <td
+                                style={{ backgroundColor: grade[1] }}
+                                onClick={() => addAmount(grade[0] as keyof TMix, 1)}
+                              >
+                                {grade[2]}
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  min={0}
+                                  value={diagrammValue[grade[0] as keyof TMix]}
+                                  name={grade[0]}
+                                  readOnly
+                                  style={{
+                                    border: "1px solid #ccc",
+                                  }}
+                                />
+                              </td>
+                              <td
+                                style={{ backgroundColor: grade[1] }}
+                                onClick={() =>
+                                  addAmount(grade[0] as keyof TMix, -1)
+                                }
+                              >
+                                -
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td
+                              style={{ backgroundColor: "llightgreen" }}
+                              onClick={() => addAmount("blocks", 1)}
+                            >
+                              B
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                min={0}
+                                value={diagrammValue.blocks}
+                                name="blocks"
+                                readOnly
+                                style={{
+                                  border: "1px solid #ccc",
+                                }}
+                              />
+                            </td>
+                            <td
+                              style={{ backgroundColor: "llightgreen" }}
+                              onClick={() => addAmount("blocks", -1)}
+                            >
+                              -
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                    <div className="border-wrapper"></div>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <th>+</th>
+                          <th>{ServiceReception ? "R" : "A"}</th>
+                          <th>-</th>
+                        </tr>
+                        {attackGradations.map((grade) => (
+                          <tr key={grade[0]}>
+                            <td
+                              style={{ backgroundColor: grade[1] }}
+                              onClick={() => addAmount(grade[0] as keyof TMix, 1)}
+                            >
+                              {grade[2]}
+                            </td>
+                            <td>
+                              <input
+                                type="text"
+                                min={0}
+                                value={
+                                  diagrammValue[grade[0] as keyof TAttackDiagramm]
+                                }
+                                name={grade[0]}
+                                readOnly
+                                style={{
+                                  border: "1px solid #ccc",
+                                }}
+                              />
+                            </td>
+                            <td
+                              style={{ backgroundColor: grade[1] }}
+                              onClick={() => addAmount(grade[0] as keyof TMix, -1)}
+                            >
+                              -
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>

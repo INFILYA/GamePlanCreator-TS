@@ -197,7 +197,7 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
         );
       }
     } catch (error) {
-      console.error(error);
+      // Обработка ошибок
     }
   };
 
@@ -205,7 +205,7 @@ export default function WrapperForDirections(props: TWrapperForDirections) {
     try {
       await set(teamsRef(team.id), team);
     } catch (error) {
-      console.error(error);
+      // Обработка ошибок
     }
   };
 

@@ -6,14 +6,12 @@ import { useAppDispatch } from "../states/store";
 import {
   calculateTotalofActions,
   calculateTotalofActionsV2,
-  checkNumbers,
   compare,
   correctZones,
   emptyPlayers,
   firstLetterCapital,
-  isBoardFull,
   isFieldExist,
-  positions,
+  zones,
 } from "../utilities/functions";
 import { TGameLogStats, TMix, TPlayer, TTeam } from "../types/types";
 import { FormEvent, useState } from "react";
@@ -211,8 +209,8 @@ export function HomePage() {
       if (currentZone) return; // Это возврат игрока, не обрабатываем здесь
 
       const player = JSON.parse(playerData) as TPlayer;
-      // Используем positions[zoneIndex] для получения boardPosition, так как в slice ищется по boardPosition
-      const boardPosition = positions[zoneIndex];
+      // Используем zones[zoneIndex] для получения boardPosition, так как в slice ищется по boardPosition
+      const boardPosition = zones[zoneIndex];
 
       // Проверяем, что команда совпадает (только для rival, так как homeTeam больше не используется)
       if (team === "rival" && teamType === "rival") {
@@ -221,7 +219,6 @@ export function HomePage() {
       }
     };
   }
-
 
   function createDragOverHandler(zoneIndex: number, teamType: "rival") {
     return (e: React.DragEvent) => {
@@ -237,7 +234,7 @@ export function HomePage() {
         guestTeamOptions.length > 0
       ) {
         // Проверяем, занята ли зона другим игроком
-        const boardPosition = positions[zoneIndex];
+        const boardPosition = zones[zoneIndex];
         const existingPlayer = guestTeamOptions.find(
           (p) => p.boardPosition === boardPosition
         );
@@ -274,6 +271,82 @@ export function HomePage() {
     setDraggedOverZone(null);
   }
 
+  // Обработчики для ячейки либеро
+  function createLiberoDropHandler() {
+    return (e: React.DragEvent) => {
+      e.preventDefault();
+      setDraggedOverZone(null);
+      const playerData = e.dataTransfer.getData("player");
+      const team = e.dataTransfer.getData("team");
+
+      if (!playerData) return;
+
+      // Проверяем, что это перенос из squads (нет currentZone)
+      const currentZone = e.dataTransfer.getData("currentZone");
+      if (currentZone) return; // Это возврат игрока, не обрабатываем здесь
+
+      const player = JSON.parse(playerData) as TPlayer;
+
+      // Проверяем, что это либеро и команда совпадает
+      if (team === "rival" && player.position === "LIB") {
+        dispatch(filterGuestPlayers(player.name));
+        dispatch(setGuestTeamIndexOfZones({ player, zone: -1 }));
+      }
+    };
+  }
+
+  function createLiberoDragOverHandler() {
+    return (e: React.DragEvent) => {
+      e.preventDefault();
+      const team = e.dataTransfer.getData("team");
+      const currentZone = e.dataTransfer.getData("currentZone");
+
+      // Показываем визуальную индикацию только если это перенос из squads (нет currentZone) и команда совпадает
+      if (!currentZone && team === "rival" && guestTeamOptions.length > 0) {
+        // Получаем данные о перетаскиваемом игроке
+        const playerData = e.dataTransfer.getData("player");
+
+        // Проверяем, что это либеро
+        if (!playerData) {
+          e.dataTransfer.dropEffect = "none";
+          setDraggedOverZone(null);
+          return;
+        }
+
+        const player = JSON.parse(playerData) as TPlayer;
+
+        // Если это не либеро, запрещаем дроп
+        if (player.position !== "LIB") {
+          e.dataTransfer.dropEffect = "none";
+          setDraggedOverZone(null);
+          return;
+        }
+
+        // Проверяем, занята ли ячейка либеро
+        const existingLibero = guestTeamOptions.find(
+          (p) => p.boardPosition === -1
+        );
+
+        // Если ячейка занята другим игроком
+        if (
+          existingLibero &&
+          existingLibero.name &&
+          existingLibero.name.trim() !== ""
+        ) {
+          // Если это другой игрок, запрещаем дроп
+          if (existingLibero.name !== player.name) {
+            e.dataTransfer.dropEffect = "none";
+            setDraggedOverZone(null);
+            return;
+          }
+        }
+
+        e.dataTransfer.dropEffect = "move";
+        setDraggedOverZone({ zoneIndex: -1, teamType: "rival" });
+      }
+    };
+  }
+
   // Пустые обработчики для блокировки дропа в занятые зоны
   function blockDrop(e: React.DragEvent) {
     e.preventDefault();
@@ -296,7 +369,16 @@ export function HomePage() {
       (normalSetScore &&
         (myScore - rivalScore > 1 || rivalScore - myScore > 1));
   const saveButton =
-    isBoardFull(guestTeamOptions) &&
+    [0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+      const boardPosition = zones[zoneIndex];
+      return guestTeamOptions.some(
+        (p) =>
+          p &&
+          typeof p.boardPosition === "number" &&
+          p.boardPosition === boardPosition &&
+          p.number !== 0
+      );
+    }) &&
     !showSquads &&
     !saveDataIcon &&
     endOfTheSet;
@@ -393,29 +475,13 @@ export function HomePage() {
     return summed;
   });
 
-  // Логирование для отладки
-  if (gameLog.length > 0) {
-    console.log("=== CALCULATING STATS FROM GAMELOG ===");
-    console.log("Total rallies in gameLog:", gameLog.length);
-    console.log(
-      "Rallies with stats:",
-      gameLog.filter((r) => r.stats.length > 0).length
-    );
-    console.log(
-      "Rallies without stats (quick points):",
-      gameLog.filter((r) => r.stats.length === 0).length
-    );
-    console.log("Total player entries from all rallies:", allRallyStats.length);
-    console.log("Unique players:", uniquePlayerNames.length);
-    console.log("Players with stats:", uniquePlayerNames);
-  }
-
   const playersStats = [currentGameStats]; // Обертываем в массив для StatisticsTable
 
   const fullGameStats = calculateForTeamDataV2(
     calculateTotalofActions(allRallyStats) as TMix
   );
-
+  console.log(guestTeamOptions);
+  console.log(gameLog);
   return (
     <article className="main-content-wrapper">
       {/* На мобильных (меньше 768px) обе панели squad идут вместе первыми */}
@@ -467,78 +533,95 @@ export function HomePage() {
               <div className="reset-button-wrapper">
                 {showGuestTeam ? (
                   <>
-                    {isBoardFull(guestTeamOptions) && (
-                      <div className="match-number-wrapper">
-                        <div>
-                          <RegularButton
-                            onClick={hideSquads}
-                            type="button"
-                            $color={!showSquads ? "orangered" : "#0272be"}
-                            $background={!showSquads ? "orangered" : "#0272be"}
-                            $active={!showSquads}
-                            onMouseEnter={() => setHoverStatisticButton(true)}
-                            onMouseLeave={() => setHoverStatisticButton(false)}
-                          >
-                            {hoverStatisticButton
-                              ? showSquads
-                                ? "Switch on"
-                                : "Switch off"
-                              : "Statistic mode"}
-                          </RegularButton>
-                        </div>
-                        {!showSquads && !showCurrentGameStats && (
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              gap: "30px",
-                              padding: "10px 0 10px 0",
-                            }}
-                          >
-                            <input
-                              onChange={(e) =>
-                                setOpponentTeamName(
-                                  firstLetterCapital(e.target.value)
-                                )
+                    {[0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+                      const boardPosition = zones[zoneIndex];
+                      return guestTeamOptions.some(
+                        (p) =>
+                          p &&
+                          typeof p.boardPosition === "number" &&
+                          p.boardPosition === boardPosition &&
+                          p.number !== 0 &&
+                          p.position !== "LIB"
+                      );
+                    }) &&
+                      guestTeamOptions.some((p) => p.position === "LIB") && (
+                        <div className="match-number-wrapper">
+                          <div>
+                            <RegularButton
+                              onClick={hideSquads}
+                              type="button"
+                              $color={!showSquads ? "orangered" : "#0272be"}
+                              $background={
+                                !showSquads ? "orangered" : "#0272be"
                               }
-                              value={opponentTeamName}
-                            ></input>
-                            <h2
-                              className={
-                                exhibitionGame ? "exhibition-game-active" : ""
+                              $active={!showSquads}
+                              onMouseEnter={() => setHoverStatisticButton(true)}
+                              onMouseLeave={() =>
+                                setHoverStatisticButton(false)
                               }
-                              style={{
-                                whiteSpace: "nowrap",
-                                cursor: "pointer",
-                                userSelect: "none",
-                                transition: "color 0.3s ease",
-                              }}
-                              onClick={() => setExhibitionGame(!exhibitionGame)}
                             >
-                              Exhibition game
-                            </h2>
-                            <select
-                              onChange={(e) => setSetNumber(e.target.value)}
-                              value={setNumber}
-                            >
-                              <option value="">Choose set</option>
-                              <option value="Set 1">Set 1</option>
-                              <option value="Set 2">Set 2</option>
-                              <option value="Set 3">Set 3</option>
-                              <option value="Set 4">Set 4</option>
-                              <option value="Set 5 (short)">
-                                Set 5 (short)
-                              </option>
-                              <option value="Set 3 (short)">
-                                Set 3 (short)
-                              </option>
-                            </select>
+                              {hoverStatisticButton
+                                ? showSquads
+                                  ? "Switch on"
+                                  : "Switch off"
+                                : "Statistic mode"}
+                            </RegularButton>
                           </div>
-                        )}
-                      </div>
-                    )}
+                          {!showSquads && !showCurrentGameStats && (
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "30px",
+                                padding: "10px 0 10px 0",
+                              }}
+                            >
+                              <input
+                                onChange={(e) =>
+                                  setOpponentTeamName(
+                                    firstLetterCapital(e.target.value)
+                                  )
+                                }
+                                value={opponentTeamName}
+                              ></input>
+                              <h2
+                                className={
+                                  exhibitionGame ? "exhibition-game-active" : ""
+                                }
+                                style={{
+                                  whiteSpace: "nowrap",
+                                  cursor: "pointer",
+                                  userSelect: "none",
+                                  transition: "color 0.3s ease",
+                                }}
+                                onClick={() =>
+                                  setExhibitionGame(!exhibitionGame)
+                                }
+                              >
+                                Exhibition game
+                              </h2>
+                              <select
+                                onChange={(e) => setSetNumber(e.target.value)}
+                                value={setNumber}
+                              >
+                                <option value="">Choose set</option>
+                                <option value="Set 1">Set 1</option>
+                                <option value="Set 2">Set 2</option>
+                                <option value="Set 3">Set 3</option>
+                                <option value="Set 4">Set 4</option>
+                                <option value="Set 5 (short)">
+                                  Set 5 (short)
+                                </option>
+                                <option value="Set 3 (short)">
+                                  Set 3 (short)
+                                </option>
+                              </select>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     {showSquads && (
                       <div style={{ marginLeft: "auto" }}>
                         <RegularButton
@@ -559,32 +642,114 @@ export function HomePage() {
               {!showCurrentGameStats && (
                 <>
                   <div className="row-zones-wrapper">
+                    {[0, 1, 2, 3, 4, 5].map((zoneIndex) => {
+                      const boardPosition = zones[zoneIndex];
+                      const player = Array.isArray(guestTeamOptions)
+                        ? guestTeamOptions.find(
+                            (p) =>
+                              p &&
+                              typeof p.boardPosition === "number" &&
+                              p.boardPosition === boardPosition &&
+                              p.number !== 0
+                          )
+                        : null;
+                      // Всегда показываем зону - либо с игроком, либо пустую для перетаскивания
+                      return player ? (
+                        <div
+                          key={zoneIndex}
+                          onDrop={blockDrop}
+                          onDragOver={blockDragOver}
+                          onDragLeave={handleDragLeaveZone}
+                          style={{
+                            backgroundColor:
+                              draggedOverZone?.zoneIndex === zoneIndex &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "rgba(2, 114, 190, 0.3)"
+                                : "transparent",
+                            border:
+                              draggedOverZone?.zoneIndex === zoneIndex &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "2px dashed #0272be"
+                                : "none",
+                            borderRadius: "8px",
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          <IconOfPlayer
+                            showSquads={showSquads}
+                            player={player}
+                            startingSix={guestTeamOptions}
+                            nextRotation={nextRotation}
+                            setNextRotation={setNextRotation}
+                          />
+                        </div>
+                      ) : (
+                        <div
+                          className="zone-names-wrapper"
+                          key={"_" + zoneIndex}
+                          onDrop={createDropHandler(zoneIndex, "rival")}
+                          onDragOver={createDragOverHandler(zoneIndex, "rival")}
+                          onDragLeave={handleDragLeaveZone}
+                          style={{
+                            backgroundColor:
+                              draggedOverZone?.zoneIndex === zoneIndex &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "rgba(2, 114, 190, 0.5)"
+                                : "rgba(2, 114, 190, 0.1)",
+                            border:
+                              draggedOverZone?.zoneIndex === zoneIndex &&
+                              draggedOverZone?.teamType === "rival"
+                                ? "3px solid #0272be"
+                                : "3px solid rgba(2, 114, 190, 0.8)",
+                            borderRadius: "8px",
+                            transition: "all 0.2s ease",
+                            minHeight: "96px",
+                          }}
+                        >
+                          P{correctZones(zoneIndex)}
+                        </div>
+                      );
+                    })}
+                    {/* Ячейка для либеро - размещена под зоной P6 */}
+                    {/* Показываем ячейку либеро только когда все 6 основных зон заполнены */}
                     {guestTeamOptions.length > 0 &&
-                      guestTeamOptions.map((option, index) =>
-                        checkNumbers(option.boardPosition) ? (
+                      [0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+                        const boardPosition = zones[zoneIndex];
+                        return guestTeamOptions.some(
+                          (p) =>
+                            p &&
+                            typeof p.boardPosition === "number" &&
+                            p.boardPosition === boardPosition &&
+                            p.number !== 0
+                        );
+                      }) &&
+                      (() => {
+                        const libero = guestTeamOptions.find(
+                          (p) => p.position === "LIB"
+                        );
+                        return libero ? (
                           <div
-                            key={index}
+                            key="libero-filled"
                             onDrop={blockDrop}
                             onDragOver={blockDragOver}
                             onDragLeave={handleDragLeaveZone}
                             style={{
-                              backgroundColor:
-                                draggedOverZone?.zoneIndex === index &&
-                                draggedOverZone?.teamType === "rival"
-                                  ? "rgba(2, 114, 190, 0.3)"
-                                  : "transparent",
-                              border:
-                                draggedOverZone?.zoneIndex === index &&
-                                draggedOverZone?.teamType === "rival"
-                                  ? "2px dashed #0272be"
-                                  : "none",
+                              backgroundColor: "transparent",
+                              border: "none",
                               borderRadius: "8px",
                               transition: "all 0.2s ease",
+                              gridColumn: "2",
+                              maxHeight: "250px",
+                              overflow: "visible",
+                              marginTop: "10px",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "flex-start",
                             }}
                           >
                             <IconOfPlayer
                               showSquads={showSquads}
-                              player={option}
+                              player={libero}
                               startingSix={guestTeamOptions}
                               nextRotation={nextRotation}
                               setNextRotation={setNextRotation}
@@ -593,50 +758,40 @@ export function HomePage() {
                         ) : (
                           <div
                             className="zone-names-wrapper"
-                            key={"_" + index}
-                            onDrop={createDropHandler(index, "rival")}
-                            onDragOver={createDragOverHandler(index, "rival")}
+                            key="libero-empty"
+                            onDrop={createLiberoDropHandler()}
+                            onDragOver={createLiberoDragOverHandler()}
                             onDragLeave={handleDragLeaveZone}
                             style={{
                               backgroundColor:
-                                draggedOverZone?.zoneIndex === index &&
+                                draggedOverZone?.zoneIndex === -1 &&
                                 draggedOverZone?.teamType === "rival"
-                                  ? "rgba(2, 114, 190, 0.5)"
-                                  : "rgba(2, 114, 190, 0.1)",
+                                  ? "rgba(64, 224, 208, 0.5)"
+                                  : "rgba(64, 224, 208, 0.1)",
                               border:
-                                draggedOverZone?.zoneIndex === index &&
+                                draggedOverZone?.zoneIndex === -1 &&
                                 draggedOverZone?.teamType === "rival"
-                                  ? "3px solid #0272be"
-                                  : "3px solid rgba(2, 114, 190, 0.8)",
+                                  ? "3px solid turquoise"
+                                  : "3px solid rgba(64, 224, 208, 0.8)",
                               borderRadius: "8px",
                               transition: "all 0.2s ease",
-                              minHeight: "96px",
+                              height: "50px",
+                              minHeight: "50px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              gridColumn: "2",
+                              marginTop: "10px",
                             }}
                           >
-                            P{correctZones(index)}
+                            <div
+                              style={{ color: "turquoise", fontWeight: "bold" }}
+                            >
+                              LIBERO
+                            </div>
                           </div>
-                        )
-                      )}
-                    {/* Ячейка для либеро - размещена под зоной P6 */}
-                    <div
-                      className="zone-names-wrapper"
-                      key="libero-cell"
-                      style={{
-                        backgroundColor: "rgba(64, 224, 208, 0.1)",
-                        border: "3px solid rgba(64, 224, 208, 0.8)",
-                        borderRadius: "8px",
-                        transition: "all 0.2s ease",
-                        minHeight: "96px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gridColumn: "2",
-                      }}
-                    >
-                      <div style={{ color: "turquoise", fontWeight: "bold" }}>
-                        LIBERO
-                      </div>
-                    </div>
+                        );
+                      })()}
                   </div>
                 </>
               )}
@@ -667,7 +822,17 @@ export function HomePage() {
                 zeroZero &&
                 !opponentTeamName &&
                 !setNumber &&
-                isBoardFull(guestTeamOptions) && (
+                [0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+                  const boardPosition = zones[zoneIndex];
+                  return guestTeamOptions.some(
+                    (p) =>
+                      p &&
+                      typeof p.boardPosition === "number" &&
+                      p.boardPosition === boardPosition &&
+                      p.number !== 0 &&
+                      p.position !== "LIB"
+                  );
+                }) && (
                   <div className="rotation-buttons-wrapper">
                     <button
                       onClick={() => rotateFront()}

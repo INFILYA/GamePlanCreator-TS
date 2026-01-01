@@ -123,6 +123,8 @@ export default function RotationPanel(arg: TRotationPanel) {
     // ============================================
     // ВАЖНО: Записываем ралли ВСЕГДА в gameLog, даже если нет действий игроков
     // Используем forSoloGameStat для очистки нулевых значений из объектов статистики игроков
+    console.log("SoloRallyStats:", SoloRallyStats);
+    
     const cleanedStats =
       SoloRallyStats.length > 0
         ? SoloRallyStats.map((player) => forSoloGameStat(player))
@@ -135,7 +137,6 @@ export default function RotationPanel(arg: TRotationPanel) {
     const ourSetterPosition = seTTer && guestTeamOptions
       ? correctZones(guestTeamOptions.indexOf(seTTer))
       : myZone;
-    const rivalSetterPosition = rivalRotation;
 
     const rallyData = {
       score: currentScore,
@@ -143,31 +144,12 @@ export default function RotationPanel(arg: TRotationPanel) {
       weWon: !rivalTeam, // Кто выиграл очко: true - мы выиграли, false - соперник выиграл
       stats: cleanedStats,
       setterBoardPosition: ourSetterPosition,
-      rivalSetterBoardPosition: rivalSetterPosition,
     };
 
     // Используем функциональное обновление для правильного накопления
     setGameLog((prevGameLog) => {
       const newGameLog = [...prevGameLog, rallyData];
 
-      // Логируем только нужную информацию
-      console.log("Who served:", whoServedInThisRally ? "We" : "Rival");
-      console.log(
-        "Actions in this rally:",
-        SoloRallyStats.length > 0
-          ? SoloRallyStats.map((p) => ({
-              name: p.name,
-              "R++": p["R++"] || 0,
-              "R+": p["R+"] || 0,
-              "A++": p["A++"] || 0,
-              "A+": p["A+"] || 0,
-              "S++": p["S++"] || 0,
-              "S+": p["S+"] || 0,
-              blocks: p.blocks || 0,
-            }))
-          : "No actions"
-      );
-      console.log("Full gameLog:", newGameLog);
 
       return newGameLog;
     });

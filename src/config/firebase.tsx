@@ -24,7 +24,6 @@ export const auth = getAuth(app);
 // Убеждаемся, что auth знает о текущем домене
 if (typeof window !== 'undefined') {
   const currentOrigin = window.location.origin;
-  console.log("Firebase auth initialized for origin:", currentOrigin);
 }
 
 // Настраиваем Google провайдер для редиректа

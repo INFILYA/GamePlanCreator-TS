@@ -131,20 +131,17 @@ export const backGroundYellow = {
 };
 export const backGroundBlue = { backgroundColor: "#0057B8", color: "#FFD700" };
 
-export function correctPositions(number: number): number {
-  return positions[number];
-}
 export function correctZones(number: number): number {
   return zones[number];
 }
 
 export const emptyPlayers: TPlayer[] = Array(6)
   .fill(emptyPlayer)
-  .map((user, index) => ({ ...user, boardPosition: correctPositions(index) }));
+  .map((user, index) => ({ ...user, boardPosition: correctZones(index) }));
 
 export const myEmptyPlayers: TPlayer[] = Array(6)
   .fill(emptyPlayer)
-  .map((user, index) => ({ ...user, boardPosition: correctPositions(index) }));
+  .map((user, index) => ({ ...user, boardPosition: correctZones(index) }));
 
 export function setStyleForEfficency(params: number): CSSProperties {
   if (params === 0) {
@@ -400,7 +397,6 @@ export function forSoloGameStat(obj: TPlayer): TPlayer {
       (key === "blocks" ||
         key === "setterBoardPosition" ||
         key === "boardPosition" ||
-        key === "zoneOfAttack" ||
         key === "A-" ||
         key === "A=" ||
         key === "A+" ||
