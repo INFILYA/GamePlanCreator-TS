@@ -183,7 +183,7 @@ main {
       flex-shrink: 0;
       align-self: flex-start;
       @media screen and (max-width: 767px) {
-        order: 1 !important; // Обе панели squad будут первыми только на iPhone
+        order: 1 !important; // Squad будет первым на мобильных
       }
     }
     .rotation-panel-wrapper {
@@ -194,28 +194,34 @@ main {
       flex-shrink: 0;
       align-self: flex-start;
       @media screen and (max-width: 767px) {
-        order: 2 !important; // Playground будет после панелей squad
+        order: 2 !important; // Playground будет после squad на мобильных
         flex: 0 0 100% !important; // Занимает всю ширину на новой строке
         width: 100% !important;
       }
     }
     @media screen and (max-width: 767px) {
-      flex-direction: row !important;
+      flex-direction: column !important;
       flex-wrap: wrap !important;
-      align-items: flex-start !important;
+      align-items: stretch !important;
       justify-content: flex-start !important;
       gap: 0 !important;
       padding: 0 !important;
-      /* Гарантируем, что панели squad идут в одном ряду */
+      /* Squad выше playground на мобильных */
       .teamsquad-section {
         flex-shrink: 0 !important;
         display: flex !important;
-        align-self: flex-start !important;
-        width: 50% !important;
-        max-width: 50% !important;
-        min-width: 50% !important;
-        flex-basis: 50% !important;
+        align-self: stretch !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 100% !important;
+        flex-basis: 100% !important;
         flex-grow: 0 !important;
+        order: 1 !important;
+      }
+      .playground-section {
+        order: 2 !important;
+        width: 100% !important;
+        max-width: 100% !important;
       }
     }
     @media screen and (min-width: 768px) and (max-width: 1024px) {
@@ -379,6 +385,14 @@ main {
       display: flex;
       flex-direction: column;
       justify-content: center;
+      .section-border {
+        @media screen and (max-width: 767px) {
+          left: 0;
+          right: 0;
+          width: 100%;
+          max-width: 100%;
+        }
+      }
       @media screen and (max-width: 767px) {
         width: 85%;
         max-width: 350px;
@@ -391,6 +405,9 @@ main {
         flex-direction: column;
         flex: 1;
         min-height: 100%;
+        @media screen and (max-width: 767px) {
+          order: -1;
+        }
         .section-content {
           display: flex;
           flex-direction: column;
@@ -667,6 +684,15 @@ main {
       left: 0;
       overflow: hidden;
       z-index: -1;
+      @media screen and (max-width: 767px) {
+        &.rotation-panel-wrapper .section-border,
+        .rotation-panel-wrapper & {
+          left: 0;
+          right: 0;
+          width: 100%;
+          max-width: 100%;
+        }
+      }
       .section-background {
         position: absolute;
         top: 0;
@@ -813,6 +839,19 @@ main {
         flex: 1;
         display: flex;
         flex-direction: column;
+        @media screen and (max-width: 767px) {
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px;
+          width: 100%;
+          .player-field-wrapper {
+            flex: 0 0 auto;
+            min-width: auto;
+            max-width: none;
+            margin: 0;
+          }
+        }
       }
       // Ограничиваем section-border на iPhone
       @media screen and (max-width: 767px) {
@@ -1183,44 +1222,71 @@ main {
         @media screen and (max-width: 767px) {
           .squad-wrapper {
             .player-field-wrapper {
+              flex-direction: row;
+              align-items: stretch;
               min-height: 26px;
               height: 26px;
-              max-width: 100%;
+              max-width: none;
+              width: auto;
+              gap: 0;
               .playerNumber-wrapper {
                 flex: 0 0 auto;
                 min-width: 35px;
                 max-width: 45px;
+                width: auto;
+                height: 100%;
+                display: flex;
+                align-items: stretch;
                 button {
                   min-height: 26px;
-                  height: 26px;
+                  height: 100%;
                   font-size: 0.8rem;
                   padding: 3px 6px;
                   width: auto;
+                  border-radius: 0;
                 }
               }
               .player-surname-wrapper {
                 flex: 1 1 auto;
                 min-width: 0;
-                max-width: calc(100% - 90px);
+                max-width: none;
+                width: auto;
+                margin-right: 0;
+                height: 100%;
+                display: flex;
+                align-items: stretch;
                 button {
                   min-height: 26px;
-                  height: 26px;
-                  font-size: 0.7rem;
+                  height: 100%;
+                  font-size: 0.8rem;
                   padding: 3px 5px;
-                  max-width: 100%;
+                  max-width: none;
+                  white-space: nowrap;
+                  border-radius: 0;
                 }
               }
               .moveToBoard-wrapper {
                 flex: 0 0 auto;
                 min-width: 30px;
                 max-width: 35px;
+                width: auto;
+                height: 100%;
+                display: flex;
+                align-items: stretch;
                 select {
                   min-height: 26px;
-                  height: 26px;
+                  height: 100%;
                   padding: 3px 18px 3px 5px;
                   font-size: 0.65rem;
+                  border-radius: 0;
                 }
               }
+            }
+            > button {
+              flex-basis: 100% !important;
+              width: 100% !important;
+              max-width: 100% !important;
+              margin-top: 8px !important;
             }
           }
         }
@@ -1586,39 +1652,25 @@ main {
           }
         }
         // КНОПКИ СБРОСУ КОМАНД
-        .reset-button-wrapper {
+        .match-number-wrapper {
           display: flex;
           width: 100%;
           margin: 1vw 0;
-          justify-content: space-between;
+          justify-content: center;
           align-items: flex-start;
-          position: relative;
-          padding-top: clamp(15px, 1.5vw, 20px);
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          flex-direction: column;
+          height: 100%;
+          box-sizing: border-box;
+          padding: clamp(15px, 1.5vw, 20px) 0.5vw clamp(2px, 0.4vw, 5px) 0.5vw;
           min-height: clamp(80px, 10vw, 96px);
+          gap: clamp(5px, 0.8vw, 10px);
           &:not(:has(.rotation-field-wrapper.statistic-mode)) {
             min-height: auto;
             padding-bottom: clamp(5px, 0.8vw, 10px);
           }
-          > div:not(.match-number-wrapper) {
-            width: 25%;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            height: auto;
-            flex-shrink: 0;
-            padding-top: 0;
-          }
-          .match-number-wrapper {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            box-sizing: border-box;
-            padding: 0 0.5vw clamp(2px, 0.4vw, 5px) 0.5vw;
-            align-items: center;
-            gap: clamp(5px, 0.8vw, 10px);
             > div:first-child {
               width: 100%;
               display: flex;
@@ -1878,23 +1930,20 @@ main {
           width: 100%;
           display: flex;
           flex-direction: column;
-          .reset-button-wrapper {
+          .match-number-wrapper {
             margin: 10px 0; // Изменено с -10px на 10px, чтобы не заезжало под header
-            justify-content: space-between;
             position: relative;
             z-index: 11;
             padding-top: 20px; // Добавляем отступ сверху, чтобы не заезжало под header
             align-items: flex-start;
             @media screen and (min-width: 768px) {
-              .match-number-wrapper {
-                position: absolute;
-                left: 50%;
-                transform: translateX(-50%);
-              }
+              position: absolute;
+              left: 50%;
+              transform: translateX(-50%);
             }
           }
           &.statistic-mode {
-            .reset-button-wrapper {
+            .match-number-wrapper {
               margin-top: 0.2vw;
               min-height: clamp(80px, 10vw, 96px);
               align-items: center;

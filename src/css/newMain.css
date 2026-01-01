@@ -214,6 +214,16 @@ main .main-content-wrapper .playground-section {
   flex-shrink: 0;
   align-self: flex-start;
 }
+@media screen and (max-width: 767px) {
+  /* На мобильных squad выше playground (для обычного режима) */
+  main .main-content-wrapper:not(:has(.rotation-field-wrapper.statistic-mode)) .teamsquad-section {
+    order: 1 !important;
+  }
+  main .main-content-wrapper:not(:has(.rotation-field-wrapper.statistic-mode)) .playground-section {
+    order: 2 !important;
+  }
+  /* Для statistic mode порядок уже установлен в другом месте (строки 329-340) */
+}
 main .main-content-wrapper section .diagram-content {
   width: 99%;
 }
@@ -313,11 +323,28 @@ main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsqua
   right: 4px;
 }
 @media screen and (max-width: 767px) {
+  main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
   main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsquad-section {
-    width: 95%;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    flex: 0 0 auto !important;
+    order: 1 !important;
   }
   main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .playground-section {
-    width: 95%;
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 auto !important;
+    order: 2 !important;
+  }
+  main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .rotation-panel-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 auto !important;
+    order: 3 !important;
   }
 }
 @media screen and (min-width: 768px) and (max-width: 1024px) {
@@ -357,6 +384,11 @@ main .main-content-wrapper .rotation-panel-wrapper .section-content-wrapper .sec
   justify-content: space-around;
   flex: 1;
   align-items: center;
+}
+@media screen and (max-width: 767px) {
+  main .main-content-wrapper .rotation-panel-wrapper .section-content-wrapper {
+    order: -1;
+  }
 }
 main .main-content-wrapper .ratings-section,
 main .main-content-wrapper .playground-section {
@@ -535,6 +567,23 @@ main .main-content-wrapper:has(.rotation-field-wrapper.statistic-mode) .teamsqua
   left: 1.2vw;
   right: 1.2vw;
 }
+/* Адаптивные стили для section-border в rotation-panel-wrapper на мобильных */
+@media screen and (max-width: 767px) {
+  main .main-content-wrapper .rotation-panel-wrapper .section-border {
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+@media screen and (max-width: 480px) {
+  main .main-content-wrapper .rotation-panel-wrapper .section-border {
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+}
 /* Делаем section-content-wrapper растягивающимся для одинаковой высоты squad панелей */
 main .main-content-wrapper .teamsquad-section .section-content-wrapper {
   display: flex;
@@ -546,6 +595,27 @@ main .main-content-wrapper .teamsquad-section .squad-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+@media screen and (max-width: 767px) {
+  main .main-content-wrapper .teamsquad-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    flex: 0 0 100% !important;
+  }
+  main .main-content-wrapper .teamsquad-section .squad-wrapper {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+  main .main-content-wrapper .teamsquad-section .squad-wrapper .player-field-wrapper {
+    flex: 0 0 auto;
+    min-width: auto;
+    max-width: none;
+    margin: 0;
+  }
 }
 main .main-content-wrapper .section-border .section-background {
   position: absolute;
@@ -843,7 +913,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rivalTeam-
   white-space: nowrap;
   word-break: break-word;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper h2 {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper h2 {
   color: rgba(2, 114, 190, 0.4);
   font-weight: 600;
   font-size: clamp(0.8rem, calc((var(--normal-text-size-value) - 1) * 3vw + 0.2rem), 1.2rem); /* Такой же размер шрифта как у input и select */
@@ -857,7 +927,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   transition: all 0.3s ease;
   opacity: 0.6;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper h2.exhibition-game-active {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper h2.exhibition-game-active {
   color: #ff4444;
   font-weight: 700;
   background: linear-gradient(135deg, rgba(255, 68, 68, 0.1) 0%, rgba(255, 100, 100, 0.1) 100%);
@@ -865,7 +935,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   text-shadow: 0 2px 4px rgba(255, 68, 68, 0.2);
   opacity: 1;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper h2:hover {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper h2:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -1128,31 +1198,115 @@ main .main-content-wrapper .section-content-wrapper .section-content .squad-wrap
   width: 100%;
   margin-top: 0;
 }
+@media screen and (max-width: 767px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper {
+    flex: 0 0 auto;
+    min-width: auto;
+    max-width: none;
+    margin: 0;
+    width: auto;
+    flex-direction: row;
+    gap: 0;
+    align-items: stretch;
+    height: 26px;
+    min-height: 26px;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .playerNumber-wrapper {
+    width: auto;
+    flex-shrink: 0;
+    flex: 0 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .playerNumber-wrapper button {
+    height: 100%;
+    border-radius: 12px 0 0 12px;
+    font-size: 0.8rem;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: none;
+    width: auto;
+    margin-right: 0;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper button {
+    height: 100%;
+    border-radius: 0;
+    font-size: 0.8rem;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .row-zones-wrapper .player-surname-wrapper button.player-surname,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .my-row-zones-wrapper .player-surname-wrapper button.player-surname,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-front-row-zones-wrapper .player-surname-wrapper button.player-surname,
+  main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .empty-guest-back-row-zones-wrapper .player-surname-wrapper button.player-surname {
+    font-size: 0.8rem !important;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .player-surname-wrapper button {
+    font-size: 0.8rem !important;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper {
+    width: auto;
+    flex-shrink: 0;
+    flex: 0 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper select {
+    height: 100%;
+    border-radius: 0 12px 12px 0;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper:not(:has(.moveToBoard-wrapper)) .player-surname-wrapper button {
+    border-radius: 0 12px 12px 0;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper > button {
+    flex-basis: 100%;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 8px;
+  }
+}
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper {
   display: flex;
+  flex-direction: row;
   margin: 3px 0;
   width: 100%;
   min-height: 2vw;
   align-items: stretch;
+  gap: 0;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .playerNumber-wrapper {
   display: flex;
   align-items: stretch;
   justify-content: center;
   height: auto;
+  flex-shrink: 0;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .playerNumber-wrapper button {
   height: 100%;
-  width: 100%;
+  width: auto;
   min-height: 100%;
+  flex-shrink: 0;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper {
   display: flex;
   align-items: stretch;
   justify-content: center;
   height: auto;
-  width: 100%;
-  margin-right: 4px;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-right: 0;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper button {
   height: 100%;
@@ -1161,6 +1315,9 @@ main .main-content-wrapper .section-content-wrapper .section-content .squad-wrap
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper {
   display: flex;
@@ -1326,53 +1483,38 @@ main .main-content-wrapper .section-content-wrapper .section-content .plusMinus 
   padding: 0px 15px;
   font-weight: 600;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper {
   display: flex;
   width: 100%;
   margin: 1vw 0;
-  justify-content: space-between;
+  justify-content: center;
   align-items: flex-start;
   padding-top: clamp(15px, 1.5vw, 20px); /* Добавляем отступ сверху, чтобы не заезжало под header */
   position: relative;
   min-height: clamp(80px, 10vw, 96px);
 }
-main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper:not(.statistic-mode) .reset-button-wrapper {
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper:not(.statistic-mode) .match-number-wrapper {
   min-height: auto;
   padding-bottom: clamp(5px, 0.8vw, 10px);
 }
 /* В statistic mode уменьшаем отступы, чтобы был впритык к именам */
-main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .reset-button-wrapper {
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper.statistic-mode .match-number-wrapper {
   margin-top: 0.2vw;
   justify-content: center;
   min-height: clamp(80px, 10vw, 96px);
   align-items: center;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper > div:not(.match-number-wrapper) {
-  width: 25%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  height: auto;
-  flex-shrink: 0;
-  padding-top: 0;
-}
 @media screen and (min-width: 768px) and (max-width: 1024px) {
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper {
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper {
     margin: 8px 0; /* Уменьшаем margin для iPad */
     padding-top: 8px;
     gap: 0.5vw; /* Добавляем gap между кнопками для iPad */
-  }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper > div:not(.match-number-wrapper) {
-    width: auto; /* Автоматическая ширина для iPad */
-    min-width: 80px; /* Минимальная ширина */
-  }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
   }
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
@@ -1384,7 +1526,59 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   align-items: center;
   gap: clamp(5px, 0.8vw, 10px);
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:first-child {
+@media screen and (max-width: 767px) {
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper {
+    position: static;
+    transform: none;
+    left: auto;
+    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+    gap: 12px;
+    height: auto;
+    min-height: auto;
+    align-items: stretch;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:first-child > div {
+    position: static !important;
+    left: auto !important;
+    transform: none !important;
+    width: 100%;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:first-child button {
+    width: 100%;
+    max-width: 100%;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:last-child {
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    width: 100%;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:last-child input,
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:last-child select {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    font-size: clamp(0.7rem, 2vw, 1rem);
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:last-child h2 {
+    font-size: clamp(0.7rem, 2vw, 1rem);
+    white-space: normal;
+    word-break: break-word;
+  }
+}
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:first-child {
   width: 100%;
   display: flex;
   align-items: center;
@@ -1395,11 +1589,11 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   padding-top: 0 !important;
   margin-top: 0 !important;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:first-child button {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:first-child button {
   margin: 0 auto;
   display: block;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:last-child {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1410,12 +1604,12 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   padding-top: clamp(5px, 0.8vw, 10px) !important;
   padding-bottom: clamp(3px, 0.5vw, 6px) !important;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child input,
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child select {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:last-child input,
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:last-child select {
   position: relative;
   z-index: 2;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child h2 {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:last-child h2 {
   position: relative;
   z-index: 1;
   align-self: center;
@@ -1424,7 +1618,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   align-items: center;
   box-sizing: border-box;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input[type="checkbox"] {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper input[type="checkbox"] {
   width: 2vw;
   min-width: 20px;
   height: 2vw;
@@ -1433,8 +1627,8 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   accent-color: #0272be;
   flex-shrink: 0;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select,
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper select,
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper input {
   width: 12vw;
   max-width: 100%;
   border: 2px solid #0272be;
@@ -1455,19 +1649,19 @@ main .main-content-wrapper .section-content-wrapper .section-content .reset-butt
   white-space: nowrap;
   box-sizing: border-box;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select:hover,
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input:hover {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper select:hover,
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper input:hover {
   border-color: #00a8ff;
   box-shadow: 0 4px 8px rgba(2, 114, 190, 0.2);
   transform: translateY(-1px);
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select:focus,
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input:focus {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper select:focus,
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper input:focus {
   outline: none;
   border-color: #00a8ff;
   box-shadow: 0 0 0 3px rgba(2, 114, 190, 0.1);
 }
-main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper .score-wrapper {
+main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper .score-wrapper {
   width: 5vmax;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .hidden-player-information-wrapper {
@@ -1590,9 +1784,8 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
   display: flex;
   flex-direction: column;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .reset-button-wrapper {
+main .main-content-wrapper .section-content-wrapper .section-content .rotation-field-wrapper .match-number-wrapper {
   margin: -10px 0;
-  justify-content: space-between;
   position: relative;
   z-index: 11;
 }
@@ -2050,15 +2243,10 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
     font-size: 0.85rem;
     padding: 4px 6px;
   }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper {
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper {
     flex-direction: column;
     gap: 10px;
     margin: 10px 0;
-  }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper > div:not(.match-number-wrapper) {
-    width: 100%;
-  }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper {
     position: static;
     transform: none;
     left: auto;
@@ -2068,7 +2256,7 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
     justify-content: center;
     gap: 8px;
   }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:first-child {
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:first-child {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -2078,19 +2266,19 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
     box-sizing: border-box;
     padding: 10px 0;
   }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper > div:last-child {
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper > div:last-child {
     padding-top: 15px !important;
     padding-bottom: 15px !important;
   }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper h2 {
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper h2 {
     margin: 0;
     flex-shrink: 0;
   }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper input {
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper input {
     flex: 1 1 auto;
     min-width: 135px;
   }
-  main .main-content-wrapper .section-content-wrapper .section-content .reset-button-wrapper .match-number-wrapper select {
+  main .main-content-wrapper .section-content-wrapper .section-content .match-number-wrapper select {
     flex: 1 1 auto;
     min-width: 135px;
   }
@@ -2116,13 +2304,27 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
     font-size: clamp(1rem, 2vw, 1.5rem);
   }
   main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper {
-    flex-direction: column;
-    gap: 5px;
+    flex-direction: row;
+    gap: 0;
+    width: auto;
+    min-width: auto;
+    max-width: none;
   }
-  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .playerNumber-wrapper,
-  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper,
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .playerNumber-wrapper {
+    width: auto;
+    flex-shrink: 0;
+    flex: 0 0 auto;
+  }
+  main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .player-surname-wrapper {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    margin-right: 0;
+  }
   main .main-content-wrapper .section-content-wrapper .section-content .squad-wrapper .player-field-wrapper .moveToBoard-wrapper {
-    width: 100%;
+    width: auto;
+    flex-shrink: 0;
+    flex: 0 0 auto;
   }
   h1 {
     font-size: clamp(1.2rem, 3vw, 1.8rem);

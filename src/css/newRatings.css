@@ -33,6 +33,36 @@
   display: flex;
   justify-content: center;
   margin-top: 1vw;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+@media screen and (max-width: 767px) {
+  .main-content-wrapper .ratings-section nav .team-filter-wrapper {
+    gap: 6px;
+    margin-top: 0.5vw;
+    padding: 0 8px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .main-content-wrapper .ratings-section nav .team-filter-wrapper > div {
+    flex-shrink: 0;
+  }
+  .main-content-wrapper .ratings-section nav .team-filter-wrapper > div button {
+    font-size: clamp(0.7rem, 2.5vw, 0.9rem) !important;
+    padding: 6px 12px !important;
+    white-space: nowrap;
+  }
+}
+@media screen and (max-width: 480px) {
+  .main-content-wrapper .ratings-section nav .team-filter-wrapper {
+    gap: 4px;
+    padding: 0 4px;
+  }
+  .main-content-wrapper .ratings-section nav .team-filter-wrapper > div button {
+    font-size: clamp(0.65rem, 2.2vw, 0.85rem) !important;
+    padding: 5px 10px !important;
+  }
 }
 .main-content-wrapper .ratings-section nav .choosen-game-filter-wrapper {
   margin: 1vw 0 1vw 0;

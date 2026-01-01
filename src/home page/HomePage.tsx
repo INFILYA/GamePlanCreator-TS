@@ -536,7 +536,7 @@ export function HomePage() {
   console.log(gameLog);
   return (
     <article className="main-content-wrapper">
-      {/* На мобильных (меньше 768px) обе панели squad идут вместе первыми */}
+      {/* На мобильных (меньше 768px) squad выше playground */}
       {isMobile && showGuestTeam && showSquads && (
         <>
           <Squads />
@@ -581,131 +581,123 @@ export function HomePage() {
               }`}
               onSubmit={saveSpikeData}
             >
-              <div className="reset-button-wrapper">
-                {showGuestTeam ? (
-                  <>
-                    {[0, 1, 2, 3, 4, 5].every((zoneIndex) => {
-                      const boardPosition = zones[zoneIndex];
-                      return guestTeamOptions.some(
-                        (p) =>
-                          p &&
-                          typeof p.boardPosition === "number" &&
-                          p.boardPosition === boardPosition &&
-                          p.number !== 0 &&
-                          p.position !== "LIB"
-                      );
-                    }) &&
-                      guestTeamOptions.some((p) => p.position === "LIB") && (
-                        <div
-                          className="match-number-wrapper"
-                          style={{ width: "100%" }}
-                        >
-                          <div>
-                            {!showSquads && gameLog.length > 0 && (
-                              <div style={{ position: "absolute", left: "0" }}>
-                                <RegularButton
-                                  onClick={undoLastRally}
-                                  type="button"
-                                  $color="white"
-                                  $background="#dc2626"
-                                  title="Undo last rally"
-                                >
-                                  Undo
-                                </RegularButton>
-                              </div>
-                            )}
-                            <RegularButton
-                              onClick={hideSquads}
-                              type="button"
-                              $color={!showSquads ? "orangered" : "#0272be"}
-                              $background={
-                                !showSquads ? "orangered" : "#0272be"
-                              }
-                              $active={!showSquads}
-                              onMouseEnter={() => setHoverStatisticButton(true)}
-                              onMouseLeave={() =>
-                                setHoverStatisticButton(false)
-                              }
-                            >
-                              {hoverStatisticButton
-                                ? showSquads
-                                  ? "Switch on"
-                                  : "Switch off"
-                                : "Statistic mode"}
-                            </RegularButton>
-                          </div>
-                          {!showSquads && !showCurrentGameStats && (
-                            <div
-                              style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                gap: "30px",
-                                padding: "10px 0 10px 0",
-                              }}
-                            >
-                              <input
-                                onChange={(e) =>
-                                  setOpponentTeamName(
-                                    firstLetterCapital(e.target.value)
-                                  )
-                                }
-                                value={opponentTeamName}
-                              ></input>
-                              <h2
-                                className={
-                                  exhibitionGame ? "exhibition-game-active" : ""
-                                }
-                                style={{
-                                  whiteSpace: "nowrap",
-                                  cursor: "pointer",
-                                  userSelect: "none",
-                                  transition: "color 0.3s ease",
-                                }}
-                                onClick={() =>
-                                  setExhibitionGame(!exhibitionGame)
-                                }
+              {showGuestTeam ? (
+                <>
+                  {[0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+                    const boardPosition = zones[zoneIndex];
+                    return guestTeamOptions.some(
+                      (p) =>
+                        p &&
+                        typeof p.boardPosition === "number" &&
+                        p.boardPosition === boardPosition &&
+                        p.number !== 0 &&
+                        p.position !== "LIB"
+                    );
+                  }) &&
+                    guestTeamOptions.some((p) => p.position === "LIB") && (
+                      <div
+                        className="match-number-wrapper"
+                        style={{ width: "100%", flexDirection: "column" }}
+                      >
+                        <div>
+                          {!showSquads && gameLog.length > 0 && (
+                            <div style={{ position: "absolute", left: "0" }}>
+                              <RegularButton
+                                onClick={undoLastRally}
+                                type="button"
+                                $color="white"
+                                $background="#dc2626"
+                                title="Undo last rally"
                               >
-                                Exhibition game
-                              </h2>
-                              <select
-                                onChange={(e) => setSetNumber(e.target.value)}
-                                value={setNumber}
-                              >
-                                <option value="">Choose set</option>
-                                <option value="Set 1">Set 1</option>
-                                <option value="Set 2">Set 2</option>
-                                <option value="Set 3">Set 3</option>
-                                <option value="Set 4">Set 4</option>
-                                <option value="Set 5 (short)">
-                                  Set 5 (short)
-                                </option>
-                                <option value="Set 3 (short)">
-                                  Set 3 (short)
-                                </option>
-                              </select>
+                                Undo
+                              </RegularButton>
                             </div>
                           )}
+                          <RegularButton
+                            onClick={hideSquads}
+                            type="button"
+                            $color={!showSquads ? "orangered" : "#0272be"}
+                            $background={!showSquads ? "orangered" : "#0272be"}
+                            $active={!showSquads}
+                            onMouseEnter={() => setHoverStatisticButton(true)}
+                            onMouseLeave={() => setHoverStatisticButton(false)}
+                          >
+                            {hoverStatisticButton
+                              ? showSquads
+                                ? "Switch on"
+                                : "Switch off"
+                              : "Statistic mode"}
+                          </RegularButton>
                         </div>
-                      )}
-                    {showSquads && (
-                      <div style={{ marginLeft: "auto" }}>
-                        <RegularButton
-                          onClick={resetTheBoardForGuestTeam}
-                          type="button"
-                          $color="orangered"
-                          $background="white"
-                        >
-                          Reset
-                        </RegularButton>
+                        {!showSquads && !showCurrentGameStats && (
+                          <div
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              gap: "30px",
+                              padding: "10px 0 10px 0",
+                            }}
+                          >
+                            <input
+                              onChange={(e) =>
+                                setOpponentTeamName(
+                                  firstLetterCapital(e.target.value)
+                                )
+                              }
+                              value={opponentTeamName}
+                            ></input>
+                            <h2
+                              className={
+                                exhibitionGame ? "exhibition-game-active" : ""
+                              }
+                              style={{
+                                whiteSpace: "nowrap",
+                                cursor: "pointer",
+                                userSelect: "none",
+                                transition: "color 0.3s ease",
+                              }}
+                              onClick={() => setExhibitionGame(!exhibitionGame)}
+                            >
+                              Exhibition game
+                            </h2>
+                            <select
+                              onChange={(e) => setSetNumber(e.target.value)}
+                              value={setNumber}
+                            >
+                              <option value="">Choose set</option>
+                              <option value="Set 1">Set 1</option>
+                              <option value="Set 2">Set 2</option>
+                              <option value="Set 3">Set 3</option>
+                              <option value="Set 4">Set 4</option>
+                              <option value="Set 5 (short)">
+                                Set 5 (short)
+                              </option>
+                              <option value="Set 3 (short)">
+                                Set 3 (short)
+                              </option>
+                            </select>
+                          </div>
+                        )}
                       </div>
                     )}
-                  </>
-                ) : (
-                  <div></div>
-                )}
-              </div>
+                  {showSquads && (
+                    <div style={{ marginLeft: "auto" }}>
+                      <RegularButton
+                        onClick={resetTheBoardForGuestTeam}
+                        type="button"
+                        $color="orangered"
+                        $background="white"
+                      >
+                        Reset
+                      </RegularButton>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div></div>
+              )}
               {!showCurrentGameStats && (
                 <>
                   <div className="row-zones-wrapper">
