@@ -13,7 +13,6 @@ import {
   correctZones,
   emptyPlayer,
   preparePlayerToSoloGame,
-  zones,
 } from "../../utilities/functions";
 import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
 import { useSelector } from "react-redux";
@@ -118,9 +117,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     const updatedPlayer = calculateForPlayerData({ ...player }, obj);
     
     if (guestTeamOptions.length === 0) return;
-    const seTTer = guestTeamOptions.find((plaer) => plaer.position === "SET");
-    if (!seTTer) return;
-    const indexOfSetter = guestTeamOptions.indexOf(seTTer);
+    const setter = guestTeamOptions.find((player) => player.position === "SET");
+    if (!setter) return;
+    const indexOfSetter = guestTeamOptions.indexOf(setter);
     
     // ============================================
     // ОТПРАВКА ДЕЙСТВИЙ ИГРОКА В REDUX
@@ -406,7 +405,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                         ) : (
                           <tr>
                             <td
-                              style={{ backgroundColor: "llightgreen" }}
+                              style={{ backgroundColor: "lightgreen" }}
                               onClick={() => addAmount("blocks", 1)}
                             >
                               B
@@ -424,7 +423,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                               />
                             </td>
                             <td
-                              style={{ backgroundColor: "llightgreen" }}
+                              style={{ backgroundColor: "lightgreen" }}
                               onClick={() => addAmount("blocks", -1)}
                             >
                               -
