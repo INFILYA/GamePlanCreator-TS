@@ -60,11 +60,6 @@ export default function GamePlanCreator() {
           localStorage.removeItem("gamesStats");
         }
         
-        // Загружаем из localStorage только если данные валидные (но Firebase имеет приоритет)
-        const validCachedTeams = cachedTeams && Array.isArray(cachedTeams) && cachedTeams.length > 0;
-        const validCachedPlayers = cachedPlayers && Array.isArray(cachedPlayers) && cachedPlayers.length > 0;
-        const validCachedGames = cachedGames && Array.isArray(cachedGames) && cachedGames.length > 0;
-        
         // Загружаем из Firebase (это имеет приоритет)
         getTeams();
         getPlayers();
@@ -101,7 +96,7 @@ export default function GamePlanCreator() {
               dispatch(setAllTeams(cachedTeams));
             }
           }
-        }, (error: any) => {
+        }, (_error: any) => {
           // Если ошибка доступа, используем кэш
           const cachedTeams = getFromLocalStorage("teams");
           if (cachedTeams && Array.isArray(cachedTeams) && cachedTeams.length > 0) {
@@ -144,7 +139,7 @@ export default function GamePlanCreator() {
             const games = Object.values(data) as TGameStats[];
             dispatch(setAllGameStats(games));
           }
-        }, (error) => {
+        }, (_error) => {
           // Если ошибка доступа, используем кэш
           const cachedGames = getFromLocalStorage("gamesStats");
           if (cachedGames && Array.isArray(cachedGames) && cachedGames.length > 0) {
