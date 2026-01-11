@@ -280,11 +280,10 @@ export function Squads() {
               p &&
               typeof p.boardPosition === "number" &&
               p.boardPosition === boardPosition &&
-              p.number !== 0 &&
-              p.position !== "LIB"
+              p.number !== 0
           );
         }) &&
-          guestTeamOptions.some((p) => p.position === "LIB") && (
+          !guestTeamOptions.some((p) => p.boardPosition === -1) && (
             <RegularButton
               onClick={saveStartingSix}
               type="button"

@@ -302,7 +302,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
         <div
           className="card-content"
           style={
-            player.position === "LIB"
+            player.boardPosition === -1
               ? {
                   border: "none",
                   backgroundColor: "transparent",
@@ -311,10 +311,10 @@ export function IconOfPlayer(props: TIconOfPlayer) {
               : undefined
           }
         >
-          {!showSquads && player.position !== "LIB" && (
+          {!showSquads && player.boardPosition !== -1 && (
             <div className="zone-names-wrapper">P{zoneNumber}</div>
           )}
-          {player.position !== "LIB" && (
+          {player.boardPosition !== -1 && (
             <div className="player-image-wrapper" onClick={showPlayerInfo}>
               <img src={`/photos/${player?.photo}`} alt=""></img>
             </div>

@@ -340,8 +340,8 @@ export function HomePage() {
 
       const player = JSON.parse(playerData) as TPlayer;
 
-      // Проверяем, что это либеро и команда совпадает
-      if (team === "rival" && player.position === "LIB") {
+      // Разрешаем дроп любого игрока в ячейку либеро
+      if (team === "rival") {
         dispatch(filterGuestPlayers(player.name));
         dispatch(setGuestTeamIndexOfZones({ player, zone: -1 }));
       }
@@ -359,7 +359,6 @@ export function HomePage() {
         // Получаем данные о перетаскиваемом игроке
         const playerData = e.dataTransfer.getData("player");
 
-        // Проверяем, что это либеро
         if (!playerData) {
           e.dataTransfer.dropEffect = "none";
           setDraggedOverZone(null);
@@ -367,13 +366,6 @@ export function HomePage() {
         }
 
         const player = JSON.parse(playerData) as TPlayer;
-
-        // Если это не либеро, запрещаем дроп
-        if (player.position !== "LIB") {
-          e.dataTransfer.dropEffect = "none";
-          setDraggedOverZone(null);
-          return;
-        }
 
         // Проверяем, занята ли ячейка либеро
         const existingLibero = guestTeamOptions.find(
@@ -394,6 +386,7 @@ export function HomePage() {
           }
         }
 
+        // Разрешаем дроп любого игрока в ячейку либеро
         e.dataTransfer.dropEffect = "move";
         setDraggedOverZone({ zoneIndex: -1, teamType: "rival" });
       }
@@ -590,11 +583,10 @@ export function HomePage() {
                         p &&
                         typeof p.boardPosition === "number" &&
                         p.boardPosition === boardPosition &&
-                        p.number !== 0 &&
-                        p.position !== "LIB"
+                        p.number !== 0
                     );
                   }) &&
-                    guestTeamOptions.some((p) => p.position === "LIB") && (
+                    guestTeamOptions.some((p) => p.boardPosition === -1) && (
                       <div
                         className="match-number-wrapper"
                         style={{ width: "100%", flexDirection: "column" }}
@@ -783,8 +775,9 @@ export function HomePage() {
                         );
                       }) &&
                       (() => {
+                        // Ищем игрока, который находится в ячейке либеро (boardPosition === -1)
                         const libero = guestTeamOptions.find(
-                          (p) => p.position === "LIB"
+                          (p) => p.boardPosition === -1
                         );
                         return libero ? (
                           <div
