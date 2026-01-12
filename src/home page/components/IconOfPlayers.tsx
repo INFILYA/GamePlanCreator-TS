@@ -45,7 +45,8 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       setDiagrammValue(soloGamePlayerStats);
       setNextRotation(false);
     }
-    if (player.position === "LIB") {
+    // Если игрок находится в ячейке либеро, устанавливаем только прием
+    if (player.boardPosition === -1) {
       setCategory("SR");
     }
   }, [player, startingSix, nextRotation, setNextRotation]);
@@ -219,9 +220,10 @@ export function IconOfPlayer(props: TIconOfPlayer) {
         ? playerOnBoard.boardPosition
         : -1;
 
-    // Для либеро boardPosition уже должен быть установлен при добавлении на доску
-    // Но на всякий случай проверяем и исправляем, если нужно
-    if (playerOnBoard.position === "LIB" && usedBoardPosition === -1) {
+    // Если игрок находится в ячейке либеро (boardPosition === -1),
+    // используем позицию middle blocker на задней линии для статистики solo rally
+    // Это работает для любого игрока в ячейке либеро, независимо от его позиции
+    if (usedBoardPosition === -1) {
       const mbBackRowPos = getMiddleBlockerBackRowPosition();
       if (mbBackRowPos !== null) {
         usedBoardPosition = mbBackRowPos;
@@ -371,12 +373,12 @@ export function IconOfPlayer(props: TIconOfPlayer) {
             <div
               className="errors-field-wrapper"
               style={
-                player.position === "LIB"
+                player.boardPosition === -1
                   ? { maxHeight: "200px", overflowY: "auto" }
                   : undefined
               }
             >
-              {player.position === "LIB" ? (
+              {player.boardPosition === -1 ? (
                 // Горизонтальная версия для либеро - только прием (3 строки x 5 столбцов)
                 <div
                   style={{
