@@ -47,6 +47,7 @@ import RotationPanel from "./components/RotationPanel";
 import { StatisticsTable } from "../ratings/components/StatisticsTable";
 import { useSetWidth } from "../utilities/useSetWidth";
 import Diagramm from "../personalInfo/components/Diagramm";
+import ConfirmField from "../utilities/ConfimField.";
 
 export function HomePage() {
   const dispatch = useAppDispatch();
@@ -71,6 +72,8 @@ export function HomePage() {
   const [previousMyScore, setPreviousMyScore] = useState(0);
   const [previousRivalScore, setPreviousRivalScore] = useState(0);
   const [rivalRotation, setRivalRotation] = useState(1);
+  const [openResetConfirmWindow, setOpenResetConfirmWindow] = useState(false);
+  const [openUndoConfirmWindow, setOpenUndoConfirmWindow] = useState(false);
   const gamesStats = useSelector(selectGamesStats);
 
   const showGuestTeam = guestTeam.length !== 0;
@@ -528,7 +531,26 @@ export function HomePage() {
   );
   console.log(gameLog);
   return (
-    <article className="main-content-wrapper">
+    <>
+      {openUndoConfirmWindow && (
+        <ConfirmField
+          onClick={() => {
+            undoLastRally();
+            setOpenUndoConfirmWindow(false);
+          }}
+          setOpenConfirmWindow={setOpenUndoConfirmWindow}
+        />
+      )}
+      {openResetConfirmWindow && (
+        <ConfirmField
+          onClick={() => {
+            resetTheBoardForGuestTeam();
+            setOpenResetConfirmWindow(false);
+          }}
+          setOpenConfirmWindow={setOpenResetConfirmWindow}
+        />
+      )}
+      <article className="main-content-wrapper">
       {/* На мобильных (меньше 768px) squad выше playground */}
       {isMobile && showGuestTeam && showSquads && (
         <>
@@ -595,7 +617,7 @@ export function HomePage() {
                           {!showSquads && gameLog.length > 0 && (
                             <div style={{ position: "absolute", left: "0" }}>
                               <RegularButton
-                                onClick={undoLastRally}
+                                onClick={() => setOpenUndoConfirmWindow(true)}
                                 type="button"
                                 $color="white"
                                 $background="#dc2626"
@@ -677,7 +699,7 @@ export function HomePage() {
                   {showSquads && (
                     <div style={{ marginLeft: "auto" }}>
                       <RegularButton
-                        onClick={resetTheBoardForGuestTeam}
+                        onClick={() => setOpenResetConfirmWindow(true)}
                         type="button"
                         $color="orangered"
                         $background="white"
@@ -902,7 +924,7 @@ export function HomePage() {
                     </button>
                   </div>
                 )}
-              {showGuestTeam && showSquads && (
+              {showGuestTeam && showSquads && zeroZero && (
                 <div className="showRatings">
                   <NavLink to={"/Ratings"}>
                     <RegularButton
@@ -993,5 +1015,6 @@ export function HomePage() {
         />
       )}
     </article>
+    </>
   );
 }
