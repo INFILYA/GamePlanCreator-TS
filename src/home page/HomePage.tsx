@@ -551,279 +551,212 @@ export function HomePage() {
         />
       )}
       <article className="main-content-wrapper">
-      {/* На мобильных (меньше 768px) squad выше playground */}
-      {isMobile && showGuestTeam && showSquads && (
-        <>
-          <Squads />
-          {/* Squad для my-team скрыт в обычном режиме, показывается только в statistic mode */}
-        </>
-      )}
-      {/* Squad для my-team показывается только в statistic mode (!showSquads) */}
-      {/* На десктопе порядок как раньше */}
-      {/* Скрываем squad для rival в statistic mode (!showSquads) - показываем только когда showSquads === true */}
-      {!showCurrentGameStats && !isMobile && showGuestTeam && showSquads && (
-        <Squads />
-      )}
-      {!showCurrentGameStats && !showSquads && (
-        <RotationPanel
-          rivalTeam={false}
-          weServe={weServe}
-          setWeServe={setWeServe}
-          score={myScore}
-          rivalScore={rivalScore}
-          currentScore={currentScore}
-          setScore={setMyScore}
-          setNextRotation={setNextRotation}
-          gameLog={gameLog}
-          setGameLog={setGameLog}
-          setstatsForTeam={setstatsForTeam}
-          statsForTeam={statsForTeam}
-          endOfTheSet={endOfTheSet}
-          setPreviousScore={setPreviousMyScore}
-          previousScore={previousMyScore}
-          rivalRotation={rivalRotation}
-          setRivalRotation={setRivalRotation}
-        />
-      )}
-      <SectionWrapper className="playground-section" backGround={null}>
-        {!showGuestTeam && <ChooseGuestTeam />}
-        {playerInfoWindow && <PersonalInformationOfPlayer link="page1" />}
-        {!playerInfoWindow && showGuestTeam && !showCurrentGameStats && (
+        {/* На мобильных (меньше 768px) squad выше playground */}
+        {isMobile && showGuestTeam && showSquads && (
           <>
-            <form
-              className={`rotation-field-wrapper ${
-                !showSquads ? "statistic-mode" : ""
-              }`}
-              onSubmit={saveSpikeData}
-            >
-              {showGuestTeam ? (
-                <>
-                  {[0, 1, 2, 3, 4, 5].every((zoneIndex) => {
-                    const boardPosition = zones[zoneIndex];
-                    return guestTeamOptions.some(
-                      (p) =>
-                        p &&
-                        typeof p.boardPosition === "number" &&
-                        p.boardPosition === boardPosition &&
-                        p.number !== 0
-                    );
-                  }) &&
-                    guestTeamOptions.some((p) => p.boardPosition === -1) && (
-                      <div
-                        className="match-number-wrapper"
-                        style={{ width: "100%", flexDirection: "column" }}
-                      >
-                        <div>
-                          {!showSquads && gameLog.length > 0 && (
-                            <div style={{ position: "absolute", left: "0" }}>
-                              <RegularButton
-                                onClick={() => setOpenUndoConfirmWindow(true)}
-                                type="button"
-                                $color="white"
-                                $background="#dc2626"
-                                title="Undo last rally"
+            <Squads />
+            {/* Squad для my-team скрыт в обычном режиме, показывается только в statistic mode */}
+          </>
+        )}
+        {/* Squad для my-team показывается только в statistic mode (!showSquads) */}
+        {/* На десктопе порядок как раньше */}
+        {/* Скрываем squad для rival в statistic mode (!showSquads) - показываем только когда showSquads === true */}
+        {!showCurrentGameStats && !isMobile && showGuestTeam && showSquads && (
+          <Squads />
+        )}
+        {!showCurrentGameStats && !showSquads && (
+          <RotationPanel
+            rivalTeam={false}
+            weServe={weServe}
+            setWeServe={setWeServe}
+            score={myScore}
+            rivalScore={rivalScore}
+            currentScore={currentScore}
+            setScore={setMyScore}
+            setNextRotation={setNextRotation}
+            gameLog={gameLog}
+            setGameLog={setGameLog}
+            setstatsForTeam={setstatsForTeam}
+            statsForTeam={statsForTeam}
+            endOfTheSet={endOfTheSet}
+            setPreviousScore={setPreviousMyScore}
+            previousScore={previousMyScore}
+            rivalRotation={rivalRotation}
+            setRivalRotation={setRivalRotation}
+          />
+        )}
+        <SectionWrapper className="playground-section" backGround={null}>
+          {!showGuestTeam && <ChooseGuestTeam />}
+          {playerInfoWindow && <PersonalInformationOfPlayer link="page1" />}
+          {!playerInfoWindow && showGuestTeam && !showCurrentGameStats && (
+            <>
+              <form
+                className={`rotation-field-wrapper ${
+                  !showSquads ? "statistic-mode" : ""
+                }`}
+                onSubmit={saveSpikeData}
+              >
+                {showGuestTeam ? (
+                  <>
+                    {[0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+                      const boardPosition = zones[zoneIndex];
+                      return guestTeamOptions.some(
+                        (p) =>
+                          p &&
+                          typeof p.boardPosition === "number" &&
+                          p.boardPosition === boardPosition &&
+                          p.number !== 0
+                      );
+                    }) &&
+                      guestTeamOptions.some((p) => p.boardPosition === -1) && (
+                        <div
+                          className="match-number-wrapper"
+                          style={{ width: "100%", flexDirection: "column" }}
+                        >
+                          <div>
+                            {!showSquads && gameLog.length > 0 && (
+                              <div style={{ position: "absolute", left: "0" }}>
+                                <RegularButton
+                                  onClick={() => setOpenUndoConfirmWindow(true)}
+                                  type="button"
+                                  $color="white"
+                                  $background="#dc2626"
+                                  title="Undo last rally"
+                                >
+                                  Undo
+                                </RegularButton>
+                              </div>
+                            )}
+                            <RegularButton
+                              onClick={hideSquads}
+                              type="button"
+                              $color={!showSquads ? "orangered" : "#0272be"}
+                              $background={
+                                !showSquads ? "orangered" : "#0272be"
+                              }
+                              $active={!showSquads}
+                              onMouseEnter={() => setHoverStatisticButton(true)}
+                              onMouseLeave={() =>
+                                setHoverStatisticButton(false)
+                              }
+                            >
+                              {hoverStatisticButton
+                                ? showSquads
+                                  ? "Switch on"
+                                  : "Switch off"
+                                : "Statistic mode"}
+                            </RegularButton>
+                          </div>
+                          {!showSquads && !showCurrentGameStats && (
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "30px",
+                                padding: "10px 0 10px 0",
+                              }}
+                            >
+                              <input
+                                onChange={(e) =>
+                                  setOpponentTeamName(
+                                    firstLetterCapital(e.target.value)
+                                  )
+                                }
+                                value={opponentTeamName}
+                              ></input>
+                              <h2
+                                className={
+                                  exhibitionGame ? "exhibition-game-active" : ""
+                                }
+                                style={{
+                                  whiteSpace: "nowrap",
+                                  cursor: "pointer",
+                                  userSelect: "none",
+                                  transition: "color 0.3s ease",
+                                }}
+                                onClick={() =>
+                                  setExhibitionGame(!exhibitionGame)
+                                }
                               >
-                                Undo
-                              </RegularButton>
+                                Exhibition game
+                              </h2>
+                              <select
+                                onChange={(e) => setSetNumber(e.target.value)}
+                                value={setNumber}
+                              >
+                                <option value="">Choose set</option>
+                                <option value="Set 1">Set 1</option>
+                                <option value="Set 2">Set 2</option>
+                                <option value="Set 3">Set 3</option>
+                                <option value="Set 4">Set 4</option>
+                                <option value="Set 5 (short)">
+                                  Set 5 (short)
+                                </option>
+                                <option value="Set 3 (short)">
+                                  Set 3 (short)
+                                </option>
+                              </select>
                             </div>
                           )}
-                          <RegularButton
-                            onClick={hideSquads}
-                            type="button"
-                            $color={!showSquads ? "orangered" : "#0272be"}
-                            $background={!showSquads ? "orangered" : "#0272be"}
-                            $active={!showSquads}
-                            onMouseEnter={() => setHoverStatisticButton(true)}
-                            onMouseLeave={() => setHoverStatisticButton(false)}
-                          >
-                            {hoverStatisticButton
-                              ? showSquads
-                                ? "Switch on"
-                                : "Switch off"
-                              : "Statistic mode"}
-                          </RegularButton>
                         </div>
-                        {!showSquads && !showCurrentGameStats && (
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              gap: "30px",
-                              padding: "10px 0 10px 0",
-                            }}
-                          >
-                            <input
-                              onChange={(e) =>
-                                setOpponentTeamName(
-                                  firstLetterCapital(e.target.value)
-                                )
-                              }
-                              value={opponentTeamName}
-                            ></input>
-                            <h2
-                              className={
-                                exhibitionGame ? "exhibition-game-active" : ""
-                              }
-                              style={{
-                                whiteSpace: "nowrap",
-                                cursor: "pointer",
-                                userSelect: "none",
-                                transition: "color 0.3s ease",
-                              }}
-                              onClick={() => setExhibitionGame(!exhibitionGame)}
-                            >
-                              Exhibition game
-                            </h2>
-                            <select
-                              onChange={(e) => setSetNumber(e.target.value)}
-                              value={setNumber}
-                            >
-                              <option value="">Choose set</option>
-                              <option value="Set 1">Set 1</option>
-                              <option value="Set 2">Set 2</option>
-                              <option value="Set 3">Set 3</option>
-                              <option value="Set 4">Set 4</option>
-                              <option value="Set 5 (short)">
-                                Set 5 (short)
-                              </option>
-                              <option value="Set 3 (short)">
-                                Set 3 (short)
-                              </option>
-                            </select>
-                          </div>
-                        )}
+                      )}
+                    {showSquads && (
+                      <div style={{ marginLeft: "auto" }}>
+                        <RegularButton
+                          onClick={() => setOpenResetConfirmWindow(true)}
+                          type="button"
+                          $color="orangered"
+                          $background="white"
+                        >
+                          Reset
+                        </RegularButton>
                       </div>
                     )}
-                  {showSquads && (
-                    <div style={{ marginLeft: "auto" }}>
-                      <RegularButton
-                        onClick={() => setOpenResetConfirmWindow(true)}
-                        type="button"
-                        $color="orangered"
-                        $background="white"
-                      >
-                        Reset
-                      </RegularButton>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div></div>
-              )}
-              {!showCurrentGameStats && (
-                <>
-                  <div className="row-zones-wrapper">
-                    {[0, 1, 2, 3, 4, 5].map((zoneIndex) => {
-                      const boardPosition = zones[zoneIndex];
-                      const player = Array.isArray(guestTeamOptions)
-                        ? guestTeamOptions.find(
-                            (p) =>
-                              p &&
-                              typeof p.boardPosition === "number" &&
-                              p.boardPosition === boardPosition &&
-                              p.number !== 0
-                          )
-                        : null;
-                      // Всегда показываем зону - либо с игроком, либо пустую для перетаскивания
-                      return player ? (
-                        <div
-                          key={zoneIndex}
-                          onDrop={blockDrop}
-                          onDragOver={blockDragOver}
-                          onDragLeave={handleDragLeaveZone}
-                          style={{
-                            backgroundColor:
-                              draggedOverZone?.zoneIndex === zoneIndex &&
-                              draggedOverZone?.teamType === "rival"
-                                ? "rgba(2, 114, 190, 0.3)"
-                                : "transparent",
-                            border:
-                              draggedOverZone?.zoneIndex === zoneIndex &&
-                              draggedOverZone?.teamType === "rival"
-                                ? "2px dashed #0272be"
-                                : "none",
-                            borderRadius: "8px",
-                            transition: "all 0.2s ease",
-                          }}
-                        >
-                          <IconOfPlayer
-                            showSquads={showSquads}
-                            player={player}
-                            startingSix={guestTeamOptions}
-                            nextRotation={nextRotation}
-                            setNextRotation={setNextRotation}
-                          />
-                        </div>
-                      ) : (
-                        <div
-                          className="zone-names-wrapper"
-                          key={"_" + zoneIndex}
-                          onDrop={createDropHandler(zoneIndex, "rival")}
-                          onDragOver={createDragOverHandler(zoneIndex, "rival")}
-                          onDragLeave={handleDragLeaveZone}
-                          style={{
-                            backgroundColor:
-                              draggedOverZone?.zoneIndex === zoneIndex &&
-                              draggedOverZone?.teamType === "rival"
-                                ? "rgba(2, 114, 190, 0.5)"
-                                : "rgba(2, 114, 190, 0.1)",
-                            border:
-                              draggedOverZone?.zoneIndex === zoneIndex &&
-                              draggedOverZone?.teamType === "rival"
-                                ? "3px solid #0272be"
-                                : "3px solid rgba(2, 114, 190, 0.8)",
-                            borderRadius: "8px",
-                            transition: "all 0.2s ease",
-                            minHeight: "96px",
-                          }}
-                        >
-                          P{correctZones(zoneIndex)}
-                        </div>
-                      );
-                    })}
-                    {/* Ячейка для либеро - размещена под зоной P6 */}
-                    {/* Показываем ячейку либеро только когда все 6 основных зон заполнены */}
-                    {guestTeamOptions.length > 0 &&
-                      [0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+                  </>
+                ) : (
+                  <div></div>
+                )}
+                {!showCurrentGameStats && (
+                  <>
+                    <div className="row-zones-wrapper">
+                      {[0, 1, 2, 3, 4, 5].map((zoneIndex) => {
                         const boardPosition = zones[zoneIndex];
-                        return guestTeamOptions.some(
-                          (p) =>
-                            p &&
-                            typeof p.boardPosition === "number" &&
-                            p.boardPosition === boardPosition &&
-                            p.number !== 0
-                        );
-                      }) &&
-                      (() => {
-                        // Ищем игрока, который находится в ячейке либеро (boardPosition === -1)
-                        const libero = guestTeamOptions.find(
-                          (p) => p.boardPosition === -1
-                        );
-                        return libero ? (
+                        const player = Array.isArray(guestTeamOptions)
+                          ? guestTeamOptions.find(
+                              (p) =>
+                                p &&
+                                typeof p.boardPosition === "number" &&
+                                p.boardPosition === boardPosition &&
+                                p.number !== 0
+                            )
+                          : null;
+                        // Всегда показываем зону - либо с игроком, либо пустую для перетаскивания
+                        return player ? (
                           <div
-                            key="libero-filled"
+                            key={zoneIndex}
                             onDrop={blockDrop}
                             onDragOver={blockDragOver}
                             onDragLeave={handleDragLeaveZone}
                             style={{
-                              backgroundColor: "transparent",
-                              border: "none",
+                              backgroundColor:
+                                draggedOverZone?.zoneIndex === zoneIndex &&
+                                draggedOverZone?.teamType === "rival"
+                                  ? "rgba(2, 114, 190, 0.3)"
+                                  : "transparent",
+                              border:
+                                draggedOverZone?.zoneIndex === zoneIndex &&
+                                draggedOverZone?.teamType === "rival"
+                                  ? "2px dashed #0272be"
+                                  : "none",
                               borderRadius: "8px",
                               transition: "all 0.2s ease",
-                              gridColumn: "2",
-                              maxHeight: "250px",
-                              overflow: "visible",
-                              marginTop: "10px",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "flex-start",
                             }}
                           >
                             <IconOfPlayer
                               showSquads={showSquads}
-                              player={libero}
+                              player={player}
                               startingSix={guestTeamOptions}
                               nextRotation={nextRotation}
                               setNextRotation={setNextRotation}
@@ -832,189 +765,268 @@ export function HomePage() {
                         ) : (
                           <div
                             className="zone-names-wrapper"
-                            key="libero-empty"
-                            onDrop={createLiberoDropHandler()}
-                            onDragOver={createLiberoDragOverHandler()}
+                            key={"_" + zoneIndex}
+                            onDrop={createDropHandler(zoneIndex, "rival")}
+                            onDragOver={createDragOverHandler(
+                              zoneIndex,
+                              "rival"
+                            )}
                             onDragLeave={handleDragLeaveZone}
                             style={{
                               backgroundColor:
-                                draggedOverZone?.zoneIndex === -1 &&
+                                draggedOverZone?.zoneIndex === zoneIndex &&
                                 draggedOverZone?.teamType === "rival"
-                                  ? "rgba(64, 224, 208, 0.5)"
-                                  : "rgba(64, 224, 208, 0.1)",
+                                  ? "rgba(2, 114, 190, 0.5)"
+                                  : "rgba(2, 114, 190, 0.1)",
                               border:
-                                draggedOverZone?.zoneIndex === -1 &&
+                                draggedOverZone?.zoneIndex === zoneIndex &&
                                 draggedOverZone?.teamType === "rival"
-                                  ? "3px solid turquoise"
-                                  : "3px solid rgba(64, 224, 208, 0.8)",
+                                  ? "3px solid #0272be"
+                                  : "3px solid rgba(2, 114, 190, 0.8)",
                               borderRadius: "8px",
                               transition: "all 0.2s ease",
-                              height: "50px",
-                              minHeight: "50px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              gridColumn: "2",
-                              marginTop: "10px",
+                              minHeight: "96px",
                             }}
                           >
-                            <div
-                              style={{ color: "turquoise", fontWeight: "bold" }}
-                            >
-                              LIBERO
-                            </div>
+                            P{correctZones(zoneIndex)}
                           </div>
                         );
-                      })()}
-                  </div>
-                </>
-              )}
-              {currentGameStats.length > 0 &&
-                !showSquads &&
-                !showCurrentGameStats && (
-                  <RegularButton
-                    onClick={() => setShowCurrentGameStats(true)}
-                    type="button"
-                    $color="#0057b8"
-                    $background="#ffd700"
-                  >
-                    Live Stats
-                  </RegularButton>
+                      })}
+                      {/* Ячейка для либеро - размещена под зоной P6 */}
+                      {/* Показываем ячейку либеро только когда все 6 основных зон заполнены */}
+                      {guestTeamOptions.length > 0 &&
+                        [0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+                          const boardPosition = zones[zoneIndex];
+                          return guestTeamOptions.some(
+                            (p) =>
+                              p &&
+                              typeof p.boardPosition === "number" &&
+                              p.boardPosition === boardPosition &&
+                              p.number !== 0
+                          );
+                        }) &&
+                        (() => {
+                          // Ищем игрока, который находится в ячейке либеро (boardPosition === -1)
+                          const libero = guestTeamOptions.find(
+                            (p) => p.boardPosition === -1
+                          );
+                          return libero ? (
+                            <div
+                              key="libero-filled"
+                              onDrop={blockDrop}
+                              onDragOver={blockDragOver}
+                              onDragLeave={handleDragLeaveZone}
+                              style={{
+                                backgroundColor: "transparent",
+                                border: "none",
+                                borderRadius: "8px",
+                                transition: "all 0.2s ease",
+                                gridColumn: "2",
+                                maxHeight: "250px",
+                                overflow: "visible",
+                                marginTop: "10px",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "flex-start",
+                              }}
+                            >
+                              <IconOfPlayer
+                                showSquads={showSquads}
+                                player={libero}
+                                startingSix={guestTeamOptions}
+                                nextRotation={nextRotation}
+                                setNextRotation={setNextRotation}
+                              />
+                            </div>
+                          ) : (
+                            <div
+                              className="zone-names-wrapper"
+                              key="libero-empty"
+                              onDrop={createLiberoDropHandler()}
+                              onDragOver={createLiberoDragOverHandler()}
+                              onDragLeave={handleDragLeaveZone}
+                              style={{
+                                backgroundColor:
+                                  draggedOverZone?.zoneIndex === -1 &&
+                                  draggedOverZone?.teamType === "rival"
+                                    ? "rgba(64, 224, 208, 0.5)"
+                                    : "rgba(64, 224, 208, 0.1)",
+                                border:
+                                  draggedOverZone?.zoneIndex === -1 &&
+                                  draggedOverZone?.teamType === "rival"
+                                    ? "3px solid turquoise"
+                                    : "3px solid rgba(64, 224, 208, 0.8)",
+                                borderRadius: "8px",
+                                transition: "all 0.2s ease",
+                                height: "50px",
+                                minHeight: "50px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gridColumn: "2",
+                                marginTop: "10px",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  color: "turquoise",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                LIBERO
+                              </div>
+                            </div>
+                          );
+                        })()}
+                    </div>
+                  </>
                 )}
-              <div className="button-save-wrapper">
-                {saveButton && (
-                  <RegularButton
-                    type="submit"
-                    $color="black"
-                    $background="#ffd700"
-                  >
-                    Save Data
-                  </RegularButton>
-                )}
-              </div>
-              {showSquads &&
-                zeroZero &&
-                !opponentTeamName &&
-                !setNumber &&
-                [0, 1, 2, 3, 4, 5].every((zoneIndex) => {
-                  const boardPosition = zones[zoneIndex];
-                  return guestTeamOptions.some(
-                    (p) =>
-                      p &&
-                      typeof p.boardPosition === "number" &&
-                      p.boardPosition === boardPosition &&
-                      p.number !== 0 &&
-                      p.position !== "LIB"
-                  );
-                }) && (
-                  <div className="rotation-buttons-wrapper">
-                    <button
-                      onClick={() => rotateFront()}
-                      disabled={endOfTheSet}
-                      style={{ borderRadius: "20px 0px 0px 20px" }}
-                    >
-                      +
-                    </button>
-                    <h1>P{getSetterPosition()}</h1>
-                    <button
-                      onClick={() => rotateBack()}
-                      style={{ borderRadius: "0px 20px 20px 0px" }}
-                    >
-                      -
-                    </button>
-                  </div>
-                )}
-              {showGuestTeam && showSquads && zeroZero && (
-                <div className="showRatings">
-                  <NavLink to={"/Ratings"}>
+                {currentGameStats.length > 0 &&
+                  !showSquads &&
+                  !showCurrentGameStats && (
                     <RegularButton
-                      onClick={() => dispatch(setInfoOfPlayer(null))}
+                      onClick={() => setShowCurrentGameStats(true)}
                       type="button"
                       $color="#0057b8"
                       $background="#ffd700"
                     >
-                      Ratings
+                      Live Stats
                     </RegularButton>
-                  </NavLink>
-                  <NavLink to={"/GamesStatistic"}>
+                  )}
+                <div className="button-save-wrapper">
+                  {saveButton && (
                     <RegularButton
-                      onClick={() => dispatch(setInfoOfPlayer(null))}
-                      type="button"
-                      $color="#0057b8"
+                      type="submit"
+                      $color="black"
                       $background="#ffd700"
                     >
-                      Games Statistic
+                      Save Data
                     </RegularButton>
-                  </NavLink>
+                  )}
                 </div>
-              )}
-            </form>
-          </>
-        )}
-      </SectionWrapper>
-      {showCurrentGameStats && (
-        <SectionWrapper className="ratings-section full-width">
-          <div
-            style={{
-              marginBottom: "12px",
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <RegularButton
-              onClick={() => setShowCurrentGameStats(false)}
-              type="button"
-              $color="#0057b8"
-              $background="#ffd700"
-            >
-              Back to Recording
-            </RegularButton>
-          </div>
-          <StatisticsTable
-            playersStats={playersStats}
-            fullGameStats={fullGameStats}
-            rankByValue={rankByValue}
-            showLegend={true}
-          />
-          <div className="diagram-wrapper">
-            <pre>
-              <Diagramm link="Reception" data={fullGameStats} />
-            </pre>
-            <pre>
-              <Diagramm link="Attack" data={fullGameStats} />
-            </pre>
-            <pre>
-              <Diagramm link="Service" data={fullGameStats} />
-            </pre>
-          </div>
+                {showSquads &&
+                  zeroZero &&
+                  !opponentTeamName &&
+                  !setNumber &&
+                  [0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+                    const boardPosition = zones[zoneIndex];
+                    return guestTeamOptions.some(
+                      (p) =>
+                        p &&
+                        typeof p.boardPosition === "number" &&
+                        p.boardPosition === boardPosition &&
+                        p.number !== 0 &&
+                        p.position !== "LIB"
+                    );
+                  }) && (
+                    <div className="rotation-buttons-wrapper">
+                      <button
+                        onClick={() => rotateFront()}
+                        disabled={endOfTheSet}
+                        style={{ borderRadius: "20px 0px 0px 20px" }}
+                      >
+                        +
+                      </button>
+                      <h1>P{getSetterPosition()}</h1>
+                      <button
+                        onClick={() => rotateBack()}
+                        style={{ borderRadius: "0px 20px 20px 0px" }}
+                      >
+                        -
+                      </button>
+                    </div>
+                  )}
+                {showGuestTeam && showSquads && zeroZero && (
+                  <div className="showRatings">
+                    <NavLink to={"/Ratings"}>
+                      <RegularButton
+                        onClick={() => dispatch(setInfoOfPlayer(null))}
+                        type="button"
+                        $color="#0057b8"
+                        $background="#ffd700"
+                      >
+                        Ratings
+                      </RegularButton>
+                    </NavLink>
+                    <NavLink to={"/GamesStatistic"}>
+                      <RegularButton
+                        onClick={() => dispatch(setInfoOfPlayer(null))}
+                        type="button"
+                        $color="#0057b8"
+                        $background="#ffd700"
+                      >
+                        Games Statistic
+                      </RegularButton>
+                    </NavLink>
+                  </div>
+                )}
+              </form>
+            </>
+          )}
         </SectionWrapper>
-      )}
-      {/* На десктопе вторая панель squad идет после playground */}
-      {/* Squad для my-team скрыт в обычном режиме, показывается только в statistic mode */}
-      {/* Squad для my-team показывается только в statistic mode (!showSquads) */}
-      {!showCurrentGameStats && !showSquads && (
-        <RotationPanel
-          opponentTeamName={opponentTeamName}
-          rivalTeam={true}
-          weServe={!weServe}
-          setWeServe={setWeServe}
-          score={rivalScore}
-          rivalScore={myScore}
-          currentScore={currentScore}
-          setScore={setRivalScore}
-          setNextRotation={setNextRotation}
-          gameLog={gameLog}
-          setGameLog={setGameLog}
-          setstatsForTeam={setstatsForTeam}
-          statsForTeam={statsForTeam}
-          endOfTheSet={endOfTheSet}
-          setPreviousScore={setPreviousRivalScore}
-          previousScore={previousRivalScore}
-          rivalRotation={rivalRotation}
-          setRivalRotation={setRivalRotation}
-        />
-      )}
-    </article>
+        {showCurrentGameStats && (
+          <SectionWrapper className="ratings-section full-width">
+            <div
+              style={{
+                marginBottom: "12px",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              <RegularButton
+                onClick={() => setShowCurrentGameStats(false)}
+                type="button"
+                $color="#0057b8"
+                $background="#ffd700"
+              >
+                Back to Recording
+              </RegularButton>
+            </div>
+            <StatisticsTable
+              playersStats={playersStats}
+              fullGameStats={fullGameStats}
+              rankByValue={rankByValue}
+              showLegend={true}
+            />
+            <div className="diagram-wrapper">
+              <pre>
+                <Diagramm link="Reception" data={fullGameStats} />
+              </pre>
+              <pre>
+                <Diagramm link="Attack" data={fullGameStats} />
+              </pre>
+              <pre>
+                <Diagramm link="Service" data={fullGameStats} />
+              </pre>
+            </div>
+          </SectionWrapper>
+        )}
+        {/* На десктопе вторая панель squad идет после playground */}
+        {/* Squad для my-team скрыт в обычном режиме, показывается только в statistic mode */}
+        {/* Squad для my-team показывается только в statistic mode (!showSquads) */}
+        {!showCurrentGameStats && !showSquads && (
+          <RotationPanel
+            opponentTeamName={opponentTeamName}
+            rivalTeam={true}
+            weServe={!weServe}
+            setWeServe={setWeServe}
+            score={rivalScore}
+            rivalScore={myScore}
+            currentScore={currentScore}
+            setScore={setRivalScore}
+            setNextRotation={setNextRotation}
+            gameLog={gameLog}
+            setGameLog={setGameLog}
+            setstatsForTeam={setstatsForTeam}
+            statsForTeam={statsForTeam}
+            endOfTheSet={endOfTheSet}
+            setPreviousScore={setPreviousRivalScore}
+            previousScore={previousRivalScore}
+            rivalRotation={rivalRotation}
+            setRivalRotation={setRivalRotation}
+          />
+        )}
+      </article>
     </>
   );
 }

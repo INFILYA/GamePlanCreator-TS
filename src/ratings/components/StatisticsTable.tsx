@@ -22,7 +22,10 @@ export function StatisticsTable({
   const namesTableRef = useRef<HTMLTableElement>(null);
   const statsTableRef = useRef<HTMLTableElement>(null);
 
-  const playersNames = playersStats.flat().map((player) => jusName(player));
+  const playersNames = playersStats
+    .flat()
+    .map((player) => jusName(player))
+    .filter((player) => player.name && player.name.trim() !== "");
 
   // Синхронизация высоты строк между таблицами
   useEffect(() => {
@@ -154,7 +157,7 @@ export function StatisticsTable({
           <table ref={statsTableRef} style={{ width: "100%" }}>
             <tbody className="rating-table-wrapper">
               <Categorys
-                filteredPlayers={playersStats.flat()}
+                filteredPlayers={playersStats.flat().filter((player) => player.name && player.name.trim() !== "")}
                 rankByValue={rankByValue}
                 categorys={categorys}
               />

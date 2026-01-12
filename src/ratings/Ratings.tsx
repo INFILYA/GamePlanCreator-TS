@@ -80,7 +80,9 @@ export function Ratings() {
     setIsBiggest(!isBiggest);
   }
 
-  const playersNames = filteredPlayers.map((player) => jusName(player));
+  const playersNames = filteredPlayers
+    .map((player) => jusName(player))
+    .filter((player) => player.name && player.name.trim() !== "");
 
   // Refs для синхронизации высоты строк
   const namesTableRef = useRef<HTMLTableElement>(null);

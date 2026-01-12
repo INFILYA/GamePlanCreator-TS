@@ -17,7 +17,7 @@ export function Categorys(props: TCategorys) {
 
   const correctPlayersInfo = filteredPlayers
     .map((player) => calculateTotalofActionsV2(filteredPlayers, player.name))
-    .filter((player) => !player.name);
+    .filter((player) => player.name && player.name.trim() !== "");
 
   const properPlayersInfo = [] as TMix[];
   for (let i = 0; i < correctPlayersInfo.length; i++) {

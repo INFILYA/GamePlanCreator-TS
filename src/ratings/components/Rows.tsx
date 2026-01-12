@@ -47,7 +47,8 @@ export function Rows(props: TRows) {
   function getCorrectPlayersInfo(obj: TMix[]) {
     const result = obj
       .map((player) => calculateTotalofActionsV2(filteredPlayers, player.name))
-      .map((player) => preparePlayerToSoloGameV3(player));
+      .map((player) => preparePlayerToSoloGameV3(player))
+      .filter((player) => lastRow || (player.name && player.name.trim() !== ""));
     const sorted = [] as TMix[];
     for (let i = 0; i < result.length; i++) {
       const plaer = result[i];
@@ -59,7 +60,9 @@ export function Rows(props: TRows) {
   }
 
   function getPlayersNames(obj: TMix[]) {
-    const result = obj.map((player) => preparePlayerToSoloGameV3(player));
+    const result = obj
+      .map((player) => preparePlayerToSoloGameV3(player))
+      .filter((player) => lastRow || (player.name && player.name.trim() !== ""));
     const sorted = [] as TMix[];
     for (let i = 0; i < result.length; i++) {
       const player = result[i];
