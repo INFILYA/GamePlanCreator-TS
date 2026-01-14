@@ -11,6 +11,7 @@ import { useEffect, useState, useRef } from "react";
 import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
 import {
   correctZones,
+  emptyDiagramm,
   emptyPlayer,
   preparePlayerToSoloGame,
 } from "../../utilities/functions";
@@ -23,11 +24,18 @@ type TIconOfPlayer = {
   showSquads: boolean;
   nextRotation: boolean;
   setNextRotation(arg: boolean): void;
+  exhibitionGame: boolean;
 };
 
 export function IconOfPlayer(props: TIconOfPlayer) {
-  const { player, nextRotation, setNextRotation, startingSix, showSquads } =
-    props;
+  const {
+    player,
+    nextRotation,
+    setNextRotation,
+    startingSix,
+    showSquads,
+    exhibitionGame,
+  } = props;
   const dispatch = useAppDispatch();
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const [category, setCategory] = useState<string>("SR");
@@ -122,6 +130,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       if (!soloGame) {
         if (
           key === "blocks" ||
+          key === "unforcedError" ||
           key === "A-" ||
           key === "A=" ||
           key === "A+" ||
@@ -162,16 +171,17 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   }
 
   function addAmount(type: keyof TMix, number: number) {
-    if (diagrammValue[type] === 0 && number === -1) return;
+    const currentValue = Number(diagrammValue[type] || 0);
+    if (currentValue === 0 && number === -1) return;
     if (
       !(type === "A-" || type === "A+" || type === "A!") &&
-      diagrammValue[type] === 1 &&
+      currentValue === 1 &&
       number === 1
     )
       return;
     setDiagrammValue({
       ...diagrammValue,
-      [type]: +diagrammValue[type] + number,
+      [type]: currentValue + number,
     });
     const obj = { [type]: number } as TDiagramm;
     const updatedPlayer = calculateForPlayerData({ ...player }, obj);
@@ -236,12 +246,31 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       boardPosition: usedBoardPosition,
     };
 
+    const diagrammPayload = {
+      ...emptyDiagramm(),
+      "R++": diagrammValue["R++"] || 0,
+      "R+": diagrammValue["R+"] || 0,
+      "R!": diagrammValue["R!"] || 0,
+      "R-": diagrammValue["R-"] || 0,
+      "R=": diagrammValue["R="] || 0,
+      "A++": diagrammValue["A++"] || 0,
+      "A+": diagrammValue["A+"] || 0,
+      "A=": diagrammValue["A="] || 0,
+      "A!": diagrammValue["A!"] || 0,
+      "A-": diagrammValue["A-"] || 0,
+      "S++": diagrammValue["S++"] || 0,
+      "S+": diagrammValue["S+"] || 0,
+      "S!": diagrammValue["S!"] || 0,
+      "S-": diagrammValue["S-"] || 0,
+      "S=": diagrammValue["S="] || 0,
+      blocks: diagrammValue.blocks || 0,
+      unforcedError: diagrammValue.unforcedError || 0,
+      [type]: Number(diagrammValue[type as keyof TDiagramm] || 0) + number,
+    };
+
     const soloGameUpdatedPlayer = calculateForPlayerData(
       { ...playerWithBoardPosition },
-      {
-        ...diagrammValue,
-        [type]: diagrammValue[type as keyof TDiagramm] + number,
-      },
+      diagrammPayload,
       true
     );
 
@@ -249,6 +278,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     // soloGameUpdatedPlayer уже содержит накопленные статы из diagrammValue для текущего ралли
     const playerStats = {
       ...soloGameUpdatedPlayer,
+      name: playerWithBoardPosition.name,
       boardPosition: usedBoardPosition,
       setterBoardPosition: correctZones(indexOfSetter),
       // Убеждаемся, что все поля статистики присутствуют (даже если 0)
@@ -269,11 +299,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
       "S-": soloGameUpdatedPlayer["S-"] || 0,
       "S=": soloGameUpdatedPlayer["S="] || 0,
       blocks: soloGameUpdatedPlayer.blocks || 0,
+      unforcedError: soloGameUpdatedPlayer.unforcedError || 0,
     };
 
     // Отправляем в Redux для накопления в SoloRallyStats (статы текущего ралли)
     dispatch(setSoloRallyStats(playerStats));
-    dispatch(setUpdatedPlayers(updatedPlayer));
+    if (!exhibitionGame) {
+      dispatch(setUpdatedPlayers(updatedPlayer));
+    }
     dispatch(setInfoOfPlayer(updatedPlayer));
     dispatch(updateInfoOfStartingSix(updatedPlayer));
   }
@@ -458,22 +491,27 @@ export function IconOfPlayer(props: TIconOfPlayer) {
               ) : (
                 // Вертикальная версия для обычных игроков
                 <>
-                  <div className="category-switcher-wrapper" style={{
-                    display: "flex",
-                    gap: "4px",
-                    justifyContent: "space-around",
-                    marginBottom: "4px",
-                  }}>
-                    <label style={{
+                  <div
+                    className="category-switcher-wrapper"
+                    style={{
                       display: "flex",
-                      alignItems: "center",
-                      gap: "3px",
-                      cursor: "pointer",
-                      fontSize: "11px",
-                      fontWeight: category === "SR" ? "bold" : "normal",
-                      color: category === "SR" ? "#2563eb" : "#64748b",
-                      padding: "2px 4px",
-                    }}>
+                      gap: "4px",
+                      justifyContent: "space-around",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "3px",
+                        cursor: "pointer",
+                        fontSize: "11px",
+                        fontWeight: category === "SR" ? "bold" : "normal",
+                        color: category === "SR" ? "#2563eb" : "#64748b",
+                        padding: "2px 4px",
+                      }}
+                    >
                       <input
                         type="radio"
                         name={`category-${player.name}`}
@@ -490,16 +528,18 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                       />
                       S/R
                     </label>
-                    <label style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "3px",
-                      cursor: "pointer",
-                      fontSize: "11px",
-                      fontWeight: category === "BA" ? "bold" : "normal",
-                      color: category === "BA" ? "#2563eb" : "#64748b",
-                      padding: "2px 4px",
-                    }}>
+                    <label
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "3px",
+                        cursor: "pointer",
+                        fontSize: "11px",
+                        fontWeight: category === "BA" ? "bold" : "normal",
+                        color: category === "BA" ? "#2563eb" : "#64748b",
+                        padding: "2px 4px",
+                      }}
+                    >
                       <input
                         type="radio"
                         name={`category-${player.name}`}
@@ -517,16 +557,133 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                       B/A
                     </label>
                   </div>
-                  <div style={{ display: "flex" }}>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <th>+</th>
-                          <th>{ServiceReception ? "S" : "BL"}</th>
-                          <th>-</th>
-                        </tr>
-                        {ServiceReception ? (
-                          serviceGradations.map((grade) => (
+                  <div style={{ display: "flex", gap: "1px", width: "100%" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        flex: "1",
+                      }}
+                    >
+                      <table style={{ width: "100%" }}>
+                        <tbody>
+                          <tr>
+                            <th>+</th>
+                            <th>{ServiceReception ? "S" : "BL"}</th>
+                            <th>-</th>
+                          </tr>
+                          {ServiceReception ? (
+                            serviceGradations.map((grade) => (
+                              <tr key={grade[0]}>
+                                <td
+                                  style={{ backgroundColor: grade[1] }}
+                                  onClick={() =>
+                                    addAmount(grade[0] as keyof TMix, 1)
+                                  }
+                                >
+                                  {grade[2]}
+                                </td>
+                                <td>
+                                  <input
+                                    type="text"
+                                    min={0}
+                                    value={
+                                      diagrammValue[grade[0] as keyof TMix]
+                                    }
+                                    name={grade[0]}
+                                    readOnly
+                                    style={{
+                                      border: "1px solid #ccc",
+                                    }}
+                                  />
+                                </td>
+                                <td
+                                  style={{ backgroundColor: grade[1] }}
+                                  onClick={() =>
+                                    addAmount(grade[0] as keyof TMix, -1)
+                                  }
+                                >
+                                  -
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td
+                                style={{ backgroundColor: "lightgreen" }}
+                                onClick={() => addAmount("blocks", 1)}
+                              >
+                                B
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  min={0}
+                                  value={diagrammValue.blocks}
+                                  name="blocks"
+                                  readOnly
+                                  style={{
+                                    border: "1px solid #ccc",
+                                  }}
+                                />
+                              </td>
+                              <td
+                                style={{ backgroundColor: "lightgreen" }}
+                                onClick={() => addAmount("blocks", -1)}
+                              >
+                                -
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                      {!ServiceReception && (
+                        <table style={{ marginTop: "4px", width: "100%" }}>
+                          <tbody>
+                            <tr>
+                              <th>+</th>
+                              <th>EU</th>
+                              <th>-</th>
+                            </tr>
+                            <tr>
+                              <td
+                                style={{ backgroundColor: "orangered" }}
+                                onClick={() => addAmount("unforcedError", 1)}
+                              >
+                                E
+                              </td>
+                              <td>
+                                <input
+                                  type="text"
+                                  min={0}
+                                  value={diagrammValue.unforcedError || 0}
+                                  name="unforcedError"
+                                  readOnly
+                                  style={{
+                                    border: "1px solid #ccc",
+                                  }}
+                                />
+                              </td>
+                              <td
+                                style={{ backgroundColor: "orangered" }}
+                                onClick={() => addAmount("unforcedError", -1)}
+                              >
+                                -
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+                    <div style={{ flex: "1" }}>
+                      <table style={{ width: "100%" }}>
+                        <tbody>
+                          <tr>
+                            <th>+</th>
+                            <th>{ServiceReception ? "R" : "A"}</th>
+                            <th>-</th>
+                          </tr>
+                          {attackGradations.map((grade) => (
                             <tr key={grade[0]}>
                               <td
                                 style={{ backgroundColor: grade[1] }}
@@ -540,7 +697,11 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                                 <input
                                   type="text"
                                   min={0}
-                                  value={diagrammValue[grade[0] as keyof TMix]}
+                                  value={
+                                    diagrammValue[
+                                      grade[0] as keyof TAttackDiagramm
+                                    ]
+                                  }
                                   name={grade[0]}
                                   readOnly
                                   style={{
@@ -557,83 +718,10 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                                 -
                               </td>
                             </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td
-                              style={{ backgroundColor: "lightgreen" }}
-                              onClick={() => addAmount("blocks", 1)}
-                            >
-                              B
-                            </td>
-                            <td>
-                              <input
-                                type="text"
-                                min={0}
-                                value={diagrammValue.blocks}
-                                name="blocks"
-                                readOnly
-                                style={{
-                                  border: "1px solid #ccc",
-                                }}
-                              />
-                            </td>
-                            <td
-                              style={{ backgroundColor: "lightgreen" }}
-                              onClick={() => addAmount("blocks", -1)}
-                            >
-                              -
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                    <div className="border-wrapper"></div>
-                    <table>
-                      <tbody>
-                        <tr>
-                          <th>+</th>
-                          <th>{ServiceReception ? "R" : "A"}</th>
-                          <th>-</th>
-                        </tr>
-                        {attackGradations.map((grade) => (
-                          <tr key={grade[0]}>
-                            <td
-                              style={{ backgroundColor: grade[1] }}
-                              onClick={() =>
-                                addAmount(grade[0] as keyof TMix, 1)
-                              }
-                            >
-                              {grade[2]}
-                            </td>
-                            <td>
-                              <input
-                                type="text"
-                                min={0}
-                                value={
-                                  diagrammValue[
-                                    grade[0] as keyof TAttackDiagramm
-                                  ]
-                                }
-                                name={grade[0]}
-                                readOnly
-                                style={{
-                                  border: "1px solid #ccc",
-                                }}
-                              />
-                            </td>
-                            <td
-                              style={{ backgroundColor: grade[1] }}
-                              onClick={() =>
-                                addAmount(grade[0] as keyof TMix, -1)
-                              }
-                            >
-                              -
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </>
               )}

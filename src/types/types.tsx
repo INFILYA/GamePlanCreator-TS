@@ -21,7 +21,10 @@ export type TReceptionDiagramm = {
   "R=": number;
 };
 
-export type TDiagramm = TDiagrammWithoutBlock & { blocks: number };
+export type TDiagramm = TDiagrammWithoutBlock & {
+  blocks: number;
+  unforcedError: number;
+};
 
 export type TDiagrammWithoutBlock = TAttackDiagramm &
   TServiceDiagramm &

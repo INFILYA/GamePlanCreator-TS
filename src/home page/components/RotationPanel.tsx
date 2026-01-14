@@ -97,7 +97,12 @@ export default function RotationPanel(arg: TRotationPanel) {
     const newScore = score + 1;
 
     // Сохраняем состояние расстановки ДО ротации для возможности отката
-    const teamRotationBefore = [...guestTeamOptions];
+    const teamRotationBefore = guestTeamOptions.map((player) => ({
+      ...player,
+      unforcedError: Number.isFinite(player.unforcedError)
+        ? player.unforcedError
+        : 0,
+    }));
     const previousRivalScoreBefore = previousScore;
     const rivalRotationBefore = rivalRotation;
 
@@ -134,12 +139,14 @@ export default function RotationPanel(arg: TRotationPanel) {
         : [];
 
     // Определяем расстановки на момент ралли
-    const seTTer = guestTeamOptions.length > 0 
-      ? guestTeamOptions.find((player) => player.position === "SET")
-      : null;
-    const ourSetterPosition = seTTer && guestTeamOptions
-      ? correctZones(guestTeamOptions.indexOf(seTTer))
-      : myZone;
+    const seTTer =
+      guestTeamOptions.length > 0
+        ? guestTeamOptions.find((player) => player.position === "SET")
+        : null;
+    const ourSetterPosition =
+      seTTer && guestTeamOptions
+        ? correctZones(guestTeamOptions.indexOf(seTTer))
+        : myZone;
 
     const rallyData = {
       score: currentScore,
@@ -155,7 +162,6 @@ export default function RotationPanel(arg: TRotationPanel) {
     // Используем функциональное обновление для правильного накопления
     setGameLog((prevGameLog) => {
       const newGameLog = [...prevGameLog, rallyData];
-
 
       return newGameLog;
     });
@@ -179,7 +185,11 @@ export default function RotationPanel(arg: TRotationPanel) {
 
   const myZones = [4, 3, 2, 5, 6, 1];
   const zones = rivalTeam ? setRivalRotation : setMyZone;
-  const nameOfTheTeam = rivalTeam ? opponentTeamName : (guestTeam.length > 0 ? guestTeam[0]?.name : "");
+  const nameOfTheTeam = rivalTeam
+    ? opponentTeamName
+    : guestTeam.length > 0
+    ? guestTeam[0]?.name
+    : "";
   const zeroZero = score === 0 && rivalScore === 0;
 
   return (

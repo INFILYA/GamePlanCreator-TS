@@ -754,13 +754,14 @@ export function HomePage() {
                               transition: "all 0.2s ease",
                             }}
                           >
-                            <IconOfPlayer
-                              showSquads={showSquads}
-                              player={player}
-                              startingSix={guestTeamOptions}
-                              nextRotation={nextRotation}
-                              setNextRotation={setNextRotation}
-                            />
+                          <IconOfPlayer
+                            showSquads={showSquads}
+                            player={player}
+                            startingSix={guestTeamOptions}
+                            nextRotation={nextRotation}
+                            setNextRotation={setNextRotation}
+                            exhibitionGame={exhibitionGame}
+                          />
                           </div>
                         ) : (
                           <div
@@ -830,13 +831,14 @@ export function HomePage() {
                                 alignItems: "flex-start",
                               }}
                             >
-                              <IconOfPlayer
-                                showSquads={showSquads}
-                                player={libero}
-                                startingSix={guestTeamOptions}
-                                nextRotation={nextRotation}
-                                setNextRotation={setNextRotation}
-                              />
+                            <IconOfPlayer
+                              showSquads={showSquads}
+                              player={libero}
+                              startingSix={guestTeamOptions}
+                              nextRotation={nextRotation}
+                              setNextRotation={setNextRotation}
+                              exhibitionGame={exhibitionGame}
+                            />
                             </div>
                           ) : (
                             <div

@@ -25,6 +25,10 @@ import {
 } from "../states/slices/detailedStatsOfPlayerSlice";
 import GameLogs from "./GameLogs";
 import { selectGuestTeam } from "../states/slices/guestTeamSlice";
+import { remove } from "firebase/database";
+import { auth, gamesRef } from "../config/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import ConfirmField from "../utilities/ConfimField.";
 
 export default function GamesStatistic() {
   const dispatch = useAppDispatch();
@@ -33,6 +37,7 @@ export default function GamesStatistic() {
   const filteredGamesStats = useSelector(selectFilteredGameStats);
   const detailedStatsOfPlayer = useSelector(selectDetailedStatsOfPlayer);
   const guestTeam = useSelector(selectGuestTeam);
+  const [user] = useAuthState(auth);
   const [filteredGames, setFilteredGames] = useState<TGameStats[]>([]);
   const [gameLogs, setGameLogs] = useState<TObjectStats[]>([]);
   const [detailedStats, setDetailedStats] = useState<TPlayer[][]>([]);
@@ -45,6 +50,7 @@ export default function GamesStatistic() {
   const [showOnlyOfficial, setShowOnlyOfficial] = useState<boolean>(false);
   const [collapsedDates, setCollapsedDates] = useState<Set<string>>(new Set());
   const [datesInitialized, setDatesInitialized] = useState<boolean>(false);
+  const [deleteConfirmKey, setDeleteConfirmKey] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(setgameFilterByTeam(guestTeam[0]?.name));
@@ -76,6 +82,28 @@ export default function GamesStatistic() {
           compare(getValue(a, criteria), getValue(b, criteria))
         );
     setIsBiggest(!isBiggest);
+  }
+
+  const canDeleteGames = user?.email === "infilya89@gmail.com";
+
+  async function deleteGame(gameKey: string) {
+    try {
+      await remove(gamesRef(gameKey));
+      setFilteredGames((prev) =>
+        prev.filter((game) => Object.keys(game)[0] !== gameKey)
+      );
+      setGameLogs((prev) =>
+        prev.filter((game) => Object.keys(game)[0] !== gameKey)
+      );
+      setChoosenGameStats([]);
+      setDetailedStats([]);
+      setSaveFullGameStats([]);
+      setChoosenSet("full");
+      dispatch(setDetailedStatsOfPlayer(""));
+      setDeleteConfirmKey(null);
+    } catch (error) {
+      // Ошибка удаления
+    }
   }
 
   function setAllGames() {
@@ -309,6 +337,12 @@ export default function GamesStatistic() {
           <PersonalInformationOfPlayer link="page1" />
         ) : (
           <>
+            {deleteConfirmKey && (
+              <ConfirmField
+                onClick={() => deleteGame(deleteConfirmKey)}
+                setOpenConfirmWindow={() => setDeleteConfirmKey(null)}
+              />
+            )}
             <nav>
               <div className="choosen-game-filter-wrapper">
                 <div className="filters-column">
@@ -524,16 +558,59 @@ export default function GamesStatistic() {
                               // Убираем дату из отображения, так как она уже в заголовке
                               const displayText = gameInfo || gameKey;
                               return (
-                                <div key={index}>
-                                  <input
-                                    onChange={() => setFilterForGames(game)}
-                                    value={gameKey}
-                                    type="checkbox"
-                                    checked={filteredGames.some(
-                                      (match) => match === game
-                                    )}
-                                  />
-                                  <div title={gameKey}>{displayText}</div>
+                                <div
+                                  key={index}
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: "8px",
+                                      flex: 1,
+                                      minWidth: 0,
+                                    }}
+                                  >
+                                    <input
+                                      onChange={() => setFilterForGames(game)}
+                                      value={gameKey}
+                                      type="checkbox"
+                                      checked={filteredGames.some(
+                                        (match) => match === game
+                                      )}
+                                    />
+                                    <div
+                                      title={gameKey}
+                                      style={{ overflow: "hidden" }}
+                                    >
+                                      {displayText}
+                                    </div>
+                                  </div>
+                                  {canDeleteGames && (
+                                    <button
+                                      type="button"
+                                      onClick={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        setDeleteConfirmKey(gameKey);
+                                      }}
+                                      title="Delete game"
+                                      style={{
+                                        background: "transparent",
+                                        border: "none",
+                                        cursor: "pointer",
+                                        padding: "4px",
+                                        fontSize: "16px",
+                                      }}
+                                    >
+                                      🗑️
+                                    </button>
+                                  )}
                                 </div>
                               );
                             })}

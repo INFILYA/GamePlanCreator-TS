@@ -120,6 +120,7 @@ export const emptyPlayer: TPlayer = {
   "R-": 0,
   "R=": 0,
   blocks: 0,
+  unforcedError: 0,
   boardPosition: 0,
   setterBoardPosition: 0,
   zoneOfAttack: 0,
@@ -291,6 +292,7 @@ export function calculateTotalofActions(obj: TMix[]): TDiagramm {
     "R-": getCalculation("R-"),
     "R=": getCalculation("R="),
     blocks: getCalculation("blocks"),
+    unforcedError: getCalculation("unforcedError"),
   };
   return sumOfAllPlayersSoloGamesStats;
 }
@@ -318,6 +320,7 @@ export function calculateTotalofActionsV2(obj: TMix[], name: string): TMix {
     "R-": getCalculation("R-"),
     "R=": getCalculation("R="),
     blocks: getCalculation("blocks"),
+    unforcedError: getCalculation("unforcedError"),
     name: name,
   };
   return sumOfAllPlayersSoloGamesStats as TMix;
@@ -341,6 +344,7 @@ export function preparePlayerToSoloGameV3(obj: TMix): TMix {
     "R-": isFieldExist(obj["R-"]),
     "R=": isFieldExist(obj["R="]),
     blocks: isFieldExist(obj.blocks),
+    unforcedError: isFieldExist(obj.unforcedError),
     name: obj.name,
   };
   return sumOfAllPlayersSoloGamesStats as TMix;
@@ -364,6 +368,7 @@ export function preparePlayerToSoloGame(obj: TMix): TMix {
   soloGamePlayerStats["R-"] = 0;
   soloGamePlayerStats["R+"] = 0;
   soloGamePlayerStats.blocks = 0;
+  soloGamePlayerStats.unforcedError = 0;
   return soloGamePlayerStats;
 }
 
@@ -385,6 +390,7 @@ export function emptyDiagramm(): TDiagramm {
   soloGamePlayerStats["R-"] = 0;
   soloGamePlayerStats["R+"] = 0;
   soloGamePlayerStats.blocks = 0;
+  soloGamePlayerStats.unforcedError = 0;
   return soloGamePlayerStats;
 }
 
@@ -395,6 +401,7 @@ export function forSoloGameStat(obj: TPlayer): TPlayer {
   for (const key in soloGamePlayerStats) {
     if (
       (key === "blocks" ||
+        key === "unforcedError" ||
         key === "setterBoardPosition" ||
         key === "boardPosition" ||
         key === "A-" ||
@@ -450,6 +457,7 @@ export const categorys = [
   "S+",
   "S++",
   "blocks",
+  "unforcedError",
   "earnedPoints",
 ] as TMixKeys[];
 

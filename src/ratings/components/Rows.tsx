@@ -40,7 +40,8 @@ export function Rows(props: TRows) {
       getPlusMinusAttack(obj) +
       getPlusMinusService(obj) +
       isFieldExist(obj.blocks) -
-      isFieldExist(obj["R="]);
+      isFieldExist(obj["R="]) -
+      isFieldExist(obj.unforcedError);
     return result;
   }
 
@@ -48,7 +49,9 @@ export function Rows(props: TRows) {
     const result = obj
       .map((player) => calculateTotalofActionsV2(filteredPlayers, player.name))
       .map((player) => preparePlayerToSoloGameV3(player))
-      .filter((player) => lastRow || (player.name && player.name.trim() !== ""));
+      .filter(
+        (player) => lastRow || (player.name && player.name.trim() !== "")
+      );
     const sorted = [] as TMix[];
     for (let i = 0; i < result.length; i++) {
       const plaer = result[i];
@@ -62,7 +65,9 @@ export function Rows(props: TRows) {
   function getPlayersNames(obj: TMix[]) {
     const result = obj
       .map((player) => preparePlayerToSoloGameV3(player))
-      .filter((player) => lastRow || (player.name && player.name.trim() !== ""));
+      .filter(
+        (player) => lastRow || (player.name && player.name.trim() !== "")
+      );
     const sorted = [] as TMix[];
     for (let i = 0; i < result.length; i++) {
       const player = result[i];
@@ -84,19 +89,33 @@ export function Rows(props: TRows) {
             >
               <td style={setStyle(plusMinus(player))}>{plusMinus(player)}</td>
               {rows.map((row) => (
-                <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
+                <td
+                  key={row[0]}
+                  style={lastRow ? { backgroundColor: row[1] } : {}}
+                >
                   {player[`R${row[0]}`]}
                 </td>
               ))}
 
-              <td style={setStyleForEfficency(gerPercentOfPerfectReception(player))}>
+              <td
+                style={setStyleForEfficency(
+                  gerPercentOfPerfectReception(player)
+                )}
+              >
                 {gerPercentOfPerfectReception(player)}%
               </td>
-              <td style={setStyleForPercent(gerPercentOfPositiveReception(player))}>
+              <td
+                style={setStyleForPercent(
+                  gerPercentOfPositiveReception(player)
+                )}
+              >
                 {gerPercentOfPositiveReception(player)}%
               </td>
               {rows.map((row) => (
-                <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
+                <td
+                  key={row[0]}
+                  style={lastRow ? { backgroundColor: row[1] } : {}}
+                >
                   {player[`A${row[0]}`]}
                 </td>
               ))}
@@ -107,11 +126,19 @@ export function Rows(props: TRows) {
                 {gerPercentOfAttack(player)}%
               </td>
               {rows.map((row) => (
-                <td key={row[0]} style={lastRow ? { backgroundColor: row[1] } : {}}>
+                <td
+                  key={row[0]}
+                  style={lastRow ? { backgroundColor: row[1] } : {}}
+                >
                   {player[`S${row[0]}`]}
                 </td>
               ))}
-              <td style={lastRow ? { backgroundColor: "gainsboro" } : {}}>{player.blocks}</td>
+              <td style={lastRow ? { backgroundColor: "gainsboro" } : {}}>
+                {player.blocks}
+              </td>
+              <td style={lastRow ? { backgroundColor: "orangered" } : {}}>
+                {player.unforcedError || 0}
+              </td>
               <td style={lastRow ? { backgroundColor: "gainsboro" } : {}}>
                 {getEarnedPoints(player)}
               </td>
@@ -123,7 +150,10 @@ export function Rows(props: TRows) {
               className="rating-row"
               style={lastRow ? { backgroundColor: "gainsboro" } : {}}
             >
-              <td onClick={() => showInfoOfPlayer(player)} className="rating-player-name">
+              <td
+                onClick={() => showInfoOfPlayer(player)}
+                className="rating-player-name"
+              >
                 {player.name}
               </td>
             </tr>

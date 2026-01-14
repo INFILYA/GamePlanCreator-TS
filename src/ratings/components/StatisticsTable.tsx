@@ -157,7 +157,9 @@ export function StatisticsTable({
           <table ref={statsTableRef} style={{ width: "100%" }}>
             <tbody className="rating-table-wrapper">
               <Categorys
-                filteredPlayers={playersStats.flat().filter((player) => player.name && player.name.trim() !== "")}
+                filteredPlayers={playersStats
+                  .flat()
+                  .filter((player) => player.name && player.name.trim() !== "")}
                 rankByValue={rankByValue}
                 categorys={categorys}
               />

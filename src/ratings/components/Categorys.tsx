@@ -4,7 +4,10 @@ import { Rows } from "./Rows";
 
 type TCategorys = {
   filteredPlayers: TMix[];
-  rankByValue<const T extends TMix>(criteria: keyof T | "earnedPoints", arr: T[]): void;
+  rankByValue<const T extends TMix>(
+    criteria: keyof T | "earnedPoints",
+    arr: T[]
+  ): void;
   categorys: (TMixKeys | "earnedPoints")[];
   sortState?: Record<string, "asc" | "desc" | null>;
   lastRow?: boolean;
@@ -36,7 +39,7 @@ export function Categorys(props: TCategorys) {
     } else if (category.startsWith("S")) {
       return "khaki"; // Service
     }
-    return undefined; // "+/-", "name", "blocks" и "earnedPoints" без цвета (используют дефолтный синий градиент)
+    return undefined; // "+/-", "name", "blocks", "unforcedError" и "earnedPoints" без цвета (используют дефолтный синий градиент)
   };
 
   return (
@@ -71,7 +74,11 @@ export function Categorys(props: TCategorys) {
                       }
                 }
               >
-                {category === "earnedPoints" ? "Points" : category}
+                {category === "earnedPoints"
+                  ? "Points"
+                  : category === "unforcedError"
+                  ? "EU"
+                  : category}
               </button>
             </th>
           );
