@@ -24,9 +24,14 @@ import { TTeam, TPlayer } from "../../types/types";
 type PlayerNameButtonProps = {
   player: TPlayer;
   onPlayerClick: () => void;
+  allowPersonalInfo: boolean;
 };
 
-function PlayerNameButton({ player, onPlayerClick }: PlayerNameButtonProps) {
+function PlayerNameButton({
+  player,
+  onPlayerClick,
+  allowPersonalInfo,
+}: PlayerNameButtonProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [displayName, setDisplayName] = useState(player.name);
 
@@ -96,7 +101,7 @@ function PlayerNameButton({ player, onPlayerClick }: PlayerNameButtonProps) {
       <button
         ref={buttonRef}
         type="button"
-        onClick={onPlayerClick}
+        onClick={allowPersonalInfo ? onPlayerClick : undefined}
         style={
           player.position === "LIB" ? { backgroundColor: "turquoise" } : {}
         }
@@ -108,7 +113,7 @@ function PlayerNameButton({ player, onPlayerClick }: PlayerNameButtonProps) {
   );
 }
 
-export function Squads() {
+export function Squads({ allowPersonalInfo }: { allowPersonalInfo: boolean }) {
   const dispatch = useAppDispatch();
   const guestTeam = useSelector(selectGuestTeam);
   const guestPlayers = useSelector(selectGuestPlayers);
@@ -260,6 +265,7 @@ export function Squads() {
               <PlayerNameButton
                 player={player}
                 onPlayerClick={() => dispatch(setInfoOfPlayer(player))}
+                allowPersonalInfo={allowPersonalInfo}
               />
             </div>
           ))}

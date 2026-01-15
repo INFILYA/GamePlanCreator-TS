@@ -25,6 +25,7 @@ type TIconOfPlayer = {
   nextRotation: boolean;
   setNextRotation(arg: boolean): void;
   exhibitionGame: boolean;
+  allowPersonalInfo: boolean;
 };
 
 export function IconOfPlayer(props: TIconOfPlayer) {
@@ -35,6 +36,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     startingSix,
     showSquads,
     exhibitionGame,
+    allowPersonalInfo,
   } = props;
   const dispatch = useAppDispatch();
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
@@ -147,8 +149,9 @@ export function IconOfPlayer(props: TIconOfPlayer) {
           key === "R+" ||
           key === "R-"
         ) {
-          (obj[key as keyof T] as number) +=
-            diagram[key as keyof TAttackDiagramm];
+          const current = Number(obj[key as keyof T] || 0);
+          const delta = Number(diagram[key as keyof TDiagramm] || 0);
+          (obj[key as keyof T] as number) = current + delta;
         } else continue;
       }
       if (soloGame) {
@@ -165,7 +168,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     }
   }
   function showPlayerInfo() {
-    if (showSquads) {
+    if (showSquads && allowPersonalInfo) {
       dispatch(setInfoOfPlayer(player));
     }
   }

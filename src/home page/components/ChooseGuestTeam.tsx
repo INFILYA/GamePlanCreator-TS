@@ -34,13 +34,14 @@ export function ChooseGuestTeam() {
         </>
       ) : (
         listOfTeams.map((team) => (
-          <div className="nav-image-wrapper" key={team.id}>
-            <img
-              alt=""
-              onClick={() => handleSetOpponentTeam(team)}
-              className="Logo"
-              src={team.logo}
-            ></img>
+          <div
+            className="nav-image-wrapper"
+            key={team.id}
+            onClick={() => handleSetOpponentTeam(team)}
+            title={team.name}
+          >
+            <div className="team-name">{team.name}</div>
+            <img alt="" className="Logo" src={team.logo}></img>
           </div>
         ))
       )}

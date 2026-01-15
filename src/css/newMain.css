@@ -1755,24 +1755,46 @@ main .main-content-wrapper .section-content-wrapper .section-content .hidden-pla
   }
 }
 main .main-content-wrapper .section-content-wrapper .section-content .opponentTeamList {
-  display: grid;
-  grid-template-columns: repeat(3, auto);
-  grid-row-gap: 1.5vw;
-  padding: 0;
-  width: 75%;
-  padding: 2vw;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 520px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .opponentTeamList .nav-image-wrapper img {
-  width: 8vw;
-  aspect-ratio: 1/1;
+main .main-content-wrapper .section-content-wrapper .section-content .opponentTeamList .nav-image-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
-main .main-content-wrapper .section-content-wrapper .section-content .opponentTeamList .nav-image-wrapper img:hover {
-  transform: translateY(-7px);
-  transition: 0.3s;
+main .main-content-wrapper .section-content-wrapper .section-content .opponentTeamList .nav-image-wrapper:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateX(2px);
+  border-color: rgba(0, 0, 0, 0.2);
 }
-main .main-content-wrapper .section-content-wrapper .section-content .opponentTeamList div {
+main .main-content-wrapper .section-content-wrapper .section-content .opponentTeamList .nav-image-wrapper .team-name {
+  flex: 1;
+  min-width: 0;
   font-weight: 600;
-  font-size: 2vw;
+  font-size: 0.95em;
+  color: #000000;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+main .main-content-wrapper .section-content-wrapper .section-content .opponentTeamList .nav-image-wrapper .Logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
 }
 main .main-content-wrapper .section-content-wrapper .section-content .showRatings {
   display: flex;

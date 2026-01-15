@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { gamesRef, playersRef, teamsRef } from "../config/firebase";
+import { auth, gamesRef, playersRef, teamsRef } from "../config/firebase";
 import { NavLink } from "react-router-dom";
 import SectionWrapper from "../wrappers/SectionWrapper";
 import { useAppDispatch } from "../states/store";
@@ -10,11 +10,13 @@ import {
   correctZones,
   emptyPlayers,
   firstLetterCapital,
+  getFromLocalStorage,
   isFieldExist,
   zones,
 } from "../utilities/functions";
 import { TGameLogStats, TMix, TPlayer, TTeam } from "../types/types";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { selectGuestTeam, setGuestTeam } from "../states/slices/guestTeamSlice";
 import { IconOfPlayer } from "./components/IconOfPlayers";
 import { Squads } from "./components/Squads";
@@ -33,7 +35,7 @@ import {
   setGuestTeamIndexOfZones,
 } from "../states/slices/indexOfGuestTeamZonesSlice";
 import { filterGuestPlayers } from "../states/slices/guestPlayersSlice";
-import { selectListOfPlayers } from "../states/slices/listOfPlayersSlice";
+import { selectListOfPlayers, setAllPlayers } from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
 import {
   resetRallyStats,
@@ -52,6 +54,7 @@ import ConfirmField from "../utilities/ConfimField.";
 export function HomePage() {
   const dispatch = useAppDispatch();
   const isMobile = useSetWidth() <= 767;
+  const [user] = useAuthState(auth);
   const listOfPlayers = useSelector(selectListOfPlayers);
   const guestTeam = useSelector(selectGuestTeam);
   const playerInfo = useSelector(selectPlayerInfo);
@@ -137,6 +140,10 @@ export function HomePage() {
     dispatch(setBackGuestTeamSelects(emptyPlayers));
     dispatch(setInfoOfPlayer(null));
     dispatch(resetRallyStats());
+    const cachedPlayers = getFromLocalStorage("players");
+    if (cachedPlayers && Array.isArray(cachedPlayers)) {
+      dispatch(setAllPlayers(cachedPlayers));
+    }
     setOpponentTeamName("");
     setSetNumber("");
     setShowSquads(true);
@@ -175,48 +182,58 @@ export function HomePage() {
     event.preventDefault();
     // download solo game statisic
     if (guestTeam.length === 0) return;
+    if (!user) {
+      alert("Permission denied: please sign in to save games.");
+      return;
+    }
     const matchInfo = `${currentDate()}; ${
       guestTeam[0].id
     } - ${opponentTeamName} ${exhibitionGame ? "|| Exhibition game" : ""}`;
 
-    if (!gameLog) return;
-    const setStat = { [setNumber]: gameLog };
-    const choosenGame = gamesStats.find((game) => game[matchInfo]);
-    if (!choosenGame) {
-      await set(gamesRef(matchInfo), { [matchInfo]: setStat });
-    } else {
-      if (setNumber in choosenGame[matchInfo]) {
-        alert("Set already exist");
-        return;
+    try {
+      if (!gameLog) return;
+      const setStat = { [setNumber]: gameLog };
+      const choosenGame = gamesStats.find((game) => game[matchInfo]);
+      if (!choosenGame) {
+        await set(gamesRef(matchInfo), { [matchInfo]: setStat });
       } else {
-        await update(gamesRef(matchInfo), {
-          [matchInfo]: { ...choosenGame[matchInfo], ...setStat },
+        if (setNumber in choosenGame[matchInfo]) {
+          alert("Set already exist");
+          return;
+        } else {
+          await update(gamesRef(matchInfo), {
+            [matchInfo]: { ...choosenGame[matchInfo], ...setStat },
+          });
+        }
+      }
+      // Refresh StartingSix players
+      if (!exhibitionGame) {
+        async function setPlayersToData(player: TPlayer) {
+          await set(playersRef(player.name), player);
+        }
+        if (guestTeam.length === 0) return;
+        const updatedPlayers = listOfPlayers.filter(
+          (player) => player.team === guestTeam[0].name
+        );
+        updatedPlayers.forEach((player) => {
+          setPlayersToData(player);
         });
+        // //add solo game stats
+        const newTeam = calculateForTeamData(
+          calculateTotalofActions(statsForTeam.flat()) as TPlayer
+        );
+        await set(teamsRef(newTeam.name), newTeam);
       }
+      setstatsForTeam([]);
+      resetTheBoardForGuestTeam();
+      setShowSquads(true);
+      dispatch(setInfoOfPlayer(null));
+    } catch (error: any) {
+      const message =
+        error?.message ||
+        "Permission denied: unable to save game to Firebase.";
+      alert(message);
     }
-    // Here IS PROBLEM!!!
-    // Refresh StartingSix players
-    if (!exhibitionGame) {
-      async function setPlayersToData(player: TPlayer) {
-        await set(playersRef(player.name), player);
-      }
-      if (guestTeam.length === 0) return;
-      const updatedPlayers = listOfPlayers.filter(
-        (player) => player.team === guestTeam[0].name
-      );
-      updatedPlayers.forEach((player) => {
-        setPlayersToData(player);
-      });
-      // //add solo game stats
-      const newTeam = calculateForTeamData(
-        calculateTotalofActions(statsForTeam.flat()) as TPlayer
-      );
-      await set(teamsRef(newTeam.name), newTeam);
-    }
-    setstatsForTeam([]);
-    resetTheBoardForGuestTeam();
-    setShowSquads(true);
-    dispatch(setInfoOfPlayer(null));
   }
 
   const hideSquads = () => {
@@ -241,8 +258,15 @@ export function HomePage() {
     dispatch(resetRallyStats());
     setNextRotation(true);
   }
+  const zeroZero = myScore === 0 && rivalScore === 0;
+  const allowPersonalInfo = zeroZero;
   const currentScore = `${myScore} - ${rivalScore}`;
-  const playerInfoWindow = playerInfo && showSquads;
+  const playerInfoWindow = playerInfo && showSquads && zeroZero;
+  useEffect(() => {
+    if (!allowPersonalInfo && playerInfo) {
+      dispatch(setInfoOfPlayer(null));
+    }
+  }, [allowPersonalInfo, playerInfo, dispatch]);
   const saveDataIcon = !opponentTeamName || !setNumber;
 
   const [draggedOverZone, setDraggedOverZone] = useState<{
@@ -431,7 +455,11 @@ export function HomePage() {
     !showSquads &&
     !saveDataIcon &&
     endOfTheSet;
-  const zeroZero = myScore === 0 && rivalScore === 0;
+  useEffect(() => {
+    if (!allowPersonalInfo && playerInfo) {
+      dispatch(setInfoOfPlayer(null));
+    }
+  }, [allowPersonalInfo, playerInfo, dispatch]);
 
   function getSetterPosition() {
     const seTTer = guestTeamOptions?.find((plaer) => plaer.position === "SET");
@@ -552,17 +580,17 @@ export function HomePage() {
       )}
       <article className="main-content-wrapper">
         {/* На мобильных (меньше 768px) squad выше playground */}
-        {isMobile && showGuestTeam && showSquads && (
+          {isMobile && showGuestTeam && showSquads && (
           <>
-            <Squads />
+              <Squads allowPersonalInfo={allowPersonalInfo} />
             {/* Squad для my-team скрыт в обычном режиме, показывается только в statistic mode */}
           </>
         )}
         {/* Squad для my-team показывается только в statistic mode (!showSquads) */}
         {/* На десктопе порядок как раньше */}
         {/* Скрываем squad для rival в statistic mode (!showSquads) - показываем только когда showSquads === true */}
-        {!showCurrentGameStats && !isMobile && showGuestTeam && showSquads && (
-          <Squads />
+      {!showCurrentGameStats && !isMobile && showGuestTeam && showSquads && (
+        <Squads allowPersonalInfo={allowPersonalInfo} />
         )}
         {!showCurrentGameStats && !showSquads && (
           <RotationPanel
@@ -761,6 +789,7 @@ export function HomePage() {
                             nextRotation={nextRotation}
                             setNextRotation={setNextRotation}
                             exhibitionGame={exhibitionGame}
+                            allowPersonalInfo={allowPersonalInfo}
                           />
                           </div>
                         ) : (
@@ -838,6 +867,7 @@ export function HomePage() {
                               nextRotation={nextRotation}
                               setNextRotation={setNextRotation}
                               exhibitionGame={exhibitionGame}
+                              allowPersonalInfo={allowPersonalInfo}
                             />
                             </div>
                           ) : (

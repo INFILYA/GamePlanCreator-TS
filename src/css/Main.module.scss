@@ -1897,26 +1897,45 @@ main {
         }
         // МЕНЮ ВИБОРУ КОМАНДИ СУПЕРНИКА
         .opponentTeamList {
-          display: grid;
-          grid-template-columns: repeat(3, auto);
-          grid-row-gap: 1.5vw;
-          padding: 0;
-          width: 75%;
-          padding: 2vw;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          width: 100%;
+          max-width: 520px;
+          padding: 8px;
+          background: rgba(255, 255, 255, 0.7);
+          border-radius: 8px;
           .nav-image-wrapper {
-            img {
-              width: 8vw;
-              aspect-ratio: 1/1;
-              &:hover {
-                transform: translateY(-7px);
-                transition: 0.3s;
-              }
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            &:hover {
+              background: rgba(255, 255, 255, 1);
+              transform: translateX(2px);
+              border-color: rgba(0, 0, 0, 0.2);
             }
-          }
-          div {
-            // text-align: center;
-            font-weight: 600;
-            font-size: 2vw;
+            .team-name {
+              flex: 1;
+              min-width: 0;
+              font-weight: 600;
+              font-size: 0.95em;
+              color: #000000;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+            .Logo {
+              width: 44px;
+              height: 44px;
+              object-fit: contain;
+            }
           }
         }
         // ПЕРЕХІД НА ІНШІ СТОРІНКИ
