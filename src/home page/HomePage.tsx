@@ -35,7 +35,10 @@ import {
   setGuestTeamIndexOfZones,
 } from "../states/slices/indexOfGuestTeamZonesSlice";
 import { filterGuestPlayers } from "../states/slices/guestPlayersSlice";
-import { selectListOfPlayers, setAllPlayers } from "../states/slices/listOfPlayersSlice";
+import {
+  selectListOfPlayers,
+  setAllPlayers,
+} from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
 import {
   resetRallyStats,
@@ -230,8 +233,7 @@ export function HomePage() {
       dispatch(setInfoOfPlayer(null));
     } catch (error: any) {
       const message =
-        error?.message ||
-        "Permission denied: unable to save game to Firebase.";
+        error?.message || "Permission denied: unable to save game to Firebase.";
       alert(message);
     }
   }
@@ -580,17 +582,17 @@ export function HomePage() {
       )}
       <article className="main-content-wrapper">
         {/* На мобильных (меньше 768px) squad выше playground */}
-          {isMobile && showGuestTeam && showSquads && (
+        {isMobile && showGuestTeam && showSquads && (
           <>
-              <Squads allowPersonalInfo={allowPersonalInfo} />
+            <Squads allowPersonalInfo={allowPersonalInfo} />
             {/* Squad для my-team скрыт в обычном режиме, показывается только в statistic mode */}
           </>
         )}
         {/* Squad для my-team показывается только в statistic mode (!showSquads) */}
         {/* На десктопе порядок как раньше */}
         {/* Скрываем squad для rival в statistic mode (!showSquads) - показываем только когда showSquads === true */}
-      {!showCurrentGameStats && !isMobile && showGuestTeam && showSquads && (
-        <Squads allowPersonalInfo={allowPersonalInfo} />
+        {!showCurrentGameStats && !isMobile && showGuestTeam && showSquads && (
+          <Squads allowPersonalInfo={allowPersonalInfo} />
         )}
         {!showCurrentGameStats && !showSquads && (
           <RotationPanel
@@ -782,15 +784,15 @@ export function HomePage() {
                               transition: "all 0.2s ease",
                             }}
                           >
-                          <IconOfPlayer
-                            showSquads={showSquads}
-                            player={player}
-                            startingSix={guestTeamOptions}
-                            nextRotation={nextRotation}
-                            setNextRotation={setNextRotation}
-                            exhibitionGame={exhibitionGame}
-                            allowPersonalInfo={allowPersonalInfo}
-                          />
+                            <IconOfPlayer
+                              showSquads={showSquads}
+                              player={player}
+                              startingSix={guestTeamOptions}
+                              nextRotation={nextRotation}
+                              setNextRotation={setNextRotation}
+                              exhibitionGame={exhibitionGame}
+                              allowPersonalInfo={allowPersonalInfo}
+                            />
                           </div>
                         ) : (
                           <div
@@ -860,15 +862,15 @@ export function HomePage() {
                                 alignItems: "flex-start",
                               }}
                             >
-                            <IconOfPlayer
-                              showSquads={showSquads}
-                              player={libero}
-                              startingSix={guestTeamOptions}
-                              nextRotation={nextRotation}
-                              setNextRotation={setNextRotation}
-                              exhibitionGame={exhibitionGame}
-                              allowPersonalInfo={allowPersonalInfo}
-                            />
+                              <IconOfPlayer
+                                showSquads={showSquads}
+                                player={libero}
+                                startingSix={guestTeamOptions}
+                                nextRotation={nextRotation}
+                                setNextRotation={setNextRotation}
+                                exhibitionGame={exhibitionGame}
+                                allowPersonalInfo={allowPersonalInfo}
+                              />
                             </div>
                           ) : (
                             <div
