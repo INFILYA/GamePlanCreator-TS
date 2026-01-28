@@ -3,21 +3,12 @@ import { TGameStats } from "../../types/types";
 import { RootState } from "../store";
 import { collection, getDocs } from "firebase/firestore";
 import { dataBase } from "../../config/firebase";
-import { getFromLocalStorage } from "../../utilities/functions";
 
 export const fetchGamesStats = createAsyncThunk("", async () => {
-  const userVersion: number = getFromLocalStorage("currentUserVersion") || 0;
-  const versionOfData = await getDocs(collection(dataBase, "dataVersion"));
-  const adminVersion = versionOfData.docs[0].data().currentVersion;
-  if (adminVersion === userVersion) {
-    return getFromLocalStorage("gamesStats");
-  }
   const data = await getDocs(collection(dataBase, "gameStats"));
-  const dataOfGameStats = data.docs.map((doc) => ({
+  return data.docs.map((doc) => ({
     ...doc.data(),
   }));
-  localStorage.setItem("gamesStats", JSON.stringify(dataOfGameStats));
-  return dataOfGameStats;
 });
 
 type TListOfTeams = {
@@ -39,11 +30,9 @@ export const gamesStatsSlice = createSlice({
   reducers: {
     setAllGameStats: (state, action: PayloadAction<TGameStats[]>) => {
       state.gamesStats = action.payload;
-      localStorage.setItem("gamesStats", JSON.stringify(action.payload));
     },
     setAddSoloGameStat: (state, action: PayloadAction<TGameStats>) => {
       state.gamesStats = [...state.gamesStats, action.payload];
-      localStorage.setItem("gamesStats", JSON.stringify([...state.gamesStats, action.payload]));
     },
     setgameFilterByTeam: (state, action: PayloadAction<string>) => {
       state.gameFilters.team = action.payload;

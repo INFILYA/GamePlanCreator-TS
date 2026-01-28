@@ -121,12 +121,14 @@ export type TSoloRallyStats = {
   score: string;
   weServe: boolean;
   weWon: boolean; // Кто выиграл очко: true - мы выиграли, false - соперник выиграл
+  rivalTeam?: boolean; // Было ли очко добавлено через панель соперника
   stats: TPlayer[];
   setterBoardPosition?: number; // Позиция связующего нашей команды (для расчета plusMinusPositions)
   rivalSetterBoardPosition?: number; // Позиция связующего соперника (для отображения в таблице)
   previousRivalScore?: number; // Счет соперника до этого ралли (для отката ротации)
   rivalRotation?: number; // Ротация соперника до этого ралли (для отката)
   teamRotationBefore?: TPlayer[]; // Состояние расстановки до ротации (для отката)
+  guestPlayersBefore?: TPlayer[]; // Состояние игроков на замене до этого ралли (для отката)
 };
 
 export type TSettersPosition = { [key: number]: number };

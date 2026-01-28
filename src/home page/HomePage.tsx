@@ -21,7 +21,11 @@ import { selectGuestTeam, setGuestTeam } from "../states/slices/guestTeamSlice";
 import { IconOfPlayer } from "./components/IconOfPlayers";
 import { Squads } from "./components/Squads";
 import { ChooseGuestTeam } from "./components/ChooseGuestTeam";
-import { setGuestPlayers } from "../states/slices/guestPlayersSlice";
+import {
+  selectGuestPlayers,
+  setGuestPlayers,
+  filterGuestPlayers,
+} from "../states/slices/guestPlayersSlice";
 import {
   selectPlayerInfo,
   setInfoOfPlayer,
@@ -34,7 +38,6 @@ import {
   setBackGuestTeamSelects,
   setGuestTeamIndexOfZones,
 } from "../states/slices/indexOfGuestTeamZonesSlice";
-import { filterGuestPlayers } from "../states/slices/guestPlayersSlice";
 import {
   selectListOfPlayers,
   setAllPlayers,
@@ -60,6 +63,7 @@ export function HomePage() {
   const [user] = useAuthState(auth);
   const listOfPlayers = useSelector(selectListOfPlayers);
   const guestTeam = useSelector(selectGuestTeam);
+  const guestPlayers = useSelector(selectGuestPlayers);
   const playerInfo = useSelector(selectPlayerInfo);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
   const [showSquads, setShowSquads] = useState(true);
@@ -104,33 +108,38 @@ export function HomePage() {
     if (lastRally.weWon) {
       // Мы выиграли последний розыгрыш, откатываем наш счет
       setMyScore((prev) => Math.max(0, prev - 1));
-      // Восстанавливаем weServe - если мы выиграли, значит мы подавали
-      setWeServe(lastRally.weServe);
     } else {
       // Соперник выиграл последний розыгрыш, откатываем счет соперника
       setRivalScore((prev) => Math.max(0, prev - 1));
-      // Если соперник выиграл, значит он подавал (weServe = false)
-      setWeServe(!lastRally.weServe);
     }
+
+    // Восстанавливаем, кто подавал ДО розыгрыша
+    setWeServe(lastRally.weServe);
 
     // Откатываем SoloRallyStats из Redux
     dispatch(resetRallyStats());
 
-    // Откатываем ротацию если нужно
-    if (lastRally.weWon) {
-      // Мы выиграли последний розыгрыш - откатываем ротацию нашей команды
-      if (lastRally.teamRotationBefore) {
-        // Восстанавливаем расстановку из сохраненного состояния
-        dispatch(setBackGuestTeamSelects(lastRally.teamRotationBefore));
-      } else {
-        // Если нет сохраненного состояния, откатываем ротацию назад
-        dispatch(rotateBackGuestTeam());
-      }
+    // Откатываем расстановку
+    if (lastRally.teamRotationBefore) {
+      // Восстанавливаем расстановку из сохраненного состояния
+      dispatch(setBackGuestTeamSelects(lastRally.teamRotationBefore));
+    } else if (lastRally.weWon) {
+      // Если нет сохраненного состояния, откатываем ротацию назад
+      dispatch(rotateBackGuestTeam());
+    }
+
+    // Откатываем игроков на замене
+    if (lastRally.guestPlayersBefore) {
+      dispatch(setGuestPlayers(lastRally.guestPlayersBefore));
     }
 
     // Восстанавливаем previousScore и rivalRotation
     if (lastRally.previousRivalScore !== undefined) {
-      setPreviousRivalScore(lastRally.previousRivalScore);
+      if (lastRally.rivalTeam) {
+        setPreviousRivalScore(lastRally.previousRivalScore);
+      } else {
+        setPreviousMyScore(lastRally.previousRivalScore);
+      }
     }
     if (lastRally.rivalRotation !== undefined) {
       setRivalRotation(lastRally.rivalRotation);
@@ -457,6 +466,22 @@ export function HomePage() {
     !showSquads &&
     !saveDataIcon &&
     endOfTheSet;
+  const areMainZonesFilled =
+    guestTeamOptions.length > 0 &&
+    [0, 1, 2, 3, 4, 5].every((zoneIndex) => {
+      const boardPosition = zones[zoneIndex];
+      return guestTeamOptions.some(
+        (p) =>
+          p &&
+          typeof p.boardPosition === "number" &&
+          p.boardPosition === boardPosition &&
+          p.number !== 0
+      );
+    });
+  const hasLiberoSlot = guestTeamOptions.some(
+    (p) => p && p.boardPosition === -1
+  );
+  const showLiberoCell = guestTeamOptions.length > 0 && (areMainZonesFilled || hasLiberoSlot);
   useEffect(() => {
     if (!allowPersonalInfo && playerInfo) {
       dispatch(setInfoOfPlayer(null));
@@ -613,6 +638,7 @@ export function HomePage() {
             previousScore={previousMyScore}
             rivalRotation={rivalRotation}
             setRivalRotation={setRivalRotation}
+            guestPlayers={guestPlayers}
           />
         )}
         <SectionWrapper className="playground-section" backGround={null}>
@@ -825,24 +851,14 @@ export function HomePage() {
                         );
                       })}
                       {/* Ячейка для либеро - размещена под зоной P6 */}
-                      {/* Показываем ячейку либеро только когда все 6 основных зон заполнены */}
-                      {guestTeamOptions.length > 0 &&
-                        [0, 1, 2, 3, 4, 5].every((zoneIndex) => {
-                          const boardPosition = zones[zoneIndex];
-                          return guestTeamOptions.some(
-                            (p) =>
-                              p &&
-                              typeof p.boardPosition === "number" &&
-                              p.boardPosition === boardPosition &&
-                              p.number !== 0
-                          );
-                        }) &&
+                      {showLiberoCell &&
                         (() => {
                           // Ищем игрока, который находится в ячейке либеро (boardPosition === -1)
                           const libero = guestTeamOptions.find(
                             (p) => p.boardPosition === -1
                           );
-                          return libero ? (
+                          const liberoOccupied = libero && libero.number !== 0;
+                          return liberoOccupied ? (
                             <div
                               key="libero-filled"
                               onDrop={blockDrop}
@@ -1058,6 +1074,7 @@ export function HomePage() {
             previousScore={previousRivalScore}
             rivalRotation={rivalRotation}
             setRivalRotation={setRivalRotation}
+            guestPlayers={guestPlayers}
           />
         )}
       </article>

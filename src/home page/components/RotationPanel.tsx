@@ -38,6 +38,7 @@ type TRotationPanel = {
   previousScore: number;
   rivalRotation: number;
   setRivalRotation(arg: number): void;
+  guestPlayers: TPlayer[];
 };
 
 export default function RotationPanel(arg: TRotationPanel) {
@@ -58,6 +59,7 @@ export default function RotationPanel(arg: TRotationPanel) {
     previousScore,
     rivalRotation,
     setRivalRotation,
+    guestPlayers,
   } = arg;
   const dispatch = useAppDispatch();
   const guestTeam = useSelector(selectGuestTeam);
@@ -98,6 +100,12 @@ export default function RotationPanel(arg: TRotationPanel) {
 
     // Сохраняем состояние расстановки ДО ротации для возможности отката
     const teamRotationBefore = guestTeamOptions.map((player) => ({
+      ...player,
+      unforcedError: Number.isFinite(player.unforcedError)
+        ? player.unforcedError
+        : 0,
+    }));
+    const guestPlayersBefore = guestPlayers.map((player) => ({
       ...player,
       unforcedError: Number.isFinite(player.unforcedError)
         ? player.unforcedError
@@ -152,11 +160,13 @@ export default function RotationPanel(arg: TRotationPanel) {
       score: currentScore,
       weServe: whoServedInThisRally, // Кто подавал в этом ралли (значение на начало розыгрыша)
       weWon: !rivalTeam, // Кто выиграл очко: true - мы выиграли, false - соперник выиграл
+      rivalTeam: rivalTeam,
       stats: cleanedStats,
       setterBoardPosition: ourSetterPosition,
       previousRivalScore: previousRivalScoreBefore, // Счет соперника до этого ралли (для отката)
       rivalRotation: rivalRotationBefore, // Ротация соперника до этого ралли (для отката)
       teamRotationBefore: teamRotationBefore, // Состояние расстановки до ротации (для отката)
+      guestPlayersBefore: guestPlayersBefore, // Состояние игроков на замене до этого ралли (для отката)
     };
 
     // Используем функциональное обновление для правильного накопления

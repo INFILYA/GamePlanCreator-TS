@@ -93,12 +93,23 @@ export const indexOfGuestTeamZonesSlice = createSlice({
         return;
       }
 
-      // Для обычных игроков - стандартная логика
+      const targetBoardPosition = action.payload.player.boardPosition;
+      if (typeof targetBoardPosition !== "number") {
+        return;
+      }
+
+      // Для обычных игроков очищаем именно его текущую зону по boardPosition
       state.indexOfGuestTeamZones = state.indexOfGuestTeamZones.map(
-        (player, index) =>
-          index === action.payload.startingSix.indexOf(action.payload.player)
-            ? { ...emptyPlayers[0], boardPosition: zones[index] }
-            : player
+        (player) => {
+          if (player.name !== action.payload.player.name) {
+            return player;
+          }
+          const zoneIndex = zones.indexOf(targetBoardPosition);
+          if (zoneIndex !== -1) {
+            return { ...emptyPlayers[zoneIndex] };
+          }
+          return { ...emptyPlayers[0], boardPosition: targetBoardPosition };
+        }
       );
     },
     setBackGuestTeamSelects: (state, action: PayloadAction<TPlayer[]>) => {
@@ -137,10 +148,16 @@ export const indexOfGuestTeamZonesSlice = createSlice({
       const playersWithoutLibero = state.indexOfGuestTeamZones.filter(
         (p) => p.boardPosition !== -1
       );
+      const orderedByZones = zones.map((boardPosition, index) => {
+        const playerAtZone = playersWithoutLibero.find(
+          (p) => p.boardPosition === boardPosition
+        );
+        return playerAtZone ? playerAtZone : { ...emptyPlayers[index] };
+      });
       const libero = state.indexOfGuestTeamZones.find(
         (p) => p.boardPosition === -1
       );
-      const Zone = [...playersWithoutLibero];
+      const Zone = [...orderedByZones];
       const newRot = [Zone[3], Zone[0], Zone[1], Zone[4], Zone[5], Zone[2]];
       // Обновляем boardPosition для каждого игрока согласно его новой позиции в массиве
       const rotatedWithUpdatedPositions = newRot.map((player, index) => ({
@@ -157,10 +174,16 @@ export const indexOfGuestTeamZonesSlice = createSlice({
       const playersWithoutLibero = state.indexOfGuestTeamZones.filter(
         (p) => p.boardPosition !== -1
       );
+      const orderedByZones = zones.map((boardPosition, index) => {
+        const playerAtZone = playersWithoutLibero.find(
+          (p) => p.boardPosition === boardPosition
+        );
+        return playerAtZone ? playerAtZone : { ...emptyPlayers[index] };
+      });
       const libero = state.indexOfGuestTeamZones.find(
         (p) => p.boardPosition === -1
       );
-      const zone = [...playersWithoutLibero];
+      const zone = [...orderedByZones];
       const newRot2 = [zone[1], zone[2], zone[5], zone[0], zone[3], zone[4]];
       // Обновляем boardPosition для каждого игрока согласно его новой позиции в массиве
       const rotatedWithUpdatedPositions = newRot2.map((player, index) => ({

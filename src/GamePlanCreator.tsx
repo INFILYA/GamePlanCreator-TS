@@ -47,8 +47,6 @@ export default function GamePlanCreator() {
         // Проверяем localStorage и очищаем если данные некорректные
         const cachedTeams = getFromLocalStorage("teams");
         const cachedPlayers = getFromLocalStorage("players");
-        const cachedGames = getFromLocalStorage("gamesStats");
-
         // Очищаем localStorage если данные пустые или некорректные
         if (
           cachedTeams &&
@@ -61,12 +59,6 @@ export default function GamePlanCreator() {
           (!Array.isArray(cachedPlayers) || cachedPlayers.length === 0)
         ) {
           localStorage.removeItem("players");
-        }
-        if (
-          cachedGames &&
-          (!Array.isArray(cachedGames) || cachedGames.length === 0)
-        ) {
-          localStorage.removeItem("gamesStats");
         }
 
         // Загружаем из Firebase (это имеет приоритет)
@@ -176,15 +168,7 @@ export default function GamePlanCreator() {
             }
           },
           (_error) => {
-            // Если ошибка доступа, используем кэш
-            const cachedGames = getFromLocalStorage("gamesStats");
-            if (
-              cachedGames &&
-              Array.isArray(cachedGames) &&
-              cachedGames.length > 0
-            ) {
-              dispatch(setAllGameStats(cachedGames));
-            }
+            // Ошибка доступа: оставляем текущее состояние без кэша
           }
         );
       } catch (_error: any) {
