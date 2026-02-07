@@ -187,6 +187,11 @@ export function HomePage() {
       const realDa = obj[key as keyof T] as number;
       (team[key as keyof TTeam] as number) += realDa ? realDa : 0;
     }
+    // Команды из БД могут не иметь поля unforcedError — добавляем явно
+    const unforcedError = (obj as TTeam).unforcedError;
+    if (Number.isFinite(unforcedError)) {
+      team.unforcedError = (team.unforcedError || 0) + unforcedError;
+    }
     return team;
   }
 
