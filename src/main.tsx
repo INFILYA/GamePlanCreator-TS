@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import GamePlanCreator from "./GamePlanCreator";
+import "./css/tailwind.css";
 import "./css/newTutorial.css";
 import "./css/newHeader.css";
 import "./css/newMain.css";

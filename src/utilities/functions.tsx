@@ -4,6 +4,7 @@ import {
   TMix,
   TMixKeys,
   TPlayer,
+  TTeam,
   TSettersPosition,
   TSettersPositions,
 } from "../types/types";
@@ -295,6 +296,22 @@ export function calculateTotalofActions(obj: TMix[]): TDiagramm {
     unforcedError: getCalculation("unforcedError"),
   };
   return sumOfAllPlayersSoloGamesStats;
+}
+
+/** Team totals derived from roster players so EU and other stats stay in sync. */
+export function mergeTeamStatsFromPlayers(team: TTeam, players: TPlayer[]): TTeam {
+  const teamPlayers = players.filter((player) => player.team === team.name);
+  return {
+    ...team,
+    ...calculateTotalofActions(teamPlayers),
+  };
+}
+
+export function mergeTeamsStatsFromPlayers(
+  teams: TTeam[],
+  players: TPlayer[]
+): TTeam[] {
+  return teams.map((team) => mergeTeamStatsFromPlayers(team, players));
 }
 
 export function calculateTotalofActionsV2(obj: TMix[], name: string): TMix {

@@ -9,6 +9,7 @@ import {
   compare,
   isFieldExist,
   jusName,
+  mergeTeamsStatsFromPlayers,
 } from "../utilities/functions";
 import { TMix } from "../types/types";
 import { Categorys } from "./components/Categorys";
@@ -39,7 +40,9 @@ export function Ratings() {
     setFilteredPlayers([]);
     setChoosenFilter(true);
     if (position === "T") {
-      setFilteredPlayers([...listOfTeams]);
+      setFilteredPlayers(
+        mergeTeamsStatsFromPlayers(listOfTeams, listOfPlayers) as TMix[]
+      );
       return;
     }
     const choosenAmplua = listOfPlayers.filter(

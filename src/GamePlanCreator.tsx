@@ -22,6 +22,10 @@ import { setAllGameStats } from "./states/slices/gamesStatsSlice";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { onValue } from "firebase/database";
 import { later, getFromLocalStorage } from "./utilities/functions";
+import TermsOfService from "./legal/TermsOfService";
+import PrivacyPolicy from "./legal/PrivacyPolicy";
+import CookieBanner from "./legal/CookieBanner";
+import { Footer } from "./components/Footer";
 
 export default function GamePlanCreator() {
   const dispatch = useAppDispatch();
@@ -180,10 +184,13 @@ export default function GamePlanCreator() {
   }, [dispatch]);
 
   const TUTORIAL = !changeLanguage ? UKRTUTORIAL : ENGTUTORIAL;
+  const isLegalPage =
+    location.pathname === "/terms" || location.pathname === "/privacy";
+
   return (
     <>
       <Header />
-      <main>
+      <main className="flex min-h-[calc(100vh-8rem)] flex-col">
         {isLoading ? (
           <>
             <div className="loading-logo-wrapper">
@@ -196,7 +203,7 @@ export default function GamePlanCreator() {
           </>
         ) : (
           <>
-            {!isShowedTutorial && (
+            {!isShowedTutorial && !isLegalPage && (
               <div className="textForTutorial">
                 {TUTORIAL.map((card, index) => (
                   <Tutorial text={card} key={index} />
@@ -209,10 +216,14 @@ export default function GamePlanCreator() {
               <Route path="/Ratings" element={<Ratings />} />
               <Route path="/Directions" element={<Directions />} />
               <Route path="/GamesStatistic" element={<GamesStatistic />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
             </Routes>
           </>
         )}
       </main>
+      <Footer />
+      <CookieBanner />
     </>
   );
 }

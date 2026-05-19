@@ -1,8 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Diagramm from "./components/Diagramm";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, playersRef } from "../config/firebase";
 import {
   selectPlayerInfo,
   setInfoOfPlayer,
@@ -18,8 +16,6 @@ import {
   upgradeAge,
 } from "../utilities/functions";
 import { RegularButton } from "../css/Button.styled";
-import { set } from "firebase/database";
-// import { set } from "firebase/database";
 
 type TPersonalInfoProps = {
   link: string;
@@ -28,7 +24,6 @@ type TPersonalInfoProps = {
 export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   const { link } = props;
   const dispatch = useAppDispatch();
-  const [isRegistratedUser] = useAuthState(auth);
   const [showDetails, setShowDetails] = useState(true);
   const playerInfos = useSelector(selectPlayerInfo);
   if (playerInfos === null) return;
@@ -39,23 +34,6 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
   const libero = playerInfo.position === "LIB";
   const servicePM = getPlusMinusService(playerInfo);
   const attackPM = getPlusMinusAttack(playerInfo);
-
-  // ADD NEW PLAYER
-  async function setNewPlayersToData() {
-    const newPlayer = {
-      ...playerInfo,
-      name: "Ziyaan Madhani",
-      id: "Ziyaan Madhani",
-      number: "27",
-      height: "188",
-      reach: "330",
-      position: "MB",
-      team: "Nova-16U",
-      age: "2010-01-01",
-    };
-    await set(playersRef("Ziyaan Madhani"), newPlayer);
-  }
-  // ADD NEW PLAYER
 
   return (
     <div className="hidden-player-information-wrapper">
@@ -125,11 +103,6 @@ export function PersonalInformationOfPlayer(props: TPersonalInfoProps) {
                       Service
                     </RegularButton>
                   </NavLink>
-                  {isRegistratedUser && (
-                    <RegularButton onClick={setNewPlayersToData}>
-                      add player
-                    </RegularButton>
-                  )}
                 </>
               )}
               {page1 && (

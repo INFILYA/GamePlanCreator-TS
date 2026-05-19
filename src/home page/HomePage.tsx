@@ -12,9 +12,10 @@ import {
   firstLetterCapital,
   getFromLocalStorage,
   isFieldExist,
+  mergeTeamStatsFromPlayers,
   zones,
 } from "../utilities/functions";
-import { TGameLogStats, TMix, TPlayer, TTeam } from "../types/types";
+import { TGameLogStats, TMix, TPlayer } from "../types/types";
 import { FormEvent, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { selectGuestTeam, setGuestTeam } from "../states/slices/guestTeamSlice";
@@ -167,34 +168,6 @@ export function HomePage() {
     setWeServe(false);
   }
 
-  function calculateForTeamData<T extends TTeam | TPlayer>(obj: T) {
-    if (guestTeam.length === 0) {
-      return obj as TTeam;
-    }
-    const team = { ...guestTeam[0] };
-    for (const key in team) {
-      if (
-        key === "id" ||
-        key === "boardPosition" ||
-        key === "name" ||
-        key === "logo" ||
-        key === "age" ||
-        key === "height" ||
-        key === "startingSquad"
-      ) {
-        continue;
-      }
-      const realDa = obj[key as keyof T] as number;
-      (team[key as keyof TTeam] as number) += realDa ? realDa : 0;
-    }
-    // Команды из БД могут не иметь поля unforcedError — добавляем явно
-    const unforcedError = (obj as TTeam).unforcedError;
-    if (Number.isFinite(unforcedError)) {
-      team.unforcedError = (team.unforcedError || 0) + unforcedError;
-    }
-    return team;
-  }
-
   async function saveSpikeData(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     // download solo game statisic
@@ -235,9 +208,9 @@ export function HomePage() {
         updatedPlayers.forEach((player) => {
           setPlayersToData(player);
         });
-        // //add solo game stats
-        const newTeam = calculateForTeamData(
-          calculateTotalofActions(statsForTeam.flat()) as TPlayer
+        const newTeam = mergeTeamStatsFromPlayers(
+          guestTeam[0],
+          updatedPlayers
         );
         await set(teamsRef(newTeam.name), newTeam);
       }
