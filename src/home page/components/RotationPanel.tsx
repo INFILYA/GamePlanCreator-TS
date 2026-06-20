@@ -7,13 +7,20 @@ import {
   selectIndexOfGuestTeamZones,
 } from "../../states/slices/indexOfGuestTeamZonesSlice";
 import { correctZones, forSoloGameStat } from "../../utilities/functions";
-import {
-  resetRallyStats,
-  selectSoloRallyStats,
-} from "../../states/slices/soloRallyStatsSlice";
+import { resetRallyStats } from "../../states/slices/soloRallyStatsSlice";
 import { useAppDispatch } from "../../states/store";
 import { TGameLogStats, TPlayer } from "../../types/types";
 import ConfirmField from "../../utilities/ConfimField.";
+import {
+  selectRallyNotation,
+  resetRallyNotation,
+  startNewRally,
+} from "../../states/slices/rallyNotationSlice";
+import {
+  playerStatsToRallyPlayers,
+  parseNotationToPlayerStats,
+} from "../../notation/parser";
+import { setUpdatedPlayers } from "../../states/slices/listOfPlayersSlice";
 
 type TRotationPanel = {
   rivalTeam: boolean;
@@ -39,6 +46,8 @@ type TRotationPanel = {
   rivalRotation: number;
   setRivalRotation(arg: number): void;
   guestPlayers: TPlayer[];
+  exhibitionGame?: boolean;
+  statMode?: boolean;
 };
 
 export default function RotationPanel(arg: TRotationPanel) {
@@ -55,23 +64,21 @@ export default function RotationPanel(arg: TRotationPanel) {
     setGameLog,
     setstatsForTeam,
     endOfTheSet,
-    setPreviousScore,
     previousScore,
     rivalRotation,
     setRivalRotation,
     guestPlayers,
+    exhibitionGame = false,
+    statMode = false,
   } = arg;
   const dispatch = useAppDispatch();
   const guestTeam = useSelector(selectGuestTeam);
-  const SoloRallyStats = useSelector(selectSoloRallyStats);
+  const rallyNotation = useSelector(selectRallyNotation);
   const [myZone, setMyZone] = useState(1);
   const [openConfirmWindow, setOpenConfirmWindow] = useState(false);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
 
   useEffect(() => {
-    // ВАЖНО: Всегда получаем расстановку нашей команды (myZone)
-    // Это нужно для расчета plusMinusPositions, чтобы понять где мы стартуем
-    // Используем guestTeamOptions (наша команда на поле)
     function myTeamRigthRotation() {
       if (guestTeamOptions.length === 0) return;
       const seTTer = guestTeamOptions.find(
@@ -81,8 +88,6 @@ export default function RotationPanel(arg: TRotationPanel) {
       const indexOfSetter = guestTeamOptions.indexOf(seTTer);
       setMyZone(correctZones(indexOfSetter));
     }
-    // Всегда обновляем myZone, независимо от rivalTeam
-    // Это расстановка нашей команды, которая нужна для расчета
     myTeamRigthRotation();
   }, [guestTeamOptions]);
 
@@ -91,14 +96,9 @@ export default function RotationPanel(arg: TRotationPanel) {
   }
 
   function addScore() {
-    // ВАЖНО: Сохраняем значение weServe на начало розыгрыша (до изменения счета)
-    // Если это панель соперника (rivalTeam = true), то weServe инвертирован
-    // Поэтому нужно инвертировать обратно, чтобы получить правильное значение
     const whoServedInThisRally = rivalTeam ? !weServe : weServe;
-
     const newScore = score + 1;
 
-    // Сохраняем состояние расстановки ДО ротации для возможности отката
     const teamRotationBefore = guestTeamOptions.map((player) => ({
       ...player,
       unforcedError: Number.isFinite(player.unforcedError)
@@ -114,18 +114,10 @@ export default function RotationPanel(arg: TRotationPanel) {
     const previousRivalScoreBefore = previousScore;
     const rivalRotationBefore = rivalRotation;
 
-    if (
-      (zeroZero && !weServe && !rivalTeam) ||
-      (previousScore !== rivalScore && !rivalTeam)
-    ) {
+    if (!rivalTeam && !weServe) {
       dispatch(rotateForwardGuestTeam());
-      setPreviousScore(rivalScore);
     }
-    if (
-      (zeroZero && !weServe && rivalTeam) ||
-      (previousScore !== rivalScore && rivalTeam)
-    ) {
-      setPreviousScore(rivalScore);
+    if (rivalTeam && weServe) {
       const properRivalZone =
         rivalRotation === 1
           ? 6
@@ -136,17 +128,14 @@ export default function RotationPanel(arg: TRotationPanel) {
     }
     setScore(newScore);
 
-    // ============================================
-    // ЗАПИСЬ ОЧКА В ИСТОРИЮ ИГРЫ
-    // ============================================
-    // ВАЖНО: Записываем ралли ВСЕГДА в gameLog, даже если нет действий игроков
-    // Используем forSoloGameStat для очистки нулевых значений из объектов статистики игроков
+    const roster = [...guestTeamOptions, ...guestPlayers];
+    const parsedByNumber = parseNotationToPlayerStats(rallyNotation);
+    const rallyPlayers = playerStatsToRallyPlayers(parsedByNumber, roster);
     const cleanedStats =
-      SoloRallyStats.length > 0
-        ? SoloRallyStats.map((player) => forSoloGameStat(player))
+      rallyPlayers.length > 0
+        ? rallyPlayers.map((player) => forSoloGameStat(player))
         : [];
 
-    // Определяем расстановки на момент ралли
     const seTTer =
       guestTeamOptions.length > 0
         ? guestTeamOptions.find((player) => player.position === "SET")
@@ -158,37 +147,36 @@ export default function RotationPanel(arg: TRotationPanel) {
 
     const rallyData = {
       score: currentScore,
-      weServe: whoServedInThisRally, // Кто подавал в этом ралли (значение на начало розыгрыша)
-      weWon: !rivalTeam, // Кто выиграл очко: true - мы выиграли, false - соперник выиграл
+      weServe: whoServedInThisRally,
+      weWon: !rivalTeam,
       rivalTeam: rivalTeam,
       stats: cleanedStats,
+      ...(rallyNotation.trim() ? { notation: rallyNotation } : {}),
       setterBoardPosition: ourSetterPosition,
-      previousRivalScore: previousRivalScoreBefore, // Счет соперника до этого ралли (для отката)
-      rivalRotation: rivalRotationBefore, // Ротация соперника до этого ралли (для отката)
-      teamRotationBefore: teamRotationBefore, // Состояние расстановки до ротации (для отката)
-      guestPlayersBefore: guestPlayersBefore, // Состояние игроков на замене до этого ралли (для отката)
+      previousRivalScore: previousRivalScoreBefore,
+      rivalRotation: rivalRotationBefore,
+      teamRotationBefore: teamRotationBefore,
+      guestPlayersBefore: guestPlayersBefore,
     };
 
-    // Используем функциональное обновление для правильного накопления
-    setGameLog((prevGameLog) => {
-      const newGameLog = [...prevGameLog, rallyData];
+    setGameLog((prevGameLog) => [...prevGameLog, rallyData]);
 
-      return newGameLog;
-    });
-
-    // Записываем в statsForTeam только если есть действия
-    if (SoloRallyStats.length > 0) {
+    if (rallyPlayers.length > 0) {
       setstatsForTeam((prevStats: TPlayer[][]) => [
         ...prevStats,
-        SoloRallyStats,
+        rallyPlayers,
       ]);
+      if (!exhibitionGame) {
+        for (const rallyPlayer of rallyPlayers) {
+          dispatch(setUpdatedPlayers(rallyPlayer));
+        }
+      }
     }
 
     dispatch(resetRallyStats());
+    dispatch(resetRallyNotation());
+    dispatch(startNewRally({ weServe: !rivalTeam }));
     setNextRotation(true);
-    // Обновляем weServe для следующего ралли
-    // Если мы выиграли (!rivalTeam), то мы будем подавать в следующем ралли (weServe = true)
-    // Если соперник выиграл (rivalTeam), то соперник будет подавать в следующем ралли (weServe = false)
     setWeServe(!rivalTeam);
     setOpenConfirmWindow(!openConfirmWindow);
   }
@@ -231,15 +219,17 @@ export default function RotationPanel(arg: TRotationPanel) {
             weServe && <div>🏐</div>
           )}
         </div>
-        <div className="rotation-buttons-wrapper">
-          <button
-            style={{ borderRadius: "50%" }}
-            onClick={() => confirmPoint()}
-            disabled={endOfTheSet}
-          >
-            +
-          </button>
-        </div>
+        {!statMode && (
+          <div className="rotation-buttons-wrapper">
+            <button
+              style={{ borderRadius: "50%" }}
+              onClick={() => confirmPoint()}
+              disabled={endOfTheSet}
+            >
+              +
+            </button>
+          </div>
+        )}
         <div style={{ fontSize: "8vw" }}>{score}</div>
         <div className="rotation-panel-content">
           {myZones.map((zone) => (

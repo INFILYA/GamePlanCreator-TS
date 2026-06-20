@@ -22,6 +22,14 @@ export function jusName(arg: TMix) {
   return newObj;
 }
 
+/** Last word of full name, or the whole name if single word (e.g. "Ivan Cheung" → "Cheung"). */
+export function playerSurname(fullName: string): string {
+  const trimmed = fullName.trim();
+  if (!trimmed) return "";
+  const parts = trimmed.split(/\s+/);
+  return parts.length > 1 ? parts[parts.length - 1] : parts[0];
+}
+
 export function getFromLocalStorage(name: string) {
   const value = localStorage.getItem(name);
   if (!value) return null;
@@ -120,6 +128,7 @@ export const emptyPlayer: TPlayer = {
   "R!": 0,
   "R-": 0,
   "R=": 0,
+  "R/": 0,
   blocks: 0,
   unforcedError: 0,
   boardPosition: 0,
@@ -202,6 +211,7 @@ export function getSumofReceptions(obj: TDiagramm) {
     isFieldExist(obj["R!"]),
     isFieldExist(obj["R-"]),
     isFieldExist(obj["R="]),
+    isFieldExist((obj as TDiagramm & { "R/"?: number })["R/"]),
   ];
   const sumOfTotalRec = totalRec.reduce((a, b) => a + b, 0);
   return +sumOfTotalRec;
@@ -292,6 +302,7 @@ export function calculateTotalofActions(obj: TMix[]): TDiagramm {
     "R!": getCalculation("R!"),
     "R-": getCalculation("R-"),
     "R=": getCalculation("R="),
+    "R/": getCalculation("R/"),
     blocks: getCalculation("blocks"),
     unforcedError: getCalculation("unforcedError"),
   };
@@ -336,6 +347,7 @@ export function calculateTotalofActionsV2(obj: TMix[], name: string): TMix {
     "R!": getCalculation("R!"),
     "R-": getCalculation("R-"),
     "R=": getCalculation("R="),
+    "R/": getCalculation("R/"),
     blocks: getCalculation("blocks"),
     unforcedError: getCalculation("unforcedError"),
     name: name,
@@ -360,6 +372,7 @@ export function preparePlayerToSoloGameV3(obj: TMix): TMix {
     "R!": isFieldExist(obj["R!"]),
     "R-": isFieldExist(obj["R-"]),
     "R=": isFieldExist(obj["R="]),
+    "R/": isFieldExist((obj as unknown as Record<string, number>)["R/"]),
     blocks: isFieldExist(obj.blocks),
     unforcedError: isFieldExist(obj.unforcedError),
     name: obj.name,
@@ -384,6 +397,7 @@ export function preparePlayerToSoloGame(obj: TMix): TMix {
   soloGamePlayerStats["R="] = 0;
   soloGamePlayerStats["R-"] = 0;
   soloGamePlayerStats["R+"] = 0;
+  soloGamePlayerStats["R/"] = 0;
   soloGamePlayerStats.blocks = 0;
   soloGamePlayerStats.unforcedError = 0;
   return soloGamePlayerStats;
@@ -406,6 +420,7 @@ export function emptyDiagramm(): TDiagramm {
   soloGamePlayerStats["R="] = 0;
   soloGamePlayerStats["R-"] = 0;
   soloGamePlayerStats["R+"] = 0;
+  soloGamePlayerStats["R/"] = 0;
   soloGamePlayerStats.blocks = 0;
   soloGamePlayerStats.unforcedError = 0;
   return soloGamePlayerStats;
@@ -435,7 +450,8 @@ export function forSoloGameStat(obj: TPlayer): TPlayer {
         key === "R=" ||
         key === "R!" ||
         key === "R+" ||
-        key === "R-") &&
+        key === "R-" ||
+        key === "R/") &&
       soloGamePlayerStats[key] !== 0
     ) {
       newObj[key] = soloGamePlayerStats[key];
@@ -452,9 +468,20 @@ export const rows = [
   ["++", "lightgreen"],
 ] as const;
 
+/** Reception columns: R=, R/, R-, R!, R+, R++ */
+export const receptionStatRows = [
+  ["=", "orangered"],
+  ["/", "#f9a8d4"],
+  ["-", "orange"],
+  ["!", "yellow"],
+  ["+", "aquamarine"],
+  ["++", "lightgreen"],
+] as const;
+
 export const categorys = [
   "+/-",
   "R=",
+  "R/",
   "R-",
   "R!",
   "R+",
@@ -477,6 +504,26 @@ export const categorys = [
   "unforcedError",
   "earnedPoints",
 ] as TMixKeys[];
+
+/** Display label for ratings / game-log column headers (stat keys unchanged). */
+export function formatStatColumnHeader(category: string): string {
+  switch (category) {
+    case "earnedPoints":
+      return "Points";
+    case "unforcedError":
+      return "EU";
+    case "A-":
+      return "Got blocked";
+    case "R++":
+      return "R#";
+    case "A++":
+      return "A#";
+    case "S++":
+      return "S#";
+    default:
+      return category;
+  }
+}
 
 export const P1 = {
   1: 1,
@@ -540,4 +587,94 @@ const setterPositions: TSettersPositions = {
 
 export function spikersPositions(position: number): TSettersPosition {
   return setterPositions[position];
+}
+
+/** Volleyball set win: reach 25 (or 15 tiebreak) with at least a 2-point lead. */
+export function isSetComplete(
+  myScore: number,
+  rivalScore: number,
+  tieBreak: boolean
+): boolean {
+  const target = tieBreak ? 15 : 25;
+  const leader = Math.max(myScore, rivalScore);
+  const trailer = Math.min(myScore, rivalScore);
+  return leader >= target && leader - trailer >= 2;
+}
+
+/** Firebase Realtime Database rejects `undefined` anywhere in the payload. */
+export function stripUndefinedForFirebase<T>(value: T): T {
+  if (value === undefined) {
+    return value;
+  }
+  if (value === null || typeof value !== "object") {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => stripUndefinedForFirebase(item)) as T;
+  }
+  const result: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(value)) {
+    if (val !== undefined) {
+      result[key] = stripUndefinedForFirebase(val);
+    }
+  }
+  return result as T;
+}
+
+function encodeFirebaseKey(key: string): string {
+  return key
+    .replace(/\./g, "__DOT__")
+    .replace(/#/g, "__HASH__")
+    .replace(/\$/g, "__DOLLAR__")
+    .replace(/\//g, "__SLASH__")
+    .replace(/\[/g, "__LBRACKET__")
+    .replace(/\]/g, "__RBRACKET__");
+}
+
+function decodeFirebaseKey(key: string): string {
+  return key
+    .replace(/__RBRACKET__/g, "]")
+    .replace(/__LBRACKET__/g, "[")
+    .replace(/__SLASH__/g, "/")
+    .replace(/__DOLLAR__/g, "$")
+    .replace(/__HASH__/g, "#")
+    .replace(/__DOT__/g, ".");
+}
+
+function encodeFirebaseKeysDeep<T>(value: T): T {
+  if (value === null || typeof value !== "object") {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => encodeFirebaseKeysDeep(item)) as T;
+  }
+  const result: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(value)) {
+    result[encodeFirebaseKey(key)] = encodeFirebaseKeysDeep(val);
+  }
+  return result as T;
+}
+
+function decodeFirebaseKeysDeep<T>(value: T): T {
+  if (value === null || typeof value !== "object") {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => decodeFirebaseKeysDeep(item)) as T;
+  }
+  const result: Record<string, unknown> = {};
+  for (const [key, val] of Object.entries(value)) {
+    result[decodeFirebaseKey(key)] = decodeFirebaseKeysDeep(val);
+  }
+  return result as T;
+}
+
+/** Strip undefined values and encode object keys for Firebase writes. */
+export function prepareForFirebase<T>(value: T): T {
+  return encodeFirebaseKeysDeep(stripUndefinedForFirebase(value));
+}
+
+/** Restore app keys after reading from Firebase. */
+export function restoreFromFirebase<T>(value: T): T {
+  return decodeFirebaseKeysDeep(value);
 }

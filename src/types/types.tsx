@@ -19,6 +19,7 @@ export type TReceptionDiagramm = {
   "R!": number;
   "R-": number;
   "R=": number;
+  "R/": number;
 };
 
 export type TDiagramm = TDiagrammWithoutBlock & {
@@ -129,6 +130,7 @@ export type TSoloRallyStats = {
   rivalRotation?: number; // Ротация соперника до этого ралли (для отката)
   teamRotationBefore?: TPlayer[]; // Состояние расстановки до ротации (для отката)
   guestPlayersBefore?: TPlayer[]; // Состояние игроков на замене до этого ралли (для отката)
+  notation?: string;
 };
 
 export type TSettersPosition = { [key: number]: number };

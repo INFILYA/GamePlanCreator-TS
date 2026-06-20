@@ -133,6 +133,7 @@ export default function Diagramm(props: TDiagrammProps) {
         isFieldExist(playerInfo["R!"]),
         isFieldExist(playerInfo["R-"]),
         isFieldExist(playerInfo["R="]),
+        isFieldExist((playerInfo as { "R/"?: number })["R/"] ?? 0),
       ];
       const sumOfTotalReception = totalReception.reduce((a, b) => a + b, 0);
       if (sumOfTotalReception === 0) return 0;

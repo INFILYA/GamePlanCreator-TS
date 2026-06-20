@@ -1,5 +1,5 @@
 import { TMix, TMixKeys } from "../../types/types";
-import { calculateTotalofActionsV2 } from "../../utilities/functions";
+import { calculateTotalofActionsV2, formatStatColumnHeader } from "../../utilities/functions";
 import { Rows } from "./Rows";
 
 type TCategorys = {
@@ -74,11 +74,7 @@ export function Categorys(props: TCategorys) {
                       }
                 }
               >
-                {category === "earnedPoints"
-                  ? "Points"
-                  : category === "unforcedError"
-                  ? "EU"
-                  : category}
+                {formatStatColumnHeader(category)}
               </button>
             </th>
           );

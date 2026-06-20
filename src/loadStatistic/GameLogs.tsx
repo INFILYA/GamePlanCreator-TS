@@ -1,163 +1,133 @@
 import { useEffect, useState } from "react";
 import { RegularButton } from "../css/Button.styled";
 import { TGameStats, TObjectStats } from "../types/types";
+import { formatStatColumnHeader } from "../utilities/functions";
+import { computeRotationReport, isOpponentServeErrorRally, pct } from "../notation/parser";
+import { RallyStringDisplay } from "../home page/components/RallyStringDisplay";
 
 type TGameLogs = {
   games: TObjectStats[];
   listOfGames: TGameStats[];
 };
 
+type TRotationCountRow = { position: string; count: number };
+type TRotationPctRow = {
+  position: string;
+  made: number;
+  attempts: number;
+};
+
+const EMPTY_PLUS_MINUS = (): TRotationCountRow[] =>
+  ["1", "2", "3", "4", "5", "6"].map((position) => ({ position, count: 0 }));
+
+const EMPTY_PCT_ROWS = (): TRotationPctRow[] =>
+  ["1", "2", "3", "4", "5", "6"].map((position) => ({
+    position,
+    made: 0,
+    attempts: 0,
+  }));
+
+function sumPctRows(rows: TRotationPctRow[]) {
+  return rows.reduce(
+    (acc, row) => ({
+      made: acc.made + row.made,
+      attempts: acc.attempts + row.attempts,
+    }),
+    { made: 0, attempts: 0 }
+  );
+}
+
+type TMetricDropdownProps = {
+  label: string;
+  rows: TRotationPctRow[];
+  isOpen: boolean;
+  onToggle: () => void;
+};
+
+function MetricDropdown({
+  label,
+  rows,
+  isOpen,
+  onToggle,
+}: TMetricDropdownProps) {
+  const total = sumPctRows(rows);
+
+  return (
+    <div className="game-rotation-metrics-row game-rotation-metrics-row--aggregate">
+      <button
+        type="button"
+        className="game-rotation-metric-toggle"
+        onClick={onToggle}
+        aria-expanded={isOpen}
+      >
+        <span className="game-rotation-metrics-label">{label}</span>
+        <span className="game-rotation-metrics-total">{pct(total.made, total.attempts)}</span>
+        <span className="game-rotation-metrics-chevron">{isOpen ? "▲" : "▼"}</span>
+      </button>
+      {isOpen && (
+        <div className="game-rotation-metrics-breakdown">
+          {rows.map((zone) => (
+            <div key={zone.position} className="game-rotation-metrics-breakdown-item">
+              <div>P{zone.position}</div>
+              <div>{pct(zone.made, zone.attempts)}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function GameLogs(arg: TGameLogs) {
   const { games, listOfGames } = arg;
   const [showLogs, setShowLogs] = useState(false);
+  const [expandedMetric, setExpandedMetric] = useState<"fb" | "trans" | null>(
+    null
+  );
   const [selectedRally, setSelectedRally] = useState<{
     rally: any;
     gameIndex: number;
     setIndex: number;
     rallyIndex: number;
   } | null>(null);
-  const [plusMinusPositions, setPlusMinusPositions] = useState([
-    { count: 0, position: "1" },
-    { count: 0, position: "2" },
-    { count: 0, position: "3" },
-    { count: 0, position: "4" },
-    { count: 0, position: "5" },
-    { count: 0, position: "6" },
-  ]);
+  const [plusMinusPositions, setPlusMinusPositions] = useState(
+    EMPTY_PLUS_MINUS()
+  );
+  const [fbSideOut, setFbSideOut] = useState(EMPTY_PCT_ROWS());
+  const [transition, setTransition] = useState(EMPTY_PCT_ROWS());
 
   useEffect(() => {
-    const newGame = [
-      { count: 0, position: "1" },
-      { count: 0, position: "2" },
-      { count: 0, position: "3" },
-      { count: 0, position: "4" },
-      { count: 0, position: "5" },
-      { count: 0, position: "6" },
-    ];
-    // Получаем все ралли, включая "0 - 0"
     const allRallies = games
       .map((game) => Object.values(game))
       .flat()
       .flat();
 
-    // Находим первое ралли "0 - 0" для получения начальной позиции связующего
-    const initialRally = allRallies.find((ball) => ball.score === "0 - 0");
-    let initialSetterPosition: number | undefined = undefined;
+    const report = computeRotationReport(allRallies);
 
-    if (initialRally) {
-      if (initialRally.setterBoardPosition !== undefined) {
-        initialSetterPosition = initialRally.setterBoardPosition;
-      } else if (
-        initialRally.stats &&
-        initialRally.stats.length > 0 &&
-        initialRally.stats[0]?.setterBoardPosition
-      ) {
-        initialSetterPosition = initialRally.stats[0].setterBoardPosition;
-      }
-    }
-
-    // Фильтруем ралли без "0 - 0" для расчета плюс/минус
-    const game = allRallies.filter((ball) => ball.score !== "0 - 0");
-
-    // Для определения кто выиграл очко, нужно сравнивать счет
-    let previousScore = "0 - 0";
-
-    // Если есть начальное ралли "0 - 0" с позицией, учитываем её для первого ралли
-    // Это нужно, чтобы позиция из "0 - 0" была учтена в подсчете, даже если первый ралли имеет свою позицию
-    if (initialSetterPosition !== undefined && game.length > 0) {
-      const firstRally = game[0];
-      // Определяем позицию первого ралли
-      const firstRallyPosition =
-        firstRally.setterBoardPosition !== undefined
-          ? firstRally.setterBoardPosition
-          : firstRally.stats &&
-            firstRally.stats.length > 0 &&
-            firstRally.stats[0]?.setterBoardPosition
-          ? firstRally.stats[0].setterBoardPosition
-          : undefined;
-
-      // Если позиция первого ралли отличается от позиции "0 - 0", учитываем позицию из "0 - 0"
-      // Это означает, что в первом ралли произошла смена позиции, и нужно учесть начальную позицию
-      if (firstRallyPosition !== initialSetterPosition) {
-        // Используем weWon из первого ралли для определения, как учитывать начальную позицию
-        const firstRallyWeWon =
-          firstRally.weWon !== undefined
-            ? firstRally.weWon
-            : (() => {
-                const [myScore] = firstRally.score.split(" - ").map(Number);
-                const [prevMyScore] = "0 - 0".split(" - ").map(Number);
-                return myScore > prevMyScore;
-              })();
-
-        // Учитываем позицию из "0 - 0" для первого ралли
-        if (firstRallyWeWon) {
-          newGame[initialSetterPosition - 1].count += 1;
-        } else {
-          newGame[initialSetterPosition - 1].count -= 1;
-        }
-      }
-    }
-
-    game.forEach((rall, index) => {
-      // Определяем расстановку связующего нашей команды
-      // Сначала проверяем setterBoardPosition на уровне ралли (для ралли без действий)
-      // Если нет, проверяем в stats[0] (для ралли с действиями, старые данные)
-      // Если и там нет, для первого ралли используем позицию из "0 - 0"
-      let setterPosition: number | undefined = undefined;
-
-      if (rall.setterBoardPosition !== undefined) {
-        // Расстановка сохранена на уровне ралли (для ралли без действий или с действиями)
-        setterPosition = rall.setterBoardPosition;
-      } else if (
-        rall.stats &&
-        rall.stats.length > 0 &&
-        rall.stats[0]?.setterBoardPosition
-      ) {
-        // Расстановка в stats (для ралли с действиями, старые данные)
-        setterPosition = rall.stats[0].setterBoardPosition;
-      } else if (index === 0 && initialSetterPosition !== undefined) {
-        // Для первого розыгрыша (после "0 - 0") используем начальную позицию из "0 - 0"
-        // Это нужно, так как первый розыгрыш может не иметь сохраненной позиции
-        setterPosition = initialSetterPosition;
-      }
-
-      // Используем weWon из данных ралли (если есть), иначе вычисляем по изменению счета
-      let weWon: boolean;
-      if (rall.weWon !== undefined) {
-        // Используем сохраненное значение weWon
-        weWon = rall.weWon;
-      } else {
-        // Fallback: вычисляем по изменению счета (для старых данных)
-        const [myScore] = rall.score.split(" - ").map(Number);
-        const [prevMyScore] = previousScore.split(" - ").map(Number);
-        weWon = myScore > prevMyScore; // Наш счет увеличился
-      }
-
-      // Логика как в Data Volley:
-      // 1. Берем каждое ралли
-      // 2. Смотрим в какой зоне наш связующий (setterPosition)
-      // 3. Проверяем выиграли очко или проиграли (используем weWon из данных)
-      // 4. Записываем +1 или -1 в эту расстановку
-      // Не имеет значения: кто подает, из какой зоны атака, какой элемент принес очко
-
-      if (setterPosition !== undefined) {
-        if (weWon) {
-          // Мы выиграли очко - увеличиваем счет для позиции связующего
-          newGame[setterPosition - 1].count += 1;
-        } else {
-          // Мы проиграли очко - уменьшаем счет для позиции связующего
-          newGame[setterPosition - 1].count -= 1;
-        }
-      }
-
-      // Обновляем предыдущий счет для следующей итерации
-      previousScore = rall.score;
-    });
-    setPlusMinusPositions(newGame);
+    setPlusMinusPositions(
+      ["1", "2", "3", "4", "5", "6"].map((pos) => ({
+        position: pos,
+        count: report[pos]?.plusMinus ?? 0,
+      }))
+    );
+    setFbSideOut(
+      ["1", "2", "3", "4", "5", "6"].map((pos) => ({
+        position: pos,
+        made: report[pos]?.firstBallSideOut.made ?? 0,
+        attempts: report[pos]?.firstBallSideOut.attempts ?? 0,
+      }))
+    );
+    setTransition(
+      ["1", "2", "3", "4", "5", "6"].map((pos) => ({
+        position: pos,
+        made: report[pos]?.transition.made ?? 0,
+        attempts: report[pos]?.transition.attempts ?? 0,
+      }))
+    );
   }, [games]);
 
   return (
-    <>
+    <div className="game-logs-root">
       <RegularButton
         onClick={() => setShowLogs(!showLogs)}
         type="button"
@@ -167,22 +137,43 @@ export default function GameLogs(arg: TGameLogs) {
         {!showLogs ? "Show Game Logs" : "Hide Game Logs"}
       </RegularButton>
       {showLogs && (
-        <>
-          <div className="game-plusMinus-position-wrapper">
-            {plusMinusPositions.map((zone) => (
-              <div key={zone.position}>
-                <div>P{zone.position}</div>
-                <div
-                  style={
-                    zone.count >= 0
-                      ? { color: "green" }
-                      : { color: "orangered" }
-                  }
-                >
-                  {zone.count}
-                </div>
+        <div className="game-logs-panel">
+          <div className="game-rotation-metrics">
+            <div className="game-rotation-metrics-row game-rotation-metrics-row--plus-minus">
+              <span className="game-rotation-metrics-label">+ / −</span>
+              <div className="game-plusMinus-position-wrapper">
+                {plusMinusPositions.map((zone) => (
+                  <div key={zone.position}>
+                    <div>P{zone.position}</div>
+                    <div
+                      style={
+                        zone.count >= 0
+                          ? { color: "green" }
+                          : { color: "orangered" }
+                      }
+                    >
+                      {zone.count}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+            <MetricDropdown
+              label="FB SO%"
+              rows={fbSideOut}
+              isOpen={expandedMetric === "fb"}
+              onToggle={() =>
+                setExpandedMetric((prev) => (prev === "fb" ? null : "fb"))
+              }
+            />
+            <MetricDropdown
+              label="Transition%"
+              rows={transition}
+              isOpen={expandedMetric === "trans"}
+              onToggle={() =>
+                setExpandedMetric((prev) => (prev === "trans" ? null : "trans"))
+              }
+            />
           </div>
           <div className="gameLog-table-wrapper">
             {games.map((game, index) => (
@@ -190,7 +181,6 @@ export default function GameLogs(arg: TGameLogs) {
                 <h2>{Object.keys(listOfGames[index])}</h2>
                 <table>
                   {Object.values(game).map((sets, setIndex) => {
-                    // Для определения кто выиграл очко, нужно сравнивать счет
                     let previousScore = "0 - 0";
 
                     return (
@@ -206,28 +196,21 @@ export default function GameLogs(arg: TGameLogs) {
                           <td>Setter</td>
                         </tr>
                         {Object.values(sets).map((set, rallyIndex) => {
-                          // Используем weWon из данных ралли (если есть), иначе вычисляем по изменению счета
                           let weWon: boolean;
                           if (set.weWon !== undefined) {
-                            // Используем сохраненное значение weWon
                             weWon = set.weWon;
                           } else {
-                            // Fallback: вычисляем по изменению счета (для старых данных)
                             const [myScore] = set.score
                               .split(" - ")
                               .map(Number);
                             const [prevMyScore] = previousScore
                               .split(" - ")
                               .map(Number);
-                            weWon = myScore > prevMyScore; // Наш счет увеличился
+                            weWon = myScore > prevMyScore;
                           }
 
-                          // Обновляем предыдущий счет для следующей итерации
                           previousScore = set.score;
 
-                          // Определяем расстановку связующего нашей команды
-                          // Сначала проверяем setterBoardPosition на уровне ралли (для ралли без действий)
-                          // Если нет, проверяем в stats[0] (для ралли с действиями, старые данные)
                           const ourSetterPosition =
                             set.setterBoardPosition !== undefined
                               ? set.setterBoardPosition
@@ -237,16 +220,7 @@ export default function GameLogs(arg: TGameLogs) {
                               ? set.stats[0].setterBoardPosition
                               : undefined;
 
-                          // Отображаем расстановку связующего:
-                          // - Слева (зеленый) - если мы выиграли очко в этой расстановке
-                          // - Справа (красный) - если мы проиграли очко в этой расстановке
-                          // ВАЖНО: Всегда отображаем позицию, если она есть, даже если нет действий игроков
                           const isInitialScore = set.score === "0 - 0";
-
-                          // Определяем, где показывать позицию:
-                          // - Слева (зеленый) - если мы выиграли очко
-                          // - Справа (красный) - если мы проиграли очко
-                          // - Слева (серый) - для начального счета (0-0)
                           const showLeft =
                             ourSetterPosition !== undefined &&
                             (weWon || isInitialScore);
@@ -314,7 +288,7 @@ export default function GameLogs(arg: TGameLogs) {
               </span>
             ))}
           </div>
-        </>
+        </div>
       )}
       {selectedRally && (
         <div
@@ -364,24 +338,47 @@ export default function GameLogs(arg: TGameLogs) {
             <h3 style={{ marginTop: 0 }}>
               Rally Details - Score: {selectedRally.rally.score}
             </h3>
+            {selectedRally.rally.notation && (
+              <div
+                style={{
+                  background: "#f8fafc",
+                  padding: "10px",
+                  borderRadius: "6px",
+                  marginBottom: "12px",
+                }}
+              >
+                <RallyStringDisplay notation={selectedRally.rally.notation} />
+                <div
+                  style={{
+                    marginTop: "8px",
+                    fontSize: "0.75rem",
+                    color: "#64748b",
+                    fontFamily: "monospace",
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {selectedRally.rally.notation}
+                </div>
+              </div>
+            )}
             {selectedRally.rally.stats &&
             selectedRally.rally.stats.length > 0 ? (
               <div>
                 <h4>Players Actions:</h4>
                 {(() => {
-                  // Определяем какие колонки имеют ненулевые значения
                   const columns = [
-                    { key: "R++", label: "R++" },
-                    { key: "R+", label: "R+" },
-                    { key: "R!", label: "R!" },
-                    { key: "R-", label: "R-" },
                     { key: "R=", label: "R=" },
-                    { key: "A++", label: "A++" },
+                    { key: "R/", label: "R/" },
+                    { key: "R-", label: "R-" },
+                    { key: "R!", label: "R!" },
+                    { key: "R+", label: "R+" },
+                    { key: "R++", label: formatStatColumnHeader("R++") },
+                    { key: "A++", label: formatStatColumnHeader("A++") },
                     { key: "A+", label: "A+" },
                     { key: "A=", label: "A=" },
                     { key: "A!", label: "A!" },
-                    { key: "A-", label: "A-" },
-                    { key: "S++", label: "S++" },
+                    { key: "A-", label: formatStatColumnHeader("A-") },
+                    { key: "S++", label: formatStatColumnHeader("S++") },
                     { key: "S+", label: "S+" },
                     { key: "S=", label: "S=" },
                     { key: "S!", label: "S!" },
@@ -389,7 +386,6 @@ export default function GameLogs(arg: TGameLogs) {
                     { key: "blocks", label: "Blocks" },
                   ];
 
-                  // Фильтруем колонки, оставляя только те, где есть хотя бы одно ненулевое значение
                   const visibleColumns = columns.filter((col) => {
                     return selectedRally.rally.stats.some((player: any) => {
                       const value = player[col.key];
@@ -456,7 +452,7 @@ export default function GameLogs(arg: TGameLogs) {
                                       textAlign: "center",
                                     }}
                                   >
-                                    {value !== 0 ? value : ""}
+                                    {value !== 0 ? value : 0}
                                   </td>
                                 );
                               })}
@@ -468,15 +464,16 @@ export default function GameLogs(arg: TGameLogs) {
                   );
                 })()}
               </div>
+            ) : isOpponentServeErrorRally(selectedRally.rally) ? (
+              <p className="rally-flow-item-serve-error">Their serve error</p>
             ) : (
               <p style={{ fontStyle: "italic", color: "#666" }}>
-                No player actions in this rally (quick point, e.g., service
-                error)
+                No player actions in this rally (quick point)
               </p>
             )}
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

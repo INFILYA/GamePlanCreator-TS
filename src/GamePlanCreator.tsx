@@ -18,10 +18,11 @@ import { ENGTUTORIAL } from "./utilities/engTutorial";
 import Directions from "./directions-section/Directions";
 import MyLogo from "./myLogo/MyLogo";
 import GamesStatistic from "./loadStatistic/GamesStatistic";
+import LiveStats from "./liveStats/LiveStats";
 import { setAllGameStats } from "./states/slices/gamesStatsSlice";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { onValue } from "firebase/database";
-import { later, getFromLocalStorage } from "./utilities/functions";
+import { later, getFromLocalStorage, restoreFromFirebase } from "./utilities/functions";
 import TermsOfService from "./legal/TermsOfService";
 import PrivacyPolicy from "./legal/PrivacyPolicy";
 import CookieBanner from "./legal/CookieBanner";
@@ -139,7 +140,9 @@ export default function GamePlanCreator() {
           (snapshot) => {
             const data = snapshot.val();
             if (data) {
-              const players = Object.values(data) as TPlayer[];
+              const players = (Object.values(data) as TPlayer[]).map((player) =>
+                restoreFromFirebase(player)
+              );
               dispatch(setAllPlayers(players));
             }
           },
@@ -167,7 +170,9 @@ export default function GamePlanCreator() {
           (snapshot) => {
             const data = snapshot.val();
             if (data) {
-              const games = Object.values(data) as TGameStats[];
+              const games = (Object.values(data) as TGameStats[]).map((game) =>
+                restoreFromFirebase(game)
+              );
               dispatch(setAllGameStats(games));
             }
           },
@@ -216,6 +221,7 @@ export default function GamePlanCreator() {
               <Route path="/Ratings" element={<Ratings />} />
               <Route path="/Directions" element={<Directions />} />
               <Route path="/GamesStatistic" element={<GamesStatistic />} />
+              <Route path="/LiveStats" element={<LiveStats />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
             </Routes>

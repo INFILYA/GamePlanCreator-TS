@@ -10,9 +10,12 @@ import {
   correctZones,
   emptyPlayers,
   firstLetterCapital,
+  forSoloGameStat,
   getFromLocalStorage,
   isFieldExist,
+  isSetComplete,
   mergeTeamStatsFromPlayers,
+  prepareForFirebase,
   zones,
 } from "../utilities/functions";
 import { TGameLogStats, TMix, TPlayer } from "../types/types";
@@ -42,6 +45,7 @@ import {
 import {
   selectListOfPlayers,
   setAllPlayers,
+  setUpdatedPlayers,
 } from "../states/slices/listOfPlayersSlice";
 import { RegularButton } from "../css/Button.styled";
 import {
@@ -57,6 +61,19 @@ import { StatisticsTable } from "../ratings/components/StatisticsTable";
 import { useSetWidth } from "../utilities/useSetWidth";
 import Diagramm from "../personalInfo/components/Diagramm";
 import ConfirmField from "../utilities/ConfimField.";
+import { RallyStringBar } from "./components/RallyStringBar";
+import { RallyScoutControls } from "./components/RallyScoutControls";
+import { syncLiveGame, clearLiveGame, selectLiveGame } from "../states/slices/liveGameSlice";
+import {
+  parseNotationToPlayerStats,
+  playerStatsToRallyPlayers,
+} from "../notation/parser";
+import {
+  selectRallyNotation,
+  selectRallySelectedPlayer,
+  resetRallyNotation,
+  startNewRally,
+} from "../states/slices/rallyNotationSlice";
 
 export function HomePage() {
   const dispatch = useAppDispatch();
@@ -67,25 +84,63 @@ export function HomePage() {
   const guestPlayers = useSelector(selectGuestPlayers);
   const playerInfo = useSelector(selectPlayerInfo);
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
-  const [showSquads, setShowSquads] = useState(true);
+  const liveGame = useSelector(selectLiveGame);
+  const [showSquads, setShowSquads] = useState(!liveGame.inStatMode);
   const [hoverStatisticButton, setHoverStatisticButton] = useState(false);
   const [showCurrentGameStats, setShowCurrentGameStats] = useState(false);
   const [isBiggest, setIsBiggest] = useState<boolean>(false);
   const [nextRotation, setNextRotation] = useState(true);
-  const [weServe, setWeServe] = useState(false);
-  const [exhibitionGame, setExhibitionGame] = useState(false);
-  const [gameLog, setGameLog] = useState<TGameLogStats>([]);
+  const [weServe, setWeServe] = useState(liveGame.weServe);
+  const [exhibitionGame, setExhibitionGame] = useState(liveGame.exhibitionGame);
+  const [gameLog, setGameLog] = useState<TGameLogStats>(liveGame.gameLog);
   const [statsForTeam, setstatsForTeam] = useState<TPlayer[][]>([]);
-  const [opponentTeamName, setOpponentTeamName] = useState("");
-  const [setNumber, setSetNumber] = useState("");
-  const [myScore, setMyScore] = useState(0);
-  const [rivalScore, setRivalScore] = useState(0);
+  const [opponentTeamName, setOpponentTeamName] = useState(
+    liveGame.opponentTeamName
+  );
+  const [setNumber, setSetNumber] = useState(liveGame.setNumber);
+  const [myScore, setMyScore] = useState(liveGame.myScore);
+  const [rivalScore, setRivalScore] = useState(liveGame.rivalScore);
   const [previousMyScore, setPreviousMyScore] = useState(0);
   const [previousRivalScore, setPreviousRivalScore] = useState(0);
   const [rivalRotation, setRivalRotation] = useState(1);
   const [openResetConfirmWindow, setOpenResetConfirmWindow] = useState(false);
   const [openUndoConfirmWindow, setOpenUndoConfirmWindow] = useState(false);
   const gamesStats = useSelector(selectGamesStats);
+  const rallyNotation = useSelector(selectRallyNotation);
+  const selectedRallyPlayer = useSelector(selectRallySelectedPlayer);
+
+  useEffect(() => {
+    if (!showSquads && !rallyNotation.trim()) {
+      dispatch(startNewRally({ weServe }));
+    }
+  }, [weServe, showSquads, rallyNotation, dispatch]);
+
+  useEffect(() => {
+    dispatch(
+      syncLiveGame({
+        gameLog,
+        myScore,
+        rivalScore,
+        weServe,
+        opponentTeamName,
+        setNumber,
+        exhibitionGame,
+        teamName: guestTeam.length > 0 ? guestTeam[0]?.name ?? "" : "",
+        inStatMode: !showSquads,
+      })
+    );
+  }, [
+    gameLog,
+    myScore,
+    rivalScore,
+    weServe,
+    opponentTeamName,
+    setNumber,
+    exhibitionGame,
+    guestTeam,
+    showSquads,
+    dispatch,
+  ]);
 
   const showGuestTeam = guestTeam.length !== 0;
 
@@ -119,13 +174,15 @@ export function HomePage() {
 
     // Откатываем SoloRallyStats из Redux
     dispatch(resetRallyStats());
+    dispatch(resetRallyNotation());
+    dispatch(startNewRally({ weServe: lastRally.weServe }));
 
     // Откатываем расстановку
     if (lastRally.teamRotationBefore) {
       // Восстанавливаем расстановку из сохраненного состояния
       dispatch(setBackGuestTeamSelects(lastRally.teamRotationBefore));
-    } else if (lastRally.weWon) {
-      // Если нет сохраненного состояния, откатываем ротацию назад
+    } else if (lastRally.weWon && !lastRally.weServe) {
+      // Legacy rallies without saved rotation: only side-outs rotated our team
       dispatch(rotateBackGuestTeam());
     }
 
@@ -153,6 +210,7 @@ export function HomePage() {
     dispatch(setBackGuestTeamSelects(emptyPlayers));
     dispatch(setInfoOfPlayer(null));
     dispatch(resetRallyStats());
+    dispatch(clearLiveGame());
     const cachedPlayers = getFromLocalStorage("players");
     if (cachedPlayers && Array.isArray(cachedPlayers)) {
       dispatch(setAllPlayers(cachedPlayers));
@@ -182,7 +240,8 @@ export function HomePage() {
 
     try {
       if (!gameLog) return;
-      const setStat = { [setNumber]: gameLog };
+      const sanitizedGameLog = prepareForFirebase(gameLog);
+      const setStat = { [setNumber]: sanitizedGameLog };
       const choosenGame = gamesStats.find((game) => game[matchInfo]);
       if (!choosenGame) {
         await set(gamesRef(matchInfo), { [matchInfo]: setStat });
@@ -192,7 +251,10 @@ export function HomePage() {
           return;
         } else {
           await update(gamesRef(matchInfo), {
-            [matchInfo]: { ...choosenGame[matchInfo], ...setStat },
+            [matchInfo]: prepareForFirebase({
+              ...choosenGame[matchInfo],
+              ...setStat,
+            }),
           });
         }
       }
@@ -206,13 +268,13 @@ export function HomePage() {
           (player) => player.team === guestTeam[0].name
         );
         updatedPlayers.forEach((player) => {
-          setPlayersToData(player);
+          setPlayersToData(prepareForFirebase(player));
         });
         const newTeam = mergeTeamStatsFromPlayers(
           guestTeam[0],
           updatedPlayers
         );
-        await set(teamsRef(newTeam.name), newTeam);
+        await set(teamsRef(newTeam.name), prepareForFirebase(newTeam));
       }
       setstatsForTeam([]);
       resetTheBoardForGuestTeam();
@@ -226,9 +288,14 @@ export function HomePage() {
   }
 
   const hideSquads = () => {
+    const enteringStatMode = showSquads;
     setShowSquads(!showSquads);
     setShowCurrentGameStats(false);
     dispatch(resetRallyStats());
+    dispatch(resetRallyNotation());
+    if (enteringStatMode) {
+      dispatch(startNewRally({ weServe }));
+    }
     setNextRotation(true);
     if (playerInfo !== null) {
       dispatch(setInfoOfPlayer(null));
@@ -422,14 +489,7 @@ export function HomePage() {
 
   const tieBreak =
     setNumber === "Set 3 (short)" || setNumber === "Set 5 (short)";
-  const tieBreakScore = myScore >= 15 || rivalScore >= 15;
-  const normalSetScore = myScore >= 25 || rivalScore >= 25;
-  const endOfTheSet = tieBreak
-    ? (tieBreakScore && myScore - rivalScore === (+2 || -2)) ||
-      (tieBreakScore && (myScore - rivalScore > 1 || rivalScore - myScore > 1))
-    : (normalSetScore && myScore - rivalScore === (+2 || -2)) ||
-      (normalSetScore &&
-        (myScore - rivalScore > 1 || rivalScore - myScore > 1));
+  const endOfTheSet = isSetComplete(myScore, rivalScore, tieBreak);
   const saveButton =
     [0, 1, 2, 3, 4, 5].every((zoneIndex) => {
       const boardPosition = zones[zoneIndex];
@@ -470,6 +530,86 @@ export function HomePage() {
     const seTTer = guestTeamOptions?.find((plaer) => plaer.position === "SET");
     if (!seTTer) return 0;
     return correctZones(guestTeamOptions.indexOf(seTTer));
+  }
+
+  function finalizeRally(weWon: boolean) {
+    if (endOfTheSet) return;
+
+    const whoServedInThisRally = weServe;
+    const teamRotationBefore = guestTeamOptions.map((player) => ({
+      ...player,
+      unforcedError: Number.isFinite(player.unforcedError)
+        ? player.unforcedError
+        : 0,
+    }));
+    const guestPlayersBefore = guestPlayers.map((player) => ({
+      ...player,
+      unforcedError: Number.isFinite(player.unforcedError)
+        ? player.unforcedError
+        : 0,
+    }));
+    const previousRivalScoreBefore = previousRivalScore;
+    const rivalRotationBefore = rivalRotation;
+
+    if (weWon) {
+      // Side-out: we received and won → rotate; serving team keeps position on rally win
+      if (!whoServedInThisRally) {
+        dispatch(rotateForwardGuestTeam());
+      }
+      setMyScore((prev) => prev + 1);
+    } else {
+      if (whoServedInThisRally) {
+        const properRivalZone =
+          rivalRotation === 1
+            ? 6
+            : rivalRotation <= 6
+            ? rivalRotation - 1
+            : rivalRotation;
+        setRivalRotation(properRivalZone);
+      }
+      setRivalScore((prev) => prev + 1);
+    }
+
+    const roster = [...guestTeamOptions, ...guestPlayers];
+    const parsedByNumber = parseNotationToPlayerStats(rallyNotation);
+    const rallyPlayers = playerStatsToRallyPlayers(parsedByNumber, roster);
+    const cleanedStats =
+      rallyPlayers.length > 0
+        ? rallyPlayers.map((player) => forSoloGameStat(player))
+        : [];
+
+    const ourSetterPosition = getSetterPosition();
+
+    const rallyData = {
+      score: currentScore,
+      weServe: whoServedInThisRally,
+      weWon,
+      rivalTeam: !weWon,
+      stats: cleanedStats,
+      ...(rallyNotation.trim() ? { notation: rallyNotation } : {}),
+      setterBoardPosition: ourSetterPosition,
+      previousRivalScore: previousRivalScoreBefore,
+      rivalRotation: rivalRotationBefore,
+      teamRotationBefore,
+      guestPlayersBefore,
+    };
+
+    setGameLog((prevGameLog) => [...prevGameLog, rallyData]);
+
+    if (rallyPlayers.length > 0) {
+      setstatsForTeam((prevStats) => [...prevStats, rallyPlayers]);
+      if (!exhibitionGame) {
+        for (const rallyPlayer of rallyPlayers) {
+          dispatch(setUpdatedPlayers(rallyPlayer));
+        }
+      }
+    }
+
+    dispatch(resetRallyStats());
+    dispatch(resetRallyNotation());
+    dispatch(startNewRally({ weServe: weWon }));
+    setNextRotation(true);
+    setWeServe(weWon);
   }
 
   function rankByValue<T extends TMix>(
@@ -617,6 +757,8 @@ export function HomePage() {
             rivalRotation={rivalRotation}
             setRivalRotation={setRivalRotation}
             guestPlayers={guestPlayers}
+            exhibitionGame={exhibitionGame}
+            statMode
           />
         )}
         <SectionWrapper className="playground-section" backGround={null}>
@@ -632,17 +774,7 @@ export function HomePage() {
               >
                 {showGuestTeam ? (
                   <>
-                    {[0, 1, 2, 3, 4, 5].every((zoneIndex) => {
-                      const boardPosition = zones[zoneIndex];
-                      return guestTeamOptions.some(
-                        (p) =>
-                          p &&
-                          typeof p.boardPosition === "number" &&
-                          p.boardPosition === boardPosition &&
-                          p.number !== 0
-                      );
-                    }) &&
-                      guestTeamOptions.some((p) => p.boardPosition === -1) && (
+                    {areMainZonesFilled && (
                         <div
                           className="match-number-wrapper"
                           style={{ width: "100%", flexDirection: "column" }}
@@ -754,6 +886,17 @@ export function HomePage() {
                 )}
                 {!showCurrentGameStats && (
                   <>
+                    {!showSquads && (
+                      <>
+                        <RallyStringBar notation={rallyNotation} />
+                        <RallyScoutControls
+                          weServe={weServe}
+                          selectedPlayerNumber={selectedRallyPlayer}
+                          onRallyEnd={finalizeRally}
+                          endOfTheSet={endOfTheSet}
+                        />
+                      </>
+                    )}
                     <div className="row-zones-wrapper">
                       {[0, 1, 2, 3, 4, 5].map((zoneIndex) => {
                         const boardPosition = zones[zoneIndex];
@@ -796,6 +939,9 @@ export function HomePage() {
                               setNextRotation={setNextRotation}
                               exhibitionGame={exhibitionGame}
                               allowPersonalInfo={allowPersonalInfo}
+                              useRallyNotation={!showSquads}
+                              weServe={weServe}
+                              endOfTheSet={endOfTheSet}
                             />
                           </div>
                         ) : (
@@ -864,6 +1010,9 @@ export function HomePage() {
                                 setNextRotation={setNextRotation}
                                 exhibitionGame={exhibitionGame}
                                 allowPersonalInfo={allowPersonalInfo}
+                                useRallyNotation={!showSquads}
+                                weServe={weServe}
+                                endOfTheSet={endOfTheSet}
                               />
                             </div>
                           ) : (
@@ -909,18 +1058,39 @@ export function HomePage() {
                     </div>
                   </>
                 )}
-                {currentGameStats.length > 0 &&
-                  !showSquads &&
-                  !showCurrentGameStats && (
-                    <RegularButton
-                      onClick={() => setShowCurrentGameStats(true)}
-                      type="button"
-                      $color="#0057b8"
-                      $background="#ffd700"
-                    >
-                      Live Stats
-                    </RegularButton>
-                  )}
+                {!showSquads &&
+                  !showCurrentGameStats &&
+                  !rallyNotation.trim() && (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      gap: "12px",
+                      flexWrap: "wrap",
+                      margin: "8px 0",
+                    }}
+                  >
+                    <NavLink to="/LiveStats">
+                      <RegularButton
+                        type="button"
+                        $color="#0057b8"
+                        $background="#ffd700"
+                      >
+                        Game flow
+                      </RegularButton>
+                    </NavLink>
+                    {currentGameStats.length > 0 && (
+                      <RegularButton
+                        onClick={() => setShowCurrentGameStats(true)}
+                        type="button"
+                        $color="#0057b8"
+                        $background="#e2e8f0"
+                      >
+                        Live Stats
+                      </RegularButton>
+                    )}
+                  </div>
+                )}
                 <div className="button-save-wrapper">
                   {saveButton && (
                     <RegularButton
@@ -1053,6 +1223,8 @@ export function HomePage() {
             rivalRotation={rivalRotation}
             setRivalRotation={setRivalRotation}
             guestPlayers={guestPlayers}
+            exhibitionGame={exhibitionGame}
+            statMode
           />
         )}
       </article>

@@ -12,6 +12,7 @@ import {
   getPlusMinusService,
   isFieldExist,
   preparePlayerToSoloGameV3,
+  receptionStatRows,
   rows,
   setStyle,
   setStyleForEfficency,
@@ -62,6 +63,25 @@ export function Rows(props: TRows) {
     return sorted;
   }
 
+  function receptionStat(
+    player: TMix,
+    grade: (typeof receptionStatRows)[number][0]
+  ): number {
+    const key = grade === "/" ? "R/" : `R${grade}`;
+    return isFieldExist((player as unknown as Record<string, number>)[key]);
+  }
+
+  function skillStat(player: TMix, prefix: "A" | "S", grade: string): number {
+    return isFieldExist(
+      (player as unknown as Record<string, number>)[`${prefix}${grade}`]
+    );
+  }
+
+  const dataCellStyle = (lastRow: boolean | undefined, totalColor?: string) =>
+    lastRow && totalColor
+      ? { backgroundColor: totalColor }
+      : { backgroundColor: "#fff" };
+
   function getPlayersNames(obj: TMix[]) {
     const result = obj
       .map((player) => preparePlayerToSoloGameV3(player))
@@ -88,12 +108,12 @@ export function Rows(props: TRows) {
               style={lastRow ? { backgroundColor: "gainsboro" } : {}}
             >
               <td style={setStyle(plusMinus(player))}>{plusMinus(player)}</td>
-              {rows.map((row) => (
+              {receptionStatRows.map((row) => (
                 <td
-                  key={row[0]}
-                  style={lastRow ? { backgroundColor: row[1] } : {}}
+                  key={`R${row[0]}`}
+                  style={dataCellStyle(lastRow, row[1])}
                 >
-                  {player[`R${row[0]}`]}
+                  {receptionStat(player, row[0])}
                 </td>
               ))}
 
@@ -114,9 +134,9 @@ export function Rows(props: TRows) {
               {rows.map((row) => (
                 <td
                   key={row[0]}
-                  style={lastRow ? { backgroundColor: row[1] } : {}}
+                  style={dataCellStyle(lastRow, row[1])}
                 >
-                  {player[`A${row[0]}`]}
+                  {skillStat(player, "A", row[0])}
                 </td>
               ))}
               <td style={setStyleForEfficency(getAttackEfficency(player))}>
@@ -128,18 +148,18 @@ export function Rows(props: TRows) {
               {rows.map((row) => (
                 <td
                   key={row[0]}
-                  style={lastRow ? { backgroundColor: row[1] } : {}}
+                  style={dataCellStyle(lastRow, row[1])}
                 >
-                  {player[`S${row[0]}`]}
+                  {skillStat(player, "S", row[0])}
                 </td>
               ))}
-              <td style={lastRow ? { backgroundColor: "gainsboro" } : {}}>
-                {player.blocks}
+              <td style={dataCellStyle(lastRow, "gainsboro")}>
+                {isFieldExist(player.blocks)}
               </td>
-              <td style={lastRow ? { backgroundColor: "orangered" } : {}}>
-                {player.unforcedError || 0}
+              <td style={dataCellStyle(lastRow, "orangered")}>
+                {isFieldExist(player.unforcedError)}
               </td>
-              <td style={lastRow ? { backgroundColor: "gainsboro" } : {}}>
+              <td style={dataCellStyle(lastRow, "gainsboro")}>
                 {getEarnedPoints(player)}
               </td>
             </tr>

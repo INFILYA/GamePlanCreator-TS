@@ -9,6 +9,8 @@ import isShowedTutorialReducer from "./slices/isShowedTutorialSlice";
 import playerInfoReducer from "./slices/playerInfoSlice";
 import indexOfGuestTeamZonesReducer from "./slices/indexOfGuestTeamZonesSlice";
 import soloRallyStatsReducer from "./slices/soloRallyStatsSlice";
+import rallyNotationReducer from "./slices/rallyNotationSlice";
+import liveGameReducer from "./slices/liveGameSlice";
 import gamesStatsReducer from "./slices/gamesStatsSlice";
 import detailedStatsOfPlayerReducer from "./slices/detailedStatsOfPlayerSlice";
 
@@ -22,7 +24,9 @@ export const store = configureStore({
     playerInfo: playerInfoReducer, //+
     changeLanguage: changeLanguageReducer, //+
     isShowedTutorial: isShowedTutorialReducer, //+
+    rallyNotation: rallyNotationReducer,
     soloRallyStats: soloRallyStatsReducer,
+    liveGame: liveGameReducer,
     gamesStats: gamesStatsReducer,
     detailedStatsOfPlayer: detailedStatsOfPlayerReducer,
   },

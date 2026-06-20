@@ -15,8 +15,16 @@ import {
   emptyPlayer,
   preparePlayerToSoloGame,
 } from "../../utilities/functions";
-import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
 import { useSelector } from "react-redux";
+import {
+  selectRallySelectedPlayer,
+  selectRallyPlayer,
+  selectServeRecorded,
+  selectRallyOver,
+  selectRallyActionLocked,
+} from "../../states/slices/rallyNotationSlice";
+import { SERVE_BOARD_POSITION } from "../../notation/grades";
+import { setSoloRallyStats } from "../../states/slices/soloRallyStatsSlice";
 
 type TIconOfPlayer = {
   startingSix: TPlayer[];
@@ -26,6 +34,9 @@ type TIconOfPlayer = {
   setNextRotation(arg: boolean): void;
   exhibitionGame: boolean;
   allowPersonalInfo: boolean;
+  useRallyNotation?: boolean;
+  weServe?: boolean;
+  endOfTheSet?: boolean;
 };
 
 export function IconOfPlayer(props: TIconOfPlayer) {
@@ -37,9 +48,31 @@ export function IconOfPlayer(props: TIconOfPlayer) {
     showSquads,
     exhibitionGame,
     allowPersonalInfo,
+    useRallyNotation = false,
+    weServe = false,
+    endOfTheSet = false,
   } = props;
   const dispatch = useAppDispatch();
   const guestTeamOptions = useSelector(selectIndexOfGuestTeamZones);
+  const selectedRallyPlayer = useSelector(selectRallySelectedPlayer);
+  const serveRecorded = useSelector(selectServeRecorded);
+  const rallyOver = useSelector(selectRallyOver);
+  const rallyLocked = useSelector(selectRallyActionLocked);
+  const inServePhase =
+    useRallyNotation &&
+    weServe &&
+    !serveRecorded &&
+    !rallyOver &&
+    !rallyLocked &&
+    !endOfTheSet;
+  const isServerZone = player.boardPosition === SERVE_BOARD_POSITION;
+  const isLiberoSlot = player.boardPosition === -1;
+  const canSelectForRally =
+    !inServePhase || isServerZone || (inServePhase && isLiberoSlot);
+  const isSelectedForRally =
+    useRallyNotation &&
+    selectedRallyPlayer !== null &&
+    String(player.number) === String(selectedRallyPlayer);
   const [category, setCategory] = useState<string>("SR");
   const [diagrammValue, setDiagrammValue] = useState<TMix>(emptyPlayer);
   const playerNameButtonRef = useRef<HTMLButtonElement>(null);
@@ -170,6 +203,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   function showPlayerInfo() {
     if (showSquads && allowPersonalInfo) {
       dispatch(setInfoOfPlayer(player));
+    }
+    if (!showSquads && useRallyNotation) {
+      if (rallyOver || rallyLocked || !canSelectForRally || endOfTheSet) return;
+      dispatch(
+        selectRallyPlayer(
+          isSelectedForRally ? null : String(player.number)
+        )
+      );
     }
   }
 
@@ -333,19 +374,71 @@ export function IconOfPlayer(props: TIconOfPlayer) {
   }
   const playerIndex = startingSix.findIndex((p) => p.name === player.name);
   const zoneNumber = playerIndex !== -1 ? correctZones(playerIndex) : 0;
+  const rallyCardClickable =
+    !showSquads &&
+    useRallyNotation &&
+    !rallyOver &&
+    !rallyLocked &&
+    !endOfTheSet &&
+    canSelectForRally;
 
   return (
     <>
       {condition && (
         <div
-          className="card-content"
+          className={`card-content${
+            !showSquads && useRallyNotation && !rallyOver && !rallyLocked && !endOfTheSet
+              ? " rally-card-clickable"
+              : ""
+          }`}
+          onClick={rallyCardClickable ? showPlayerInfo : undefined}
           style={
             player.boardPosition === -1
               ? {
                   border: "none",
                   backgroundColor: "transparent",
                   ...(!showSquads ? { minWidth: "220px", width: "auto" } : {}),
+                  ...(inServePhase && !canSelectForRally
+                    ? { opacity: 0.35, pointerEvents: "none" as const }
+                    : {}),
+                  ...(endOfTheSet
+                    ? { opacity: 0.35, pointerEvents: "none" as const }
+                    : {}),
+                  ...(inServePhase && canSelectForRally
+                    ? {
+                        boxShadow: "0 0 0 2px #0057b8",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                      }
+                    : {}),
+                  ...(!inServePhase && rallyCardClickable
+                    ? { cursor: "pointer" }
+                    : {}),
                 }
+              : isSelectedForRally
+              ? {
+                  boxShadow: "0 0 0 3px #ffd700",
+                  borderRadius: "8px",
+                  ...(rallyCardClickable ? { cursor: "pointer" } : {}),
+                }
+              : rallyLocked || endOfTheSet
+              ? {
+                  opacity: 0.35,
+                  pointerEvents: "none" as const,
+                }
+              : inServePhase && !canSelectForRally
+              ? {
+                  opacity: 0.35,
+                  pointerEvents: "none" as const,
+                }
+              : inServePhase && isServerZone
+              ? {
+                  boxShadow: "0 0 0 2px #0057b8",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                }
+              : rallyCardClickable
+              ? { cursor: "pointer" }
               : undefined
           }
         >
@@ -353,7 +446,10 @@ export function IconOfPlayer(props: TIconOfPlayer) {
             <div className="zone-names-wrapper">P{zoneNumber}</div>
           )}
           {player.boardPosition !== -1 && (
-            <div className="player-image-wrapper" onClick={showPlayerInfo}>
+            <div
+              className="player-image-wrapper"
+              onClick={!useRallyNotation ? showPlayerInfo : undefined}
+            >
               <img src={`/photos/${player?.photo}`} alt=""></img>
             </div>
           )}
@@ -362,7 +458,7 @@ export function IconOfPlayer(props: TIconOfPlayer) {
               <button
                 type="button"
                 style={{ backgroundColor: "#f0f" }}
-                onClick={() => cancelGuestTeamChoice(player)}
+                onClick={useRallyNotation ? undefined : () => cancelGuestTeamChoice(player)}
                 draggable={showSquads}
                 onDragStart={(e) => {
                   if (showSquads) {
@@ -398,14 +494,14 @@ export function IconOfPlayer(props: TIconOfPlayer) {
                       }
                     : undefined
                 }
-                onClick={showPlayerInfo}
+                onClick={useRallyNotation ? undefined : showPlayerInfo}
                 title={player.name}
               >
                 {displayName}
               </button>
             </div>
           </div>
-          {!showSquads && (
+          {!showSquads && !useRallyNotation && (
             <div
               className="errors-field-wrapper"
               style={

@@ -2385,4 +2385,389 @@ main .main-content-wrapper .section-content-wrapper .section-content .rotation-f
   width: 33.33%;
 }
 
+/* Rally notation scouting UI */
+.rally-string-bar-wrapper {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+.rally-string-bar-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+.rally-string-bar-display {
+  font-family: ui-monospace, monospace;
+  font-size: clamp(0.75rem, 2.5vw, 1rem);
+  word-break: break-word;
+  min-height: 1.5rem;
+  color: #0f172a;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: stretch;
+}
+.rally-string-bar-display--empty {
+  font-family: inherit;
+  font-style: italic;
+  color: #94a3b8;
+  display: block;
+}
+.rally-string-token {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  border: 2px solid;
+  font-family: system-ui, sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  color: #0f172a;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+.rally-string-token--terminal {
+  box-shadow: 0 0 0 2px #16a34a, 0 1px 3px rgba(0, 0, 0, 0.12);
+  font-weight: 600;
+}
+.rally-string-token-jersey {
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+.rally-string-token-skill {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+.rally-string-token-grade {
+  font-weight: 600;
+}
+.rally-string-token-raw {
+  display: none;
+}
+
+/* Rally flow dropdown */
+.rally-flow-dropdown {
+  margin: 0.5rem 0;
+  width: 100%;
+}
+.rally-flow-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #fff;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+}
+.rally-flow-dropdown-toggle:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+.rally-flow-dropdown-count {
+  background: #0057b8;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  min-width: 1.25rem;
+  text-align: center;
+}
+.rally-flow-dropdown-chevron {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: #64748b;
+}
+.rally-flow-dropdown-panel {
+  margin-top: 0.35rem;
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+.rally-flow-list {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.rally-flow-item {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+}
+.rally-flow-item--live {
+  border-color: #0057b8;
+  box-shadow: 0 0 0 1px rgba(0, 87, 184, 0.25);
+}
+.rally-flow-item-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin-bottom: 0.4rem;
+  font-size: 0.8rem;
+}
+.rally-flow-item-index {
+  font-weight: 700;
+  color: #64748b;
+  min-width: 1.5rem;
+}
+.rally-flow-item-score {
+  font-weight: 700;
+  color: #0f172a;
+}
+.rally-flow-item-rotation {
+  color: #475569;
+  font-weight: 600;
+}
+.rally-flow-item-result {
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+.rally-flow-item-result--won {
+  background: #dcfce7;
+  color: #166534;
+}
+.rally-flow-item-result--lost {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.rally-flow-item-serve {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-left: auto;
+}
+.rally-flow-item-live-label {
+  font-weight: 700;
+  color: #0057b8;
+  font-size: 0.75rem;
+}
+.rally-flow-item-actions {
+  margin-top: 0.25rem;
+}
+.rally-flow-item-empty {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+.rally-flow-item-serve-error {
+  margin: 0.25rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #ea580c;
+}
+.rally-flow-empty {
+  margin: 1rem 0;
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Live Stats page */
+.live-stats-page .live-stats-section {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.live-stats-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.live-stats-title-block {
+  flex: 1;
+}
+.live-stats-title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #0057b8;
+}
+.live-stats-subtitle {
+  margin: 0.15rem 0 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+.live-stats-scoreboard {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 0.75rem;
+}
+.live-stats-team {
+  text-align: left;
+}
+.live-stats-team--rival {
+  text-align: right;
+}
+.live-stats-team-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.05em;
+}
+.live-stats-team-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #0f172a;
+}
+.live-stats-score {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0057b8;
+  text-align: center;
+  white-space: nowrap;
+}
+.live-stats-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: #475569;
+  margin-bottom: 1rem;
+}
+.live-stats-exhibition {
+  color: orangered;
+  font-weight: 600;
+}
+.live-stats-flow-panel {
+  max-height: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  padding: 0.75rem;
+}
+.live-stats-flow-panel .rally-flow-list {
+  max-height: none;
+}
+.rally-scout-controls {
+  margin: 0.5rem 0 1rem;
+  padding: 0.75rem;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+}
+.rally-scout-hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: #334155;
+}
+.rally-scout-prompt {
+  margin: 0.5rem 0;
+  color: #64748b;
+  font-style: italic;
+  text-align: center;
+}
+.rally-scout-prompt--serve {
+  color: #0057b8;
+  font-weight: 600;
+  font-style: normal;
+}
+.rally-scout-prompt--terminal {
+  color: #16a34a;
+  font-weight: 600;
+  font-style: normal;
+}
+.rally-scout-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.rally-scout-row-label {
+  font-weight: 600;
+  font-size: 0.8rem;
+  min-width: 2.5rem;
+  color: #475569;
+}
+.rally-scout-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  flex: 1;
+}
+.rally-scout-skill-btn,
+.rally-scout-grade-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.65rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #0f172a;
+}
+.rally-scout-skill-btn {
+  background: #e2e8f0;
+}
+.rally-scout-skill-btn--active {
+  background: #ffd700;
+  box-shadow: 0 0 0 2px #0057b8;
+}
+.rally-scout-grade-btn:disabled {
+  cursor: not-allowed;
+}
+.rally-scout-skill-btn--serve {
+  background: #ffd700;
+  box-shadow: 0 0 0 2px #0057b8;
+}
+.rally-scout-skill-btn--pass {
+  background: #e9d5ff;
+  box-shadow: 0 0 0 2px #7c3aed;
+}
+.rally-scout-outcome-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin: 1rem 0 0.5rem;
+}
+.rally-scout-undo-row {
+  margin-top: 0.75rem;
+  text-align: center;
+}
+.player-field-wrapper.rally-player-selected .player-image-wrapper {
+  box-shadow: 0 0 0 3px #ffd700;
+  border-radius: 50%;
+}
+.rally-card-clickable .zone-names-wrapper,
+.rally-card-clickable .player-image-wrapper,
+.rally-card-clickable .player-field-wrapper {
+  pointer-events: none;
+}
+
 /*# sourceMappingURL=newMain.css.map */
